@@ -1,0 +1,129 @@
+0000.017 (0) Opened log file at time: Thu, 15 May 2014 22:07:48 +0000 on http://realtime.safecast.org/wordpress
+0000.035 (0) UpdraftPlus WordPress backup plugin (http://updraftplus.com): 1.9.5 WP: 3.9.1 PHP: 5.4.9-4ubuntu2.4 (Linux ngeigie 2.6.32-042stab084.14 #1 SMP Mon Dec 16 18:16:56 MSK 2013 x86_64) MySQL: 5.5.34-0ubuntu0.13.04.1 Server: Apache/2.2.22 (Ubuntu) safe_mode: 0 max_execution_time: 900 memory_limit: 268435456 (used: 22.2M | 22.5M) multisite: N mcrypt: Y ZipArchive::addFile: Y W3TC/ObjectCache: N
+0000.038 (0) Free space on disk containing Updraft's temporary directory: 73964.9 Mb
+0000.051 (0) Tasks: Backup files: 1 (schedule: weekly) Backup DB:  (schedule: daily)
+0000.054 (0) Processed schedules. Tasks now: Backup files: 1 Backup DB: 
+0000.217 (0) Requesting semaphore lock (f)
+0000.220 (0) Set semaphore last lock (f) time to 2014-05-15 22:07:48
+0000.221 (0) Semaphore lock (f) complete
+0000.225 (0) Backup run: resumption=0, nonce=f92ac52a68d2, begun at=1400191668 (0s ago), job type=backup
+0000.225 (0) Scheduling a resumption (1) after 300 seconds (1400191968) in case this run gets aborted
+0000.239 (0) OpenVZ; reported memory: 2048 Mb
+0000.241 (0) Checking if we have a zip executable available
+0000.246 (0) Creation of backups of directories: beginning
+0000.346 (0) Beginning creation of dump of plugins (split every: 800 Mb)
+0000.760 (0) Total entities for the zip file: 268 directories, 2837 files, 38 Mb
+0000.799 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 100 files added (on-disk size: 0 Kb)
+0000.808 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 200 files added (on-disk size: 0 Kb)
+0000.814 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 300 files added (on-disk size: 0 Kb)
+0000.821 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 400 files added (on-disk size: 0 Kb)
+0000.828 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 500 files added (on-disk size: 0 Kb)
+0000.829 (0) Adding batch to zip file (UpdraftPlus_ZipArchive): over 500 files added on this batch (10 Mb, 2837 files batched, 501 (501) added so far); re-opening (prior size: 0 Kb)
+0003.294 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 600 files added (on-disk size: 4249.8 Kb)
+0003.302 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 700 files added (on-disk size: 4249.8 Kb)
+0003.315 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 800 files added (on-disk size: 4249.8 Kb)
+0003.327 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 900 files added (on-disk size: 4249.8 Kb)
+0003.337 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 1000 files added (on-disk size: 4249.8 Kb)
+0003.338 (0) Adding batch to zip file (UpdraftPlus_ZipArchive): over 500 files added on this batch (4.6 Mb, 2837 files batched, 501 (1002) added so far); re-opening (prior size: 4249.8 Kb)
+0004.930 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 1100 files added (on-disk size: 5935.2 Kb)
+0004.939 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 1200 files added (on-disk size: 5935.2 Kb)
+0004.950 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 1300 files added (on-disk size: 5935.2 Kb)
+0004.960 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 1400 files added (on-disk size: 5935.2 Kb)
+0004.970 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 1500 files added (on-disk size: 5935.2 Kb)
+0004.971 (0) Adding batch to zip file (UpdraftPlus_ZipArchive): over 500 files added on this batch (7.9 Mb, 2837 files batched, 501 (1503) added so far); re-opening (prior size: 5935.2 Kb)
+0006.789 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 1600 files added (on-disk size: 8946.3 Kb)
+0006.806 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 1700 files added (on-disk size: 8946.3 Kb)
+0006.819 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 1800 files added (on-disk size: 8946.3 Kb)
+0006.831 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 1900 files added (on-disk size: 8946.3 Kb)
+0006.843 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 2000 files added (on-disk size: 8946.3 Kb)
+0006.845 (0) Adding batch to zip file (UpdraftPlus_ZipArchive): over 500 files added on this batch (2.7 Mb, 2837 files batched, 501 (2004) added so far); re-opening (prior size: 8946.3 Kb)
+0007.562 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 2100 files added (on-disk size: 11037.7 Kb)
+0007.575 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 2200 files added (on-disk size: 11037.7 Kb)
+0007.591 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 2300 files added (on-disk size: 11037.7 Kb)
+0007.606 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 2400 files added (on-disk size: 11037.7 Kb)
+0007.622 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 2500 files added (on-disk size: 11037.7 Kb)
+0007.624 (0) Adding batch to zip file (UpdraftPlus_ZipArchive): over 500 files added on this batch (10 Mb, 2837 files batched, 501 (2505) added so far); re-opening (prior size: 11037.7 Kb)
+0010.202 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 2600 files added (on-disk size: 15604 Kb)
+0010.218 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 2700 files added (on-disk size: 15604 Kb)
+0010.233 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip.tmp: 2800 files added (on-disk size: 15604 Kb)
+0011.149 (0) Created plugins zip (0) - 16960.1 Kb in 10.8 s (1570.4 Kb/s) (SHA1 checksum: f751ffed1468966c6c38c84e4799b8241cf8d35f)
+0011.152 (0) Beginning creation of dump of themes (split every: 800 Mb)
+0011.190 (0) Total entities for the zip file: 20 directories, 189 files, 1.5 Mb
+0011.195 (0) Zip: backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-themes.zip.tmp: 100 files added (on-disk size: 0 Kb)
+0011.590 (0) Created themes zip (0) - 1160.9 Kb in 0.4 s (2684.2 Kb/s) (SHA1 checksum: cd4d808977139c56b3a931afa44f9c4a1bd7f587)
+0011.595 (0) Exclusion option setting (uploads): backup*,*backups,backwpup*,wp-clone
+0011.597 (0) Looking for candidates to back up in: /var/www/wordpress/wp-content/uploads
+0011.604 (0) finding files: 2014: adding to list (1)
+0011.606 (0) finding files: wp-google-maps: adding to list (2)
+0011.608 (0) Beginning creation of dump of uploads (split every: 800 Mb)
+0011.638 (0) Total entities for the zip file: 5 directories, 47 files, 1.1 Mb
+0012.084 (0) Created uploads zip (0) - 892.2 Kb in 0.5 s (1879 Kb/s) (SHA1 checksum: e8e57c0e3c38fe92094b3ae8292c36dae6a2234b)
+0012.087 (0) Beginning backup of other directories found in the content directory (index: 0)
+0012.088 (0) Exclusion option setting (others): upgrade,cache,updraft,backup*,*backups
+0012.092 (0) Looking for candidates to back up in: /var/www/wordpress/wp-content
+0012.093 (0) finding files: updraft: skipping: this is the updraft directory
+0012.095 (0) finding files: tablepress-custom.css: adding to list (1)
+0012.096 (0) finding files: languages: adding to list (2)
+0012.097 (0) finding files: themes: skipping: this is the themes directory
+0012.098 (0) finding files: index.php: adding to list (3)
+0012.099 (0) finding files: tablepress-custom.min.css: adding to list (4)
+0012.100 (0) finding files: upgrade: skipping: excluded by options
+0012.101 (0) finding files: tablepress-combined.min.css: adding to list (5)
+0012.102 (0) finding files: uploads: skipping: this is the uploads directory
+0012.103 (0) finding files: plugins: skipping: this is the plugins directory
+0012.107 (0) Total entities for the zip file: 1 directories, 8 files, 0.4 Mb
+0012.370 (0) Created others zip (0) - 157.5 Kb in 0.3 s (595.7 Kb/s) (SHA1 checksum: e81050590930e7d453116dc4296beae33ccc6003)
+0012.376 (0) Saving backup status to database (elements: 8)
+0012.379 (0) No database backup - not part of this run
+0012.380 (0) Saving backup history
+0012.383 (0) backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-plugins.zip: plugins: This file has not yet been successfully uploaded: will queue
+0012.384 (0) backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-themes.zip: themes: This file has not yet been successfully uploaded: will queue
+0012.384 (0) backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-uploads.zip: uploads: This file has not yet been successfully uploaded: will queue
+0012.386 (0) backup_2014-05-15-2207_SAFECAST_f92ac52a68d2-others.zip: others: This file has not yet been successfully uploaded: will queue
+0012.391 (0) Requesting upload of the files that have not yet been successfully uploaded (4)
+0012.394 (0) Cloud backup selection: none
+0012.396 (0) No remote despatch: user chose no remote backup service
+0012.399 (0) Retain: beginning examination of existing backup sets; user setting: retain_files=4, retain_db=4
+0012.401 (0) Number of backup sets in history: 9
+0012.403 (0) Examining backup set with datestamp: 1400191668 (May 15 2014 22:07:48)
+0012.405 (0) 1400191668: this backup set remains non-empty (1/0); will retain in history
+0012.406 (0) Examining backup set with datestamp: 1400105510 (May 14 2014 22:11:50)
+0012.407 (0) 1400105510: db: this set includes a database (backup_2014-05-14-2211_SAFECAST_d545ac98a367-db.gz); db count is now 1
+0012.409 (0) 1400105510: this backup set remains non-empty (0/1); will retain in history
+0012.410 (0) Examining backup set with datestamp: 1400022180 (May 13 2014 23:03:00)
+0012.411 (0) 1400022180: db: this set includes a database (backup_2014-05-13-2303_SAFECAST_ff6520b3a976-db.gz); db count is now 2
+0012.413 (0) 1400022180: this backup set remains non-empty (0/1); will retain in history
+0012.414 (0) Examining backup set with datestamp: 1399932500 (May 12 2014 22:08:20)
+0012.417 (0) 1399932500: db: this set includes a database (backup_2014-05-12-2208_SAFECAST_875731d29018-db.gz); db count is now 3
+0012.420 (0) 1399932500: this backup set remains non-empty (0/1); will retain in history
+0012.421 (0) Examining backup set with datestamp: 1399846051 (May 11 2014 22:07:31)
+0012.422 (0) 1399846051: db: this set includes a database (backup_2014-05-11-2207_SAFECAST_b818278c2765-db.gz); db count is now 4
+0012.424 (0) 1399846051: this backup set remains non-empty (0/1); will retain in history
+0012.425 (0) Examining backup set with datestamp: 1399589037 (May 08 2014 22:43:57)
+0012.428 (0) 1399589037: this backup set remains non-empty (1/0); will retain in history
+0012.429 (0) Examining backup set with datestamp: 1398981969 (May 01 2014 22:06:09)
+0012.431 (0) 1398981969: this backup set remains non-empty (1/0); will retain in history
+0012.432 (0) Examining backup set with datestamp: 1398388275 (Apr 25 2014 01:11:15)
+0012.435 (0) 1398388275: this backup set remains non-empty (1/0); will retain in history
+0012.437 (0) Examining backup set with datestamp: 1397947908 (Apr 19 2014 22:51:48)
+0012.438 (0) plugins: 1397947908: over retain limit (4); will delete this file (backup_2014-04-19-2251_SAFECAST_d0f731398091-plugins.zip)
+0012.438 (0) themes: 1397947908: over retain limit (4); will delete this file (backup_2014-04-19-2251_SAFECAST_d0f731398091-themes.zip)
+0012.439 (0) uploads: 1397947908: over retain limit (4); will delete this file (backup_2014-04-19-2251_SAFECAST_d0f731398091-uploads.zip)
+0012.440 (0) others: 1397947908: over retain limit (4); will delete this file (backup_2014-04-19-2251_SAFECAST_d0f731398091-others.zip)
+0012.441 (0) Delete file: backup_2014-04-19-2251_SAFECAST_d0f731398091-plugins.zip, service=none
+0012.442 (0) Deleting local copy (backup_2014-04-19-2251_SAFECAST_d0f731398091-plugins.zip)
+0012.445 (0) Delete file: backup_2014-04-19-2251_SAFECAST_d0f731398091-themes.zip, service=none
+0012.447 (0) Deleting local copy (backup_2014-04-19-2251_SAFECAST_d0f731398091-themes.zip)
+0012.448 (0) Delete file: backup_2014-04-19-2251_SAFECAST_d0f731398091-uploads.zip, service=none
+0012.449 (0) Deleting local copy (backup_2014-04-19-2251_SAFECAST_d0f731398091-uploads.zip)
+0012.450 (0) Delete file: backup_2014-04-19-2251_SAFECAST_d0f731398091-others.zip, service=none
+0012.451 (0) Deleting local copy (backup_2014-04-19-2251_SAFECAST_d0f731398091-others.zip)
+0012.455 (0) 1397947908: this backup set is now empty; will remove from history
+0012.457 (0) 1397947908: deleting log file (log.d0f731398091.txt)
+0012.459 (0) Retain: saving new backup history (sets now: 8) and finishing retain operation
+0012.463 (0) Resume backup (f92ac52a68d2, 0): finish run
+0012.469 (0) Decremented the semaphore (f) by 1
+0012.471 (0) Semaphore (f) unlocked
+0012.472 (0) There were no errors in the uploads, so the 'resume' event (1) is being unscheduled
+0012.491 (0) No email will/can be sent - the user has not configured an email address.
+0012.493 (0) The backup apparently succeeded and is now complete

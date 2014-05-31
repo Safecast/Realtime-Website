@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Folder>
+    <name>Devices Safecast</name>
+    <visibility>1</visibility>
+    <open>1</open>
+    <description>Safecast Fixed devices</description>
+    <NetworkLink>
+      <name>Device 40</name>
+      <visibility>0</visibility>
+      <open>0</open>
+      <description>Device 40</description>
+      <refreshVisibility>0</refreshVisibility>
+      <flyToView>1</flyToView>
+      <Link>
+        <href>http://107.161.164.166/feeds/device_40.xml</href>
+      </Link>
+    </NetworkLink>
+	<NetworkLink>
+      <name>Device 41</name>
+      <visibility>0</visibility>
+      <open>0</open>
+      <description>Device 41</description>
+      <refreshVisibility>0</refreshVisibility>
+      <flyToView>1</flyToView>
+      <Link>
+		<href>http://107.161.164.166/feeds/device_41.xml</href>
+      </Link>
+    </NetworkLink>
+	<NetworkLink>
+      <name>Device 42</name>
+      <visibility>0</visibility>
+      <open>0</open>
+      <description>Device 42</description>
+      <refreshVisibility>0</refreshVisibility>
+      <flyToView>0</flyToView>
+      <Link>
+		<href>http://107.161.164.166/feeds/device_42.xml</href>
+      </Link>
+    </NetworkLink>
+	<NetworkLink>
+      <name>Device 47</name>
+      <visibility>0</visibility>
+      <open>0</open>
+      <description>Device 47</description>
+      <refreshVisibility>0</refreshVisibility>
+      <flyToView>0</flyToView>
+      <Link>
+		<href>http://107.161.164.166/feeds/device_47.xml</href>
+      </Link>
+    </NetworkLink>
+	<NetworkLink>
+      <name>Device 49</name>
+      <visibility>0</visibility>
+      <open>0</open>
+      <description>Device 49</description>
+      <refreshVisibility>0</refreshVisibility>
+      <flyToView>0</flyToView>
+      <Link>
+		<href>http://107.161.164.166/feeds/device_49.xml</href>
+      </Link>
+    </NetworkLink>
+	 <NetworkLink>
+      <name>Device 58</name>
+      <visibility>0</visibility>
+      <open>0</open>
+      <description>Device 58</description>
+      <refreshVisibility>0</refreshVisibility>
+      <flyToView>0</flyToView>
+      <Link>
+		<href>http://107.161.164.166/feeds/device_58.xml</href>
+      </Link>
+    </NetworkLink>
+	 <NetworkLink>
+      <name>Device 59</name>
+      <visibility>0</visibility>
+      <open>0</open>
+      <description>Device 59</description>
+      <refreshVisibility>0</refreshVisibility>
+      <flyToView>0</flyToView>
+      <Link>
+		<href>http://107.161.164.166/feeds/device_59.xml</href>
+      </Link>
+    </NetworkLink>
+	 <NetworkLink>
+      <name>Device 60</name>
+      <visibility>0</visibility>
+      <open>0</open>
+      <description>Device 60</description>
+      <refreshVisibility>0</refreshVisibility>
+      <flyToView>0</flyToView>
+      <Link>
+		<href>http://107.161.164.166/feeds/device_60.xml</href>
+      </Link>
+    </NetworkLink>
+	 <NetworkLink>
+      <name>Device 62</name>
+      <visibility>0</visibility>
+      <open>0</open>
+      <description>Device 62</description>
+      <refreshVisibility>0</refreshVisibility>
+      <flyToView>0</flyToView>
+      <Link>
+		<href>http://107.161.164.166/feeds/device_62.xml</href>
+      </Link>
+    </NetworkLink>
+ </Folder>
+</kml>

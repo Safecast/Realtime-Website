@@ -1,0 +1,6 @@
+#content_htmlsnippet img, #content_st_cf_embed img {width:95px; border:none !important; padding:0}
+
+
+#content_htmlsnippet, #content_st_cf_embed {width:95px;}
+
+#metavalue {height:200px;}

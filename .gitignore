@@ -1,0 +1,17 @@
+wordpress/.htaccess
+wordpress/wp-content/blogs.dir/
+wordpress/wp-content/upgrade/
+wordpress/wp-content/backup-db/
+wordpress/wp-content/advanced-cache.php
+wordpress/wp-content/wp-cache-config.php
+wordpress/sitemap.xml
+wordpress/*.log
+wordpress/wp-content/cache/
+wordpress/wp-content/upload/
+wordpress/wp-content/backups/
+wordpress/sitemap.xml.gz
+wordpress/wp-config.php
+feeds/device_*
+plots/cache/
+plots/out/
+plots/tmp/
