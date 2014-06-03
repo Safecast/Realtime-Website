@@ -9,7 +9,8 @@ wordpress/*.log
 wordpress/wp-content/cache/*
 wordpress/wp-content/uploads/*
 wordpress/wp-content/backups/*
+wordpress/wp-content/updraft/*
+wordpress/wp-content/themes/safecast/assets/map/*
 wordpress/sitemap.xml.gz
 wordpress/wp-config.php
-wordpress/wp-content/themes/safecast/assets/map/*
 plots/
