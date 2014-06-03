@@ -3,80 +3,86 @@ reset;
 set encoding utf8;
 
 CPM2DRE=1.0/334.0;
+NOW=system("TZ=" . CONFIG_TIMEZONE . " date +%FT%T" . CONFIG_TZ);
 DATAFILE=sprintf("cache/%d.csv", ID);
-#TODAY=system("date +%F");
-#OUTFILE=sprintf("%d_%s.png", ID, TODAY);
 OUTFILE=sprintf("out/%d.png", ID);
 OUTFILE_small=sprintf("out/%d_small.png", ID);
 TABLE=sprintf("tmp/%d.data", ID);
-#PERIOD_START="1 months ago";
-#system("./fixed_sensor_cacher.pl " . ID . " '" . PERIOD_START . "'");
 
 # This converts the time string in column COL to a number of seconds
-iso2s(COL) = strptime("%Y-%m-%dT%H:%M:%SEDT",strcol(COL));
-s2iso(seconds) = strftime("%Y-%m-%dT%H:%M:%SEDT", seconds);
+iso2s(COL) = strptime("%Y-%m-%dT%H:%M:%S" . CONFIG_TZ, strcol(COL));
+s2iso(seconds) = strftime("%Y-%m-%dT%H:%M:%S" . CONFIG_TZ, seconds);
 
 set datafile separator ",";
+
+# set palette
+set cbtics (0.03, 0.14, 0.43, 1.65, 65.54);
+set palette model RGB;
+set palette file "cyanhalo_lut_4xlog10.csv" u 1:2:3;
+set cbrange [0.03: 65.54];
+unset colorbox;
+
+
 set key autotitle columnheader top right;
 set grid front;
-S_START=strptime("%Y-%m-%dT%H:%M:%SEDT",system("date +%FT%TEDT --date='" . PERIOD_START . "'"));
-S_END=strptime("%Y-%m-%dT%H:%M:%SEDT",system("date +%FT%TEDT"));
-set xrange [ S_START : S_END ];
+S_START=strptime("%Y-%m-%dT%H:%M:%S" . CONFIG_TZ, system("TZ=" . CONFIG_TIMEZONE . " date +%FT%T" . CONFIG_TZ . " --date='" . PERIOD_START . "'"));
+S_END=strptime("%Y-%m-%dT%H:%M:%S" . CONFIG_TZ, NOW);
+set xrange [ S_START : S_END ]; # set xlabel "timestamp";
 stats DATAFILE u (iso2s(1)):2 nooutput;
 
-min_y = STATS_min_y; max_y = STATS_max_y;
-#min_y = 0; max_y = 300;
-set yrange [min_y: max_y];
-set y2range [min_y * CPM2DRE: max_y * CPM2DRE]; set y2tics nomirror textcolor rgb "#777777"; set y2label "μSv/h" textcolor rgb "#777777";
-set arrow 2 nohead front from graph 1, graph 0 to graph 1, graph 1 lc rgb "black";
+min_y = (1.1*STATS_min_y < STATS_mean_y - 4*STATS_stddev_y) ? 1.1*STATS_min_y : STATS_mean_y - 4*STATS_stddev_y; min_y = (min_y > 0) ? min_y : 0;
+max_y = (1.1*STATS_max_y > STATS_mean_y + 4*STATS_stddev_y) ? 1.1*STATS_max_y : STATS_mean_y + 4*STATS_stddev_y;
+#min_y = 0; max_y = 350;
+set yrange [min_y: max_y]; set ylabel "CPM";
+set y2range [min_y * CPM2DRE: max_y * CPM2DRE]; set y2tics nomirror textcolor rgb "grey"; set y2label "μSv/h" textcolor rgb "grey";
+set arrow 2 nohead front from graph 1, graph 0 to graph 1, graph 1 lc rgb "grey";
 
-set xdata time; set timefmt "%Y-%m-%dT%H:%M:%SEDT"; set format x "%Y-%m-%d\n%H:%MEDT";
-
-sma_12_init(x) = (s12=s11=s10=s9=s8=s7=s6=s5=s4=s3=s2=s1=x);
-sma_12_shift(x) = (s12=s11, s11=s10, s10=s9, s9=s8, s8=s7, s7=s6, s6=s5, s5=s4, s4=s3, s3=s2, s2=s1, s1 = x);
-sma_12(x) = (sma_12_shift(x), (s12+s11+s10+s9+s8+s7+s6+s5+s4+s3+s2+s1)/12);
+set xdata time; set timefmt "%Y-%m-%dT%H:%M:%S" . CONFIG_TZ; set format x "%Y-%m-%d\n%H:%M " . CONFIG_TZ;
 
 sma_24_init(x) = (k24=k23=k22=k21=k20=k19=k18=k17=k16=k15=k14=k13=k12=k11=k10=k9=k8=k7=k6=k5=k4=k3=k2=k1=x);
 sma_24_shift(x) = (k24=k23, k23=k22, k22=k21, k21=k20, k20=k19, k19=k18, k18=k17, k17=k16, K16=k15, K15=k14, k14=k13, k13=k12, k12=k11, k11=k10, k10=k9, k9=k8, k8=k7, k7=k6, k6=k5, k5=k4, k4=k3, k3=k2, k2=k1, k1 = x);
-sma_24(x) = (sma_24_shift(x), (k24+k23+k22+k21+k20+k19+k18+k17+k16+k15+k14+k13+k12+k11+k10+k9+k8+k7+k6+k5+k4+k3+k2+k1)/24);
+sma_24_RO(x) = (k24+k23+k22+k21+k20+k19+k18+k17+k16+k15+k14+k13+k12+k11+k10+k9+k8+k7+k6+k5+k4+k3+k2+k1)/24;
+sma_24(x) = (sma_24_shift(x), sma_24_RO(x));
 
-wma_12_init(x) = (w12=w11=w10=w9=w8=w7=w6=w5=w4=w3=w2=w1=x);
-wma_12_shift(x) = (w12=w11, w11=w10, w10=w9, w9=w8, w8=w7, w7=w6, w6=w5, w5=w4, w4=w3, w3=w2, w2=w1, w1 = x);
-wma_12(x) = (wma_12_shift(x), (w12*1 + w11*2 + w10*3 + w9*4 + w8*5 + w7*6 + w6*7 + w5*8 + w4*9 + w3*10 + w2*11 + w1*12)/ ((12*13)/2));
-
-set ytics add ("mean" STATS_mean_y);
+#set ytics add ("mean" STATS_mean_y);
 #set y2tics add ("mean" STATS_mean_y * CPM2DRE);
-set ytics add ("+1σ    " STATS_mean_y + STATS_stddev_y);
-set ytics add ("-1σ    " STATS_mean_y - STATS_stddev_y);
+#set ytics add ("+3σ    " STATS_mean_y + 3*STATS_stddev_y);
+#set ytics add ("-3σ    " STATS_mean_y - 3*STATS_stddev_y);
 
-set object 1 rectangle from "2013-01-01", STATS_mean_y - STATS_stddev_y to "2015-01-01", STATS_mean_y + STATS_stddev_y back fc rgb "#666666" fillstyle solid 0.1;
-set title tc lt  sprintf("Safecast fixed sensor: id=%d, ΔT=5 min, total %d records, %0.1f±%0.1f CPM (%0.2f±%0.2f μSv/h)", ID, STATS_records, STATS_mean_y, STATS_stddev_y, STATS_mean_y * CPM2DRE , STATS_stddev_y * CPM2DRE);
-set term png enhanced font "Arial,8" size 600, 400 background "#ffffff";
+set object 1 rectangle from "2013-01-01", STATS_mean_y - 3*STATS_stddev_y to "2015-01-01", STATS_mean_y + 3*STATS_stddev_y back fc rgb "grey" fillstyle solid 0.1 border lc rgb "grey";
+set title sprintf("sensor=%d, total %d records, %0.1f±%0.1f CPM (%0.2f±%0.2f μSv/h)", ID, STATS_records, STATS_mean_y, 3*STATS_stddev_y, STATS_mean_y * CPM2DRE , 3*STATS_stddev_y * CPM2DRE);
+
+set term png enhanced font "Arial,8" size CONFIG_WIDTH_BIG, CONFIG_HEIGHT_BIG background "#ffffff";
 set output OUTFILE;
-#set term qt enhanced size 1500, 1000 font "Arial ,8";
 
 set style line 1 lc rgb "orange";
 plot \
 	DATAFILE u 1:2 w p ls 1 notitle, \
-	a = sma_12_init(STATS_mean_y), \
-	DATAFILE u 1:(sma_12($2)) w l lw 2 lc rgb "#6ba8bd" title "CPM, 12-bin SMA", \
 	a = sma_24_init(STATS_mean_y), \
-	DATAFILE u 1:(sma_24($2)) w l lw 2 lc rgb "#555555" title "CPM, 24-bin SMA";
-#	a = wma_12_init(STATS_mean_y), \
-#	DATAFILE u 1:(wma_12($2)) w l lw 3 title "CPM, 12-bin WMA";
-#	DATAFILE u 1:2 smooth bezier lw 3 title "CPM, bezier",
+	DATAFILE u 1:(sma_24($2))  w l lw 2 lc rgb "#00CED1"  title "CPM, 24-bin SMA", \
+	-100 w filledcurves fc rgb "grey" fs transparent solid .1 title "±3σ area";
 
-set term png enhanced font "Arial ,7" size 320, 200 background "#ffffff";
+
+# plot small PNG for Fusion tables
+unset object 1; unset arrow 2;
+set term png enhanced notransparent nointerlace truecolor butt font "Arial Unicode MS,7" size CONFIG_WIDTH_SMALL, CONFIG_HEIGHT_SMALL background "#ffffff";
 set output OUTFILE_small;
-set title sprintf("%0.1f±%0.1f CPM (%0.2f±%0.2f μSv/h)", STATS_mean_y, STATS_stddev_y, STATS_mean_y * CPM2DRE , STATS_stddev_y * CPM2DRE) font "Arial ,8";
+uSv_h = sprintf("%0.2f±%0.2f μSv/h", STATS_mean_y * CPM2DRE , 3*STATS_stddev_y * CPM2DRE);
+set title sprintf("%s (%0.1f±%0.1f CPM)", uSv_h, STATS_mean_y, 3*STATS_stddev_y) font "Arial Unicode MS,9";
 unset ytics; set ytics;
-unset y2label;
-set format x "%m/%d";
+set yrange [0: 1.1];
+unset y2tics; unset y2label;
+set ylabel "μSv/h" font "Arial Unicode MS,9";
+set format x "%Y-%m-%d";
+
 plot \
 	a = sma_24_init(STATS_mean_y), \
-	DATAFILE u 1:(sma_24($2)) w l ls 1 notitle;
+	DATAFILE u 1:(sma_24($2)*CPM2DRE):(sma_24_RO($2)*CPM2DRE) w l lw 1 palette notitle;
 
-set format x "%Y-%m-%dEDT";
+
+
+# save data for ALL.png
+set format x "%Y-%m-%dT%H:%M:%S" . CONFIG_TZ;
 set table TABLE;
-plot a = sma_24_init(STATS_mean_y), DATAFILE u 1:(sma_24($2)) title sprintf("%d",ID);
+plot a = sma_24_init(STATS_mean_y), DATAFILE u 1:(sma_24($2)) title sprintf("%d: %s", ID, uSv_h);
 unset table;
