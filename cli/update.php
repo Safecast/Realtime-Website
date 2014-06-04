@@ -28,14 +28,14 @@ $_SERVER             = array(
 );
 
 /* Loading WP to enable post update */
-require_once('../wordpress/wp-load.php');
+require_once(dirname(dirname(__FILE__)).'/wordpress/wp-load.php');
 
 /* Loading composer requirements */
-require_once('vendor/autoload.php');
+require_once(dirname(__FILE__).'/vendor/autoload.php');
 
 /* Loading functions */
-require_once('updateSensorsMeasurements.php');
-require_once('updateSensorsMap.php');
+require_once(dirname(__FILE__).'/updateSensorsMeasurements.php');
+require_once(dirname(__FILE__).'/updateSensorsMap.php');
 
 /* Safecast API URL format */
 define('API_URI_FORMAT', 'https://api.safecast.org/en-US/measurements?captured_after="%s"&captured_before="%s"&format=json');
