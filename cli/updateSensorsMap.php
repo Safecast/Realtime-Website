@@ -28,7 +28,6 @@ function updateSensorsMap()
 	<author><name>Safecast</name></author>
 	<id>%s</id>
 	<icon>http://blog.safecast.org/favicon.ico</icon>
-	<entry><id>%s</id><title>%s CPM</title><updated>%s</updated><georss:point>%s %s</georss:point><summary>%s CPM</summary></entry>
 	<entry><id>%s</id><title>%s µSv/h</title><updated>%s</updated><georss:point>%s %s</georss:point><summary>%0.3f µSv/h</summary></entry>
 </feed>';
 
@@ -73,7 +72,6 @@ function updateSensorsMap()
 				$xmlContent = sprintf($xmlTemplate,
 				$gmt, $id, $permalink, $id,
 				// @todo replace last $id by uuid.uuid5(uuid.NAMESPACE_DNS, name))
-				$id, $cpm, $gmt, $latitude, $longitude, $cpm,
 				$id, $usieverts, $gmt, $latitude, $longitude, $usieverts);
 				
 				file_put_contents(sprintf($xmlFilename, $id), $xmlContent);

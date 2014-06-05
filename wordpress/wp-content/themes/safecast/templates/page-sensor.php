@@ -60,7 +60,7 @@
 				</div>
 				<div class="graph col-md-6">
 					<a href="/plots/<?php echo $id ?>.png" rel="lightbox">
-						<img class="img-responsive" alt="" src="/plots/<?php echo $id ?>.png" />
+						<img class="img-responsive" alt="" src="/plots/<?php echo $id ?>_small.png" />
 					</a>
 				</div>
 			</div>
