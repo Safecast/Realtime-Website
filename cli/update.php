@@ -10,10 +10,14 @@
  */
 
 /* Checking parameters */
-if ($argc != 1) {
-	printf("Usage: $ php %s\n", $argv[0]);
+if ($argc > 2
+|| ($argc == 2 && $argv[1] != '-v')) {
+	printf("Usage: $ php [-v] %s\n", $argv[0]);
 	die;
 }
+
+/* Is verbose mode ON? */
+define('IS_VERBOSE', $argc == 2);
 
 /* Defining environmental variables necessary to load WP */
 define('DOING_AJAX', 	true);
@@ -36,9 +40,6 @@ require_once(dirname(__FILE__).'/vendor/autoload.php');
 /* Loading functions */
 require_once(dirname(__FILE__).'/updateSensorsMeasurements.php');
 require_once(dirname(__FILE__).'/updateSensorsMap.php');
-
-/* Safecast API URL format */
-define('API_URI_FORMAT', 'https://api.safecast.org/en-US/measurements?captured_after="%s"&captured_before="%s"&format=json');
 
 try {
 	/* Update sensors measurements in Wordpress */
