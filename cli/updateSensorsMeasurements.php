@@ -17,7 +17,7 @@ function updateSensorPost($postId, $measurement)
 {
 	$cpm            = (float)$measurement->value;
 	$svt            = number_format(($cpm / 334), 3);
-	$maxCpm         = (float)get_post_meta($postId, 'sensor_last_cpm', TRUE);
+	$maxCpm         = (float)get_post_meta($postId, 'sensor_max_cpm', TRUE);
 	$timeDifference = strtotime($measurement->captured_at)
 		- strtotime(get_post_meta($postId, 'sensor_last_gmt', TRUE));
 	
