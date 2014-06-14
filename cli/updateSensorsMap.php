@@ -17,8 +17,8 @@ function updateSensorsMap()
 	$query             = new WP_Query($args);
 	
 	// Defining XML format and filenames
-	$xmlFilename       = get_template_directory().'/assets/map/device_%s.xml';
-	$xmlURI            = get_template_directory_uri().'/assets/map/device_%s.xml';
+	$xmlFilename       = dirname(dirname(__FILE__)).'/site/'.get_template_directory().'/assets/map/device_%s.xml';
+	$xmlURI            = dirname(dirname(__FILE__)).'/site/'.get_template_directory_uri().'/assets/map/device_%s.xml';
 	$xmlTemplate       = '<?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xmlns:georss="http://www.georss.org/georss">
 	<updated>%s</updated>
@@ -32,7 +32,7 @@ function updateSensorsMap()
 </feed>';
 
 	// Defining KML format and filenames
-	$kmlFilename       = get_template_directory().'/assets/map/devices.kml';
+	$kmlFilename       = dirname(dirname(__FILE__)).'/site/'.get_template_directory().'/assets/map/devices.kml';
 	$kmlTemplate       = '<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
 	<Folder>

@@ -32,7 +32,7 @@ $_SERVER             = array(
 );
 
 /* Loading WP to enable post update */
-require_once(dirname(dirname(__FILE__)).'/wordpress/wp-load.php');
+require_once(dirname(dirname(__FILE__)).'/site/wordpress/wp-load.php');
 
 /* Loading composer requirements */
 require_once(dirname(__FILE__).'/vendor/autoload.php');
@@ -40,6 +40,7 @@ require_once(dirname(__FILE__).'/vendor/autoload.php');
 /* Loading functions */
 require_once(dirname(__FILE__).'/updateSensorsMeasurements.php');
 require_once(dirname(__FILE__).'/updateSensorsMap.php');
+require_once(dirname(__FILE__).'/updateSensorsPlots.php');
 
 try {
 	/* Update sensors measurements in Wordpress */
@@ -47,6 +48,9 @@ try {
 	
 	/* Creates XML files and the KML file for MAP */
 	updateSensorsMap();
+	
+	/* Overwrite the Makefile.config file */
+	updateSensorsPlots();
 } catch (Exception $e) {
 	printf("Error : %s\n", $e->getMessage());
 }
