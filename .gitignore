@@ -1,17 +1,13 @@
 site/.htaccess
-site/wordpress/.htaccess
 site/wp-content/blogs.dir/*
 site/wp-content/upgrade/*
 site/wp-content/backup-db/*
 site/wp-content/advanced-cache.php
 site/wp-content/wp-cache-config.php
-site/wordpress/sitemap.xml
-site/wordpress/*.log
 site/wp-content/cache/*
 site/wp-content/uploads/*
 site/wp-content/backups/*
 site/wp-content/updraft/*
 site/wp-content/themes/safecast/assets/map/*
-site/wordpress/sitemap.xml.gz
 site/wp-config.php
 plots/
