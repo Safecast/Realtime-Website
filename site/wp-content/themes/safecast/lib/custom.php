@@ -7,6 +7,8 @@ define('ACF_LITE', true);
 
 require_once(WP_CONTENT_DIR.'/plugins/advanced-custom-fields/acf.php');
 
+add_filter('post_type_link', 'qtrans_convertURL'); 
+
 function safecast_sensor_sidebar_path() {
   return new Roots_Wrapping('templates/sidebar-sensor.php');
 }
