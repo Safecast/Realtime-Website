@@ -329,3 +329,151 @@ if (!function_exists('addFooTable')) {
 }
 
 add_action('wp_enqueue_scripts', 'addFooTable');
+
+/*
+ * Sensors Map generation
+*/
+
+if (!function_exists('generateMap')) {
+	function generateMap($sensors) {
+		$markers  = '';
+		
+		foreach ($sensors as $sensor) {
+			$id          = addslashes($sensor['id']);
+			$permalink   = addslashes($sensor['permalink']);
+			$location    = addslashes($sensor['location']);
+			$timeGMT     = addslashes($sensor['measurement']['gmt']);
+			$timestamp   = strtotime($sensor['measurement']['gmt']);
+			$timeAgo     = $timestamp ? human_time_diff($timestamp).($lang == 'jp' ? '前' : ' ago') : '';
+			$timeSince   = time() - $timestamp;
+			$usievert    = addslashes($sensor['measurement']['usieverts']);
+			$cpm         = addslashes($sensor['measurement']['cpm']);
+			$latitude    = addslashes($sensor['measurement']['latitude']);
+			$longitude   = addslashes($sensor['measurement']['longitude']);
+			$graph       = get_site_url()."/plots/".$id."_small.png";
+			$status		 = '#269abc';
+
+			if ($timeSince >= TIME_OFFLINE_LONG) {
+				$status = '#ac2925';
+			}  else if ($timeSince >= TIME_OFFLINE_SHORT) {
+				$status = '#eea236';
+			}
+			
+			$markers .= "
+			infowindows[".$id."] = new google.maps.InfoWindow({
+		        content: '<div id=\"content\">'+
+				      '<div id=\"siteNotice\">'+
+				      '</div>'+
+				      '<h1 style=\"font-size:1.5em;\" id=\"firstHeading\" class=\"firstHeading\"><a href=\"".$permalink."\">".$sensor['location']."</a></h1>'+
+				      '<div id=\"bodyContent\">'+
+					  '<p style=\"float:right\">".$timeAgo."</p>'+
+				      '<div style=\"text-align:center;font-size:1.5em;clear:both;display:inline;width:50%;float:left;\"><p><b>".$cpm."</b> CPM</p></div>'+
+					  '<div style=\"text-align:center;font-size:1.5em;display:inline;width:50%;float:left;\"><p><b>".$usievert."</b> μSv</p></div>'+
+					  '<p style=\"clear:both\"><img src=\"".$graph."\" /></p>'+
+				      '</div>'+
+				      '</div>',
+		        maxWidth: 250
+		    });
+
+		    markers[".$id."] = new google.maps.Marker({
+		        position: new google.maps.LatLng(".$latitude.",".$longitude."),
+				icon: {
+					strokeColor: 'black',
+					strokeOpacity: .6,
+					fillColor: '".$status."',
+					fillOpacity: .7,
+     				path: google.maps.SymbolPath.CIRCLE,
+					strokeWeight: 2,
+					scale: 10
+    			},
+		        map: map,
+			    flat: true, 
+		        title: '".$sensor['location']."',
+				draggable: false
+		    });
+			
+		    google.maps.event.addListener(markers[".$id."], 'click', function() {
+		        map.panTo(markers[".$id."].position);
+
+				if ( activeInfoWindow == infowindows[".$id."]) {
+		            return;
+		        }
+		        if ( activeInfoWindow ) {
+		            activeInfoWindow.close();
+		        }
+				
+			  infowindows[".$id."].open(map, this);
+			  activeInfoWindow = infowindows[".$id."];
+		    });";
+		}
+		
+		$html 		= "<script type=\"text/javascript\">
+      function initialize() {
+        var mapOptions = {
+          center: new google.maps.LatLng(37.4230, 141.0329),
+          zoom: 5,
+		  styles:
+		  [{featureType:\"poi\",stylers:[{saturation:-100},{lightness:51},{visibility:\"simplified\"}]},
+		  {featureType:\"road.highway\",stylers:[{saturation:-100},{visibility:\"simplified\"}]},
+		  {featureType:\"road.arterial\",stylers:[{saturation:-100},{lightness:30},{visibility:\"on\"}]},
+		  {featureType:\"road.local\",stylers:[{saturation:-100},{lightness:40},{visibility:\"on\"}]},
+		  {featureType:\"transit\",stylers:[{saturation:-100},{visibility:\"simplified\"}]}]
+        };
+        var map = new google.maps.Map(document.getElementById(\"map-canvas\"), mapOptions);
+		
+	    var markers = [];
+	    var infowindows = [];
+		var activeInfoWindow;
+		
+		".$markers."
+		  
+		    // Add the 10km circle
+		    cityCircle = new google.maps.Circle({
+		      strokeColor: '#FF0000',
+		      strokeOpacity: 0.4,
+		      strokeWeight: 1,
+		      fillColor: '#FF0000',
+		      fillOpacity: 0.1,
+		      map: map,
+		      center: new google.maps.LatLng(37.4230, 141.0329),
+		      radius: 10*1000
+		    });
+			
+		    // Add the 20km circle
+		    cityCircle = new google.maps.Circle({
+		      strokeColor: '#FF0000',
+		      strokeOpacity: 0.6,
+		      strokeWeight: 1,
+		      fillColor: '#FF0000',
+		      fillOpacity: 0.1,
+		      map: map,
+		      center: new google.maps.LatLng(37.4230, 141.0329),
+		      radius: 20*1000
+		    });
+	}
+	  
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+	<div id=\"map-canvas\"/ style='height:500px;width:100%'>";
+
+		return $html;
+	}
+}
+
+if (!function_exists('sensorsMap')) {
+	function sensorsMap($atts) {
+		return generateMap(getAllSensors());
+	}
+}
+
+add_shortcode('sensors_map', 'sensorsMap');
+
+if (!function_exists('addMap')) {
+	function addMap() {
+	   	if (is_page('map')) {		
+			wp_enqueue_script('footable-js', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAB0jjFVo07ZIVR_xkKaa_x4HVb2yiQPIE', array(), null, false);
+		}
+	}
+}
+
+add_action('wp_enqueue_scripts', 'addMap');
