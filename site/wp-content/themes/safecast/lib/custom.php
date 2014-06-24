@@ -350,7 +350,7 @@ if (!function_exists('generateMap')) {
 			$cpm         = addslashes($sensor['measurement']['cpm']);
 			$latitude    = addslashes($sensor['measurement']['latitude']);
 			$longitude   = addslashes($sensor['measurement']['longitude']);
-			$graph       = home_url()."/plots/".$id."_small.png";
+			$graph       = get_template_directory_uri()."/../../../../plots/".$id."_small.png";
 			$status		 = '#269abc';
 
 			if ($timeSince >= TIME_OFFLINE_LONG) {
@@ -369,7 +369,7 @@ if (!function_exists('generateMap')) {
 					  '<p style=\"float:right\">".$timeAgo."</p>'+
 				      '<div style=\"text-align:center;font-size:1.5em;clear:both;display:inline;width:50%;float:left;\"><p><b>".$cpm."</b> CPM</p></div>'+
 					  '<div style=\"text-align:center;font-size:1.5em;display:inline;width:50%;float:left;\"><p><b>".$usievert."</b> μSv</p></div>'+
-					  '<p style=\"clear:both\"><img src=\"".$graph."\" /></p>'+
+					  '<p style=\"clear:both\"><img style=\"width:100%;height:auto\"src=\"".$graph."\" /></p>'+
 				      '</div>'+
 				      '</div>',
 		        maxWidth: 250
