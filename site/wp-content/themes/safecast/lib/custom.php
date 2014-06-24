@@ -350,7 +350,7 @@ if (!function_exists('generateMap')) {
 			$cpm         = addslashes($sensor['measurement']['cpm']);
 			$latitude    = addslashes($sensor['measurement']['latitude']);
 			$longitude   = addslashes($sensor['measurement']['longitude']);
-			$graph       = get_site_url()."/plots/".$id."_small.png";
+			$graph       = home_url()."/plots/".$id."_small.png";
 			$status		 = '#269abc';
 
 			if ($timeSince >= TIME_OFFLINE_LONG) {
