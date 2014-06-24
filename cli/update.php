@@ -39,15 +39,11 @@ require_once(dirname(__FILE__).'/vendor/autoload.php');
 
 /* Loading functions */
 require_once(dirname(__FILE__).'/updateSensorsMeasurements.php');
-require_once(dirname(__FILE__).'/updateSensorsMap.php');
 require_once(dirname(__FILE__).'/updateSensorsPlots.php');
 
 try {
 	/* Update sensors measurements in Wordpress */
 	updateSensorsMeasurements();
-	
-	/* Creates XML files and the KML file for MAP */
-	updateSensorsMap();
 	
 	/* Overwrite the Makefile.config file */
 	updateSensorsPlots();

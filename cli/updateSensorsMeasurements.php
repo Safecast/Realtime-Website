@@ -30,8 +30,8 @@ function updateSensorPost($postId, $measurement)
 		- strtotime(get_post_meta($postId, 'sensor_last_gmt', TRUE));	
 	
 	/* Based on tube type the conversion from cpm differs */
-	if ($sensorType == "LND712" ||
-		$sensorType == "LND 712") {
+	if (strpos($sensorType, "LND712") !== false ||
+		strpos($sensorType, "LND 712") !== false) {
 		$svt = number_format(($cpm / 120.5), 3);
 	} else {
 		$svt = number_format(($cpm / 334), 3);
