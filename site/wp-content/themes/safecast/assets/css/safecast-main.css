@@ -2,6 +2,10 @@
  * Safecast css
  */
 
+ footer {
+ 	font-size: .85em;
+ }
+
 .sidebar {
 	margin-top: 40px;
 }
@@ -64,4 +68,33 @@ ul.qtrans_language_chooser > li > a {
 	padding-left: 15px;
 	padding-right: 15px;
 	padding-top: 15px;
+}
+
+/*!
+ * Fullwidth template
+ */
+
+html,
+body.map,
+body.map .wrap.container,
+body.map .content,
+body.map .main,
+body.map .main #map-canvas {
+ 	width: 100%;
+ 	height: 100%;
+ 	padding: 0;
+ 	margin: 0;
+}
+
+body.map {
+	padding-top:50px;
+}
+
+body.map header {
+	margin-top:-50px;
+	margin-bottom: 0;
+}
+
+body.map footer {
+	display: none;
 }

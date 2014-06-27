@@ -317,7 +317,7 @@ add_shortcode('sensors_table', 'sensorsTable');
 
 if (!function_exists('addFooTable')) {
 	function addFooTable() {
-	   	if (is_page('Fixed sensor information')) {		
+	   	if (is_page('home')) {		
 			wp_enqueue_script('footable-js', get_template_directory_uri().'/assets/js/footable.js', array(), '2-0-1', true);
 			wp_enqueue_script('footable-js-sort', get_template_directory_uri().'/assets/js/footable.sort.js', array(), '2-0-1', true);
 			wp_enqueue_script('footable-js-filter', get_template_directory_uri().'/assets/js/footable.filter.js', array(), '2-0-1', true);
@@ -335,7 +335,7 @@ add_action('wp_enqueue_scripts', 'addFooTable');
 */
 
 if (!function_exists('generateMap')) {
-	function generateMap($sensors) {
+	function generateMap($sensors, $lang = 'en') {
 		$markers  = '';
 		
 		foreach ($sensors as $sensor) {
@@ -454,7 +454,7 @@ if (!function_exists('generateMap')) {
 	  
       google.maps.event.addDomListener(window, 'load', initialize);
     </script>
-	<div id=\"map-canvas\"/ style='height:500px;width:100%'>";
+	<div id=\"map-canvas\"/>";
 
 		return $html;
 	}
@@ -462,7 +462,11 @@ if (!function_exists('generateMap')) {
 
 if (!function_exists('sensorsMap')) {
 	function sensorsMap($atts) {
-		return generateMap(getAllSensors());
+		extract(shortcode_atts(array(
+			'lang' => 'en',
+		), $atts, 'bartag'));
+		
+		return generateMap(getAllSensors(), $lang);
 	}
 }
 
