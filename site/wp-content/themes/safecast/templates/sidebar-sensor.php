@@ -22,8 +22,6 @@
 ?>
 
 <div class="map">
-	
-	
 	<a href="http://maps.googleapis.com/maps/api/staticmap?center=<?php echo $latitude ?>,<?php echo $longitude ?>&zoom=7&size=800x500&maptype=roadmap
 		&markers=color:<?php echo $color ?>%7C<?php echo $latitude ?>,<?php echo $longitude ?>&sensor=false" rel="lightbox" title="<?php echo $location ?>">
 		<img class="img-responsive img-thumbnail" alt="" src="http://maps.googleapis.com/maps/api/staticmap?center=<?php echo $latitude ?>,<?php echo $longitude ?>&zoom=6&size=360x200&maptype=roadmap

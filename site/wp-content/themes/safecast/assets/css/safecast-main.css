@@ -71,7 +71,7 @@ ul.qtrans_language_chooser > li > a {
 }
 
 /*!
- * Fullwidth template
+ * Map template
  */
 
 html,
@@ -97,4 +97,25 @@ body.map header {
 
 body.map footer {
 	display: none;
+}
+
+#content h1 {
+	font-size:	1.5em;
+}
+
+#content h2 {
+	font-size:	1em;
+	text-align:	right;
+}
+
+#content #bodyContent div {
+	text-align:center;
+	font-size:1.3em;
+	display:inline;
+	width:50%;
+	float:left;
+}
+
+#content #bodyContent a {
+	clear:both;
 }
