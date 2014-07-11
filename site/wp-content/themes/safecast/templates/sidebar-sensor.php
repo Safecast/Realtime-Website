@@ -1,9 +1,9 @@
 <?php
-	$latitude  = get_post_meta(get_the_ID(), 'sensor_last_latitude', true);
-	$longitude = get_post_meta(get_the_ID(), 'sensor_last_longitude', true);
-	$gmt       = get_post_meta(get_the_ID(), 'sensor_last_gmt', true);
+	$latitude  = get_post_meta(get_the_ID(), 'sensor_measurement_last_latitude', true);
+	$longitude = get_post_meta(get_the_ID(), 'sensor_measurement_last_longitude', true);
+	$gmt       = get_post_meta(get_the_ID(), 'sensor_measurement_last_gmt', true);
 	$timeSince = time() - strtotime($gmt);
-	$color     = 'blue'; 
+	$color     = 'blue';
 	
 	if ($timeSince >= TIME_OFFLINE_LONG) {
 		$color = 'red'; 

@@ -11,23 +11,22 @@
 
 /* Safecast API URL format */
 define('API_URI_INFO_FORMAT', 'https://api.safecast.org/devices/%s.json');
-define('API_URI_CREATE_FORMAT', 'https://api.safecast.org/en-US/measurements.json?device_id=%s');
-define('API_URI_UPDATE_FORMAT', 'https://api.safecast.org/en-US/measurements.json?device_id=%s&since="%s"');
+define('API_URI_CREATE_FORMAT', 'https://api.safecast.org/en-US/measurements.json?device_id=%s&order=captured_at+asc');
+define('API_URI_UPDATE_FORMAT', 'https://api.safecast.org/en-US/measurements.json?device_id=%s&since="%s"&order=captured_at+asc');
 
-function updateSensorInformation($postId, $information)
-{
+
+function updateSensorInformation($postId, $information) {
 	update_post_meta($postId, 'sensor_type', $information->sensor);
 	update_post_meta($postId, 'sensor_manufacturer', $information->manufacturer);
 	update_post_meta($postId, 'sensor_model', $information->model);
 }
 
-function updateSensorPost($postId, $measurement)
-{
+function updateSensorMeasurement($postId, $measurement) {
 	$cpm            = (float)$measurement->value;
-	$maxCpm         = (float)get_post_meta($postId, 'sensor_max_cpm', TRUE);
+	$maxCpm         = (float)get_post_meta($postId, 'sensor_measurement_max_cpm', TRUE);
 	$sensorType     = get_post_meta(get_the_ID(), 'sensor_type', TRUE);
 	$timeDifference = strtotime($measurement->captured_at)
-		- strtotime(get_post_meta($postId, 'sensor_last_gmt', TRUE));	
+		- strtotime(get_post_meta($postId, 'sensor_measurement_last_gmt', TRUE));	
 	
 	/* Based on tube type the conversion from cpm differs */
 	if (strpos($sensorType, "LND712") !== false ||
@@ -38,24 +37,81 @@ function updateSensorPost($postId, $measurement)
 	}
 	
 	if ($timeDifference > 0) {
-		update_post_meta($postId, 'sensor_last_usieverts', $svt);
-		update_post_meta($postId, 'sensor_last_cpm', $cpm);
-		update_post_meta($postId, 'sensor_last_gmt', $measurement->captured_at);
-		update_post_meta($postId, 'sensor_last_latitude', $measurement->latitude);
-		update_post_meta($postId, 'sensor_last_longitude', $measurement->longitude);
+		update_post_meta($postId, 'sensor_measurement_last_msv', $svt);
+		update_post_meta($postId, 'sensor_measurement_last_cpm', $cpm);
+		update_post_meta($postId, 'sensor_measurement_last_gmt', $measurement->captured_at);
+		update_post_meta($postId, 'sensor_measurement_last_latitude', $measurement->latitude);
+		update_post_meta($postId, 'sensor_measurement_last_longitude', $measurement->longitude);
+		update_post_meta($postId, 'sensor_measurement_last_id', $measurement->id);
+		update_post_meta($postId, 'sensor_measurement_last_user_id', $measurement->user_id);
 	}
 	
 	if ($cpm >= $maxCpm) {
-		update_post_meta($postId, 'sensor_max_usieverts', $svt);
-		update_post_meta($postId, 'sensor_max_cpm', $cpm);
-		update_post_meta($postId, 'sensor_max_gmt', $measurement->captured_at);
-		update_post_meta($postId, 'sensor_max_latitude', $measurement->latitude);
-		update_post_meta($postId, 'sensor_max_longitude', $measurement->longitude);
+		update_post_meta($postId, 'sensor_measurement_max_msv', $svt);
+		update_post_meta($postId, 'sensor_measurement_max_cpm', $cpm);
+		update_post_meta($postId, 'sensor_measurement_max_gmt', $measurement->captured_at);
+		update_post_meta($postId, 'sensor_measurement_max_latitude', $measurement->latitude);
+		update_post_meta($postId, 'sensor_measurement_max_longitude', $measurement->longitude);
+		update_post_meta($postId, 'sensor_measurement_max_id', $measurement->id);
+		update_post_meta($postId, 'sensor_measurement_max_user_id', $measurement->user_id);
 	}
 }
 
-function updateSensorsMeasurements()
-{
+function getSensorType($postId, $sensorId, $reset) {
+	$type = get_post_meta($postId, 'sensor_type', TRUE);
+	
+	if (!$type || $reset) {
+		if (IS_VERBOSE) {
+			printf("Retrieving information for device %s\n", $sensorId);
+		}
+		$uri	= sprintf(API_URI_INFO_FORMAT, $sensorId);
+		
+		/* Querying the API */
+		$response    = \Httpful\Request::get($uri)->send();
+		$information = $response->body;
+		
+		updateSensorInformation($postId, $information);
+		$type = get_post_meta($postId, 'sensor_type', TRUE);
+	}
+	
+	return $type;
+}
+
+function logMeasurement($filehandle, $postId) {
+	$sensorId             = get_post_meta(get_the_ID(), 'sensor_id', TRUE);
+	$sensorType           = get_post_meta(get_the_ID(), 'sensor_type', TRUE);
+	$sensorManufacturer   = get_post_meta(get_the_ID(), 'sensor_manufacturer', TRUE);
+	$sensorModel          = get_post_meta(get_the_ID(), 'sensor_model', TRUE);
+	$measurementId        = get_post_meta(get_the_ID(), 'sensor_measurement_last_id', TRUE);
+	$measurementUserId    = get_post_meta(get_the_ID(), 'sensor_measurement_last_user_id', TRUE);
+	$measurementMsv       = get_post_meta(get_the_ID(), 'sensor_measurement_last_msv', TRUE);
+	$measurementCpm       = get_post_meta(get_the_ID(), 'sensor_measurement_last_cpm', TRUE);
+	$measurementGmt       = get_post_meta(get_the_ID(), 'sensor_measurement_last_gmt', TRUE);
+	$measurementLatitude  = get_post_meta(get_the_ID(), 'sensor_measurement_last_latitude', TRUE);
+	$measurementLongitude = get_post_meta(get_the_ID(), 'sensor_measurement_last_longitude', TRUE);
+	$fields               = array($measurementId, $measurementUserId,
+		$measurementMsv, $measurementCpm, $measurementGmt,
+		$measurementLatitude, $measurementLongitude, $sensorId,
+		$sensorType, $sensorManufacturer, $sensorModel);
+	
+	fputcsv($filehandle, $fields);
+}
+
+function getLogFilehandle($sensorId, $reset) {
+	$uploadDir  = wp_upload_dir();
+	$filename   = $uploadDir['basedir'].sprintf("/measurements/device_%s.csv", $sensorId);
+	$filehandle = fopen($filename, $reset ? 'w' : 'a');
+	
+	if ($reset || (0 == filesize($filename))) {
+		fputcsv($filehandle, array('id', 'userId', 'msv', 'cpm',
+			'capturedAt', 'latitude', 'longitude',
+			'device', 'type', 'manufacturer', 'model'));
+	}
+	
+	return $filehandle;
+}
+
+function updateSensorsMeasurements() {
 	$args                = array(
 	  'post_type'        => 'sensors',
 	  'posts_per_page'   => -1);
@@ -66,56 +122,56 @@ function updateSensorsMeasurements()
 		while ($query->have_posts()) {
 			$query->the_post();
 			
-			$id = get_post_meta(get_the_ID(), 'sensor_id', TRUE);
+			$sensorId = get_post_meta(get_the_ID(), 'sensor_id', TRUE);
+			$reset    = IS_RESET;
 			
-			if ($id) {
-				$type = get_post_meta(get_the_ID(), 'sensor_type', TRUE);
-				
-				if (!$type) {
+			if ($sensorId) {
+				if (getSensorType(get_the_ID(), $sensorId, $reset)) {
 					if (IS_VERBOSE) {
-						printf("Retrieving information for device %s\n", $id);
+						printf("Retrieving measurements for device %s\n", $sensorId);
 					}
-					$uri	= sprintf(API_URI_INFO_FORMAT, $id);
 					
-					/* Querying the API */
-					$response    = \Httpful\Request::get($uri)->send();
-					$information = $response->body;
-					
-					updateSensorInformation(get_the_ID(), $information);
-				}
-				
-				$type = get_post_meta(get_the_ID(), 'sensor_type', TRUE);
-				
-				if ($type) {
-					if (IS_VERBOSE) {
-						printf("Retrieving measurements for device %s\n", $id);
-					}
-				
-					$sinceTimestamp = strtotime(get_post_meta(get_the_ID(), 'sensor_last_gmt', TRUE)) + 2;
-					$since          = gmdate("Y-m-d\TH:i:s\Z", $sinceTimestamp);
+					/* Iterate while there is measurements */
+					while (42) {
+						$sinceTimestamp = strtotime(get_post_meta(get_the_ID(), 'sensor_measurement_last_gmt', TRUE)) + 2;
 			
-					/* Preparing the query for the API */
-					if ($since) {
-						$uri	= sprintf(API_URI_UPDATE_FORMAT, $id, $since);
-					} else {
-						$uri	= sprintf(API_URI_CREATE_FORMAT, $id);
-					}
-			
-					/* Querying the API */
-					$response     = \Httpful\Request::get($uri)->send();
-					$measurements = $response->body;
-			
-					if (is_array($measurements) && count($measurements)) {
-						if (IS_VERBOSE) {
-							printf("> %d new measurement(s) since %s\n", count($measurements), $since);
+						/* Preparing the query for the API */
+						if ($reset || !$sinceTimestamp) {
+							$since = 'inception';
+							$uri   = sprintf(API_URI_CREATE_FORMAT, $sensorId);
+						} else {
+							$since = gmdate("Y-m-d\TH:i:s\Z", $sinceTimestamp);
+							$uri   = sprintf(API_URI_UPDATE_FORMAT, $sensorId, $since);
 						}
-					
-						foreach ($measurements as $measurement)  {
-							updateSensorPost(get_the_ID(), $measurement);
-						}
-					} else {
 						if (IS_VERBOSE) {
-							printf("> No new measurement since %s\n", $since);
+							printf("> Quering the API for new measurements since %s\n", $since);
+						}
+						
+						/* Querying the API */
+						$response     = \Httpful\Request::get($uri)->send();
+						$measurements = $response->body;
+			
+						if (is_array($measurements) && count($measurements)) {
+							if (IS_VERBOSE) {
+								printf("> %d new measurement(s)\n", count($measurements));
+							}
+							
+							$filehandle	= getLogFilehandle($sensorId, $reset);
+							
+							foreach ($measurements as $measurement) {
+								updateSensorMeasurement(get_the_ID(), $measurement);
+								logMeasurement($filehandle, get_the_ID());
+								
+								$reset	= false;
+							}
+							
+							fclose($filehandle);
+						} else {
+							if (IS_VERBOSE) {
+								printf("> No new measurement\n");
+							}
+							
+							break;
 						}
 					}
 				}

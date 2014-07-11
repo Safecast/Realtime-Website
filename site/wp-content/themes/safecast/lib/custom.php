@@ -7,6 +7,308 @@ define('ACF_LITE', true);
 
 require_once(WP_CONTENT_DIR.'/plugins/advanced-custom-fields/acf.php');
 
+if(function_exists("register_field_group"))
+{
+	register_field_group(array (
+		'id' => 'acf_last-measurement',
+		'title' => 'Last measurement',
+		'fields' => array (
+			array (
+				'key' => 'field_5386e49735466',
+				'label' => 'µSv/h',
+				'name' => 'sensor_measurement_last_msv',
+				'type' => 'number',
+				'default_value' => '',
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'min' => '',
+				'max' => '',
+				'step' => '',
+			),
+			array (
+				'key' => 'field_5386e41335463',
+				'label' => 'cpm',
+				'name' => 'sensor_measurement_last_cpm',
+				'type' => 'number',
+				'default_value' => '',
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'min' => '',
+				'max' => '',
+				'step' => '',
+			),
+			array (
+				'key' => 'field_5386e4e135468',
+				'label' => 'Time in GMT',
+				'name' => 'sensor_measurement_last_gmt',
+				'type' => 'text',
+				'default_value' => '',
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'formatting' => 'html',
+				'maxlength' => '',
+			),
+			array (
+				'key' => 'field_5386e64a35469',
+				'label' => 'Latitude',
+				'name' => 'sensor_measurement_last_latitude',
+				'type' => 'number',
+				'default_value' => '',
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'min' => '',
+				'max' => '',
+				'step' => '',
+			),
+			array (
+				'key' => 'field_5386e6853546a',
+				'label' => 'Longitude',
+				'name' => 'sensor_measurement_last_longitude',
+				'type' => 'text',
+				'default_value' => '',
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'formatting' => 'html',
+				'maxlength' => '',
+			),
+		),
+		'location' => array (
+			array (
+				array (
+					'param' => 'post_type',
+					'operator' => '==',
+					'value' => 'sensors',
+					'order_no' => 0,
+					'group_no' => 0,
+				),
+			),
+		),
+		'options' => array (
+			'position' => 'side',
+			'layout' => 'default',
+			'hide_on_screen' => array (
+			),
+		),
+		'menu_order' => 0,
+	));
+	register_field_group(array (
+		'id' => 'acf_max-measurement',
+		'title' => 'Max measurement',
+		'fields' => array (
+			array (
+				'key' => 'field_5386e7e7907c0',
+				'label' => 'µSv/h',
+				'name' => 'sensor_measurement_max_ msv',
+				'type' => 'number',
+				'default_value' => '',
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'min' => '',
+				'max' => '',
+				'step' => '',
+			),
+			array (
+				'key' => 'field_5386e83e907c1',
+				'label' => 'cpm',
+				'name' => 'sensor_measurement_max_cpm',
+				'type' => 'number',
+				'default_value' => '',
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'min' => '',
+				'max' => '',
+				'step' => '',
+			),
+			array (
+				'key' => 'field_5386e85f907c2',
+				'label' => 'Time in GMT',
+				'name' => 'sensor_measurement_max_gmt',
+				'type' => 'text',
+				'default_value' => '',
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'formatting' => 'html',
+				'maxlength' => '',
+			),
+			array (
+				'key' => 'field_5386e870907c3',
+				'label' => 'Latitude',
+				'name' => 'sensor_measurement_max_latitude',
+				'type' => 'number',
+				'default_value' => '',
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'min' => '',
+				'max' => '',
+				'step' => '',
+			),
+			array (
+				'key' => 'field_5386e887907c4',
+				'label' => 'Longitude',
+				'name' => 'sensor_measurement_max_longitude',
+				'type' => 'number',
+				'default_value' => '',
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'min' => '',
+				'max' => '',
+				'step' => '',
+			),
+		),
+		'location' => array (
+			array (
+				array (
+					'param' => 'post_type',
+					'operator' => '==',
+					'value' => 'sensors',
+					'order_no' => 0,
+					'group_no' => 0,
+				),
+			),
+		),
+		'options' => array (
+			'position' => 'side',
+			'layout' => 'default',
+			'hide_on_screen' => array (
+			),
+		),
+		'menu_order' => 0,
+	));
+	register_field_group(array (
+		'id' => 'acf_general-information',
+		'title' => 'General information',
+		'fields' => array (
+			array (
+				'key' => 'field_5386e7024bf30',
+				'label' => 'ID',
+				'name' => 'sensor_id',
+				'type' => 'number',
+				'required' => 1,
+				'default_value' => '',
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'min' => '',
+				'max' => '',
+				'step' => '',
+			),
+			array (
+				'key' => 'field_5386df91bedaf',
+				'label' => 'Location name',
+				'name' => 'sensor_location',
+				'type' => 'text',
+				'default_value' => '',
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'formatting' => 'none',
+				'maxlength' => '',
+			),
+			array (
+				'key' => 'field_5386dffcbedb0',
+				'label' => 'City name',
+				'name' => 'sensor_city',
+				'type' => 'text',
+				'default_value' => '',
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'formatting' => 'html',
+				'maxlength' => '',
+			),
+			array (
+				'key' => 'field_5386e01fbedb1',
+				'label' => 'State/Province',
+				'name' => 'sensor_province',
+				'type' => 'text',
+				'default_value' => '',
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'formatting' => 'html',
+				'maxlength' => '',
+			),
+			array (
+				'key' => 'field_5386e02abedb2',
+				'label' => 'Country',
+				'name' => 'sensor_country',
+				'type' => 'text',
+				'required' => 1,
+				'default_value' => '',
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'formatting' => 'html',
+				'maxlength' => '',
+			),
+			array (
+				'key' => 'field_53996cd482f8f',
+				'label' => 'Sensor type',
+				'name' => 'sensor_type',
+				'type' => 'text',
+				'default_value' => '',
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'formatting' => 'html',
+				'maxlength' => '',
+			),
+			array (
+				'key' => 'field_53996f385f892',
+				'label' => 'Manufacturer',
+				'name' => 'sensor_manufacturer',
+				'type' => 'text',
+				'default_value' => '',
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'formatting' => 'html',
+				'maxlength' => '',
+			),
+			array (
+				'key' => 'field_53996f4e5f893',
+				'label' => 'Model',
+				'name' => 'sensor_model',
+				'type' => 'text',
+				'default_value' => '',
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'formatting' => 'html',
+				'maxlength' => '',
+			),
+		),
+		'location' => array (
+			array (
+				array (
+					'param' => 'post_type',
+					'operator' => '==',
+					'value' => 'sensors',
+					'order_no' => 0,
+					'group_no' => 0,
+				),
+			),
+		),
+		'options' => array (
+			'position' => 'acf_after_title',
+			'layout' => 'default',
+			'hide_on_screen' => array (
+			),
+		),
+		'menu_order' => 2,
+	));
+}
+
 add_filter('post_type_link', 'qtrans_convertURL'); 
 
 function safecast_sensor_sidebar_path() {
@@ -194,7 +496,7 @@ if (!function_exists('generateSensorsTable')) {
 			$timestamp   = strtotime($sensor['measurement']['gmt']);
 			$timeAgo     = $timestamp ? human_time_diff($timestamp).($lang == 'jp' ? '前' : ' ago') : '';
 			$timeSince   = time() - $timestamp;
-			$usievert    = addslashes($sensor['measurement']['usieverts']);
+			$usievert    = addslashes($sensor['measurement']['msv']);
 			$cpm         = addslashes($sensor['measurement']['cpm']);
 			$latitude    = addslashes($sensor['measurement']['latitude']);
 			$longitude   = addslashes($sensor['measurement']['longitude']);
@@ -284,11 +586,11 @@ if (!function_exists('getAllSensors')) {
 					.($location ? ', '.$location : '');
 				
 				$lastMeasurement = array(
-					'usieverts'     => get_post_meta(get_the_ID(), 'sensor_last_usieverts', true),
-					'cpm'           => get_post_meta(get_the_ID(), 'sensor_last_cpm', 		true),
-					'gmt'     		=> get_post_meta(get_the_ID(), 'sensor_last_gmt', 		true),
-					'latitude'      => get_post_meta(get_the_ID(), 'sensor_last_latitude', 	true),
-					'longitude'     => get_post_meta(get_the_ID(), 'sensor_last_longitude', true));
+					'msv'     => get_post_meta(get_the_ID(), 'sensor_measurement_last_msv', true),
+					'cpm'           => get_post_meta(get_the_ID(), 'sensor_measurement_last_cpm', 		true),
+					'gmt'     		=> get_post_meta(get_the_ID(), 'sensor_measurement_last_gmt', 		true),
+					'latitude'      => get_post_meta(get_the_ID(), 'sensor_measurement_last_latitude', 	true),
+					'longitude'     => get_post_meta(get_the_ID(), 'sensor_measurement_last_longitude', true));
 				
 				$sensors[$id]  = array(
 					'permalink'   => $permalink,
@@ -345,7 +647,7 @@ if (!function_exists('generateMap')) {
 			$timestamp   = strtotime($sensor['measurement']['gmt']);
 			$timeAgo     = $timestamp ? human_time_diff($timestamp).($lang == 'jp' ? '前' : ' ago') : '';
 			$timeSince   = time() - $timestamp;
-			$usvt        = addslashes($sensor['measurement']['usieverts']);
+			$usvt        = addslashes($sensor['measurement']['msv']);
 			$cpm         = addslashes($sensor['measurement']['cpm']);
 			$latitude    = addslashes($sensor['measurement']['latitude']);
 			$longitude   = addslashes($sensor['measurement']['longitude']);

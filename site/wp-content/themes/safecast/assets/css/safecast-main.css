@@ -30,6 +30,15 @@
 	width: 100%;
 }
 
+.graph {
+	text-align:center;
+}
+
+.download {
+	margin-top: 10px;
+	margin-bottom: 20px;
+}
+
 h1.entry-title div.status {
 	float:right;
 }

@@ -2,26 +2,26 @@
 	$id            = get_post_meta(get_the_ID(), 'sensor_id', true);
 	$langIsJap     = qtrans_getLanguage() == "jp";
 	
-	$lastCpm       = get_post_meta(get_the_ID(), 'sensor_last_cpm', true);
-	$lastUsievert  = get_post_meta(get_the_ID(), 'sensor_last_usieverts', true);
-	$lastLatitude  = get_post_meta(get_the_ID(), 'sensor_last_latitude', true);
-	$lastLongitude = get_post_meta(get_the_ID(), 'sensor_last_longitude', true);
-	$lastGmt       = get_post_meta(get_the_ID(), 'sensor_last_gmt', true);
+	$lastCpm       = get_post_meta(get_the_ID(), 'sensor_measurement_last_cpm', true);
+	$lastUsievert  = get_post_meta(get_the_ID(), 'sensor_measurement_last_msv', true);
+	$lastLatitude  = get_post_meta(get_the_ID(), 'sensor_measurement_last_latitude', true);
+	$lastLongitude = get_post_meta(get_the_ID(), 'sensor_measurement_last_longitude', true);
+	$lastGmt       = get_post_meta(get_the_ID(), 'sensor_measurement_last_gmt', true);
 	$lastTimestamp = strtotime($lastGmt);
 	$lastTimeSince = time() - $lastTimestamp;
 	$lastTimeAgo   = human_time_diff($lastTimestamp).($langIsJap ? '前' : ' ago');
 	
-	$maxCpm        = get_post_meta(get_the_ID(), 'sensor_max_cpm', true);
-	$maxUsievert   = get_post_meta(get_the_ID(), 'sensor_max_usieverts', true);
-	$maxLatitude   = get_post_meta(get_the_ID(), 'sensor_max_latitude', true);
-	$maxLongitude  = get_post_meta(get_the_ID(), 'sensor_max_longitude', true);
-	$maxGmt        = get_post_meta(get_the_ID(), 'sensor_max_gmt', true);
+	$maxCpm        = get_post_meta(get_the_ID(), 'sensor_measurement_max_cpm', true);
+	$maxUsievert   = get_post_meta(get_the_ID(), 'sensor_measurement_max_msv', true);
+	$maxLatitude   = get_post_meta(get_the_ID(), 'sensor_measurement_max_latitude', true);
+	$maxLongitude  = get_post_meta(get_the_ID(), 'sensor_measurement_max_longitude', true);
+	$maxGmt        = get_post_meta(get_the_ID(), 'sensor_measurement_max_gmt', true);
 	$maxTimestamp  = strtotime($maxGmt);
 	$maxTimeSince  = time() - $maxTimestamp;
 	$maxTimeAgo    = human_time_diff($maxTimestamp).($langIsJap ? '前' : ' ago');
 	
-	$status        = $langIsJap ? 'オンライン' : 'Online';
-	$statusClass   = 'info';
+	$status      = $langIsJap ? 'オンライン' : 'Online';
+	$statusClass = 'info';
 
 	if ($lastTimeSince >= TIME_OFFLINE_LONG) {
 		$status      = $langIsJap ? 'オフライン（長）' : 'Offline long';
@@ -30,6 +30,11 @@
 		$status      = $langIsJap ? 'オフライン（短）' : 'Offline short';
 		$statusClass = 'warning';
 	}
+	
+	
+	$download  = $langIsJap ? 'データセットのダウンロード' : 'Download the dataset';
+	$uploadDir = wp_upload_dir();
+	$fileURI   = $uploadDir['baseurl'].sprintf("/measurements/device_%s.csv", $id);
 ?>
 
 <div class="sensor-page-header container-fluid">
@@ -62,6 +67,9 @@
 					<a href="/plots/<?php echo $id ?>.png" rel="lightbox">
 						<img class="img-responsive" alt="" src="/plots/<?php echo $id ?>_small.png" />
 					</a>
+					<div class="download">
+						<a href="<?php echo $fileURI; ?>" target="_blank" class="btn btn-default btn-primary"><?php echo $download; ?></a>
+					</div>
 				</div>
 			</div>
 		</div>
