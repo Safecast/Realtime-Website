@@ -10,6 +10,39 @@ require_once(WP_CONTENT_DIR.'/plugins/advanced-custom-fields/acf.php');
 if(function_exists("register_field_group"))
 {
 	register_field_group(array (
+		'id' => 'acf_update',
+		'title' => '<!--:en-->Update<!--:--><!--:ja-->Update<!--:-->',
+		'fields' => array (
+			array (
+				'key' => 'field_53bfd0a2fbacb',
+				'label' => 'Mutex',
+				'name' => 'sensor_mutex',
+				'type' => 'true_false',
+				'required' => 1,
+				'message' => '',
+				'default_value' => 0,
+			),
+		),
+		'location' => array (
+			array (
+				array (
+					'param' => 'post_type',
+					'operator' => '==',
+					'value' => 'sensors',
+					'order_no' => 0,
+					'group_no' => 0,
+				),
+			),
+		),
+		'options' => array (
+			'position' => 'side',
+			'layout' => 'default',
+			'hide_on_screen' => array (
+			),
+		),
+		'menu_order' => 42,
+	));
+	register_field_group(array (
 		'id' => 'acf_last-measurement',
 		'title' => 'Last measurement',
 		'fields' => array (

@@ -9,7 +9,7 @@
  * @copyright  2014 Safecast
  */
 
-define('USAGE', sprintf("Usage: $ php [-v|r] %s\n", $argv[0]));
+define('USAGE', sprintf("Usage: $ php [-v|r|c] %s\n", $argv[0]));
 
 /* Checking parameters */
 $usageError	= false;
@@ -21,13 +21,16 @@ if ($argc > 2) {
 		for ($i = 1; $i < strlen($options); $i++) {
 			switch ($options[$i]) {
 			case 'v':
-				defined('IS_VERBOSE') || define('IS_VERBOSE', true);
+				defined('VERBOSE') || define('VERBOSE', true);
 				break;
 			case 'r':
-				defined('IS_RESET') || define('IS_RESET', true);
+				defined('RESET') || define('RESET', true);
+				break;
+			case 'c':
+				defined('CLEAN_MUTEX') || define('CLEAN_MUTEX', true);
 				break;
 			default:
-				echo sprintf("Unknown option -%c\n", $options[$i]);
+				echo sprintf("Unknown option -%s\n", $options[$i]);
 				$usageError = true;
 				break;
 			}
@@ -38,14 +41,16 @@ if ($argc > 2) {
 }
 
 if ($usageError) {
-	echo 'USAGE';
+	echo USAGE;
 	return -1;
 }
 
 /* Default verbose value */
-defined('IS_VERBOSE') || define('IS_VERBOSE', false);
+defined('VERBOSE') || define('VERBOSE', false);
 /* Default reset value  */
-defined('IS_RESET') || define('IS_RESET', false);
+defined('RESET') || define('RESET', false);
+/* Default mutex value  */
+defined('CLEAN_MUTEX') || define('CLEAN_MUTEX', false);
 
 /* Defining environmental variables necessary to load WP */
 define('DOING_AJAX', 	true);
