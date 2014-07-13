@@ -152,7 +152,7 @@ function updateSensorsMeasurements() {
 							
 							/* Iterate while there is measurements */
 							while (42) {
-								$sinceTimestamp = strtotime(get_post_meta(get_the_ID(), 'sensor_measurement_last_gmt', TRUE)) + 5;
+								$sinceTimestamp = strtotime(get_post_meta(get_the_ID(), 'sensor_measurement_last_gmt', TRUE)) + 10;
 								
 								/* Preparing the query for the API */
 								if ($reset || !$sinceTimestamp) {
