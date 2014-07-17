@@ -136,7 +136,7 @@ if(function_exists("register_field_group"))
 			array (
 				'key' => 'field_5386e7e7907c0',
 				'label' => 'µSv/h',
-				'name' => 'sensor_measurement_max_ msv',
+				'name' => 'sensor_measurement_max_msv',
 				'type' => 'number',
 				'default_value' => '',
 				'placeholder' => '',
