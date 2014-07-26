@@ -571,8 +571,8 @@ if (!function_exists('generateSensorsTable')) {
 	</tbody>
 	<tfoot>
 		<tr>
-			<td colspan="7">
-				<div class="pagination pagination-centered hide-if-no-paging"></div>
+			<td colspan="8" class="text-center">
+				<ul class="hide-if-no-paging pagination pagination-centered"></ul>
 			</td>
 		</tr>
 	</tfoot>
