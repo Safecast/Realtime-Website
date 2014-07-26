@@ -9,6 +9,19 @@ function updraft_delete(key, nonce, showremote) {
 	jQuery('#updraft-delete-modal').dialog('open');
 }
 
+function updraft_openrestorepanel(toggly) {
+	//jQuery('.download-backups').slideDown(); updraft_historytimertoggle(1); jQuery('html,body').animate({scrollTop: jQuery('#updraft_lastlogcontainer').offset().top},'slow');
+	updraft_historytimertoggle(toggly);
+	jQuery('#updraft-navtab-status-content').hide();
+	jQuery('#updraft-navtab-expert-content').hide();
+	jQuery('#updraft-navtab-settings-content').hide();
+	jQuery('#updraft-navtab-backups-content').show();
+	jQuery('#updraft-navtab-backups').addClass('nav-tab-active');
+	jQuery('#updraft-navtab-expert').removeClass('nav-tab-active');
+	jQuery('#updraft-navtab-settings').removeClass('nav-tab-active');
+	jQuery('#updraft-navtab-status').removeClass('nav-tab-active');
+}
+
 function updraft_delete_old_dirs() {
 	//jQuery('#updraft_delete_old_dirs_pagediv').slideUp().remove();
 	//updraft_iframe_modal('delete_old_dirs', updraftlion.delete_old_dirs);
@@ -25,7 +38,11 @@ function updraft_restore_setoptions(entities) {
 		if (ematch) {
 			jQuery(y).removeAttr('disabled').data('howmany', ematch[1]).parent().show();
 			howmany++;
-			if (entity == 'db') { howmany += 4.5;}
+			if ('db' == entity) { howmany += 4.5;}
+			if (jQuery(y).is(':checked')) {
+				// This element may or may not exist. The purpose of explicitly calling show() is that Firefox, when reloading (including via forwards/backwards navigation) will remember checkbox states, but not which DOM elements were showing/hidden - which can result in some being hidden when they should be shown, and the user not seeing the options that are/are not checked.
+				jQuery('#updraft_restorer_'+entity+'options').show();
+			}
 		} else {
 			jQuery(y).attr('disabled','disabled').parent().hide();
 		}
@@ -88,7 +105,6 @@ function updraft_activejobs_update(force) {
 			if (resp.ds != null && resp.ds != '') {
 				jQuery(resp.ds).each(function(x, dstatus){
 					if (dstatus.base != '') {
-//trycatch
 						updraft_downloader_status_update(dstatus.base, dstatus.timestamp, dstatus.what, dstatus.findex, dstatus, response);
 					}
 				});
@@ -165,10 +181,12 @@ function updraft_updatehistory(rescan, remotescan) {
 	jQuery.get(ajaxurl, { action: 'updraft_ajax', subaction: 'historystatus', nonce: updraft_credentialtest_nonce, rescan: rescan, remotescan: remotescan }, function(response) {
 		try {
 			resp = jQuery.parseJSON(response);
-			if (resp.n != null) { jQuery('#updraft_showbackups').html(resp.n); }
+// 			if (resp.n != null) { jQuery('#updraft_showbackups').html(resp.n); }
+			if (resp.n != null) { jQuery('#updraft-navtab-backups').html(resp.n); }
 			if (resp.t != null) { jQuery('#updraft_existing_backups').html(resp.t); }
 		} catch(err) {
 			console.log(updraftlion.unexpectedresponse+' '+response);
+			console.log(err);
 		}
 	});
 }
@@ -240,6 +258,11 @@ function updraft_iframe_modal(getwhat, title) {
 	jQuery('#updraft-iframe-modal').dialog('option', 'title', title).dialog('open');
 }
 
+function updraft_html_modal(showwhat, title) {
+	jQuery('#updraft-iframe-modal-innards').html(showwhat);
+	jQuery('#updraft-iframe-modal').dialog('option', 'title', title).dialog('open');
+}
+
 function updraftplus_diskspace() {
 	jQuery('#updraft_diskspaceused').html('<em>'+updraftlion.calculating+'</em>');
 	jQuery.get(ajaxurl, { action: 'updraft_ajax', entity: 'updraft', subaction: 'diskspaceused', nonce: updraft_credentialtest_nonce }, function(response) {
@@ -301,10 +324,10 @@ function updraft_downloader(base, nonce, what, whicharea, set_contents, prettyda
 jQuery(document).ajaxError(function( event, jqxhr, settings, exception ) {
 	if (exception == null || exception == '') return;
 	if (jqxhr.responseText == null || jqxhr.responseText == '') return;
-	console.log("Error caught by UpdraftPlus ajaxError handler (follows)");
+	console.log("Error caught by UpdraftPlus ajaxError handler (follows) for "+settings.url);
 	console.log(exception);
 	if (settings.url.search(ajaxurl) == 0) {
-		if (settings.url.search('subaction=downloadstatus')) {
+		if (settings.url.search('subaction=downloadstatus') >= 0) {
 			var timestamp = settings.url.match(/timestamp=\d+/);
 			var type = settings.url.match(/type=[a-z]+/);
 			var findex = settings.url.match(/findex=\d+/);
@@ -317,6 +340,9 @@ jQuery(document).ajaxError(function( event, jqxhr, settings, exception ) {
 				var stid = base+timestamp+'_'+type+'_'+findex;
 				jQuery('#'+stid+' .raw').html('<strong>'+updraftlion.error+'</strong> '+updraftlion.servererrorcode);
 			}
+		} else if (settings.url.search('subaction=restore_alldownloaded') >= 0) {
+			//var timestamp = settings.url.match(/timestamp=\d+/);
+			jQuery('#updraft-restore-modal-stage2a').append('<br><strong>'+updraftlion.error+'</strong> '+updraftlion.servererrorcode+': '+exception);
 		}
 	}
 });
@@ -454,7 +480,7 @@ jQuery(document).ready(function($){
 	var updraft_message_modal_buttons = {};
 	updraft_message_modal_buttons[updraftlion.close] = function() { jQuery(this).dialog("close"); };
 	jQuery( "#updraft-message-modal" ).dialog({
-		autoOpen: false, height: 300, width: 500, modal: true,
+		autoOpen: false, height: 350, width: 520, modal: true,
 		buttons: updraft_message_modal_buttons
 	});
 	
@@ -474,7 +500,8 @@ jQuery(document).ready(function($){
 				if (resp.result == 'error') {
 					alert(updraftlion.error+' '+resp.message);
 				} else if (resp.result == 'success') {
-					jQuery('#updraft_showbackups').load(ajaxurl+'?action=updraft_ajax&subaction=countbackups&nonce='+updraft_credentialtest_nonce);
+					//jQuery('#updraft_showbackups').load(ajaxurl+'?action=updraft_ajax&subaction=countbackups&nonce='+updraft_credentialtest_nonce);
+					jQuery('#updraft-navtab-backups').load(ajaxurl+'?action=updraft_ajax&subaction=countbackups&nonce='+updraft_credentialtest_nonce);
 					jQuery('#updraft_existing_backups_row_'+timestamp).slideUp().remove();
 					jQuery("#updraft-delete-modal").dialog('close');
 					alert(resp.message);
@@ -568,20 +595,18 @@ jQuery(document).ready(function($){
 		
 		jQuery(this).dialog("close");
 		jQuery('#updraft_backup_started').html('<em>'+updraftlion.requeststart+'</em>').slideDown('');
+		setTimeout(function() {
+			jQuery('#updraft_lastlogmessagerow').fadeOut('slow', function() {
+				jQuery(this).fadeIn('slow');
+			});
+		}, 1700);
+		setTimeout(function() {updraft_activejobs_update(true);}, 1000);
+		setTimeout(function() {jQuery('#updraft_backup_started').fadeOut('slow');}, 75000);
 		jQuery.post(ajaxurl, { action: 'updraft_ajax', subaction: 'backupnow', nonce: updraft_credentialtest_nonce, backupnow_nodb: backupnow_nodb, backupnow_nofiles: backupnow_nofiles, backupnow_nocloud: backupnow_nocloud }, function(response) {
 			jQuery('#updraft_backup_started').html(response);
 			// Kick off some activity to get WP to get the scheduled task moving as soon as possible
-			setTimeout(function() {jQuery.get(updraft_siteurl);}, 5100);
-			setTimeout(function() {jQuery.get(updraft_siteurl+'/wp-cron.php');}, 13500);
-			//setTimeout(function() {updraft_showlastlog();}, 6000);
-			setTimeout(function() {updraft_activejobs_update(true);}, 6000);
-			setTimeout(function() {
-				jQuery('#updraft_lastlogmessagerow').fadeOut('slow', function() {
-					jQuery(this).fadeIn('slow');
-				});
-			}, 3200);
-				setTimeout(function() {jQuery('#updraft_backup_started').fadeOut('slow');}, 75000);
-				// Should be redundant (because of the polling for the last log line), but harmless (invokes page load)
+// 			setTimeout(function() {jQuery.get(updraft_siteurl);}, 5100);
+// 			setTimeout(function() {jQuery.get(updraft_siteurl+'/wp-cron.php');}, 13500);
 		});
 	};
 	backupnow_modal_buttons[updraftlion.cancel] = function() { jQuery(this).dialog("close"); };
@@ -636,6 +661,44 @@ jQuery(document).ready(function($){
 		updraft_iframe_modal('rawbackuphistory', updraftlion.raw);
 	});
 
+	jQuery('#updraft-navtab-status').click(function(e) {
+		e.preventDefault();
+		jQuery(this).addClass('nav-tab-active');
+		jQuery('#updraft-navtab-expert-content').hide();
+		jQuery('#updraft-navtab-settings-content').hide();
+		jQuery('#updraft-navtab-backups-content').hide();
+		jQuery('#updraft-navtab-status-content').show();
+		jQuery('#updraft-navtab-expert').removeClass('nav-tab-active');
+		jQuery('#updraft-navtab-backups').removeClass('nav-tab-active');
+		jQuery('#updraft-navtab-settings').removeClass('nav-tab-active');
+	});
+	jQuery('#updraft-navtab-expert').click(function(e) {
+		e.preventDefault();
+		jQuery(this).addClass('nav-tab-active');
+		jQuery('#updraft-navtab-settings-content').hide();
+		jQuery('#updraft-navtab-status-content').hide();
+		jQuery('#updraft-navtab-backups-content').hide();
+		jQuery('#updraft-navtab-expert-content').show();
+		jQuery('#updraft-navtab-status').removeClass('nav-tab-active');
+		jQuery('#updraft-navtab-backups').removeClass('nav-tab-active');
+		jQuery('#updraft-navtab-settings').removeClass('nav-tab-active');
+	});
+	jQuery('#updraft-navtab-settings, #updraft-navtab-settings2').click(function(e) {
+		e.preventDefault();
+		jQuery('#updraft-navtab-status-content').hide();
+		jQuery('#updraft-navtab-backups-content').hide();
+		jQuery('#updraft-navtab-expert-content').hide();
+		jQuery('#updraft-navtab-settings-content').show();
+		jQuery('#updraft-navtab-settings').addClass('nav-tab-active');
+		jQuery('#updraft-navtab-expert').removeClass('nav-tab-active');
+		jQuery('#updraft-navtab-backups').removeClass('nav-tab-active');
+		jQuery('#updraft-navtab-status').removeClass('nav-tab-active');
+	});
+	jQuery('#updraft-navtab-backups').click(function(e) {
+		e.preventDefault();
+		updraft_openrestorepanel(1);
+	});
+	
 	jQuery.get(ajaxurl, { action: 'updraft_ajax', subaction: 'ping', nonce: updraft_credentialtest_nonce }, function(data, response) {
 		if ('success' == response && data != 'pong' && data.indexOf('pong')>=0) {
 			jQuery('#ud-whitespace-warning').show();
@@ -805,7 +868,15 @@ jQuery(document).ready(function($){
 			}
 		});
 	}
-
+	// , 
+	jQuery('#updraft_existing_backups').on('tripleclick', '.updraft_existingbackup_date', { threshold: 500 }, function(e) {
+		e.preventDefault();
+		var data = jQuery(this).data('rawbackup');
+		if (data != null && data != '') {
+			updraft_html_modal(data, updraftlion.raw);
+		}
+	});
+	
 });
 
 // Next: the encrypted database pluploader
@@ -895,3 +966,73 @@ jQuery(document).ready(function($){
 	jQuery('#updraft-hidethis').remove();
 
 });
+
+// https://github.com/richadams/jquery-tripleclick/
+// @author Rich Adams <rich@richadams.me>
+// Implements a triple-click event. Click (or touch) three times within 1s on the element to trigger.
+
+;(function($)
+{
+	// Default options
+	var defaults = {
+		threshold: 1000, // ms
+	}
+	
+	function tripleHandler(event)
+	{
+		var $elem = jQuery(this);
+		
+		// Merge the defaults and any user defined settings.
+		settings = jQuery.extend({}, defaults, event.data);
+		
+		// Get current values, or 0 if they don't yet exist.
+		var clicks = $elem.data("triclick_clicks") || 0;
+		var start = $elem.data("triclick_start") || 0;
+		
+		// If first click, register start time.
+		if (clicks === 0) { start = event.timeStamp; }
+		
+		// If we have a start time, check it's within limit
+		if (start != 0
+			&& event.timeStamp > start + settings.threshold)
+		{
+			// Tri-click failed, took too long.
+			clicks = 0;
+			start = event.timeStamp;
+		}
+		
+		// Increment counter, and do finish action.
+		clicks += 1;
+		if (clicks === 3)
+		{
+			clicks = 0;
+			start = 0;
+			event.type = "tripleclick";
+			
+			// Let jQuery handle the triggering of "tripleclick" event handlers
+			if (jQuery.event.handle === undefined) {
+				jQuery.event.dispatch.apply(this, arguments);
+			}
+			else {
+				// for jQuery before 1.9
+				jQuery.event.handle.apply(this, arguments);
+			}
+		}
+		
+		// Update object data
+		$elem.data("triclick_clicks", clicks);
+		$elem.data("triclick_start", start);
+	}
+	
+	var tripleclick = $.event.special.tripleclick =
+	{
+		setup: function(data, namespaces)
+		{
+			$(this).bind("touchstart click.triple", data, tripleHandler);
+		},
+  teardown: function(namespaces)
+  {
+	  $(this).unbind("touchstart click.triple", data, tripleHandler);
+  }
+	};
+})(jQuery);

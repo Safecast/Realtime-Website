@@ -188,6 +188,10 @@ function qtrans_isEmptyContent($value) {
 function mqtrans_postUpdated($post_ID, $after, $before) {
 	global $wpdb, $q_config;
 
+	// Don't handle custom post types
+	if (!in_array($after->post_type, array( 'post', 'page' )) && !in_array($after->post_type, $q_config['allowed_custom_post_types']))
+		return;
+	
 	$titleMap = array();
 	$contentMap = array();
 	
@@ -238,7 +242,7 @@ function mqtrans_postUpdated($post_ID, $after, $before) {
 
 function mqtrans_filterHomeURL($url, $path, $orig_scheme, $blog_id) {
 	global $q_config;
-	return ((empty($path) && $q_config['url_mode'] == QT_URL_PATH) || $path == '/') ? qtrans_convertURL($url) : $url;
+	return ((empty($path) && $q_config['url_mode'] == QT_URL_PATH) || $path == '/' || !empty($q_config['url_info']['explicit_default_language'])) ? qtrans_convertURL($url, '', false, $q_config['url_info']['explicit_default_language']) : $url;
 }
 
 function mqtrans_filterPostMetaData($original_value, $object_id, $meta_key, $single) {

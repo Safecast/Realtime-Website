@@ -249,21 +249,23 @@ function qtrans_initJS() {
 			}
 			
 			var hook = tinyMCEPreInit.mceInit['content'];
-			
-			// Removing WPFullscreen plugin and button
-			var p = hook.plugins.split(',').filter(function(element) { return (element != 'wpfullscreen'); });
-			hook.plugins = p.join(',');
-			p = hook.toolbar1.split(',').filter(function(element) { return (element != 'wp_fullscreen'); });
-			hook.toolbar1 = p.join(',');
-			
-			hook.elements='hook-to-nothing';
-			hook.selector = '#qtrans_textarea_content';
-			delete tinyMCEPreInit.mceInit['content'];
-			tinyMCEPreInit.mceInit['qtrans_textarea_content'] = hook;
-			
-			var wrap = jQuery('#wp-content-wrap');
-			var html = '<div id=\"wp-qtrans_textarea_content-wrap\" class=\"' + wrap.prop('className') + '\"></div>';
-			jQuery('body').append(html);
+			if (hook)
+			{
+				// Removing WPFullscreen plugin and button
+				var p = hook.plugins.split(',').filter(function(element) { return (element != 'wpfullscreen'); });
+				hook.plugins = p.join(',');
+				p = hook.toolbar1.split(',').filter(function(element) { return (element != 'wp_fullscreen'); });
+				hook.toolbar1 = p.join(',');
+				
+				hook.elements='hook-to-nothing';
+				hook.selector = '#qtrans_textarea_content';
+				delete tinyMCEPreInit.mceInit['content'];
+				tinyMCEPreInit.mceInit['qtrans_textarea_content'] = hook;
+				
+				var wrap = jQuery('#wp-content-wrap');
+				var html = '<div id=\"wp-qtrans_textarea_content-wrap\" class=\"' + wrap.prop('className') + '\"></div>';
+				jQuery('body').append(html);
+			}
 		}());
 	";
 	

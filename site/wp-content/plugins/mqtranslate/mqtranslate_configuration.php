@@ -225,10 +225,21 @@ function mqtranslate_conf() {
 		qtrans_checkSetting('ignore_file_types',		true, QT_STRING);
 		qtrans_checkSetting('detect_browser_language',	true, QT_BOOLEAN);
 		qtrans_checkSetting('hide_untranslated',		true, QT_BOOLEAN);
+		qtrans_checkSetting('show_displayed_language_prefix', true, QT_BOOLEAN);
 		qtrans_checkSetting('use_strftime',				true, QT_INTEGER);
 		qtrans_checkSetting('url_mode',					true, QT_INTEGER);
 		qtrans_checkSetting('auto_update_mo',			true, QT_BOOLEAN);
 		qtrans_checkSetting('hide_default_language',	true, QT_BOOLEAN);
+		
+		if (isset($_POST['allowed_custom_post_types']))
+		{
+			$acpt = explode(',', trim(trim($_POST['allowed_custom_post_types']), ','));
+			$acpt = array_map('trim', $acpt);
+			$q_config['allowed_custom_post_types'] = $acpt;
+			$acpt = implode(',', $acpt);
+			update_option('mqtranslate_allowed_custom_post_types', $acpt);
+		}
+		
 		if(isset($_POST['update_mo_now']) && $_POST['update_mo_now']=='1' && qtrans_updateGettextDatabases(true))
 			$message = __('Gettext databases updated.', 'mqtranslate');
 	}
@@ -475,6 +486,9 @@ function mqtranslate_conf() {
 					<small>
 					<?php _e('When checked, posts will be hidden if the content is not available for the selected language. If unchecked, a message will appear showing all the languages the content is available in.', 'mqtranslate'); ?>
 					<?php _e('This function will not work correctly if you installed mqTranslate on a blog with existing entries. In this case you will need to take a look at "Convert Database" under "Advanced Settings".', 'mqtranslate'); ?>
+					
+					<br /><br />
+					<label for="show_displayed_language_prefix"><input type="checkbox" name="show_displayed_language_prefix" id="show_displayed_language_prefix" value="1"<?php echo $q_config['show_displayed_language_prefix'] ? ' checked="checked"' : ''; ?>/> <?php _e('Show displayed language prefix when Content is not available for the selected language.', 'mqtranslate'); ?></label>
 					</small>
 				</td>
 			</tr>
@@ -520,6 +534,14 @@ function mqtranslate_conf() {
 					<input type="text" name="ignore_file_types" id="ignore_file_types" value="<?php echo $q_config['ignore_file_types']; ?>" style="width:100%"/>
 					<br/>
 					<small><?php _e('Don\'t convert Links to files of the given file types. (Default: gif,jpg,jpeg,png,pdf,swf,tif,rar,zip,7z,mpg,divx,mpeg,avi,css,js)', 'mqtranslate'); ?></small>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><?php _e('Allowed Custom Post Types', 'mqtranslate'); ?></th>
+				<td>
+					<input type="text" name="allowed_custom_post_types" id="allowed_custom_post_types" value="<?php echo implode(', ', $q_config['allowed_custom_post_types']); ?>" style="width: 100%" />
+					<br />
+					<small><?php _e('Comma-separated list of the custom post types for which you want mqTranslate to keep multi-language values.')?></small>
 				</td>
 			</tr>
 			<tr valign="top">

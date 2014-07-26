@@ -1,9 +1,9 @@
 <?php // encoding: utf-8
 /*
 Plugin Name: mqTranslate
-Plugin URI: http://www.xhaleera.com/index.php/wordpress/mqtranslate/
+Plugin URI: http://wordpress.org/plugins/mqtranslate/
 Description: Adds userfriendly multilingual content support into Wordpress. mqTranslate is a fork of the well-known <a href="http://www.qianqin.de/mqtranslate/">qTranslate</a> plugin by <a href="http://www.qianqin.de/">Qian Qin</a>, extending the original software with collaborative and team-oriented features.
-Version: 2.6.2.6
+Version: 2.6.3
 Author: xhaleera
 Author URI: http://www.xhaleera.com
 Tags: multilingual, multi, language, admin, tinymce, mqTranslate, Polyglot, bilingual, widget, switcher, professional, human, translation, service
@@ -13,7 +13,12 @@ Tags: multilingual, multi, language, admin, tinymce, mqTranslate, Polyglot, bili
 	FOTW Flags Of The World website at http://flagspot.net/flags/
 	(http://www.crwflags.com/FOTW/FLAGS/wflags.html)
 */
-/*  Copyright 2008  Qian Qin  (email : mail@qianqin.de)
+/*  
+	Original qTranslate source code
+	Copyright 2008  Qian Qin  (email : mail@qianqin.de)
+	
+	mqTranslate
+	Copyright 2013  Christophe SAUVEUR - xhaleera  (email : support@xhaleera.com)
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -80,7 +85,7 @@ Tags: multilingual, multi, language, admin, tinymce, mqTranslate, Polyglot, bili
 
 	Specials thanks
 	===============
-	All Supporters! Thanks for all the gifts, cards and donations!
+	All Supporters! Thanks for all the donations!
 */
 /* DEFAULT CONFIGURATION PART BEGINS HERE */
 
@@ -118,6 +123,7 @@ $q_config['detect_browser_language'] = true;
 
 // hide pages without content
 $q_config['hide_untranslated'] = false;
+$q_config['show_displayed_language_prefix'] = true;
 
 // automatically update .mo files
 $q_config['auto_update_mo'] = true;
@@ -457,6 +463,9 @@ $q_config['windows_locale']['zu'] = "Zulu";
 
 // User-level language protection
 $q_config['ul_lang_protection'] = 1;
+
+// Custom post types modification
+$q_config['allowed_custom_post_types'] = array();
 
 // Load mqTranslate
 require_once(dirname(__FILE__)."/mqtranslate_javascript.php");

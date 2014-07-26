@@ -2,8 +2,8 @@
 Contributors: chsxf
 Tags: multilingual, language, admin, tinymce, bilingual, widget, switcher, i18n, l10n, multilanguage, professional, translation, service, human
 Requires at least: 3.9
-Tested up to: 4.0-alpha
-Stable tag: 2.6.2.6
+Tested up to: 4.0-alpha-20140629
+Stable tag: 2.6.3
 Donate Link: http://www.xhaleera.com/
 License: GPLv2
 
@@ -69,6 +69,14 @@ For Problems with mqTranslate-specific features, visits [our Support Page](http:
 3. qTranslate Services (Translation)
 
 == Changelog ==
+
+2.6.3:
+
+- Fixed mqTranslate behavior with custom post types. Data won't be altered by mqTranslate anymore (fixes corrupted data with TablePress and probably other plugins).
+- Added "Allowed Custom Post Types" advanced setting to enable multi-language support from mqTranslate for specific custom post types. 
+- Added setting to remove displayed language prefix when content is not available for the selected language.
+- Fixed wrongly reported 404 errors when default language was provided in the URL in Pre-Path mode while set to be hidden in URLs 
+- Fixed minor JavaScript bug
 
 2.6.2.6:
 

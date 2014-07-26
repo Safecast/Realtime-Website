@@ -25,7 +25,7 @@ switch ($config_tabs[$current_tab-1]){
 
 			'general_integration_header' => array('description' => __('WordPress Integration','wp-slimstat'), 'type' => 'section_header'),
 			'use_separate_menu' => array( 'description' => __('Menu Position','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('Choose between a standalone admin menu for WP SlimStat or a drop down in the admin bar (if visible).','wp-slimstat'), 'custom_label_yes' => __('Side Menu','wp-slimstat'), 'custom_label_no' => __('Admin Bar','wp-slimstat') ),
-			'add_posts_column' => array( 'description' => __('Add Stats to Posts','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('Add a new column to the Edit Posts screen, with the number of hits per post.','wp-slimstat') ),
+			'add_posts_column' => array( 'description' => __('Add Stats to Posts and Pages','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('Add a new column to the Edit Posts/Pages screens, with the number of hits per post.','wp-slimstat') ),
 
 			'general_database_header' => array('description' => __('Database','wp-slimstat'), 'type' => 'section_header'),
 			'auto_purge' => array( 'description' => __('Retain data for','wp-slimstat'), 'type' => 'integer', 'long_description' => __("Delete log entries older than the number of days specified here above. Enter <strong>0</strong> (number zero) if you want to preserve your data regardless of its age.",'wp-slimstat').(wp_get_schedule('wp_slimstat_purge')?' <br> '.__('Next clean-up on','wp-slimstat').' '.date_i18n(get_option('date_format').', '.get_option('time_format'), wp_next_scheduled('wp_slimstat_purge')).'. '.sprintf(__('Entries logged on or before %s will be permanently deleted.','wp-slimstat'), date_i18n(get_option('date_format'), strtotime('-'.wp_slimstat::$options['auto_purge'].' days'))):''), 'after_input_field' => __('days','wp-slimstat') )
@@ -45,7 +45,7 @@ switch ($config_tabs[$current_tab-1]){
 		$options_on_this_page = array(
 			'views_basic_header' => array('description' => __('Data and Formats','wp-slimstat'), 'type' => 'section_header'),
 			'convert_ip_addresses' => array('description' => __('Convert IP Addresses','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('Display provider names instead of IP addresses.','wp-slimstat')),
-			'use_european_separators' => array('description' => __('Number Format','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('Choose the number format you want to use for your reports, European or American.','wp-slimstat'), 'custom_label_yes' => '1.234,56', 'custom_label_no' => '1,234.56'),
+			'use_european_separators' => array('description' => __('Number Format','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('Choose the number format you want to use for your reports.','wp-slimstat'), 'custom_label_yes' => '1.234,56', 'custom_label_no' => '1,234.56'),
 			'show_display_name' => array('description' => __('Show Display Name','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('By default, users are listed by their usernames. Use this option to visualize their display names instead.','wp-slimstat')),
 			'show_complete_user_agent_tooltip' => array('description' => __('Show User Agent','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('Choose if you want to see the browser name or a complete user agent string when hovering on browser icons.','wp-slimstat')),
 			'convert_resource_urls_to_titles' => array('description' => __('Show Titles','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('WP SlimStat converts your permalinks into post and page titles. Disable this feature if you need to see the URL in your reports.','wp-slimstat')),
@@ -218,7 +218,7 @@ switch ($config_tabs[$current_tab-1]){
 			'extensions_to_track' => array('description' => __('Extensions to Track','wp-slimstat'), 'type' => 'textarea', 'long_description' => __("List all the file extensions that you want to be treated as Downloads. Please note that links pointing to external resources (i.e. PDFs on a different website) are considered Downloads and not Outbound Links (and tracked as such), if their extension matches one of the ones listed here below.",'wp-slimstat')),
 
 			'advanced_external_pages_header' => array('description' => __('External Pages','wp-slimstat'), 'type' => 'section_header'),
-			'external_pages_script' => array('type' => 'static', 'description' => __('Add the following code to all the non-WP pages you want to track','wp-slimstat'), 'long_description' => '&lt;script type="text/javascript"&gt;
+			'external_pages_script' => array('type' => 'static', 'skip_update' => 'yes', 'description' => __('Add the following code to all the non-WP pages you want to track','wp-slimstat'), 'long_description' => '&lt;script type="text/javascript"&gt;
 /* &lt;![CDATA[ */
 var SlimStatParams = {
 	ajaxurl: "'.admin_url('admin-ajax.php').'",
@@ -233,7 +233,7 @@ var SlimStatParams = {
 			'show_sql_debug' => array('description' => __('Debug Mode','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('Display the SQL queries used to retrieve the data.','wp-slimstat')),
 			'ip_lookup_service' => array('description' => __('IP Lookup','wp-slimstat'), 'type' => 'text', 'long_description' => __('Customize the Geolocation service to be used in the reports.','wp-slimstat')),
 			'custom_css' => array('description' => __('Custom CSS','wp-slimstat'), 'type' => 'textarea', 'long_description' => __("Paste here your custom stylesheet to personalize the way your reports look. <a href='http://wordpress.org/plugins/wp-slimstat/faq/' target='_blank'>Check the FAQ</a> for more information on how to use this setting.",'wp-slimstat')),
-			'enable_ads_network' => array('description' => __('Enable UAN','wp-slimstat'), 'type' => 'yesno', 'long_description' => __("Send anonymous data about unknown user agents to our server for analysis. This allows us to contribute to the <a href='http://browscap.org/' target='_blank'>BrowsCap opensource project</a>, and improve the accuracy of WP SlimStat's browser detection functionality.",'wp-slimstat'))
+			'enable_ads_network' => array('description' => __('Enable UAN','wp-slimstat'), 'type' => 'yesno', 'long_description' => __("Send anonymous data about user agents to our server for analysis. This allows us to contribute to the <a href='http://browscap.org/' target='_blank'>BrowsCap opensource project</a>, and improve the accuracy of WP SlimStat's browser detection functionality. It also enables our transparent ads network. No worries, your site will not be affected in any way.",'wp-slimstat'))
 		);
 		break;
 	case __('Maintenance','wp-slimstat'):
