@@ -11,8 +11,8 @@
 
 /* Safecast API URL format */
 define('API_URI_INFO_FORMAT', 'https://api.safecast.org/devices/%s.json');
-define('API_URI_CREATE_FORMAT', 'https://api.safecast.org/en-US/measurements.json?device_id=%s&order=captured_at+asc');
-define('API_URI_UPDATE_FORMAT', 'https://api.safecast.org/en-US/measurements.json?device_id=%s&since="%s"&order=captured_at+asc');
+define('API_URI_CREATE_FORMAT', 'https://api.safecast.org/en-US/measurements.json?device_id=%s&per_page=1000&order=captured_at+asc');
+define('API_URI_UPDATE_FORMAT', 'https://api.safecast.org/en-US/measurements.json?device_id=%s&per_page=1000&captured_after="%s"&order=captured_at+asc');
 
 
 function updateSensorInformation($postId, $information) {
@@ -25,8 +25,6 @@ function updateSensorMeasurement($postId, $measurement) {
 	$cpm            = (float)$measurement->value;
 	$maxCpm         = (float)get_post_meta($postId, 'sensor_measurement_max_cpm', TRUE);
 	$sensorType     = get_post_meta(get_the_ID(), 'sensor_type', TRUE);
-	$timeDifference = strtotime($measurement->captured_at)
-		- strtotime(get_post_meta($postId, 'sensor_measurement_last_gmt', TRUE));	
 	
 	/* Based on tube type the conversion from cpm differs */
 	if (strpos($sensorType, "LND712") !== false ||
@@ -35,16 +33,14 @@ function updateSensorMeasurement($postId, $measurement) {
 	} else {
 		$svt = number_format(($cpm / 334), 3);
 	}
-	
-	if ($timeDifference > 0) {
-		update_post_meta($postId, 'sensor_measurement_last_msv', $svt);
-		update_post_meta($postId, 'sensor_measurement_last_cpm', $cpm);
-		update_post_meta($postId, 'sensor_measurement_last_gmt', $measurement->captured_at);
-		update_post_meta($postId, 'sensor_measurement_last_latitude', $measurement->latitude);
-		update_post_meta($postId, 'sensor_measurement_last_longitude', $measurement->longitude);
-		update_post_meta($postId, 'sensor_measurement_last_id', $measurement->id);
-		update_post_meta($postId, 'sensor_measurement_last_user_id', $measurement->user_id);
-	}
+
+	update_post_meta($postId, 'sensor_measurement_last_msv', $svt);
+	update_post_meta($postId, 'sensor_measurement_last_cpm', $cpm);
+	update_post_meta($postId, 'sensor_measurement_last_gmt', $measurement->captured_at);
+	update_post_meta($postId, 'sensor_measurement_last_latitude', $measurement->latitude);
+	update_post_meta($postId, 'sensor_measurement_last_longitude', $measurement->longitude);
+	update_post_meta($postId, 'sensor_measurement_last_id', $measurement->id);
+	update_post_meta($postId, 'sensor_measurement_last_user_id', $measurement->user_id);
 	
 	if ($cpm >= $maxCpm) {
 		update_post_meta($postId, 'sensor_measurement_max_msv', $svt);
@@ -152,7 +148,7 @@ function updateSensorsMeasurements() {
 							
 							/* Iterate while there is measurements */
 							while (42) {
-								$sinceTimestamp = strtotime(get_post_meta(get_the_ID(), 'sensor_measurement_last_gmt', TRUE)) + 10;
+								$sinceTimestamp = strtotime(get_post_meta(get_the_ID(), 'sensor_measurement_last_gmt', TRUE));
 								
 								/* Preparing the query for the API */
 								if ($reset || !$sinceTimestamp) {
