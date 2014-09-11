@@ -49,7 +49,7 @@ if(function_exists("register_field_group"))
 			array (
 				'key' => 'field_5386e49735466',
 				'label' => 'µSv/h',
-				'name' => 'sensor_measurement_last_msv',
+				'name' => 'sensor_measurement_last_usvh',
 				'type' => 'number',
 				'default_value' => '',
 				'placeholder' => '',
@@ -136,7 +136,7 @@ if(function_exists("register_field_group"))
 			array (
 				'key' => 'field_5386e7e7907c0',
 				'label' => 'µSv/h',
-				'name' => 'sensor_measurement_max_msv',
+				'name' => 'sensor_measurement_max_usvh',
 				'type' => 'number',
 				'default_value' => '',
 				'placeholder' => '',
@@ -529,7 +529,7 @@ if (!function_exists('generateSensorsTable')) {
 			$timestamp   = strtotime($sensor['measurement']['gmt']);
 			$timeAgo     = $timestamp ? human_time_diff($timestamp).($lang == 'jp' ? '前' : ' ago') : '';
 			$timeSince   = time() - $timestamp;
-			$usievert    = addslashes($sensor['measurement']['msv']);
+			$usievert    = addslashes($sensor['measurement']['usvh']);
 			$cpm         = addslashes($sensor['measurement']['cpm']);
 			$latitude    = addslashes($sensor['measurement']['latitude']);
 			$longitude   = addslashes($sensor['measurement']['longitude']);
@@ -619,7 +619,7 @@ if (!function_exists('getAllSensors')) {
 					.($location ? ', '.$location : '');
 				
 				$lastMeasurement = array(
-					'msv'     => get_post_meta(get_the_ID(), 'sensor_measurement_last_msv', true),
+					'usvh'     => get_post_meta(get_the_ID(), 'sensor_measurement_last_usvh', true),
 					'cpm'           => get_post_meta(get_the_ID(), 'sensor_measurement_last_cpm', 		true),
 					'gmt'     		=> get_post_meta(get_the_ID(), 'sensor_measurement_last_gmt', 		true),
 					'latitude'      => get_post_meta(get_the_ID(), 'sensor_measurement_last_latitude', 	true),
@@ -680,7 +680,7 @@ if (!function_exists('generateMap')) {
 			$timestamp   = strtotime($sensor['measurement']['gmt']);
 			$timeAgo     = $timestamp ? human_time_diff($timestamp).($lang == 'jp' ? '前' : ' ago') : '';
 			$timeSince   = time() - $timestamp;
-			$usvt        = addslashes($sensor['measurement']['msv']);
+			$usvh        = addslashes($sensor['measurement']['usvh']);
 			$cpm         = addslashes($sensor['measurement']['cpm']);
 			$latitude    = addslashes($sensor['measurement']['latitude']);
 			$longitude   = addslashes($sensor['measurement']['longitude']);
@@ -694,7 +694,7 @@ if (!function_exists('generateMap')) {
 			}
 				
 			$markers	.= sprintf("addMarker('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');
-			", $id, $permalink, $timeAgo, $location, $latitude, $longitude, $cpm, $usvt, $graphPath, $status);
+			", $id, $permalink, $timeAgo, $location, $latitude, $longitude, $cpm, $usvh, $graphPath, $status);
 		}
 		
 		//var_dump($markers);die;

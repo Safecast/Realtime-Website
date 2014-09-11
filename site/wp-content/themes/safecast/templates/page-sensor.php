@@ -1,9 +1,8 @@
 <?php
 	$id            = get_post_meta(get_the_ID(), 'sensor_id', true);
 	$langIsJap     = qtrans_getLanguage() == "jp";
-	
 	$lastCpm       = get_post_meta(get_the_ID(), 'sensor_measurement_last_cpm', true);
-	$lastUsievert  = get_post_meta(get_the_ID(), 'sensor_measurement_last_msv', true);
+	$lastUsievert  = get_post_meta(get_the_ID(), 'sensor_measurement_last_usvh', true);
 	$lastLatitude  = get_post_meta(get_the_ID(), 'sensor_measurement_last_latitude', true);
 	$lastLongitude = get_post_meta(get_the_ID(), 'sensor_measurement_last_longitude', true);
 	$lastGmt       = get_post_meta(get_the_ID(), 'sensor_measurement_last_gmt', true);
@@ -12,7 +11,7 @@
 	$lastTimeAgo   = human_time_diff($lastTimestamp).($langIsJap ? '前' : ' ago');
 	
 	$maxCpm        = get_post_meta(get_the_ID(), 'sensor_measurement_max_cpm', true);
-	$maxUsievert   = get_post_meta(get_the_ID(), 'sensor_measurement_max_msv', true);
+	$maxUsievert   = get_post_meta(get_the_ID(), 'sensor_measurement_max_usvh', true);
 	$maxLatitude   = get_post_meta(get_the_ID(), 'sensor_measurement_max_latitude', true);
 	$maxLongitude  = get_post_meta(get_the_ID(), 'sensor_measurement_max_longitude', true);
 	$maxGmt        = get_post_meta(get_the_ID(), 'sensor_measurement_max_gmt', true);
@@ -33,8 +32,10 @@
 	
 	
 	$download  = $langIsJap ? 'データセットのダウンロード' : 'Download the dataset';
+	$api       = $langIsJap ? 'APIデータへ' : 'See API data';
 	$uploadDir = wp_upload_dir();
 	$fileURI   = $uploadDir['baseurl'].sprintf("/measurements/device_%s.csv", $id);
+	$apiURI    = sprintf("https://api.safecast.org/%s/measurements?device_id=%s", $langIsJap ? 'ja' : 'en-US', $id);
 ?>
 
 <div class="sensor-page-header container-fluid">
@@ -69,6 +70,9 @@
 					</a>
 					<div class="download">
 						<a href="<?php echo $fileURI; ?>" target="_blank" class="btn btn-default btn-primary"><?php echo $download; ?></a>
+					</div>
+					<div class="download api">
+						<a href="<?php echo $apiURI; ?>" target="_blank" class="btn btn-default btn-primary"><?php echo $api; ?></a>
 					</div>
 				</div>
 			</div>

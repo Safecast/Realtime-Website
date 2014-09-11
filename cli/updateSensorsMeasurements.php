@@ -29,12 +29,12 @@ function updateSensorMeasurement($postId, $measurement) {
 	/* Based on tube type the conversion from cpm differs */
 	if (strpos($sensorType, "LND712") !== false ||
 		strpos($sensorType, "LND 712") !== false) {
-		$svt = number_format(($cpm / 120.5), 3);
+		$usvh = number_format(($cpm / 120.5), 3);
 	} else {
-		$svt = number_format(($cpm / 334), 3);
+		$usvh = number_format(($cpm / 334), 3);
 	}
 
-	update_post_meta($postId, 'sensor_measurement_last_msv', $svt);
+	update_post_meta($postId, 'sensor_measurement_last_usvh', $usvh);
 	update_post_meta($postId, 'sensor_measurement_last_cpm', $cpm);
 	update_post_meta($postId, 'sensor_measurement_last_gmt', $measurement->captured_at);
 	update_post_meta($postId, 'sensor_measurement_last_latitude', $measurement->latitude);
@@ -43,7 +43,7 @@ function updateSensorMeasurement($postId, $measurement) {
 	update_post_meta($postId, 'sensor_measurement_last_user_id', $measurement->user_id);
 	
 	if ($cpm >= $maxCpm) {
-		update_post_meta($postId, 'sensor_measurement_max_msv', $svt);
+		update_post_meta($postId, 'sensor_measurement_max_usvh', $usvh);
 		update_post_meta($postId, 'sensor_measurement_max_cpm', $cpm);
 		update_post_meta($postId, 'sensor_measurement_max_gmt', $measurement->captured_at);
 		update_post_meta($postId, 'sensor_measurement_max_latitude', $measurement->latitude);
@@ -80,7 +80,7 @@ function logMeasurement($filehandle, $postId) {
 	$sensorModel          = get_post_meta(get_the_ID(), 'sensor_model', TRUE);
 	$measurementId        = get_post_meta(get_the_ID(), 'sensor_measurement_last_id', TRUE);
 	$measurementUserId    = get_post_meta(get_the_ID(), 'sensor_measurement_last_user_id', TRUE);
-	$measurementMsv       = get_post_meta(get_the_ID(), 'sensor_measurement_last_msv', TRUE);
+	$measurementMsv       = get_post_meta(get_the_ID(), 'sensor_measurement_last_usvh', TRUE);
 	$measurementCpm       = get_post_meta(get_the_ID(), 'sensor_measurement_last_cpm', TRUE);
 	$measurementGmt       = get_post_meta(get_the_ID(), 'sensor_measurement_last_gmt', TRUE);
 	$measurementLatitude  = get_post_meta(get_the_ID(), 'sensor_measurement_last_latitude', TRUE);
@@ -99,7 +99,7 @@ function getLogFilehandle($sensorId, $reset) {
 	$filehandle = fopen($filename, $reset ? 'w' : 'a');
 	
 	if ($reset || (0 == filesize($filename))) {
-		fputcsv($filehandle, array('id', 'userId', 'msv', 'cpm',
+		fputcsv($filehandle, array('id', 'userId', 'μSv/h', 'cpm',
 			'capturedAt', 'latitude', 'longitude',
 			'device', 'type', 'manufacturer', 'model'));
 	}
