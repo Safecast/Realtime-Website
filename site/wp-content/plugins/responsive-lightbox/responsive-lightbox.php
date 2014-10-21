@@ -2,7 +2,7 @@
 /*
 Plugin Name: Responsive Lightbox
 Description: Responsive Lightbox allows users to view larger versions of images and galleries in a lightbox (overlay) effect optimized for mobile devices.
-Version: 1.4.5
+Version: 1.4.8
 Author: dFactory
 Author URI: http://www.dfactory.eu/
 Plugin URI: http://www.dfactory.eu/plugins/responsive-lightbox/
@@ -29,6 +29,8 @@ class Responsive_Lightbox
 			'script' => 'swipebox',
 			'selector' => 'lightbox',
 			'galleries' => true,
+			'enable_gallery_image_size' => false,
+			'gallery_image_size' => 'full',
 			'videos' => true,
 			'image_links' => true,
 			'images_as_gallery' => false,
@@ -97,6 +99,7 @@ class Responsive_Lightbox
 			),
 			'nivo' => array(
 				'effect' => 'fade',
+				'click_overlay_to_close' => true,
 				'keyboard_nav' => true,
 				'error_message' => 'The requested content cannot be loaded. Please try again later.'
 			),
@@ -109,7 +112,7 @@ class Responsive_Lightbox
 				'quit_on_document_click' => true
 			)
 		),
-		'version' => '1.4.5'
+		'version' => '1.4.8'
 	);
 	private $scripts = array();
 	private $options = array();
@@ -168,13 +171,16 @@ class Responsive_Lightbox
 		add_filter('plugin_row_meta', array(&$this, 'plugin_extend_links'), 10, 2);
 		add_filter('post_gallery', array(&$this, 'gallery_attributes'), 1000);
 
-		if($this->options['settings']['galleries'] === TRUE)
+		if($this->options['settings']['galleries'] === true)
 			add_filter('wp_get_attachment_link', array(&$this, 'add_gallery_lightbox_selector'), 1000, 6);
+		
+		if ($this->options['settings']['enable_gallery_image_size'] === true)
+			add_filter('wp_get_attachment_link', array(&$this, 'gallery_attachment_link_filter'), 1001, 6);
 
-		if($this->options['settings']['videos'] === TRUE)
+		if($this->options['settings']['videos'] === true)
 			add_filter('the_content', array(&$this, 'add_videos_lightbox_selector'));
 
-		if($this->options['settings']['image_links'] === TRUE || $this->options['settings']['images_as_gallery'] === TRUE)
+		if($this->options['settings']['image_links'] === true || $this->options['settings']['images_as_gallery'] === true)
 			add_filter('the_content', array(&$this, 'add_links_lightbox_selector'));
 	}
 
@@ -470,6 +476,7 @@ class Responsive_Lightbox
 		add_settings_field('rl_script', __('Lightbox script', 'responsive-lightbox'), array(&$this, 'rl_script'), 'responsive_lightbox_settings', 'responsive_lightbox_settings');
 		add_settings_field('rl_selector', __('Selector', 'responsive-lightbox'), array(&$this, 'rl_selector'), 'responsive_lightbox_settings', 'responsive_lightbox_settings');
 		add_settings_field('rl_galleries', __('Galleries', 'responsive-lightbox'), array(&$this, 'rl_galleries'), 'responsive_lightbox_settings', 'responsive_lightbox_settings');
+		add_settings_field('rl_enable_gallery_image_size', __('Gallery image size', 'responsive-lightbox'), array(&$this, 'rl_enable_gallery_image_size'), 'responsive_lightbox_settings', 'responsive_lightbox_settings');
 		add_settings_field('rl_videos', __('Video links', 'responsive-lightbox'), array(&$this, 'rl_videos'), 'responsive_lightbox_settings', 'responsive_lightbox_settings');
 		add_settings_field('rl_image_links', __('Image links', 'responsive-lightbox'), array(&$this, 'rl_image_links'), 'responsive_lightbox_settings', 'responsive_lightbox_settings');
 		add_settings_field('rl_images_as_gallery', __('Single images as gallery', 'responsive-lightbox'), array(&$this, 'rl_images_as_gallery'), 'responsive_lightbox_settings', 'responsive_lightbox_settings');
@@ -541,6 +548,7 @@ class Responsive_Lightbox
 		elseif($this->options['settings']['script'] === 'nivo')
 		{
 			add_settings_field('rl_nv_effect', __('Effect', 'responsive-lightbox'), array(&$this, 'rl_nv_effect'), 'responsive_lightbox_configuration', 'responsive_lightbox_configuration');
+			add_settings_field('rl_nv_click_overlay_to_close', __('Click overlay to close', 'responsive-lightbox'), array(&$this, 'rl_nv_click_overlay_to_close'), 'responsive_lightbox_configuration', 'responsive_lightbox_configuration');
 			add_settings_field('rl_nv_keyboard_nav', __('Keyboard navigation', 'responsive-lightbox'), array(&$this, 'rl_nv_keyboard_nav'), 'responsive_lightbox_configuration', 'responsive_lightbox_configuration');
 			add_settings_field('rl_nv_error_message', __('Error message', 'responsive-lightbox'), array(&$this, 'rl_nv_error_message'), 'responsive_lightbox_configuration', 'responsive_lightbox_configuration');
 		}
@@ -644,6 +652,46 @@ class Responsive_Lightbox
 
 		echo '
 			<p class="description">'.__('Add lightbox to WordPress image galleries by default.', 'responsive-lightbox').'</p>
+		</div>';
+	}
+	
+	
+	public function rl_enable_gallery_image_size()
+	{
+		echo '
+		<div id="rl_enable_gallery_image_size" class="wplikebtns">';
+
+		foreach($this->choices as $val => $trans)
+		{
+			$val = esc_attr($val);
+
+			echo '
+			<input id="rl-enable-gallery-image-size-'.$val.'" type="radio" name="responsive_lightbox_settings[enable_gallery_image_size]" value="'.$val.'" '.checked(($val === 'yes' ? true : false), $this->options['settings']['enable_gallery_image_size'], false).' />
+			<label for="rl-enable-gallery-image-size-'.$val.'">'.esc_html($trans).'</label>';
+		}
+		
+		echo '
+			<p class="description">'.__('By default WP gallery links point to full size images only. Enable that to modify the image size of native WP gallery image links.', 'responsive-lightbox').'</p>';
+		
+		// get available image sizes
+		$image_sizes = get_intermediate_image_sizes();
+		
+		// print_r($image_sizes);
+		
+		echo '
+			<div id="rl_gallery_image_size"'.($this->options['settings']['enable_gallery_image_size'] === false ? ' style="display: none;"' : '').'>
+				<select name="responsive_lightbox_settings[gallery_image_size]" value="'.esc_attr($this->options['settings']['gallery_image_size']).'" />
+					<option value="full" '.selected($this->options['settings']['gallery_image_size'], 'full', false).'>'.esc_attr(__('full', 'responsive-lightbox')).'</option>';
+			
+		foreach ($image_sizes as $image_size)
+		{
+			echo 	'<option value="'.esc_attr($image_size).'" '.selected($this->options['settings']['gallery_image_size'], esc_attr($image_size), false).'>'.esc_attr($image_size).'</option>';
+		}
+		
+		echo '
+				</select>
+				<p class="description">'.__('Select image size for gallery image links.', 'responsive-lightbox').'</p>
+			</div>
 		</div>';
 	}
 
@@ -1522,11 +1570,29 @@ class Responsive_Lightbox
 	}
 
 
+	public function rl_nv_click_overlay_to_close()
+	{
+		echo '
+		<div id="rl_nv_click_overlay_to_close" class="wplikebtns">';
+
+		foreach($this->choices as $val => $trans)
+		{
+			echo '
+			<input id="rl-nv-click-overlay-to-close-'.$val.'" type="radio" name="responsive_lightbox_configuration[nivo][click_overlay_to_close]" value="'.esc_attr($val).'" '.checked(($val === 'yes' ? TRUE : FALSE), $this->options['configuration']['nivo']['click_overlay_to_close'], FALSE).' />
+			<label for="rl-nv-click-overlay-to-close-'.$val.'">'.$trans.'</label>';
+		}
+
+		echo '
+			<p class="description">'.__('Eneble to close lightbox on overlay click.', 'responsive-lightbox').'</p>
+		</div>';
+	}
+
+
 	public function rl_nv_error_message()
 	{
 		echo '
 		<div id="rl_nv_error_message">
-			<input type="text" value="'.esc_attr($this->options['configuration']['nivo']['error_message']).'" name="responsive_lightbox_configuration[nivo][error_message]" />
+			<input type="text" class="large-text" value="'.esc_attr($this->options['configuration']['nivo']['error_message']).'" name="responsive_lightbox_configuration[nivo][error_message]" />
 			<p class="description">'.__('Error message if the content cannot be loaded.', 'responsive-lightbox').'</p>
 		</div>';
 	}
@@ -1655,6 +1721,15 @@ class Responsive_Lightbox
 			if($input['enable_custom_events'] === true)
 			{
 				$input['custom_events'] = sanitize_text_field(isset($input['custom_events']) && $input['custom_events'] !== '' ? $input['custom_events'] : $this->defaults['settings']['custom_events']);
+			}
+			
+			// enable gallery image size
+			$input['enable_gallery_image_size'] = (isset($input['enable_gallery_image_size'], $this->choices[$input['enable_gallery_image_size']]) ? ($input['enable_gallery_image_size'] === 'yes' ? true : false) : $this->defaults['settings']['enable_gallery_image_size']);
+
+			// gallery image size
+			if($input['enable_gallery_image_size'] === true)
+			{
+				$input['gallery_image_size'] = esc_attr(isset($input['gallery_image_size']) && $input['gallery_image_size'] !== '' ? $input['gallery_image_size'] : $this->defaults['settings']['gallery_image_size']);
 			}
 
 			// checkboxes
@@ -1829,6 +1904,9 @@ class Responsive_Lightbox
 				//keyboard navigation
 				$input['nivo']['keyboard_nav'] = (isset($input['nivo']['keyboard_nav']) && in_array($input['nivo']['keyboard_nav'], array_keys($this->choices)) ? ($input['nivo']['keyboard_nav'] === 'yes' ? TRUE : FALSE) : $this->defaults['configuration']['nivo']['keyboard_nav']);
 
+				// keyboard navigation
+				$input['nivo']['click_overlay_to_close'] = (isset($input['nivo']['click_overlay_to_close']) && in_array($input['nivo']['click_overlay_to_close'], array_keys($this->choices)) ? ($input['nivo']['click_overlay_to_close'] === 'yes' ? true : false) : $this->defaults['configuration']['nivo']['click_overlay_to_close']);
+
 				//error message
 				$input['nivo']['error_message'] = sanitize_text_field($input['nivo']['error_message']);
 			}
@@ -1949,7 +2027,13 @@ class Responsive_Lightbox
 						<p class="inner"><a href="http://wordpress.org/support/view/plugin-reviews/responsive-lightbox" target="_blank" title="'.__('Rate it 5', 'responsive-lightbox').'">'.__('Rate it 5', 'responsive-lightbox').'</a> '.__('on WordPress.org', 'responsive-lightbox').'<br />'.
 						__('Blog about it & link to the', 'responsive-lightbox').' <a href="http://www.dfactory.eu/plugins/responsive-lightbox/?utm_source=responsive-lightbox-settings&utm_medium=link&utm_campaign=blog-about" target="_blank" title="'.__('plugin page', 'responsive-lightbox').'">'.__('plugin page', 'responsive-lightbox').'</a><br />'.
 						__('Check out our other', 'responsive-lightbox').' <a href="http://www.dfactory.eu/?utm_source=responsive-lightbox-settings&utm_medium=link&utm_campaign=other-plugins" target="_blank" title="'.__('WordPress plugins', 'responsive-lightbox').'">'.__('WordPress plugins', 'responsive-lightbox').'</a>
-						</p>            
+						</p>
+						<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank" class="inner">
+							<input type="hidden" name="cmd" value="_s-xclick">
+							<input type="hidden" name="hosted_button_id" value="8AL8ULUN9R76U">
+							<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+							<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+						</form>
 						<hr />
 						<p class="df-link inner">Created by <a href="http://www.dfactory.eu/?utm_source=responsive-lightbox-settings&utm_medium=link&utm_campaign=created-by" target="_blank" title="dFactory - Quality plugins for WordPress"><img src="'.plugins_url('/images/logo-dfactory.png' , __FILE__ ).'" title="dFactory - Quality plugins for WordPress" alt="dFactory - Quality plugins for WordPress" /></a></p>
 					</div>
@@ -2027,7 +2111,7 @@ class Responsive_Lightbox
 			'script' => $this->options['settings']['script'],
 			'selector' => $this->options['settings']['selector'],
 			'custom_events' => ($this->options['settings']['enable_custom_events'] === TRUE ? ' '.$this->options['settings']['custom_events'] : ''),
-			'activeGalleries' => $this->getBooleanValue($this->options['settings']['galleries'])
+			'activeGalleries' => $this->get_boolean_value($this->options['settings']['galleries'])
 		));
 
 		if($args['script'] === 'prettyphoto')
@@ -2053,26 +2137,26 @@ class Responsive_Lightbox
 				$args,
 				array(
 					'animationSpeed' => $this->options['configuration']['prettyphoto']['animation_speed'],
-					'slideshow' => $this->getBooleanValue($this->options['configuration']['prettyphoto']['slideshow']),
+					'slideshow' => $this->get_boolean_value($this->options['configuration']['prettyphoto']['slideshow']),
 					'slideshowDelay' => $this->options['configuration']['prettyphoto']['slideshow_delay'],
-					'slideshowAutoplay' => $this->getBooleanValue($this->options['configuration']['prettyphoto']['slideshow_autoplay']),
+					'slideshowAutoplay' => $this->get_boolean_value($this->options['configuration']['prettyphoto']['slideshow_autoplay']),
 					'opacity' => sprintf('%.2f', ($this->options['configuration']['prettyphoto']['opacity'] / 100)),
-					'showTitle' => $this->getBooleanValue($this->options['configuration']['prettyphoto']['show_title']),
-					'allowResize' => $this->getBooleanValue($this->options['configuration']['prettyphoto']['allow_resize']),
-					'allowExpand' => $this->getBooleanValue($this->options['configuration']['prettyphoto']['allow_expand']),
+					'showTitle' => $this->get_boolean_value($this->options['configuration']['prettyphoto']['show_title']),
+					'allowResize' => $this->get_boolean_value($this->options['configuration']['prettyphoto']['allow_resize']),
+					'allowExpand' => $this->get_boolean_value($this->options['configuration']['prettyphoto']['allow_expand']),
 					'width' => $this->options['configuration']['prettyphoto']['width'],
 					'height' => $this->options['configuration']['prettyphoto']['height'],
 					'separator' => $this->options['configuration']['prettyphoto']['separator'],
 					'theme' => $this->options['configuration']['prettyphoto']['theme'],
 					'horizontalPadding' => $this->options['configuration']['prettyphoto']['horizontal_padding'],
-					'hideFlash' => $this->getBooleanValue($this->options['configuration']['prettyphoto']['hide_flash']),
+					'hideFlash' => $this->get_boolean_value($this->options['configuration']['prettyphoto']['hide_flash']),
 					'wmode' => $this->options['configuration']['prettyphoto']['wmode'],
-					'videoAutoplay' => $this->getBooleanValue($this->options['configuration']['prettyphoto']['video_autoplay']),
-					'modal' => $this->getBooleanValue($this->options['configuration']['prettyphoto']['modal']),
-					'deeplinking' => $this->getBooleanValue($this->options['configuration']['prettyphoto']['deeplinking']),
-					'overlayGallery' => $this->getBooleanValue($this->options['configuration']['prettyphoto']['overlay_gallery']),
-					'keyboardShortcuts' => $this->getBooleanValue($this->options['configuration']['prettyphoto']['keyboard_shortcuts']),
-					'social' => $this->getBooleanValue($this->options['configuration']['prettyphoto']['social'])
+					'videoAutoplay' => $this->get_boolean_value($this->options['configuration']['prettyphoto']['video_autoplay']),
+					'modal' => $this->get_boolean_value($this->options['configuration']['prettyphoto']['modal']),
+					'deeplinking' => $this->get_boolean_value($this->options['configuration']['prettyphoto']['deeplinking']),
+					'overlayGallery' => $this->get_boolean_value($this->options['configuration']['prettyphoto']['overlay_gallery']),
+					'keyboardShortcuts' => $this->get_boolean_value($this->options['configuration']['prettyphoto']['keyboard_shortcuts']),
+					'social' => $this->get_boolean_value($this->options['configuration']['prettyphoto']['social'])
 				)
 			);
 		}
@@ -2098,8 +2182,8 @@ class Responsive_Lightbox
 			$args = array_merge(
 				$args,
 				array(
-					'animation' => $this->getBooleanValue(($this->options['configuration']['swipebox']['animation'] === 'css' ? TRUE : FALSE)),
-					'hideBars' => $this->getBooleanValue($this->options['configuration']['swipebox']['hide_bars']),
+					'animation' => $this->get_boolean_value(($this->options['configuration']['swipebox']['animation'] === 'css' ? TRUE : FALSE)),
+					'hideBars' => $this->get_boolean_value($this->options['configuration']['swipebox']['hide_bars']),
 					'hideBarsDelay' => $this->options['configuration']['swipebox']['hide_bars_delay'],
 					'videoMaxWidth' => $this->options['configuration']['swipebox']['video_max_width']
 				)
@@ -2135,21 +2219,21 @@ class Responsive_Lightbox
 			$args = array_merge(
 				$args,
 				array(
-					'modal' => $this->getBooleanValue($this->options['configuration']['fancybox']['modal']),
-					'showOverlay' => $this->getBooleanValue($this->options['configuration']['fancybox']['show_overlay']),
-					'showCloseButton' => $this->getBooleanValue($this->options['configuration']['fancybox']['show_close_button']),
-					'enableEscapeButton' => $this->getBooleanValue($this->options['configuration']['fancybox']['enable_escape_button']),
-					'hideOnOverlayClick' => $this->getBooleanValue($this->options['configuration']['fancybox']['hide_on_overlay_click']),
-					'hideOnContentClick' => $this->getBooleanValue($this->options['configuration']['fancybox']['hide_on_content_click']),
-					'cyclic' => $this->getBooleanValue($this->options['configuration']['fancybox']['cyclic']),
-					'showNavArrows' => $this->getBooleanValue($this->options['configuration']['fancybox']['show_nav_arrows']),
-					'autoScale' => $this->getBooleanValue($this->options['configuration']['fancybox']['auto_scale']),
+					'modal' => $this->get_boolean_value($this->options['configuration']['fancybox']['modal']),
+					'showOverlay' => $this->get_boolean_value($this->options['configuration']['fancybox']['show_overlay']),
+					'showCloseButton' => $this->get_boolean_value($this->options['configuration']['fancybox']['show_close_button']),
+					'enableEscapeButton' => $this->get_boolean_value($this->options['configuration']['fancybox']['enable_escape_button']),
+					'hideOnOverlayClick' => $this->get_boolean_value($this->options['configuration']['fancybox']['hide_on_overlay_click']),
+					'hideOnContentClick' => $this->get_boolean_value($this->options['configuration']['fancybox']['hide_on_content_click']),
+					'cyclic' => $this->get_boolean_value($this->options['configuration']['fancybox']['cyclic']),
+					'showNavArrows' => $this->get_boolean_value($this->options['configuration']['fancybox']['show_nav_arrows']),
+					'autoScale' => $this->get_boolean_value($this->options['configuration']['fancybox']['auto_scale']),
 					'scrolling' => $this->options['configuration']['fancybox']['scrolling'],
-					'centerOnScroll' => $this->getBooleanValue($this->options['configuration']['fancybox']['center_on_scroll']),
-					'opacity' => $this->getBooleanValue($this->options['configuration']['fancybox']['opacity']),
+					'centerOnScroll' => $this->get_boolean_value($this->options['configuration']['fancybox']['center_on_scroll']),
+					'opacity' => $this->get_boolean_value($this->options['configuration']['fancybox']['opacity']),
 					'overlayOpacity' => $this->options['configuration']['fancybox']['overlay_opacity'],
 					'overlayColor' => $this->options['configuration']['fancybox']['overlay_color'],
-					'titleShow' => $this->getBooleanValue($this->options['configuration']['fancybox']['title_show']),
+					'titleShow' => $this->get_boolean_value($this->options['configuration']['fancybox']['title_show']),
 					'titlePosition' => $this->options['configuration']['fancybox']['title_position'],
 					'transitions' => $this->options['configuration']['fancybox']['transitions'],
 					'easings' => $this->options['configuration']['fancybox']['easings'],
@@ -2167,7 +2251,7 @@ class Responsive_Lightbox
 		{
 			wp_register_script(
 				'responsive-lightbox-nivo',
-				plugins_url('assets/nivo/nivo-lightbox.js', __FILE__),
+				plugins_url('assets/nivo/nivo-lightbox.min.js', __FILE__),
 				array('jquery'),
 				'',
 				($this->options['settings']['loading_place'] === 'header' ? false : true)
@@ -2193,7 +2277,8 @@ class Responsive_Lightbox
 				$args,
 				array(
 					'effect' => $this->options['configuration']['nivo']['effect'],
-					'keyboardNav' => $this->getBooleanValue($this->options['configuration']['nivo']['keyboard_nav']),
+					'clickOverlayToClose' => $this->get_boolean_value($this->options['configuration']['nivo']['click_overlay_to_close']),
+					'keyboardNav' => $this->get_boolean_value($this->options['configuration']['nivo']['keyboard_nav']),
 					'errorMessage' => esc_attr($this->options['configuration']['nivo']['error_message'])
 				)
 			);
@@ -2221,11 +2306,11 @@ class Responsive_Lightbox
 				$args,
 				array(
 					'animationSpeed' => $this->options['configuration']['imagelightbox']['animation_speed'],
-					'preloadNext' => $this->getBooleanValue($this->options['configuration']['imagelightbox']['preload_next']),
-					'enableKeyboard' => $this->getBooleanValue($this->options['configuration']['imagelightbox']['enable_keyboard']),
-					'quitOnEnd' => $this->getBooleanValue($this->options['configuration']['imagelightbox']['quit_on_end']),
-					'quitOnImageClick' => $this->getBooleanValue($this->options['configuration']['imagelightbox']['quit_on_image_click']),
-					'quitOnDocumentClick' => $this->getBooleanValue($this->options['configuration']['imagelightbox']['quit_on_document_click']),
+					'preloadNext' => $this->get_boolean_value($this->options['configuration']['imagelightbox']['preload_next']),
+					'enableKeyboard' => $this->get_boolean_value($this->options['configuration']['imagelightbox']['enable_keyboard']),
+					'quitOnEnd' => $this->get_boolean_value($this->options['configuration']['imagelightbox']['quit_on_end']),
+					'quitOnImageClick' => $this->get_boolean_value($this->options['configuration']['imagelightbox']['quit_on_image_click']),
+					'quitOnDocumentClick' => $this->get_boolean_value($this->options['configuration']['imagelightbox']['quit_on_document_click']),
 				)
 			);
 		}
@@ -2256,7 +2341,7 @@ class Responsive_Lightbox
 	/**
 	 * 
 	*/
-	private function getBooleanValue($option)
+	private function get_boolean_value($option)
 	{
 		return ($option === TRUE ? 1 : 0);
 	}
@@ -2296,7 +2381,7 @@ class Responsive_Lightbox
 	/**
 	 * Add links to Settings page
 	*/
-	function plugin_settings_link($links, $file) 
+	public function plugin_settings_link($links, $file) 
 	{
 		if(!is_admin() || !current_user_can('manage_options'))
 			return $links;
@@ -2313,6 +2398,22 @@ class Responsive_Lightbox
 
 		return $links;
 	}
+
+
+	/**
+	 * Modify gallery image link size
+	*/
+	public function gallery_attachment_link_filter($content, $post_id, $size, $permalink, $icon, $text)
+	{
+	    if ($permalink) {
+	        $image = wp_get_attachment_image_src($post_id, $this->options['settings']['gallery_image_size']); // or other image size
+	        $new_content = preg_replace('/href=\'(.*?)\'/', 'href=\'' . $image[0] . '\'', $content);
+	        return $new_content;
+	    } else {
+	        return $content;
+	    }
+	}
+
 }
 
 $responsive_lightbox = new Responsive_Lightbox();

@@ -52,9 +52,13 @@ if ( !function_exists( 'aioseop_update_settings_check' ) ) {
 				unset( $aioseop_options['aiosp_archive_noindex'] );
 				$update_options = true;
 			}
-			if ( !empty( $aioseop_options['archive_title_format'] ) && empty( $aioseop_options['date_title_format'] ) ) {
-				$aioseop_options['date_title_format'] = $aioseop_options['archive_title_format'];
-				unset( $aioseop_options['archive_title_format'] );
+			if ( !empty( $aioseop_options['aiosp_archive_title_format'] ) && empty( $aioseop_options['aiosp_date_title_format'] ) ) {
+				$aioseop_options['aiosp_date_title_format'] = $aioseop_options['archive_title_format'];
+				unset( $aioseop_options['aiosp_archive_title_format'] );
+				$update_options = true;
+			}
+			if ( !empty( $aioseop_options['aiosp_archive_title_format'] ) && ( $aioseop_options['aiosp_archive_title_format'] == '%date% | %blog_title%' ) ) {
+				$aioseop_options['aiosp_archive_title_format'] = '%archive_title% | %blog_title%';
 				$update_options = true;
 			}
 			if ( $update_options )
@@ -262,7 +266,7 @@ if ( !function_exists( 'aioseop_ajax_save_url' ) ) {
 		$_POST = $module->get_current_options( $_POST, null );
 		$module->handle_settings_updates( null );
 		$options = $module->get_current_options( Array(), null );
-		$output .= $module->display_custom_options( '', Array( 'name' => 'aiosp_sitemap_addl_pages', 'type' => 'custom', 'save' => true, 'value' => $options['aiosp_sitemap_addl_pages'], 'attr' => '' ) );
+		$output = $module->display_custom_options( '', Array( 'name' => 'aiosp_sitemap_addl_pages', 'type' => 'custom', 'save' => true, 'value' => $options['aiosp_sitemap_addl_pages'], 'attr' => '' ) );
 		$output = str_replace( "'", "\'", $output );
 		$output = str_replace( "\n", '\n', $output );
 		die( sprintf( AIOSEOP_AJAX_MSG_TMPL, $output ) );
@@ -602,8 +606,11 @@ if ( !function_exists( 'aioseop_add_contactmethods' ) ) {
 			$contactmethods['googleplus'] = __( 'Google+', 'all_in_one_seo_pack' );
 		if ( !empty( $aioseop_modules ) && is_object( $aioseop_modules ) ) {
 			$m = $aioseop_modules->return_module( 'All_in_One_SEO_Pack_Opengraph' );
-			if ( ( $m !== false ) && is_object( $m ) && $m->option_isset( 'twitter_creator' ) ) {
-				$contactmethods['twitter'] = __( 'Twitter', 'all_in_one_seo_pack' );
+			if ( ( $m !== false ) && is_object( $m ) ) {
+				if ( $m->option_isset( 'twitter_creator' ) )
+					$contactmethods['twitter'] = __( 'Twitter', 'all_in_one_seo_pack' );
+				if ( $m->option_isset( 'facebook_author' ) )
+					$contactmethods['facebook'] = __( 'Facebook', 'all_in_one_seo_pack' );
 			}
 		}
 		return $contactmethods;

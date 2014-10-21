@@ -54,12 +54,13 @@ class UpdraftPlus_Options {
 		register_setting('updraft-options-group', 'updraft_encryptionphrase');
 		register_setting('updraft-options-group', 'updraft_service', array($updraftplus, 'just_one'));
 
-		register_setting('updraft-options-group', 'updraft_s3');
+		register_setting('updraft-options-group', 'updraft_s3', array($updraftplus, 's3_sanitise'));
 		register_setting('updraft-options-group', 'updraft_ftp', array($updraftplus, 'ftp_sanitise'));
 		register_setting('updraft-options-group', 'updraft_dreamobjects');
 		register_setting('updraft-options-group', 'updraft_s3generic');
 		register_setting('updraft-options-group', 'updraft_cloudfiles');
 		register_setting('updraft-options-group', 'updraft_bitcasa', array($updraftplus, 'bitcasa_checkchange'));
+		register_setting('updraft-options-group', 'updraft_copycom', array($updraftplus, 'copycom_checkchange'));
 		register_setting('updraft-options-group', 'updraft_openstack');
 		register_setting('updraft-options-group', 'updraft_dropbox', array($updraftplus, 'dropbox_checkchange'));
 		register_setting('updraft-options-group', 'updraft_googledrive', array($updraftplus, 'googledrive_checkchange'));

@@ -41,9 +41,13 @@ function qtrans_init() {
 		delete_option('mqtranslate_url_mode');
 		delete_option('mqtranslate_detect_browser_language');
 		delete_option('mqtranslate_hide_untranslated');
+		delete_option('mqtranslate_show_displayed_language_prefix');
 		delete_option('mqtranslate_auto_update_mo');
 		delete_option('mqtranslate_next_update_mo');
 		delete_option('mqtranslate_hide_default_language');
+		delete_option('mqtranslate_ul_lang_protection');
+		delete_option('mqtranslate_allowed_custom_post_types');
+		delete_option('mqtranslate_disable_header_css');
 		if(isset($_POST['mqtranslate_reset3'])) {
 			delete_option('mqtranslate_term_name');
 		}
@@ -143,6 +147,10 @@ function qtrans_init() {
 			add_filter('option_'.$option, 'qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage',0);
 		}
 	}
+	
+	// Disable CSS in head if applying
+	if ($q_config['disable_header_css'])
+		add_filter('mqtranslate_header_css', create_function('$a', "return '';"));
 	
 	// load plugin translations
 	load_plugin_textdomain('mqtranslate', false, dirname(plugin_basename( __FILE__ )).'/lang');
@@ -266,6 +274,7 @@ function qtrans_loadConfig() {
 	$term_name = get_option('mqtranslate_term_name');
 	$hide_default_language = get_option('mqtranslate_hide_default_language');
 	$allowed_custom_post_types = get_option('mqtranslate_allowed_custom_post_types');
+	$disable_header_css = get_option('mqtranslate_disable_header_css');
 	
 	// default if not set
 	if(!is_array($date_formats)) $date_formats = $q_config['date_format'];
@@ -295,6 +304,7 @@ function qtrans_loadConfig() {
 	$show_displayed_language_prefix = qtrans_validateBool($show_displayed_language_prefix, $q_config['show_displayed_language_prefix']);
 	$auto_update_mo = qtrans_validateBool($auto_update_mo, $q_config['auto_update_mo']);
 	$hide_default_language = qtrans_validateBool($hide_default_language, $q_config['hide_default_language']);
+	$disable_header_css = qtrans_validateBool($disable_header_css, $q_config['disable_header_css']);
 	
 	// url fix for upgrading users
 	$flag_location = trailingslashit(preg_replace('#^wp-content/#','',$flag_location));
@@ -323,6 +333,7 @@ function qtrans_loadConfig() {
 	$q_config['show_displayed_language_prefix'] = $show_displayed_language_prefix;
 	$q_config['term_name'] = $term_name;
 	$q_config['allowed_custom_post_types'] = $allowed_custom_post_types;
+	$q_config['disable_header_css'] = $disable_header_css;
 	
 	do_action('mqtranslate_loadConfig');
 }
@@ -367,6 +378,7 @@ function qtrans_saveConfig() {
 		update_option('mqtranslate_hide_default_language', '0');
 	
 	update_option('mqtranslate_allowed_custom_post_types', implode(',', $q_config['allowed_custom_post_types']));
+	update_option('mqtranslate_disable_header_css', $q_config['disable_header_css'] ? '1' : '0');
 		
 	do_action('mqtranslate_saveConfig');
 }
@@ -729,63 +741,61 @@ function qtrans_split($text, $quicktags = true, array &$languageMap = NULL) {
 	$split_regex = "#(<!--[^-]*-->|\[:[a-z]{2}\])#ism";
 	$current_language = "";
 	$result = array();
-	foreach($q_config['enabled_languages'] as $language) {
+	foreach($q_config['enabled_languages'] as $language)
 		$result[$language] = "";
-	}
 	
 	// split text at all xml comments
 	$blocks = preg_split($split_regex, $text, -1, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
-	foreach($blocks as $block) {
+	foreach ($blocks as $block) {
 		# detect language tags
-		if(preg_match("#^<!--:([a-z]{2})-->$#ism", $block, $matches)) {
-			if(qtrans_isEnabled($matches[1])) {
+		if (preg_match("#^<!--:([a-z]{2})-->$#ismS", $block, $matches)) {
+			if (qtrans_isEnabled($matches[1])) {
 				$current_language = $matches[1];
 				$languageMap[$current_language] = false;
-			} else {
+			} else
 				$current_language = "invalid";
-			}
 			continue;
 		// detect quicktags
-		} elseif($quicktags && preg_match("#^\[:([a-z]{2})\]$#ism", $block, $matches)) {
-			if(qtrans_isEnabled($matches[1])) {
+		} elseif ($quicktags && preg_match("#^\[:([a-z]{2})\]$#ismS", $block, $matches)) {
+			if (qtrans_isEnabled($matches[1])) {
 				$current_language = $matches[1];
 				$languageMap[$current_language] = true;
-			} else {
-				$current_language = "invalid";
 			}
+			else
+				$current_language = "invalid";
 			continue;
 		// detect ending tags
-		} elseif(preg_match("#^<!--:-->$#ism", $block, $matches)) {
+		} elseif ($block == '<!--:-->') {
 			$current_language = "";
 			continue;
 		// detect defective more tag
-		} elseif(preg_match("#^<!--more-->$#ism", $block, $matches)) {
-			foreach($q_config['enabled_languages'] as $language) {
+		} elseif ($block == '<!--more-->') {
+			foreach ($q_config['enabled_languages'] as $language)
 				$result[$language] .= $block;
-			}
 			continue;
 		}
+		
 		// correctly categorize text block
-		if($current_language == "") {
+		if ($current_language == "") {
 			// general block, add to all languages
-			foreach($q_config['enabled_languages'] as $language) {
+			foreach ($q_config['enabled_languages'] as $language)
 				$result[$language] .= $block;
-			}
 		} elseif($current_language != "invalid") {
 			// specific block, only add to active language
 			$result[$current_language] .= $block;
 		}
 	}
-	foreach($result as $lang => $lang_content) {
-		$result[$lang] = preg_replace("#(<!--more-->|<!--nextpage-->)+$#ism","",$lang_content);
-	}
+	
+	foreach ($result as $lang => $lang_content)
+		$result[$lang] = preg_replace("#(<!--more-->|<!--nextpage-->)+$#ismS","",$lang_content);
+	
 	return $result;
 }
 
 function qtrans_join($texts, array $tagTypeMap = array()) {
 	global $q_config;
 	if(!is_array($texts)) $texts = qtrans_split($texts, false);
-	$split_regex = "#<!--more-->#ism";
+	$split_regex = "#<!--more-->#ismS";
 	$max = 0;
 	$text = "";
 	
@@ -840,54 +850,58 @@ function qtrans_enableLanguage($lang) {
 
 function qtrans_use($lang, $text, $show_available=false) {
 	global $q_config;
+	
 	// return full string if language is not enabled
-	if(!qtrans_isEnabled($lang)) return $text;
-	if(is_array($text)) {
+	if (!qtrans_isEnabled($lang) || (is_string($text) && !preg_match('/(<!--:[a-z]{2}-->|\[:[a-z]{2}\])/', $text))) 
+		return $text;
+	
+	if (is_array($text)) {
 		// handle arrays recursively
-		foreach($text as $key => $t) {
-			$text[$key] = qtrans_use($lang,$text[$key],$show_available);
-		}
+		foreach ($text as &$t)
+			$t = qtrans_use($lang, $t, $show_available);
 		return $text;
 	}
 	
-	if(is_object($text)||@get_class($text) == '__PHP_Incomplete_Class') {
-		foreach(get_object_vars($text) as $key => $t) {
-			$text->$key = qtrans_use($lang,$text->$key,$show_available);
-		}
+	if (is_object($text) || $text instanceof __PHP_Incomplete_Class) {
+		foreach ($text as &$t)
+			$t = qtrans_use($lang, $t, $show_available);
 		return $text;
 	}
 	
 	// prevent filtering weird data types and save some resources
-	if(!is_string($text) || $text == '') {
+	if (!is_string($text) || $text == '')
 		return $text;
-	}
 	
 	// get content
 	$content = qtrans_split($text);
 	// find available languages
 	$available_languages = array();
-	foreach($content as $language => $lang_text) {
+	foreach ($content as $language => &$lang_text) {
 		$lang_text = trim($lang_text);
-		if(!empty($lang_text)) $available_languages[] = $language;
+		if (!empty($lang_text))
+			$available_languages[] = $language;
 	}
+	unset($lang_text);
 	
 	// if no languages available show full text
-	if(sizeof($available_languages)==0) return $text;
+	if (empty($available_languages))
+		return $text;
+	
 	// if content is available show the content in the requested language
-	if(!empty($content[$lang])) {
+	if (!empty($content[$lang]))
 		return $content[$lang];
-	}
+	
 	// content not available in requested language (bad!!) what now?
-	if(!$show_available){
+	if (!$show_available) { 
 		// check if content is available in default language, if not return first language found. (prevent empty result)
-		if($lang!=$q_config['default_language']) {
-			$str = qtrans_use($q_config['default_language'], $text, $show_available);
+		if ($lang != $q_config['default_language'] && !empty($content[$q_config['default_language']])) {
+			$str = $content[$q_config['default_language']];
 			if ($q_config['show_displayed_language_prefix'])
 				$str = "(".$q_config['language_name'][$q_config['default_language']].") " . $str;
 			return $str;
 		}
-		foreach($content as $language => $lang_text) {
-			$lang_text = trim($lang_text);
+		
+		foreach ($content as $language => $lang_text) {
 			if (!empty($lang_text)) {
 				$str = $lang_text;
 				if ($q_config['show_displayed_language_prefix'])
@@ -896,22 +910,23 @@ function qtrans_use($lang, $text, $show_available=false) {
 			}
 		}
 	}
+	
 	// display selection for available languages
 	$available_languages = array_unique($available_languages);
 	$language_list = "";
-	if(preg_match('/%LANG:([^:]*):([^%]*)%/',$q_config['not_available'][$lang],$match)) {
+	if (preg_match('/%LANG:([^:]*):([^%]*)%/S', $q_config['not_available'][$lang], $match)) {
 		$normal_seperator = $match[1];
 		$end_seperator = $match[2];
 		// build available languages string backward
-		$i = 0;
-		foreach($available_languages as $language) {
-			if($i==1) $language_list  = $end_seperator.$language_list;
-			if($i>1) $language_list  = $normal_seperator.$language_list;
+		foreach ($available_languages as $k => $language) {
+			if ($k == 1)
+				$language_list = $end_seperator.$language_list;
+			else if ($k > 1)
+				$language_list = $normal_seperator.$language_list;
 			$language_list = "<a href=\"".qtrans_convertURL('', $language)."\">".$q_config['language_name'][$language]."</a>".$language_list;
-			$i++;
 		}
 	}
-	return "<p>".preg_replace('/%LANG:([^:]*):([^%]*)%/', $language_list, $q_config['not_available'][$lang])."</p>";
+	return "<p>".preg_replace('/%LANG:([^:]*):([^%]*)%/S', $language_list, $q_config['not_available'][$lang])."</p>";
 }
 
 function qtrans_showAllSeperated($text) {

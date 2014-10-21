@@ -21,10 +21,10 @@ switch ($config_tabs[$current_tab-1]){
 			'is_tracking' => array( 'description' => __('Enable Tracking','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('Turn the tracker on or off, but keep the reports accessible.','wp-slimstat') ),
 			'track_admin_pages' => array( 'description' => __('Monitor Admin Pages','wp-slimstat'), 'type' => 'yesno', 'long_description' => __("Enable this option to track your users' activity within the admin.",'wp-slimstat') ),
 			'enable_javascript' => array('description' => __('Enable Spy Mode','wp-slimstat'), 'type' => 'yesno', 'long_description' => __("Collect information about screen resolutions, outbound links, downloads, etc. If Tracking Mode is set to Javascript, this data will be tracked regardless of which value you set for this option.",'wp-slimstat')),
-			'javascript_mode' => array( 'description' => __('Tracking Mode','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('Select <strong>Javascript</strong> if you are using a caching plugin (W3 Total Cache, WP SuperCache, HyperCache, etc). WP SlimStat will behave pretty much like Google Analytics, and visitors whose browser does not support Javascript will be ignored. A nice side effect is that <strong>most spammers, search engines and other crawlers</strong> will not be tracked.','wp-slimstat'), 'custom_label_yes' => __('Javascript','wp-slimstat'), 'custom_label_no' => __('Server-side','wp-slimstat') ),
+			'javascript_mode' => array( 'description' => __('Tracking Mode','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('Select <strong>Javascript</strong> if you are using a caching plugin (W3 Total Cache, WP SuperCache, HyperCache, etc). Slimstat will behave pretty much like Google Analytics, and visitors whose browser does not support Javascript will be ignored. A nice side effect is that <strong>most spammers, search engines and other crawlers</strong> will not be tracked.','wp-slimstat'), 'custom_label_yes' => __('Javascript','wp-slimstat'), 'custom_label_no' => __('Server-side','wp-slimstat') ),
 
 			'general_integration_header' => array('description' => __('WordPress Integration','wp-slimstat'), 'type' => 'section_header'),
-			'use_separate_menu' => array( 'description' => __('Menu Position','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('Choose between a standalone admin menu for WP SlimStat or a drop down in the admin bar (if visible).','wp-slimstat'), 'custom_label_yes' => __('Side Menu','wp-slimstat'), 'custom_label_no' => __('Admin Bar','wp-slimstat') ),
+			'use_separate_menu' => array( 'description' => __('Menu Position','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('Choose between a standalone admin menu for Slimstat or a drop down in the admin bar (if visible).','wp-slimstat'), 'custom_label_yes' => __('Side Menu','wp-slimstat'), 'custom_label_no' => __('Admin Bar','wp-slimstat') ),
 			'add_posts_column' => array( 'description' => __('Add Stats to Posts and Pages','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('Add a new column to the Edit Posts/Pages screens, with the number of hits per post.','wp-slimstat') ),
 
 			'general_database_header' => array('description' => __('Database','wp-slimstat'), 'type' => 'section_header'),
@@ -46,9 +46,11 @@ switch ($config_tabs[$current_tab-1]){
 			'views_basic_header' => array('description' => __('Data and Formats','wp-slimstat'), 'type' => 'section_header'),
 			'convert_ip_addresses' => array('description' => __('Convert IP Addresses','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('Display provider names instead of IP addresses.','wp-slimstat')),
 			'use_european_separators' => array('description' => __('Number Format','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('Choose the number format you want to use for your reports.','wp-slimstat'), 'custom_label_yes' => '1.234,56', 'custom_label_no' => '1,234.56'),
+			'enable_sov' => array('description' => __('Enable SOV','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('In linguistic typology, a subject-object-verb (SOV) language is one in which the subject, object, and verb of a sentence appear in that order, like in Japanese.','wp-slimstat')),
 			'show_display_name' => array('description' => __('Show Display Name','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('By default, users are listed by their usernames. Use this option to visualize their display names instead.','wp-slimstat')),
 			'show_complete_user_agent_tooltip' => array('description' => __('Show User Agent','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('Choose if you want to see the browser name or a complete user agent string when hovering on browser icons.','wp-slimstat')),
-			'convert_resource_urls_to_titles' => array('description' => __('Show Titles','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('WP SlimStat converts your permalinks into post and page titles. Disable this feature if you need to see the URL in your reports.','wp-slimstat')),
+			'convert_resource_urls_to_titles' => array('description' => __('Show Titles','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('Slimstat converts your permalinks into post and page titles. Disable this feature if you need to see the URL in your reports.','wp-slimstat')),
+			'date_time_format' => array('description' => __('Date and Time','wp-slimstat'), 'type' => 'text', 'long_description' => __('Format to use to display date and time of a pageview.','wp-slimstat')),
 			
 			'views_functionality_header' => array('description' => __('Functionality','wp-slimstat'), 'type' => 'section_header'),
 			'async_load' => array('description' => __('Asynchronous Views','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('Load all the reports dynamically. It makes the reports render faster, but it increases the load on your server.','wp-slimstat')),
@@ -57,7 +59,7 @@ switch ($config_tabs[$current_tab-1]){
 			'rows_to_show' => array('description' => __('Rows to Display','wp-slimstat'), 'type' => 'integer', 'long_description' => __('Specify the number of items in each report.','wp-slimstat')),
 			
 			'views_right_now_header' => array('description' => __('Activity Log','wp-slimstat'), 'type' => 'section_header'),
-			'refresh_interval' => array('description' => __('Live Stream','wp-slimstat'), 'type' => 'integer', 'long_description' => __('Enable the Live view, which refreshes the Activity Log every X seconds. Enter <strong>0</strong> (number zero) to disable this functionality.','wp-slimstat'), 'after_input_field' => __('seconds','wp-slimstat')),
+			'refresh_interval' => array('description' => __('Live Stream','wp-slimstat'), 'type' => 'integer', 'long_description' => __('Enable the Live view, which refreshes the Activity Log every X seconds. Enter <strong>0</strong> (number zero) to deactivate this feature.','wp-slimstat'), 'after_input_field' => __('seconds','wp-slimstat')),
 			'number_results_raw_data' => array('description' => __('Rows to Display','wp-slimstat'), 'type' => 'integer', 'long_description' => __('Specify the number of items in the Activity Log.','wp-slimstat')),
 			'include_outbound_links_right_now' => array('description' => __('Activity Log Extended','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('Choose if you want to see outbound links listed in the Activity Log. It might slow down the rendering of this report.','wp-slimstat'))
 		);
@@ -79,7 +81,7 @@ switch ($config_tabs[$current_tab-1]){
 			
 			'filters_miscellaneous_header' => array('description' => __('Miscellaneous','wp-slimstat'), 'type' => 'section_header'),
 			'anonymize_ip' => array('description' => __('Enable Privacy Mode','wp-slimstat'), 'type' => 'yesno', 'long_description' => __("Mask your visitors' IP addresses to comply with European Privacy Laws.",'wp-slimstat')),
-			'ignore_prefetch' => array('description' => __('Ignore Prefetch Requests','wp-slimstat'), 'type' => 'yesno', 'long_description' => __("Prevent WP SlimStat from tracking pageviews generated by Firefox's <a href='https://developer.mozilla.org/en/Link_prefetching_FAQ' target='_blank'>Link Prefetching functionality</a>.",'wp-slimstat'))
+			'ignore_prefetch' => array('description' => __('Ignore Prefetch Requests','wp-slimstat'), 'type' => 'yesno', 'long_description' => __("Prevent Slimstat from tracking pageviews generated by Firefox's <a href='https://developer.mozilla.org/en/Link_prefetching_FAQ' target='_blank'>Link Prefetching functionality</a>.",'wp-slimstat'))
 		);
 
 		// Some options need a special treatment
@@ -134,7 +136,7 @@ switch ($config_tabs[$current_tab-1]){
 			'can_view' => array('description' => __('Whitelist','wp-slimstat'), 'type' => 'textarea', 'long_description' => __("List all the users who should have access to the reports, separated by commas. Administrators are implicitly allowed, so you don't need to list them in here. Usernames are case sensitive.",'wp-slimstat'), 'skip_update' => true),
 			
 			'permissions_config_header' => array('description' => __('Settings','wp-slimstat'), 'type' => 'section_header'),
-			'capability_can_admin' => array('description' => __('Capability','wp-slimstat'), 'type' => 'text', 'long_description' => __("Specify the minimum <a href='http://codex.wordpress.org/Roles_and_Capabilities' target='_new'>capability</a> required to configure WP SlimStat (default: <code>activate_plugins</code>). The whitelist here below can be used to override this option for specific users.",'wp-slimstat')),
+			'capability_can_admin' => array('description' => __('Capability','wp-slimstat'), 'type' => 'text', 'long_description' => __("Specify the minimum <a href='http://codex.wordpress.org/Roles_and_Capabilities' target='_new'>capability</a> required to configure Slimstat (default: <code>activate_plugins</code>). The whitelist here below can be used to override this option for specific users.",'wp-slimstat')),
 			'can_admin' => array('description' => __('Whitelist','wp-slimstat'), 'type' => 'textarea', 'long_description' => __("List all the users who can edit these options, separated by commas. Please be advised that admins <strong>are not</strong> implicitly allowed, so do not forget to include yourself! Usernames are case sensitive.",'wp-slimstat'), 'skip_update' => true)
 		);
 
@@ -233,7 +235,7 @@ var SlimStatParams = {
 			'show_sql_debug' => array('description' => __('Debug Mode','wp-slimstat'), 'type' => 'yesno', 'long_description' => __('Display the SQL queries used to retrieve the data.','wp-slimstat')),
 			'ip_lookup_service' => array('description' => __('IP Lookup','wp-slimstat'), 'type' => 'text', 'long_description' => __('Customize the Geolocation service to be used in the reports.','wp-slimstat')),
 			'custom_css' => array('description' => __('Custom CSS','wp-slimstat'), 'type' => 'textarea', 'long_description' => __("Paste here your custom stylesheet to personalize the way your reports look. <a href='http://wordpress.org/plugins/wp-slimstat/faq/' target='_blank'>Check the FAQ</a> for more information on how to use this setting.",'wp-slimstat')),
-			'enable_ads_network' => array('description' => __('Enable UAN','wp-slimstat'), 'type' => 'yesno', 'long_description' => __("Send anonymous data about user agents to our server for analysis. This allows us to contribute to the <a href='http://browscap.org/' target='_blank'>BrowsCap opensource project</a>, and improve the accuracy of WP SlimStat's browser detection functionality. It also enables our transparent ads network. No worries, your site will not be affected in any way.",'wp-slimstat'))
+			'enable_ads_network' => array('description' => __('Enable UAN','wp-slimstat'), 'type' => 'yesno', 'long_description' => __("Send anonymous data about user agents to our server for analysis. This allows us to contribute to the <a href='http://browscap.org/' target='_blank'>BrowsCap opensource project</a>, and improve the accuracy of Slimstat's browser detection functionality. It also enables our transparent ads network. No worries, your site will not be affected in any way.",'wp-slimstat'))
 		);
 		break;
 	case __('Maintenance','wp-slimstat'):
@@ -243,8 +245,8 @@ var SlimStatParams = {
 		break;
 }
 
-if (has_filter('slimstat_options_on_page') && $config_tabs[$current_tab-1] == __('Add-ons','wp-slimstat')){
-	$options_on_this_page = apply_filters('slimstat_options_on_page', $options_on_this_page);
+if (has_filter('slimstat_options_on_page')){
+	$options_on_this_page = apply_filters('slimstat_options_on_page', $options_on_this_page, $current_tab);
 }
 
 if (isset($options_on_this_page)){

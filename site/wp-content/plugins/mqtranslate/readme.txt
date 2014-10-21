@@ -1,9 +1,9 @@
 === mqTranslate ===
-Contributors: chsxf
+Contributors: chsxf, michel.weimerskirch
 Tags: multilingual, language, admin, tinymce, bilingual, widget, switcher, i18n, l10n, multilanguage, professional, translation, service, human
 Requires at least: 3.9
-Tested up to: 4.0-alpha-20140629
-Stable tag: 2.6.3
+Tested up to: 4.0
+Stable tag: 2.7.1.1
 Donate Link: http://www.xhaleera.com/
 License: GPLv2
 
@@ -69,6 +69,54 @@ For Problems with mqTranslate-specific features, visits [our Support Page](http:
 3. qTranslate Services (Translation)
 
 == Changelog ==
+
+2.7.1.1:
+
+- Fixed syntax error with PHP versions < 5.3
+
+2.7.1:
+
+- Added option to remove inline CSS added in head
+- Imported original translations from qTranslate + improved German translation (thanks to michel.weimerskirch)
+- Fixed unwanted additional blank line at the top of the post when TinyMCE is the default editor (thanks to michel.weimerskirch)
+- Fixed untranslated texts
+
+2.7:
+
+- Support of WordPress 4.0 (except for the new auto-expand feature)
+- Fixed auto-expand conflicting with mqTranslate (thanks to michel.weimerskirch from the WordPress Support Forums)
+- Fixed regression with qtrans_parseURL()
+
+2.6.7:
+
+- Fixed inconsistently removed or preserved empty paragraphs
+
+2.6.6.3:
+
+- Reverted mqtranslate_xhaleera_addons.php to fix bugs introduced in 2.6.6 (removes support for custom post fields)
+
+2.6.6.2:
+
+- Fixed potential conflicting bugs with other plugins using post metadata
+
+2.6.6.1:
+
+- Fixed a blocking bug introduced in previous version (related to post metadata)
+
+2.6.6:
+
+- Added translation of custom post fields through the_meta() and get_post_meta() functions
+- Fixed a bug removing empty paragraphs on post update
+- Fixed a bug when displaying available languages for a post.
+
+2.6.5:
+
+- Fixed bugs introduced by previous version optimizations
+- Fixed missing editor toolbar when visual editor is disabled 
+
+2.6.4:
+
+- Optimized some key functions (about 10~15% faster page generation on our test setup) thanks to normadize suggestions on the forums
 
 2.6.3:
 

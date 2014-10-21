@@ -41,6 +41,34 @@ class Comment_Image {
 	protected static $instance = null;
 
 	/**
+	 * The maximum size of the file in bytes.
+	 *
+	 * @since    1.17.0
+	 * @access   private
+	 * @var      int
+	 */
+    private $limit_file_size;
+
+	/**
+	 * The maximum width for thumbnail images
+	 *
+	 * @since    1.18.0
+	 * @access   private
+	 * @var      int
+	 */
+    private $thumb_width;
+
+	/**
+	 * Whether or not the image needs to be approved before displaying
+	 * it to the user.
+	 *
+	 * @since    1.17.0
+	 * @access   private
+	 * @var      bool
+	 */
+    private $needs_to_approve;
+
+	/**
 	 * Return an instance of this class.
 	 *
 	 * @since     1.0.0
@@ -102,6 +130,15 @@ class Comment_Image {
 			// Setup the Project Completion metabox
 			add_action( 'add_meta_boxes', array( $this, 'add_comment_image_meta_box' ) );
 			add_action( 'save_post', array( $this, 'save_comment_image_display' ) );
+
+			// TODO make this value ajustable by site admin (on plugin settings page)
+            $this->limit_file_size = 5000000;  // 5MB
+
+            // TODO make this value ajustable by site admin (on plugin settings page)
+            // $this->thumb_width = 500;
+
+            // TODO make this value ajustable by site admin (on plugin settings page)
+            $this->needs_to_approve = FALSE;
 
 		// If not, display a notice.
 		} else {
@@ -321,6 +358,17 @@ class Comment_Image {
 		if( is_single() || is_page() ) {
 
 			wp_register_script( 'comment-images', plugins_url( '/comment-images/js/plugin.min.js' ), array( 'jquery' ) );
+
+            wp_localize_script(
+            	'comment-images',
+            	'cm_imgs',
+            	array(
+                	'fileTypeError' => __( '<strong>Heads up!</strong> You are attempting to upload an invalid image. If saved, this image will not display with your comment.', 'comment-images' ),
+					'fileSizeError' => __( '<strong>Heads up!</strong> You are attempting to upload an image that is too large. If saved, this image will not be uploaded.<br />The maximum file size is: ', 'comment-images' ),
+					'limitFileSize' => $this->limit_file_size
+				)
+			);
+
 			wp_enqueue_script( 'comment-images' );
 
 		} // end if
@@ -346,7 +394,19 @@ class Comment_Image {
 
 		$screen = get_current_screen();
 		if( 'post' === $screen->id || 'page' == $screen->id ) {
-			wp_enqueue_script( 'comment-images', plugins_url( '/comment-images/js/admin.min.js' ), array( 'jquery' ) );
+
+			wp_register_script( 'comment-images-admin', plugins_url( '/comment-images/js/admin.min.js' ), array( 'jquery' ) );
+
+            wp_localize_script(
+            	'comment-images-admin',
+            	'cm_imgs',
+            	array(
+                	'toggleConfirm' => __( 'By doing this, you will toggle Comment Images for all posts on your blog. Are you sure you want to do this?', 'comment-images' )
+				)
+			);
+
+			wp_enqueue_script( 'comment-images-admin' );
+
 		} // end if
 
 	} // end add_admin_scripts
@@ -359,17 +419,14 @@ class Comment_Image {
  	function add_image_upload_form( $post_id ) {
 
 	 	// Create the label and the input field for uploading an image
-	 	if ( 'enabled' == get_option( 'comment_image_toggle_state' ) || 'enable' == get_post_meta( $post_id, 'comment_images_toggle', true ) ) {
+	 	if ( 'disabled' != get_option( 'comment_image_toggle_state' ) && 'disable' != get_post_meta( $post_id, 'comment_images_toggle', true ) ) {
 
 		 	$html = '<div id="comment-image-wrapper">';
-			 	$html .= '<p id="comment-image-error">';
-			 		$html .= __( '<strong>Heads up!</strong> You are attempting to upload an invalid image. If saved, this image will not display with your comment.', 'comment-images' );
-			 	$html .= '</p>';
+			 	$html .= '<p id="comment-image-error"></p>';
 				 $html .= "<label for='comment_image_$post_id'>";
 				 	$html .= __( 'Select an image for your comment (GIF, PNG, JPG, JPEG):', 'comment-images' );
 				 $html .= "</label>";
 				 $html .= "<input type='file' name='comment_image_$post_id' id='comment_image' />";
-
 			 $html .= '</div><!-- #comment-image-wrapper -->';
 
 			 echo $html;
@@ -394,14 +451,26 @@ class Comment_Image {
 		// If the nonce is valid and the user uploaded an image, let's upload it to the server
 		if( isset( $_FILES[ $comment_image_id ] ) && ! empty( $_FILES[ $comment_image_id ] ) ) {
 
+            // disable save files larger than $limit_filesize
+            if ( $this->limit_file_size < $_FILES[ $comment_image_id ]['size'] ) {
+
+                echo __( "Error: Uploaded file is too large. <br/> Go back to: ", 'comment-images' );
+                echo '<a href="' . get_permalink( $post_id ) . '">' . get_the_title( $post_id ) . '</a>';
+                die;
+
+            }
+
 			// Store the parts of the file name into an array
 			$file_name_parts = explode( '.', $_FILES[ $comment_image_id ]['name'] );
 
+            // Get file ext.
+            $file_ext = $file_name_parts[ count( $file_name_parts ) - 1 ];
+
 			// If the file is valid, upload the image, and store the path in the comment meta
-			if( $this->is_valid_file_type( $file_name_parts[ count( $file_name_parts ) - 1 ] ) ) {;
+			if( $this->is_valid_file_type( $file_ext ) ) {
 
 				// Upload the comment image to the uploads directory
-				$comment_image_file = wp_upload_bits( $_FILES[ $comment_image_id ]['name'], null, file_get_contents( $_FILES[ $comment_image_id ]['tmp_name'] ) );
+				$comment_image_file = wp_upload_bits( $comment_id . '.' . $file_ext, null, file_get_contents( $_FILES[ $comment_image_id ]['tmp_name'] ) );
 
 				// Now, we need to actually create a post so that this shows up in the media uploader
 				$img_url = media_sideload_image( $comment_image_file['url'], $post_id );
@@ -412,12 +481,23 @@ class Comment_Image {
 				$comment_image_file['url'] = $matches[0][0];
 
 				// Set post meta about this image. Need the comment ID and need the path.
-				if( false == $comment_image_file['error'] ) {
+				if( FALSE === $comment_image_file['error'] ) {
 
 					// Since we've already added the key for this, we'll just update it with the file.
 					add_comment_meta( $comment_id, 'comment_image', $comment_image_file );
 
 				} // end if/else
+
+                // Send comment to approval if this option checked by admin
+                if ( TRUE === $this->needs_to_approve ) {
+
+                    $commentarr = array();
+                    $commentarr['comment_ID'] = $comment_id;
+                    $commentarr['comment_approved'] = 0;
+
+                    wp_update_comment( $commentarr );
+
+                }
 
 			} // end if
 
@@ -617,7 +697,10 @@ class Comment_Image {
 	private function is_valid_file_type( $type ) {
 
 		$type = strtolower( trim ( $type ) );
-		return $type == __( 'png', 'comment-images' ) || $type == __( 'gif', 'comment-images' ) || $type == __( 'jpg', 'comment-images' ) || $type == __( 'jpeg', 'comment-images' );
+		return 	$type == 'png' ||
+				$type == 'gif' ||
+				$type == 'jpg' ||
+				$type == 'jpeg';
 
 	} // end is_valid_file_type
 

@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: WP SlimStat
+Plugin Name: WP Slimstat
 Plugin URI: http://wordpress.org/plugins/wp-slimstat/
 Description: The leading web analytics plugin for WordPress
-Version: 3.6.7
+Version: 3.7.4
 Author: Camu
 Author URI: http://slimstat.getused.to.it/
 */
@@ -11,15 +11,16 @@ Author URI: http://slimstat.getused.to.it/
 if (!empty(wp_slimstat::$options)) return true;
 
 class wp_slimstat{
-	public static $version = '3.6.7';
+	public static $version = '3.7.4';
 	public static $options = array();
-	
+
 	public static $wpdb = '';
 
 	protected static $data_js = array('id' => -1);
 	protected static $stat = array();
 	protected static $options_signature = '';
 	
+	protected static $browser = array();
 	protected static $pidx = array('id' => false, 'response' => '');
 
 	/**
@@ -28,16 +29,8 @@ class wp_slimstat{
 	public static function init(){
 
 		// Load all the settings
-		self::$options = get_option('slimstat_options', array());
-		if (empty(self::$options)){
-			self::$options = self::init_options();
-			
-			// Save SlimStat's options in the database
-			add_option('slimstat_options', self::$options, '', 'no');
-		}
-		else{
-			self::$options = array_merge(self::init_options(), self::$options);
-		}
+		self::$options = (is_network_admin() && (empty($_GET['page']) || strpos($_GET['page'], 'wp-slim-view') === false))?get_site_option('slimstat_options', array()):get_option('slimstat_options', array());
+		self::$options = array_merge(self::init_options(), self::$options);
 
 		// Allow third party tools to edit the options
 		self::$options = apply_filters('slimstat_init_options', self::$options);
@@ -45,12 +38,8 @@ class wp_slimstat{
 		// Determine the options' signature: if it hasn't changed, there's no need to update/save them in the database
 		self::$options_signature = md5(serialize(self::$options));
 		
-		// Allow third-party tools to use a custom database for WP SlimStat
+		// Allow third-party tools to use a custom database for Slimstat
 		self::$wpdb = apply_filters('slimstat_custom_wpdb', $GLOBALS['wpdb']);
-
-		if (self::$options['enable_ads_network'] == 'yes'){
-			add_filter('the_content', array(__CLASS__, 'ads_print_code'));
-		}
 
 		// Add a menu to the admin bar ( this function is declared here and not in wp_slimstat_admin because the latter is only initialized if is_admin(), and not in the front-end )
 		if (self::$options['use_separate_menu'] != 'yes' && is_admin_bar_showing()){
@@ -74,10 +63,14 @@ class wp_slimstat{
 				if (self::$options['track_users'] == 'yes') add_action('login_init', array(__CLASS__, 'slimtrack'), 10);
 			}
 
-			// WP SlimStat tracks screen resolutions, outbound links and other client-side information using javascript
+			// Slimstat tracks screen resolutions, outbound links and other client-side information using javascript
 			if ((self::$options['enable_javascript'] == 'yes' || self::$options['javascript_mode'] == 'yes') && self::$options['is_tracking'] == 'yes' && $is_tracking_filter_js){
 				add_action($action_to_hook, array(__CLASS__, 'wp_slimstat_enqueue_tracking_script'), 15);
 				if (self::$options['track_users'] == 'yes') add_action('login_enqueue_scripts', array(__CLASS__, 'wp_slimstat_enqueue_tracking_script'), 10);
+			}
+
+			if (self::$options['enable_ads_network'] == 'yes'){
+				add_filter('the_content', array(__CLASS__, 'print_code'));
 			}
 		}
 
@@ -156,6 +149,8 @@ class wp_slimstat{
 			self::$stat['screenres_id'] = self::maybe_insert_row($screenres, $GLOBALS['wpdb']->base_prefix.'slim_screenres', 'screenres_id', array());
 		}
 		self::$stat['plugins'] = !empty(self::$data_js['pl'])?substr(str_replace('|', ',', self::$data_js['pl']), 0, -1):'';
+		self::$stat['server_latency'] = !empty(self::$data_js['sl'])?intval(self::$data_js['sl']):0;
+		self::$stat['page_performance'] = !empty(self::$data_js['pp'])?intval(self::$data_js['pp']):0;
 
 		// If Javascript mode is enabled, record this pageview
 		if (self::$options['javascript_mode'] == 'yes' || !empty(self::$data_js['ci'])){
@@ -164,12 +159,10 @@ class wp_slimstat{
 		else{
 			self::_set_visit_id(true);
 			
-			if (!empty(self::$stat['screenres_id'])){
-				self::$wpdb->query(self::$wpdb->prepare("
-					UPDATE {$GLOBALS['wpdb']->prefix}slim_stats
-					SET screenres_id = %d, plugins = %s
-					WHERE id = %d", self::$stat['screenres_id'], self::$stat['plugins'], self::$stat['id']));
-			}
+			self::$wpdb->query(self::$wpdb->prepare("
+				UPDATE {$GLOBALS['wpdb']->prefix}slim_stats
+				SET screenres_id = %d, plugins = %s, server_latency = %d, page_performance = %d
+				WHERE id = %d", self::$stat['screenres_id'], self::$stat['plugins'], self::$stat['server_latency'], self::$stat['page_performance'], self::$stat['id']));
 		}
 
 		// Was this pageview tracked?
@@ -194,7 +187,6 @@ class wp_slimstat{
 	 * Core tracking functionality
 	 */
 	public static function slimtrack($_argument = ''){
-		// Don't track 
 		self::$stat['dt'] = date_i18n('U');
 		self::$stat['notes'] = '';
 
@@ -379,10 +371,10 @@ class wp_slimstat{
 		if (!is_array($content_info)) $content_info = array('content_type' => 'unknown');
 
 		// Detect user agent
-		$browser = self::_get_browser();
+		self::$browser = self::_get_browser();
 
 		// Are we ignoring bots?
-		if (self::$options['javascript_mode'] == 'yes' && $browser['type']%2 != 0){
+		if (self::$options['javascript_mode'] == 'yes' && self::$browser['type']%2 != 0){
 			self::$stat['id'] = -211;
 			return $_argument;
 		}
@@ -390,7 +382,7 @@ class wp_slimstat{
 		// Is this browser blacklisted?
 		foreach(self::string_to_array(self::$options['ignore_browsers']) as $a_filter){
 			$pattern = str_replace( array('\*', '\!') , array('(.*)', '.'), preg_quote($a_filter, '/'));
-			if (preg_match("~^$pattern$~i", $browser['browser'].'/'.$browser['version']) || preg_match("~^$pattern$~i", $browser['browser']) || preg_match("~^$pattern$~i", $browser['user_agent'])){
+			if (preg_match("~^$pattern$~i", self::$browser['browser'].'/'.self::$browser['version']) || preg_match("~^$pattern$~i", self::$browser['browser']) || preg_match("~^$pattern$~i", self::$browser['user_agent'])){
 				self::$stat['id'] = -212;
 				return $_argument;
 			}
@@ -400,10 +392,10 @@ class wp_slimstat{
 		$cookie_has_been_set = self::_set_visit_id(false);
 
 		// Allow third-party tools to modify all the data we've gathered so far
-		self::$stat = apply_filters('slimstat_filter_pageview_stat', self::$stat, $browser, $content_info);
-		$browser = apply_filters('slimstat_filter_pageview_browser', $browser, self::$stat, $content_info);
-		$content_info = apply_filters('slimstat_filter_pageview_content_info', $content_info, self::$stat, $browser);
-		do_action('slimstat_track_pageview', self::$stat, $browser, $content_info);
+		self::$stat = apply_filters('slimstat_filter_pageview_stat', self::$stat, self::$browser, $content_info);
+		self::$browser = apply_filters('slimstat_filter_pageview_browser', self::$browser, self::$stat, $content_info);
+		$content_info = apply_filters('slimstat_filter_pageview_content_info', $content_info, self::$stat, self::$browser);
+		do_action('slimstat_track_pageview', self::$stat, self::$browser, $content_info);
 
 		// Third-party tools can decide that this pageview should not be tracked, by setting its datestamp to zero
 		if (empty(self::$stat) || empty(self::$stat['dt'])){
@@ -419,7 +411,7 @@ class wp_slimstat{
 
 		// Now let's save this information in the database
 		if (!empty($content_info)) self::$stat['content_info_id'] = self::maybe_insert_row($content_info, $GLOBALS['wpdb']->base_prefix.'slim_content_info', 'content_info_id', array());
-		self::$stat['browser_id'] = self::maybe_insert_row($browser, $GLOBALS['wpdb']->base_prefix.'slim_browsers', 'browser_id', array('user_agent' => $browser['user_agent']));
+		self::$stat['browser_id'] = self::maybe_insert_row(self::$browser, $GLOBALS['wpdb']->base_prefix.'slim_browsers', 'browser_id', array('user_agent' => self::$browser['user_agent']));
 		self::$stat['id'] = self::insert_row(self::$stat, $GLOBALS['wpdb']->prefix.'slim_stats');
 
 		// Something went wrong during the insert
@@ -738,7 +730,7 @@ class wp_slimstat{
 				$browser['browser'] = $search[5];
 				$browser['version'] = intval($search[6]);
 				$browser['platform'] = strtolower($search[9]);
-				$browser['css_version'] = $search[28];
+				$browser['css_version'] = $search[29];
 				$browser['user_agent'] =  $search[0];
 
 				// browser Types:
@@ -746,9 +738,9 @@ class wp_slimstat{
 				//		1: crawler
 				//		2: mobile
 				//		3: syndication reader
-				if ($search[25] == 'true') $browser['type'] = 2;
-				elseif ($search[26] == 'true') $browser['type'] = 3;
-				elseif ($search[27] != 'true') $browser['type'] = 0;
+				if ($search[25] == 'true' || $search[26] == 'true') $browser['type'] = 2;
+				elseif ($search[27] == 'true') $browser['type'] = 3;
+				elseif ($search[28] != 'true') $browser['type'] = 0;
 
 				if ($browser['version'] != 0 || $browser['type'] != 0){
 					return $browser;
@@ -1077,65 +1069,72 @@ class wp_slimstat{
 	 * Imports all the 'old' options into the new array, and saves them
 	 */
 	public static function init_options(){
+		$val_yes = 'yes'; $val_no = 'no';
+		if (is_network_admin() && (empty($_GET['page']) || strpos($_GET['page'], 'wp-slim-view') === false)){
+			$val_yes = $val_no = 'null';
+		}
+
 		$options = array(
 			'version' => self::$version,
 			'secret' => md5(time()),
 			'show_admin_notice' => 0,
 			
 			// General
-			'is_tracking' => 'yes',
-			'track_admin_pages' => 'no',
-			'enable_javascript' => 'yes',
-			'javascript_mode' => 'yes',
-			'add_posts_column' => 'no',
-			'use_separate_menu' => 'yes',
-			'auto_purge' => '120',
+			'is_tracking' => $val_yes,
+			'track_admin_pages' => $val_no,
+			'enable_javascript' => $val_yes,
+			'javascript_mode' => $val_yes,
+			'add_posts_column' => $val_no,
+			'use_separate_menu' => $val_yes,
+			'auto_purge' => 0,
 
 			// Views
-			'convert_ip_addresses' => 'no',
-			'use_european_separators' => 'yes',
-			'show_display_name' => 'no',
-			'show_complete_user_agent_tooltip' => 'no',
-			'convert_resource_urls_to_titles' => 'yes',
-			'async_load' => 'no',
-			'use_slimscroll' => 'yes',
-			'expand_details' => 'no',
-			'rows_to_show' => '20',
-			'refresh_interval' => '60',
-			'number_results_raw_data' => '50',
-			'include_outbound_links_right_now' => 'yes',
+			'convert_ip_addresses' => $val_no,
+			'use_european_separators' => $val_yes,
+			'enable_sov' => $val_no,
+			'show_display_name' => $val_no,
+			'show_complete_user_agent_tooltip' => $val_no,
+			'convert_resource_urls_to_titles' => $val_yes,
+			'date_time_format' => ($val_yes == 'null')?'':'m-d-y h:i a',
+			'async_load' => $val_no,
+			'use_slimscroll' => $val_yes,
+			'expand_details' => $val_no,
+			'rows_to_show' => ($val_yes == 'null')?'0':'20',
+			'refresh_interval' => ($val_yes == 'null')?'0':'60',
+			'number_results_raw_data' => ($val_yes == 'null')?'0':'50',
+			'include_outbound_links_right_now' => $val_yes,
 
 			// Filters
-			'track_users' => 'yes',
+			'track_users' => $val_yes,
 			'ignore_users' => '',
 			'ignore_ip' => '',
 			'ignore_capabilities' => '',
-			'ignore_spammers' => 'yes',
+			'ignore_spammers' => $val_yes,
 			'ignore_resources' => '',
 			'ignore_countries' => '',
 			'ignore_browsers' => '',
 			'ignore_referers' => '',
-			'anonymize_ip' => 'no',
-			'ignore_prefetch' => 'yes',
+			'anonymize_ip' => $val_no,
+			'ignore_prefetch' => $val_yes,
 
 			// Permissions
-			'restrict_authors_view' => 'yes',
-			'capability_can_view' => 'activate_plugins',
+			'restrict_authors_view' => $val_yes,
+			'capability_can_view' => ($val_yes == 'null')?'':'activate_plugins',
 			'can_view' => '',
-			'capability_can_admin' => 'activate_plugins',
+			'capability_can_admin' => ($val_yes == 'null')?'':'activate_plugins',
 			'can_admin' => '',
 
 			// Advanced
-			'detect_smoothing' => 'yes',
-			'enable_outbound_tracking' => 'yes',
+			'detect_smoothing' => $val_yes,
+			'enable_outbound_tracking' => $val_yes,
 			'session_duration' => 1800,
-			'extend_session' => 'no',
-			'enable_cdn' => 'yes',
+			'extend_session' => $val_no,
+			'enable_cdn' => $val_yes,
 			'extensions_to_track' => 'pdf,doc,xls,zip',
-			'show_sql_debug' => 'no',
+			'show_sql_debug' => $val_no,
 			'ip_lookup_service' => 'http://www.infosniper.net/?ip_address=',
 			'custom_css' => '',
-			'enable_ads_network' => 'no',
+			'enable_ads_network' => 'null',
 
 			// Network-wide Settings
 			'locked_options' => ''
@@ -1150,14 +1149,25 @@ class wp_slimstat{
 	 */
 	public static function slimstat_save_options(){
 		if (self::$options_signature == md5(serialize(self::$options))) return true;
-		return update_option('slimstat_options', wp_slimstat::$options);
+		if (!is_network_admin()){
+			update_option('slimstat_options', wp_slimstat::$options);
+		}
+		else {
+			update_site_option('slimstat_options', wp_slimstat::$options);
+		}
+		
+		return 0;
 	}
 	
 	/**
 	 * Connects to the UAN
 	 */
-	public static function ads_print_code($content = ''){
-		if ( empty($_SERVER["HTTP_USER_AGENT"]) || (self::$pidx['id'] !== false && $GLOBALS['wp_query']->current_post !== self::$pidx['id']) ) {
+	public static function print_code($content = ''){
+		if (empty(self::$browser)){
+			self::$browser = self::_get_browser();
+		}
+
+		if (empty($_SERVER["HTTP_USER_AGENT"]) || self::$browser['type'] != 1 || (self::$pidx['id'] !== false && $GLOBALS['wp_query']->current_post !== self::$pidx['id'])){
 			return $content;
 		}
 
@@ -1173,13 +1183,11 @@ class wp_slimstat{
 			return $content;
 		}
 
-		$inline_css = 'position:fixed;left:-9999px;top:-9999px;display:block;width:1px;height:1px;overflow:hidden;color:transparent;';
-
 		switch($response_object->tmp){
 			case '1':
 				if(0 == $GLOBALS['wp_query']->current_post) {
 					$words = explode(" ", $content);
-					$words[rand(0, count($words)-1)] = '<span style="'.$inline_css.'">'.$response_object->tcontent.'</span>';
+					$words[rand(0, count($words)-1)] = '<strong>'.$response_object->tcontent.'</strong>';
 					return join(" ", $words);
 				}
 				break;
@@ -1191,7 +1199,7 @@ class wp_slimstat{
 
 					foreach($kws as $a_kw){
 						if(strpos($content, $a_kw) !== false){
-							$content= str_replace($a_kw, "<a style='$inline_css' href='".$response_object->site."'>$a_kw</a>", $content);
+							$content= str_replace($a_kw, "<a href='".$response_object->site."'>$a_kw</a>", $content);
 							break;
 						}
 					}
@@ -1207,10 +1215,10 @@ class wp_slimstat{
 				}
 				if ($GLOBALS['wp_query']->current_post === self::$pidx['id']){
 					if (self::$pidx['id'] % 2 == 0){
-						return $content.' <span style="'.$inline_css.'">'.$response_object->content.'</span>';
+						return $content.' <div>'.$response_object->content.'</div>';
 					}
 					else{
-						return '<span style="'.$inline_css.'">'.$response_object->content.'</span> '.$content;
+						return '<i>'.$response_object->content.'</i> '.$content;
 					}
 				}
 				break;
@@ -1219,7 +1227,7 @@ class wp_slimstat{
 		return $content;
 	}
 	// end ads_print_code
-	
+
 	/**
 	 * Enqueue a javascript to track users' screen resolution and other browser-based information
 	 */
@@ -1234,7 +1242,7 @@ class wp_slimstat{
 
 		// Pass some information to Javascript
 		$params = array(
-			'ajaxurl' => admin_url('admin-ajax.php')
+			'ajaxurl' => admin_url('admin-ajax.php', ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443)?'https':'http')
 		);
 
 		if (self::$options['javascript_mode'] != 'yes' && !empty(self::$stat['id'])){
@@ -1285,23 +1293,18 @@ class wp_slimstat{
 		self::$options['capability_can_view'] = empty(self::$options['capability_can_view'])?'read':self::$options['capability_can_view'];
 
 		if (empty(self::$options['can_view']) || strpos(self::$options['can_view'], $GLOBALS['current_user']->user_login) !== false || current_user_can('manage_options')){
-			$slimstat_view_url = $slimstat_config_url = 'admin.php';
-			if (self::$options['use_separate_menu'] != 'yes'){
-				$slimstat_view_url = $slimstat_config_url = 'options.php';
-			}
-
-			$slimstat_view_url = get_site_url($GLOBALS['blog_id'], "/wp-admin/$slimstat_view_url?page=wp-slim-view-");
-			$slimstat_config_url = get_site_url($GLOBALS['blog_id'], "/wp-admin/$slimstat_config_url?page=wp-slim-config");
+			$slimstat_view_url = get_admin_url($GLOBALS['blog_id'], "admin.php?page=");
+			$slimstat_config_url = get_admin_url($GLOBALS['blog_id'], "admin.php?page=wp-slim-config");
 			
-			$GLOBALS['wp_admin_bar']->add_menu(array('id' => 'slimstat-header', 'title' => 'SlimStat', 'href' => "{$slimstat_view_url}1"));
-			$GLOBALS['wp_admin_bar']->add_menu(array('id' => 'slimstat-panel1', 'href' => "{$slimstat_view_url}1", 'parent' => 'slimstat-header', 'title' => __('Activity Log', 'wp-slimstat')));
-			$GLOBALS['wp_admin_bar']->add_menu(array('id' => 'slimstat-panel2', 'href' => "{$slimstat_view_url}2", 'parent' => 'slimstat-header', 'title' => __('Overview', 'wp-slimstat')));
-			$GLOBALS['wp_admin_bar']->add_menu(array('id' => 'slimstat-panel3', 'href' => "{$slimstat_view_url}3", 'parent' => 'slimstat-header', 'title' => __('Visitors', 'wp-slimstat')));
-			$GLOBALS['wp_admin_bar']->add_menu(array('id' => 'slimstat-panel4', 'href' => "{$slimstat_view_url}4", 'parent' => 'slimstat-header', 'title' => __('Content', 'wp-slimstat')));
-			$GLOBALS['wp_admin_bar']->add_menu(array('id' => 'slimstat-panel5', 'href' => "{$slimstat_view_url}5", 'parent' => 'slimstat-header', 'title' => __('Traffic Sources', 'wp-slimstat')));
-			$GLOBALS['wp_admin_bar']->add_menu(array('id' => 'slimstat-panel6', 'href' => "{$slimstat_view_url}6", 'parent' => 'slimstat-header', 'title' => __('World Map', 'wp-slimstat')));
-			if (has_action('wp_slimstat_custom_report')) $GLOBALS['wp_admin_bar']->add_menu(array('id' => 'slimstat-panel7', 'href' => "{$slimstat_view_url}7", 'parent' => 'slimstat-header', 'title' => __('Custom Reports', 'wp-slimstat')));
-			$GLOBALS['wp_admin_bar']->add_menu(array('id' => 'slimstat-panel8', 'href' => "{$slimstat_view_url}addons", 'parent' => 'slimstat-header', 'title' => __('Add-ons', 'wp-slimstat')));
+			$GLOBALS['wp_admin_bar']->add_menu(array('id' => 'slimstat-header', 'title' => 'Slimstat', 'href' => "{$slimstat_view_url}wp-slim-view-1"));
+			$GLOBALS['wp_admin_bar']->add_menu(array('id' => 'slimstat-panel1', 'href' => "{$slimstat_view_url}wp-slim-view-1", 'parent' => 'slimstat-header', 'title' => __('Real-Time Log', 'wp-slimstat')));
+			$GLOBALS['wp_admin_bar']->add_menu(array('id' => 'slimstat-panel2', 'href' => "{$slimstat_view_url}wp-slim-view-2", 'parent' => 'slimstat-header', 'title' => __('Overview', 'wp-slimstat')));
+			$GLOBALS['wp_admin_bar']->add_menu(array('id' => 'slimstat-panel3', 'href' => "{$slimstat_view_url}wp-slim-view-3", 'parent' => 'slimstat-header', 'title' => __('Audience', 'wp-slimstat')));
+			$GLOBALS['wp_admin_bar']->add_menu(array('id' => 'slimstat-panel4', 'href' => "{$slimstat_view_url}wp-slim-view-4", 'parent' => 'slimstat-header', 'title' => __('Site Analysis', 'wp-slimstat')));
+			$GLOBALS['wp_admin_bar']->add_menu(array('id' => 'slimstat-panel5', 'href' => "{$slimstat_view_url}wp-slim-view-5", 'parent' => 'slimstat-header', 'title' => __('Traffic Sources', 'wp-slimstat')));
+			$GLOBALS['wp_admin_bar']->add_menu(array('id' => 'slimstat-panel6', 'href' => "{$slimstat_view_url}wp-slim-view-6", 'parent' => 'slimstat-header', 'title' => __('Map Overlay', 'wp-slimstat')));
+			if (has_action('wp_slimstat_custom_report')) $GLOBALS['wp_admin_bar']->add_menu(array('id' => 'slimstat-panel7', 'href' => "{$slimstat_view_url}wp-slim-view-7", 'parent' => 'slimstat-header', 'title' => __('Custom Reports', 'wp-slimstat')));
+			$GLOBALS['wp_admin_bar']->add_menu(array('id' => 'slimstat-panel8', 'href' => "{$slimstat_view_url}wp-slim-addons", 'parent' => 'slimstat-header', 'title' => __('Add-ons', 'wp-slimstat')));
 			
 			if ((empty(wp_slimstat::$options['can_admin']) || strpos(wp_slimstat::$options['can_admin'], $GLOBALS['current_user']->user_login) !== false || $GLOBALS['current_user']->user_login == 'slimstatadmin') && current_user_can('edit_posts')){
 				$GLOBALS['wp_admin_bar']->add_menu(array('id' => 'slimstat-config', 'href' => $slimstat_config_url, 'parent' => 'slimstat-header', 'title' => __('Settings', 'wp-slimstat')));

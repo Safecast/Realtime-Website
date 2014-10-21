@@ -49,7 +49,7 @@ if(function_exists("register_field_group"))
 			array (
 				'key' => 'field_5386e49735466',
 				'label' => 'µSv/h',
-				'name' => 'sensor_measurement_last_usvh',
+				'name' => 'sensor_measurement_last_msv',
 				'type' => 'number',
 				'default_value' => '',
 				'placeholder' => '',
@@ -136,7 +136,7 @@ if(function_exists("register_field_group"))
 			array (
 				'key' => 'field_5386e7e7907c0',
 				'label' => 'µSv/h',
-				'name' => 'sensor_measurement_max_usvh',
+				'name' => 'sensor_measurement_max_msv',
 				'type' => 'number',
 				'default_value' => '',
 				'placeholder' => '',
@@ -529,7 +529,7 @@ if (!function_exists('generateSensorsTable')) {
 			$timestamp   = strtotime($sensor['measurement']['gmt']);
 			$timeAgo     = $timestamp ? human_time_diff($timestamp).($lang == 'jp' ? '前' : ' ago') : '';
 			$timeSince   = time() - $timestamp;
-			$usievert    = addslashes($sensor['measurement']['usvh']);
+			$usievert    = addslashes($sensor['measurement']['msv']);
 			$cpm         = addslashes($sensor['measurement']['cpm']);
 			$latitude    = addslashes($sensor['measurement']['latitude']);
 			$longitude   = addslashes($sensor['measurement']['longitude']);
@@ -545,6 +545,13 @@ if (!function_exists('generateSensorsTable')) {
 				$status      = ($lang == 'jp' ? 'オフライン（短）' : 'Offline short');
 				$statusClass = 'warning';
 				$statusValue = 1;
+				$to      = 'robouden@docomo.ne.jp';
+				$subject = 'Offline';
+				$message = "$id";
+				$headers = 'From: root@realtime.safecast.org' . "\r\n" .
+					'Reply-To: root@realtime.safecast.org' . "\r\n" .
+					'X-Mailer: PHP/' . phpversion();
+					mail($to, $subject, $message, $headers);
 			}
 
 			$html 		.= sprintf('
@@ -619,7 +626,7 @@ if (!function_exists('getAllSensors')) {
 					.($location ? ', '.$location : '');
 				
 				$lastMeasurement = array(
-					'usvh'     => get_post_meta(get_the_ID(), 'sensor_measurement_last_usvh', true),
+					'msv'     => get_post_meta(get_the_ID(), 'sensor_measurement_last_msv', true),
 					'cpm'           => get_post_meta(get_the_ID(), 'sensor_measurement_last_cpm', 		true),
 					'gmt'     		=> get_post_meta(get_the_ID(), 'sensor_measurement_last_gmt', 		true),
 					'latitude'      => get_post_meta(get_the_ID(), 'sensor_measurement_last_latitude', 	true),
@@ -680,11 +687,11 @@ if (!function_exists('generateMap')) {
 			$timestamp   = strtotime($sensor['measurement']['gmt']);
 			$timeAgo     = $timestamp ? human_time_diff($timestamp).($lang == 'jp' ? '前' : ' ago') : '';
 			$timeSince   = time() - $timestamp;
-			$usvh        = addslashes($sensor['measurement']['usvh']);
+			$usvt        = addslashes($sensor['measurement']['msv']);
 			$cpm         = addslashes($sensor['measurement']['cpm']);
 			$latitude    = addslashes($sensor['measurement']['latitude']);
 			$longitude   = addslashes($sensor['measurement']['longitude']);
-			$graphPath   = get_template_directory_uri()."/../../../../plots/";
+			$graphPath   = get_template_directory_uri()."/../../../../../../plots/";
 			$status		 = '#269abc';
 
 			if ($timeSince >= TIME_OFFLINE_LONG) {
@@ -694,7 +701,7 @@ if (!function_exists('generateMap')) {
 			}
 				
 			$markers	.= sprintf("addMarker('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');
-			", $id, $permalink, $timeAgo, $location, $latitude, $longitude, $cpm, $usvh, $graphPath, $status);
+			", $id, $permalink, $timeAgo, $location, $latitude, $longitude, $cpm, $usvt, $graphPath, $status);
 		}
 		
 		//var_dump($markers);die;
@@ -731,3 +738,4 @@ if (!function_exists('addMap')) {
 }
 
 add_action('wp_enqueue_scripts', 'addMap');
+

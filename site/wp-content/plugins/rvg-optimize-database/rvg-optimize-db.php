@@ -1,16 +1,16 @@
 <?php
-$odb_version      = '2.7.9';
-$odb_release_date = '05/02/2014';
+$odb_version      = '2.8.3';
+$odb_release_date = '09/10/2014';
 /**
  * @package Optimize Database after Deleting Revisions
- * @version 2.7.9
+ * @version 2.8.3
  */
 /*
 Plugin Name: Optimize Database after Deleting Revisions
 Plugin URI: http://cagewebdev.com/index.php/optimize-database-after-deleting-revisions-wordpress-plugin/
 Description: Optimizes the Wordpress Database after Cleaning it out - <a href="options-general.php?page=rvg_odb_admin"><strong>plug in options</strong></a>
 Author: CAGE Web Design | Rolf van Gelder, Eindhoven, The Netherlands
-Version: 2.7.9
+Version: 2.8.3
 Author URI: http://cagewebdev.com
 */
 
@@ -21,7 +21,10 @@ Author URI: http://cagewebdev.com
 *********************************************************************************************/
 function optimize_db_main()
 {	if (function_exists('add_management_page'))
-	{	add_management_page(__('Optimize Database'), __('Optimize Database'),'administrator' ,'rvg-optimize-db.php', 'rvg_optimize_db');
+	{	# v2.8: 'administrator' role changed to 'edit_themes' capability
+		// add_management_page(__('Optimize Database'), __('Optimize Database'), 'edit_themes', 'rvg-optimize-db.php', 'rvg_optimize_db');
+		# v2.8.1: changed capability back to 'administrator'
+		add_management_page(__('Optimize Database'), __('Optimize Database'), 'administrator','rvg-optimize-db.php', 'rvg_optimize_db');
     }
 }
 add_action('admin_menu', 'optimize_db_main');
@@ -108,22 +111,14 @@ function rvg_odb_options_page()
 	$current_date     = substr($current_datetime, 0, 8);
 	$current_hour     = substr($current_datetime, 8, 2);
 	
-	# jQuery FRAMEWORK
-	if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
-		echo '<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>';
-	}
-	else
-	{	# 2.7.9
-		echo '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>';
-	}
-	
 	if(isset($_REQUEST['delete_log']))
 		if($_REQUEST['delete_log'] == "Y") @unlink(dirname(__FILE__).'/rvg-optimize-db-log.html');
 	
 	// SAVE THE OPTIONS
  	if (isset($_POST['info_update']))
 	{
-		check_admin_referer();
+		// v2.8.3
+		check_admin_referer('odb_action', 'odb_nonce');
 
 		# DELETE ALL EXCLUDED TABLES
 		$sql = "
@@ -246,14 +241,17 @@ function rvg_odb_options_page()
 	?>
 <script type="text/javascript">
 function schedule_changed()
-{	if(document.options.rvg_odb_schedule.value == 'daily' || document.options.rvg_odb_schedule.value == 'weekly')
-		$("#schedulehour").show();
+{	// v2.8.3
+	if(document.options.rvg_odb_schedule.value == 'daily' || document.options.rvg_odb_schedule.value == 'weekly')
+		jQuery("#schedulehour").show();
 	else
-		$("#schedulehour").hide();
+		jQuery("#schedulehour").hide();
 }
 </script>
 
 <form name="options" method="post" action="">
+  <?php // v2.8.3 ?>
+  <?php wp_nonce_field( 'odb_action','odb_nonce' ); ?>
   <div class="wrap">
     <h2>Using Optimize Database after Deleting Revisions</h2>
     <blockquote>
@@ -348,22 +346,22 @@ if($rvg_odb_logging_on == 'Y')  $rvg_odb_logging_on_checked  = ' checked="checke
               </table></td>
           </tr>
           <?php
-	# v2.7.8
-	$names = $wpdb->get_results("SHOW TABLES FROM `".DB_NAME."`");
-	$dbname = 'Tables_in_'.DB_NAME;
+	# v2.8.2
+	$tables = $wpdb->get_results("SHOW TABLES FROM `".DB_NAME."`",ARRAY_N);
+	# v2.8.3 $ replaced by jQuery
 ?>
           <tr>
             <td colspan="4" valign="top"><table id="table_list" width="100%" border="0" cellspacing="0" cellpadding="4" style="display:block;">
                 <tr>
                   <td colspan="4" align="center"><span style="font-weight:bold;">EXCLUDE DATABASE TABLES FROM OPTIMIZATION: <span style="text-decoration:underline;color:#F00;">CHECKED</span> TABLES <span style="text-decoration:underline;color:#F00;">WON'T</span> BE OPTIMIZED!</span><br />
-                    <a href="javascript:;" onclick="$('[id^=cb_]').attr('checked',true);">check all tables</a> | <a href="javascript:;" onclick="$('[id^=cb_]').attr('checked',false);">uncheck all tables</a> | <a href="javascript:;" onclick="$(':not([id^=cb_<?php echo $table_prefix; ?>])').filter('[id^=cb_]').attr('checked',true);">check all NON-WordPress tables</a></td>
+                    <a href="javascript:;" onclick="jQuery('[id^=cb_]').attr('checked',true);">check all tables</a> | <a href="javascript:;" onclick="jQuery('[id^=cb_]').attr('checked',false);">uncheck all tables</a> | <a href="javascript:;" onclick="jQuery(':not([id^=cb_<?php echo $table_prefix; ?>])').filter('[id^=cb_]').attr('checked',true);">check all NON-WordPress tables</a></td>
                 </tr>
                 <tr>
                   <?php
 	$c = 0;
 	$t = 0;
-	# v2.7.8
-	for ($i=0; $i<count($names); $i++)
+	# v2.8.2
+	for ($i=0; $i<count($tables); $i++)
 	{	$t++;
 		$c++;
 		if($c>4)
@@ -373,19 +371,19 @@ if($rvg_odb_logging_on == 'Y')  $rvg_odb_logging_on_checked  = ' checked="checke
 		}
 		$style = 'normal';
 		// WORDPRESS TABLE?
-		if(substr($names[$i]->$dbname,0,strlen($table_prefix)) == $table_prefix) $style = 'bold;color:#00F;';
+		if(substr($tables[$i][0], 0, strlen($table_prefix)) == $table_prefix) $style = 'bold;color:#00F;';
 		
 		$cb_checked = '';
 		$sql = "
 		SELECT	`option_value`
 		FROM	$wpdb->options
-		WHERE	`option_name` = 'rvg_ex_".$names[$i]->$dbname."'
+		WHERE	`option_name` = 'rvg_ex_".$tables[$i][0]."'
 		";
 		$results = $wpdb -> get_results($sql);
 		if(isset($results[0]->option_value))
 			if($results[0]->option_value == 'excluded') $cb_checked = ' checked';		
-		echo '<td width="25%" style="font-weight:'.$style.'"><input id="cb_'.$names[$i]->$dbname.'" name="cb_'.$names[$i]->$dbname.'" type="checkbox" value="1" '.$cb_checked.'  /> '.$names[$i]->$dbname.'</td>'."\n";
-	} # for ($i=0; $i<count($names); $i++)
+		echo '<td width="25%" style="font-weight:'.$style.'"><input id="cb_'.$tables[$i][0].'" name="cb_'.$tables[$i][0].'" type="checkbox" value="1" '.$cb_checked.'  /> '.$tables[$i][0].'</td>'."\n";
+	} # for ($i=0; $i<count($tables); $i++)
 ?>
                 </tr>
               </table></td>
@@ -1344,18 +1342,19 @@ function rvg_optimize_tables($display)
 {
 	global $wpdb, $table_prefix;
 
-	# v2.7.8
-	$names  = $wpdb->get_results("SHOW TABLES FROM `".DB_NAME."`");
-	$dbname = 'Tables_in_'.DB_NAME;
+	# v2.8.2
+	$tables = $wpdb->get_results("SHOW TABLES FROM `".DB_NAME."`",ARRAY_N);
+	// print_r($tables);	
+
 	$cnt    = 0;
-	for ($i=0; $i<count($names); $i++)
+	for ($i=0; $i<count($tables); $i++)
 	{
-		$excluded = get_option('rvg_ex_'.$names[$i]->$dbname);
+		$excluded = get_option('rvg_ex_'.$tables[$i][0]);
 		
 		if(!$excluded)
 		{	# TABLE NOT EXCLUDED
 			$cnt++;
-			$query  = "OPTIMIZE TABLE ".$names[$i]->$dbname;
+			$query  = "OPTIMIZE TABLE ".$tables[$i][0];
 			$result = $wpdb -> get_results($query);
 			
 			// v2.7.5
@@ -1365,7 +1364,7 @@ function rvg_optimize_tables($display)
 			) AS size, table_rows
 			FROM information_schema.TABLES
 			WHERE table_schema = '".strtolower(DB_NAME)."'
-			AND   table_name   = '".$names[$i]->$dbname."'
+			AND   table_name   = '".$tables[$i][0]."'
 			";
 
 			$table_info = $wpdb -> get_results($sql);
@@ -1375,7 +1374,7 @@ function rvg_optimize_tables($display)
 ?>
 <tr>
   <td align="right" valign="top"><?php echo $cnt?>.</td>
-  <td valign="top" style="font-weight:bold;"><?php echo $names[$i]->$dbname ?></td>
+  <td valign="top" style="font-weight:bold;"><?php echo $tables[$i][0] ?></td>
   <td valign="top"><?php echo $result[0]->Msg_text ?></td>
   <td valign="top"><?php echo $table_info[0]->engine ?></td>
   <td align="right" valign="top"><?php echo $table_info[0]->table_rows ?></td>
@@ -1384,7 +1383,7 @@ function rvg_optimize_tables($display)
 <?php
 			} // if($display)
 		} // if(!$excluded)
-	} // for ($i=0; $i<count($names); $i++)
+	} // for ($i=0; $i<count($tables); $i++)
 	return $cnt;
 	
 } // rvg_optimize_tables ()

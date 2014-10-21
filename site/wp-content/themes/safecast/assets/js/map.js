@@ -1,14 +1,14 @@
-    var activeInfoWindow;
+﻿    var activeInfoWindow;
     var map;
 
-    function addMarker(id, permalink, timeAgo, location, latitude, longitude, cpm, usvh, graphPath, status) {
+    function addMarker(id, permalink, timeAgo, location, latitude, longitude, cpm, usvt, graphPath, status) {
         var infowindow = new google.maps.InfoWindow({
                 content: '<div id="content">'+
                     '<h1><a href="'+permalink+'">'+location+'</a></h1>'+
                     '<h2>'+timeAgo+'</h2>'+
                     '<div id="bodyContent">'+
                     '<div><b>'+cpm+'</b> CPM</div>'+
-                    '<div ><b>'+usvh+'</b> µSv/h</div>'+
+                    '<div ><b>'+usvt+'</b> μSv</div>'+
                     '<img class="img-responsive" src="'+graphPath+id+'_small.png" />'+
                     '</div>'+
                     '</div>',

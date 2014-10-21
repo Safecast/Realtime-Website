@@ -48,10 +48,13 @@ function qtrans_modifyTermFormFor($term) {
 }
 
 function qtrans_TinyMCE_init() {
-	global $q_config;
-	echo "<script type=\"text/javascript\">\n// <![CDATA[\n";
-	echo $q_config['js']['qtrans_updateTinyMCE'];
-	echo "</script>\n";
+	if (user_can_richedit())
+	{
+		global $q_config;
+		echo "<script type=\"text/javascript\">\n// <![CDATA[\n";
+		echo $q_config['js']['qtrans_updateTinyMCE'];
+		echo "</script>\n";
+	}
 }
 
 function isWordPressMajorVersionSupported() {
@@ -107,17 +110,12 @@ function qtrans_modifyRichEditor($old_content) {
 	if($id!="content") return $old_content;
 	
 	// don't do anything to the editor if it's not rich
-	if(!user_can_richedit()) {
+	if (!user_can_richedit()) {
 		//echo '<p class="updated">'.__('The mqTranslate Editor could not be loaded because WYSIWYG/TinyMCE is not activated in your profile.').'</p>';
 		return $old_content;
 	}
 	
-	// remove wpautop
-	if('html' != wp_default_editor()) {
-		remove_filter('the_editor_content', 'wp_richedit_pre');
-	}
-	
- 	$content = "";
+	$content = "";
 	$content_append = "";
 	
 	// create editing field for selected languages
@@ -176,6 +174,8 @@ function qtrans_modifyRichEditor($old_content) {
 	$content_append .="document.getElementById('qtrans_select_".$q_config['default_language']."').className='wp-switch-editor switch-tmce switch-html';\n";
 	// show default language
 	$content_append .="var text = document.getElementById('".$id."').value;\n";
+	// when TinyMCE is displayed as the default editor, remove the automatically added paragraphs before initializing mqTranslate
+	$content_append .="if(getUserSetting( 'editor' ) == 'tinymce') { var text = switchEditors.pre_wpautop(text); }";
 	$content_append .="qtrans_assign('qtrans_textarea_".$id."',qtrans_use('".$q_config['default_language']."',text));\n";
 	
 	$content_append .="}\n";

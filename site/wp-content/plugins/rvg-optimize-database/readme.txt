@@ -3,13 +3,14 @@ Contributors: CAGE Web Design | Rolf van Gelder
 Donate link: http://cagewebdev.com
 Plugin Name: Optimize Database after Deleting Revisions
 Plugin URI: http://cagewebdev.com/index.php/optimize-database-after-deleting-revisions-wordpress-plugin
-Tags: database, delete, revisions, optimize, post, posts, page, pages, clean, clean up, trash, spam, trashed, spammed, database size, scheduler, transients
+Tags: database, delete, revisions, optimize, post, posts, page, pages, clean, clean up, trash, spam, trashed, spammed, database size, scheduler, transients, unused tags
 Author URI: http://cagewebdev.com
 Author: CAGE Web Design | Rolf van Gelder, Eindhoven, The Netherlands
 Requires at least: 2.0
-Tested up to: 3.9
-Stable tag: 2.7.9
-Version: 2.7.9
+Tested up to: 4.0
+Stable tag: 2.8.3
+Version: 2.8.3
+License: GPLv2 or later
 
 == Description ==
 
@@ -44,7 +45,13 @@ http://cagewebdev.com/index.php/optimize-database-after-deleting-revisions-wordp
 http://wordpress.org/extend/plugins/rvg-optimize-database/
 
 = Disclaimer =
-No warranty, use at own risk!
+NO WARRANTY, USE IT AT YOUR OWN RISK!
+
+= Other plugins by Rolf van Gelder =
+Rocket Reader (Speed reader)
+http://wordpress.org/plugins/rocket-reader-speed-reader/
+Order your Posts Manually
+http://wordpress.org/plugins/order-your-posts-manually/
 
 == Installation ==
 
@@ -53,6 +60,21 @@ No warranty, use at own risk!
 * Change the settings (if needed) in the WP Admin Panel &raquo; Settings &raquo; Optimize DB Options.
 
 == Changelog ==
+
+= 2.8.3 [09/10/2014] =
+* CHANGE: using the WP jQuery libs now (not from googleapis anymore)
+* BUG FIX: check_admin_referer() fixed (gave a debug warning)
+
+= 2.8.2 [08/01/2014] =
+* BUG FIX: all problems with getting the table names should be fixed now!
+
+= 2.8.1 [07/31/2014] =
+* CHANGE: changed the 'edit_themes' capability back to 'administrator'-role
+* BUG FIX: no table names beside checkboxes (rewrote it, so it should work for every site now)
+
+= 2.8 [07/30/2014] =
+* CHANGE: 'administrator'-role changed to 'edit_themes'-capability
+* BUG FIX: no table names beside checkboxes
 
 = 2.7.9 [05/02/2014] =
 * BUG FIX: some minor bug fixes (thanks Mike!)

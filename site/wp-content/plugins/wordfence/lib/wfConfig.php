@@ -2,6 +2,7 @@
 class wfConfig {
 	public static $diskCache = array();
 	private static $diskCacheDisabled = false; //enables if we detect a write fail so we don't keep calling stat()
+	private static $cacheDisableCheckDone = false;
 	private static $table = false;
 	private static $cache = array();
 	private static $DB = false;
@@ -60,6 +61,7 @@ class wfConfig {
 				"autoUpdate" => false,
 				"disableCookies" => false,
 				"startScansRemotely" => false,
+				"disableConfigCaching" => false,
 				"addCacheComment" => false,
 				"allowHTTPSCaching" => false,
 				"debugOn" => false
@@ -140,6 +142,7 @@ class wfConfig {
 				"autoUpdate" => false,
 				"disableCookies" => false,
 				"startScansRemotely" => false,
+				"disableConfigCaching" => false,
 				"addCacheComment" => false,
 				"allowHTTPSCaching" => false,
 				"debugOn" => false
@@ -220,6 +223,7 @@ class wfConfig {
 				"autoUpdate" => false,
 				"disableCookies" => false,
 				"startScansRemotely" => false,
+				"disableConfigCaching" => false,
 				"addCacheComment" => false,
 				"allowHTTPSCaching" => false,
 				"debugOn" => false
@@ -300,6 +304,7 @@ class wfConfig {
 				"autoUpdate" => false,
 				"disableCookies" => false,
 				"startScansRemotely" => false,
+				"disableConfigCaching" => false,
 				"addCacheComment" => false,
 				"allowHTTPSCaching" => false,
 				"debugOn" => false
@@ -380,6 +385,7 @@ class wfConfig {
 				"autoUpdate" => false,
 				"disableCookies" => false,
 				"startScansRemotely" => false,
+				"disableConfigCaching" => false,
 				"addCacheComment" => false,
 				"allowHTTPSCaching" => false,
 				"debugOn" => false
@@ -458,7 +464,7 @@ class wfConfig {
 		self::$cache = array();
 	}
 	public static function getHTML($key){
-		return htmlspecialchars(self::get($key));
+		return wp_kses(self::get($key), array());
 	}
 	public static function inc($key){
 		$val = self::get($key, false);
@@ -468,6 +474,11 @@ class wfConfig {
 		self::set($key, $val + 1);
 	}
 	public static function set($key, $val){
+		if($key == 'disableConfigCaching'){
+			self::getDB()->queryWrite("insert into " . self::table() . " (name, val) values ('%s', '%s') ON DUPLICATE KEY UPDATE val='%s'", $key, $val, $val);
+			return;
+		}
+	
 		if(is_array($val)){
 			$msg = "wfConfig::set() got an array as second param with key: $key and value: " . var_export($val, true);
 			wordfence::status(1, 'error', $msg);
@@ -494,6 +505,19 @@ class wfConfig {
 		self::$diskCacheDisabled = true;
 	}
 	public static function get($key, $default = false){
+		if($key == 'disableConfigCaching'){
+			$val = self::getDB()->querySingle("select val from " . self::table() . " where name='%s'", $key);
+			return $val;
+		}
+
+		if(! self::$cacheDisableCheckDone){
+			self::$cacheDisableCheckDone = true;
+			$cachingDisabledSetting = self::getDB()->querySingle("select val from " . self::table() . " where name='%s'", 'disableConfigCaching');
+			if($cachingDisabledSetting == '1'){
+				self::$diskCacheDisabled = true;
+			}
+		}
+
 		if(! isset(self::$cache[$key])){ 
 			$val = self::loadFromDiskCache($key);
 			//$val = self::getDB()->querySingle("select val from " . self::table() . " where name='%s'", $key);
@@ -527,7 +551,9 @@ class wfConfig {
 			}
 		}
 		$val = self::getDB()->querySingle("select val from " . self::table() . " where name='%s'", $key);
-		if(self::$diskCacheDisabled){ return $val; }
+		if(self::$diskCacheDisabled){ 
+			return $val; 
+		}
 		wfConfig::$diskCache[$key] = isset($val) ? $val : '';
 		try {
 			$bytesWritten = @file_put_contents($cacheFile, self::$tmpFileHeader . serialize(wfConfig::$diskCache), LOCK_EX);
@@ -725,10 +751,23 @@ class wfConfig {
 	}
 	public static function autoUpdate(){
 		try {
+			if(getenv('noabort') != '1' && stristr($_SERVER['SERVER_SOFTWARE'], 'litespeed') !== false){
+				 wordfence::alert("Wordfence Upgrade not run. Please modify your .htaccess", "To preserve the integrity of your website we are not running Wordfence auto-update.\n" .
+				 	"You are running the LiteSpeed web server which has been known to cause a problem with Wordfence auto-update.\n" .
+					"Please go to your website now and make a minor change to your .htaccess to fix this.\n" .
+					"You can find out how to make this change at:\n" .
+					"https://support.wordfence.com/solution/articles/1000129050-running-wordfence-under-litespeed-web-server-and-preventing-process-killing-or\n" .
+					"\nAlternatively you can disable auto-update on your website to stop receiving this message and upgrade Wordfence manually.\n"
+					);
+				return;
+			}
 			require_once(ABSPATH . 'wp-admin/includes/class-wp-upgrader.php');
+			require_once(ABSPATH . 'wp-admin/includes/misc.php');
+			/* We were creating show_message here so that WP did not write to STDOUT. This had the strange effect of throwing an error about redeclaring show_message function, but only when a crawler hit the site and triggered the cron job. Not a human. So we're now just require'ing misc.php which does generate output, but that's OK because it is a loopback cron request.  
 			if(! function_exists('show_message')){ 
 				function show_message($msg = 'null'){}
 			}
+			*/
 			define('FS_METHOD', 'direct');
 			require_once(ABSPATH . 'wp-includes/update.php');
 			require_once(ABSPATH . 'wp-admin/includes/file.php');
@@ -742,8 +781,8 @@ class wfConfig {
 					wordfence::alert("Wordfence Upgraded to version " . $matches[1], "Your Wordfence installation has been upgraded to version " . $matches[1], '127.0.0.1');
 				}
 			}
-			$output = ob_get_contents();
-			ob_end_clean();
+			$output = @ob_get_contents();
+			@ob_end_clean();
 		} catch(Exception $e){}
 	}
 }

@@ -56,7 +56,7 @@ CONFIG_TZ := 'EDT'
 #PUBLISH_CMD := rsync -HavPS --exclude=/.run --delete-excluded --delete out/ WEBSERVER:DIRECTORY/
 #VIEW_CMD := firefox out/index.html";
 	
-	file_put_contents(dirname(dirname(__FILE__)).'/plots/Makefile.config', $configContent);
+	file_put_contents(dirname(dirname(__FILE__)).'/../plots/Makefile.config', $configContent);
 	
 	wp_reset_query();
 }

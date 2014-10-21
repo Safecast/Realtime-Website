@@ -1,41 +1,50 @@
 <?php if (!function_exists('add_action')) exit(0); ?>
 
 <div class="wrap slimstat">
-	<h2><?php echo wp_slimstat_reports::$screen_names[wp_slimstat_reports::$current_tab] ?></h2>
-	
-	<form action="<?php echo wp_slimstat_reports::fs_url(); ?>" method="post" id="slimstat-filters-form">
-		<fieldset id="slimstat-filters">
-			<select name="f" id="slimstat-filter-name">
-				<?php
-					foreach (wp_slimstat_reports::$dropdown_filter_names as $a_filter_label => $a_filter_name){
-						echo "<option value='$a_filter_label'>$a_filter_name</option>";
-					}
-				?>
-			</select>
+	<h2><?php echo wp_slimstat_reports::$screen_names[wp_slimstat_admin::$current_tab] ?></h2>
 
-			<select name="o" id="slimstat-filter-operator">
-				<option value="equals"><?php _e('equals','wp-slimstat') ?></option>
-				<option value="is_not_equal_to"><?php _e('is not equal to','wp-slimstat') ?></option>
-				<option value="contains"><?php _e('contains','wp-slimstat') ?></option>
-				<option value="does_not_contain"><?php _e('does not contain','wp-slimstat') ?></option>
-				<option value="starts_with"><?php _e('starts with','wp-slimstat') ?></option>
-				<option value="ends_with"><?php _e('ends with','wp-slimstat') ?></option>
-				<option value="sounds_like"><?php _e('sounds like','wp-slimstat') ?></option>
-				<option value="is_greater_than"><?php _e('is greater than','wp-slimstat') ?></option>
-				<option value="is_less_than"><?php _e('is less than','wp-slimstat') ?></option>
-				<option value="matches"><?php _e('matches','wp-slimstat') ?></option>
-				<option value="does_not_match"><?php _e('does not match','wp-slimstat') ?></option>
-				<option value="is_empty"><?php _e('is empty','wp-slimstat') ?></option>
-				<option value="is_not_empty"><?php _e('is not empty','wp-slimstat') ?></option>
-			</select>
-			<input type="text" class="text" name="v" id="slimstat-filter-value" value="" size="20">
+	<form action="<?php echo wp_slimstat_reports::fs_url(); ?>" method="post" id="slimstat-filters-form">
+		<fieldset id="slimstat-filters"><?php
+			$filter_name_html = '<select name="f" id="slimstat-filter-name">';
+			foreach (wp_slimstat_reports::$dropdown_filter_names as $a_filter_label => $a_filter_name){
+				$filter_name_html .= "<option value='$a_filter_label'>$a_filter_name</option>";
+			}
+			$filter_name_html .= '</select>';
+
+			$filter_operator_html = '<select name="o" id="slimstat-filter-operator">';
+			$filter_operator_html .= '<option value="equals">'.__('equals','wp-slimstat').'</option>';
+			$filter_operator_html .= '<option value="is_not_equal_to">'.__('is not equal to','wp-slimstat').'</option>';
+			$filter_operator_html .= '<option value="contains">'.__('contains','wp-slimstat').'</option>';
+			$filter_operator_html .= '<option value="does_not_contain">'.__('does not contain','wp-slimstat').'</option>';
+			$filter_operator_html .= '<option value="starts_with">'.__('starts with','wp-slimstat').'</option>';
+			$filter_operator_html .= '<option value="ends_with">'.__('ends with','wp-slimstat').'</option>';
+			$filter_operator_html .= '<option value="sounds_like">'.__('sounds like','wp-slimstat').'</option>';
+			$filter_operator_html .= '<option value="is_greater_than">'.__('is greater than','wp-slimstat').'</option>';
+			$filter_operator_html .= '<option value="is_less_than">'.__('is less than','wp-slimstat').'</option>';
+			$filter_operator_html .= '<option value="between">'.__('is between (x,y)','wp-slimstat').'</option>';
+			$filter_operator_html .= '<option value="matches">'.__('matches','wp-slimstat').'</option>';
+			$filter_operator_html .= '<option value="does_not_match">'.__('does not match','wp-slimstat').'</option>';
+			$filter_operator_html .= '<option value="is_empty">'.__('is empty','wp-slimstat').'</option>';
+			$filter_operator_html .= '<option value="is_not_empty">'.__('is not empty','wp-slimstat').'</option>';
+			$filter_operator_html .= '</select>';
+			
+			$filter_value_html = '<input type="text" class="text" name="v" id="slimstat-filter-value" value="" size="20">';
+			
+			if (wp_slimstat::$options['enable_sov'] == 'yes'){
+				echo $filter_value_html.$filter_operator_html.$filter_name_html;
+			}
+			else{
+				echo $filter_name_html.$filter_operator_html.$filter_value_html;
+			}
+			
+			?>
 			<input type="submit" value="<?php _e('Apply','wp-slimstat') ?>" class="button-secondary">
 		</fieldset><!-- slimstat-filters -->
 
 		<fieldset id="slimstat-date-filters" class="wp-ui-highlight">
 			<a href="#"><?php
 				if (!empty(wp_slimstat_db::$filters_normalized['date']['hour'])){
-					echo ucwords(gmdate(wp_slimstat_db::$formats['date_time_format'], wp_slimstat_db::$filters_normalized['utime']['start']).' - '.gmdate(wp_slimstat_db::$formats['time_format'], wp_slimstat_db::$filters_normalized['utime']['end']));
+					echo ucwords(gmdate(wp_slimstat::$options['date_time_format'], wp_slimstat_db::$filters_normalized['utime']['start']).' - '.gmdate(wp_slimstat_db::$formats['time_format'], wp_slimstat_db::$filters_normalized['utime']['end']));
 				}
 				else if (!empty(wp_slimstat_db::$filters_normalized['date']['day']) && empty(wp_slimstat_db::$filters_normalized['date']['interval'])){
 					echo ucwords(gmdate(wp_slimstat_db::$formats['date_format'], wp_slimstat_db::$filters_normalized['utime']['start']));
@@ -105,7 +114,7 @@
 	<div class="meta-box-sortables">
 		<form style="display:none" method="get" action=""><input type="hidden" id="meta-box-order-nonce" name="meta-box-order-nonce" value="<?php echo wp_slimstat_reports::$meta_report_order_nonce ?>" /></form><?php
 
-		switch(wp_slimstat_reports::$current_tab){
+		switch(wp_slimstat_admin::$current_tab){
 			case 1:
 				include_once(dirname(__FILE__).'/right-now.php');
 				break;
@@ -120,7 +129,7 @@
 				<div class="postbox medium">
 					<h3 class="hndle"><?php _e('Your report here', 'wp-slimstat'); ?></h3>
 					<div class="container noscroll">
-						<p style="padding:10px;line-height:2em;white-space:normal"><?php _e( 'Yes, you can! Create and view your personalized analytics for WP SlimStat. Just write a new plugin that retrieves the desired information from the database and then hook it to the action <code>wp_slimstat_custom_report</code>. For more information, visit my <a href="http://wordpress.org/tags/wp-slimstat?forum_id=10" target="_blank">support forum</a>.', 'wp-slimstat' ); ?></p>
+						<p style="padding:10px;line-height:2em;white-space:normal"><?php _e( 'Yes, you can! Create and view your personalized analytics for Slimstat. Just write a new plugin that retrieves the desired information from the database and then hook it to the action <code>wp_slimstat_custom_report</code>. For more information, visit my <a href="http://wordpress.org/tags/wp-slimstat?forum_id=10" target="_blank">support forum</a>.', 'wp-slimstat' ); ?></p>
 					</div>
 				</div>
 
@@ -137,27 +146,27 @@
 							wp_slimstat_reports::report_header($a_box_id, 'wide chart', wp_slimstat_reports::$chart_tooltip, wp_slimstat_reports::chart_title(__('Pageviews', 'wp-slimstat')));
 							break;
 						case 'slim_p1_04':
-							wp_slimstat_reports::report_header($a_box_id, 'normal', __('When visitors leave a comment on your blog, WordPress assigns them a cookie. WP SlimStat leverages this information to identify returning visitors. Please note that visitors also include registered users.','wp-slimstat'));
+							wp_slimstat_reports::report_header($a_box_id, 'normal', __('When visitors leave a comment on your blog, WordPress assigns them a cookie. Slimstat leverages this information to identify returning visitors. Please note that visitors also include registered users.','wp-slimstat'));
 							break;
 						case 'slim_p1_05':
 						case 'slim_p3_08':
-							wp_slimstat_reports::report_header($a_box_id, 'wide', __('Take a sneak peek at what human visitors are doing on your website.','wp-slimstat').'<br><br><strong>'.__('Color codes','wp-slimstat').'</strong><p class="legend"><span class="little-color-box is-search-engine" style="padding:0 5px">&nbsp;&nbsp;</span> '.__('From a search result page','wp-slimstat').'</p><p class="legend"><span class="little-color-box is-known-visitor" style="padding:0 5px">&nbsp;&nbsp;</span> '.__('Known Visitor','wp-slimstat').'</p><p class="legend"><span class="little-color-box is-known-user" style="padding:0 5px">&nbsp;&nbsp;</span> '.__('Known Users','wp-slimstat').'</p><p class="legend"><span class="little-color-box is-direct" style="padding:0 5px">&nbsp;&nbsp;</span> '.__('Other Humans','wp-slimstat').'</p>');
+							wp_slimstat_reports::report_header($a_box_id, 'wide', __('Color codes','wp-slimstat').'</strong><p><span class="little-color-box is-search-engine"></span> '.__('From search result page','wp-slimstat').'</p><p><span class="little-color-box is-known-visitor"></span> '.__('Known Visitor','wp-slimstat').'</p><p><span class="little-color-box is-known-user"></span> '.__('Known Users','wp-slimstat').'</p><p><span class="little-color-box is-direct"></span> '.__('Other Humans','wp-slimstat').'</p><p><span class="little-color-box"></span> '.__('Bot or Crawler','wp-slimstat').'</p>');
 							break;
 						case 'slim_p1_06':
 						case 'slim_p3_09':
 							wp_slimstat_reports::report_header($a_box_id, 'normal', __('Keywords used by your visitors to find your website on a search engine.','wp-slimstat'));
 							break;
 						case 'slim_p1_15':
-							wp_slimstat_reports::report_header($a_box_id, 'normal', __("WP SlimStat retrieves live information from Alexa, Facebook and Google, to measures your site's rankings. Values are updated every 12 hours. Filters set above don't apply to this report.",'wp-slimstat'));
+							wp_slimstat_reports::report_header($a_box_id, 'normal', __("Slimstat retrieves live information from Alexa, Facebook and Google, to measures your site's rankings. Values are updated every 12 hours. Filters set above don't apply to this report.",'wp-slimstat'));
 							break;
 						case 'slim_p2_01':
 							wp_slimstat_reports::report_header($a_box_id, 'wide chart', wp_slimstat_reports::$chart_tooltip, wp_slimstat_reports::chart_title(__('Human Visits', 'wp-slimstat')));
 							break;
 						case 'slim_p2_05':
-							wp_slimstat_reports::report_header($a_box_id, 'wide', __('Internet Service Provider: a company which provides other companies or individuals with access to the Internet. Your DSL or cable internet service is provided to you by your ISP.<br><br>You can ignore specific IP addresses by setting the corresponding filter under Settings > SlimStat > Filters.','wp-slimstat'));
+							wp_slimstat_reports::report_header($a_box_id, 'wide', __('Internet Service Provider: a company which provides other companies or individuals with access to the Internet. Your DSL or cable internet service is provided to you by your ISP.<br><br>You can ignore specific IP addresses by setting the corresponding filter under Settings > Slimstat > Filters.','wp-slimstat'));
 							break;
 						case 'slim_p2_10':
-							wp_slimstat_reports::report_header($a_box_id, 'normal', __('You can configure WP SlimStat to ignore a specific Country by setting the corresponding filter under Settings > SlimStat > Filters.','wp-slimstat'));
+							wp_slimstat_reports::report_header($a_box_id, 'normal', __('You can configure Slimstat to ignore a specific Country by setting the corresponding filter under Settings > Slimstat > Filters.','wp-slimstat'));
 							break;
 						case 'slim_p2_18':
 							wp_slimstat_reports::report_header($a_box_id, 'normal', __('This report shows you what user agent families (no version considered) are popular among your visitors.','wp-slimstat'));

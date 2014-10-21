@@ -1,8 +1,6 @@
 <?php
 
 class wp_slimstat_admin{
-
-	public static $view_url = '';
 	public static $config_url = '';
 	public static $current_tab = 1;
 	public static $faulty_fields = array();
@@ -13,56 +11,56 @@ class wp_slimstat_admin{
 	 * Init -- Sets things up.
 	 */
 	public static function init(){
-		// This option requires a special treatment
-		if (!empty($_POST['options']['use_separate_menu'])){
-			wp_slimstat::$options['use_separate_menu'] = in_array($_POST['options']['use_separate_menu'], array('yes','no'))?$_POST['options']['use_separate_menu']:'';
+		if (wp_slimstat::$options['enable_ads_network'] == 'yes' || wp_slimstat::$options['enable_ads_network'] == 'no') {
+			self::$admin_notice = "We would like to thank all our users who volunteered their time to test our latest add-on (more than 100 requests), which can now be found on our <a href='http://slimstat.getused.to.it/addons/' target='_blank'>online store</a>.";
 		}
-
-		self::$admin_notice = "
-		<div class=\"fixed-height\">
-			<p>In order to protect our intellectual property rights (<a href=\"http://www.youtube.com/watch?v=OeU-RrjolCw\" target=\"_blank\">Keyword Swarm</a>, anyone?), we are asking you to review the following terms of use.</p>
-			<p><strong>GNU General Public License v2</strong></p>
-			<ol>
-				<li>You may copy and distribute verbatim copies of WP SlimStat's source code as you receive it, in any medium, provided that you conspicuously and appropriately publish on each copy an appropriate copyright notice and disclaimer of warranty; keep intact all the notices that refer to this License and to the absence of any warranty; and give any other recipients of WP SlimStat a copy of this License along with WP SlimStat. You may charge a fee for the physical act of transferring a copy, and you may at your option offer warranty protection in exchange for a fee.</li>
-				<li>You may modify your copy or copies of WP SlimStat or any portion of it, thus forming a work based on WP SlimStat, and copy and distribute such modifications or work under the terms of Section 1 above, provided that you also meet all of these conditions:
-					<ol>
-						<li>You must cause the modified files to carry prominent notices stating that you changed the files and the date of any change.</li>
-						<li>You must cause any work that you distribute or publish, <strong>that in whole or in part contains or is derived from WP SlimStat or any part thereof, to be licensed as a whole at no charge</strong> to all third parties under the terms of this License.</li>
-						<li>If the modified program normally reads commands interactively when run, you must cause it, when started running for such interactive use in the most ordinary way, to print or display an announcement including an appropriate copyright notice and a notice that there is no warranty (or else, saying that you provide a warranty) and that users may redistribute WP SlimStat under these conditions, and telling the user how to view a copy of this License.</li>
-					</ol>
-					These requirements apply to the modified work as a whole. If identifiable sections of that work are not derived from WP SlimStat, and can be reasonably considered independent and separate works in themselves, then this License, and its terms, do not apply to those sections when you distribute them as separate works. But when you distribute the same sections as part of a whole which is a work based on WP SlimStat, the distribution of the whole must be on the terms of this License, whose permissions for other licensees extend to the entire whole, and thus to each and every part regardless of who wrote it.
-					Thus, it is not the intent of this section to claim rights or contest your rights to work written entirely by you; rather, the intent is to exercise the right to control the distribution of derivative or collective works based on WP SlimStat.
-					In addition, mere aggregation of another work not based on WP SlimStat with WP SlimStat (or with a work based on WP SlimStat) on a volume of a storage or distribution medium does not bring the other work under the scope of this License.</li>
-				<li>You may copy and distribute WP SlimStat (or a work based on it, under Section 2) in object code or executable form under the terms of Sections 1 and 2 above provided that you also do one of the following:
-					<ol>
-						<li>Accompany it with the complete corresponding machine-readable source code, which must be distributed under the terms of Sections 1 and 2 above on a medium customarily used for software interchange; or,</li>
-						<li>Accompany it with a written offer, valid for at least three years, to give any third party, for a charge no more than your cost of physically performing source distribution, a complete machine-readable copy of the corresponding source code, to be distributed under the terms of Sections 1 and 2 above on a medium customarily used for software interchange; or,</li>
-						<li>Accompany it with the information you received as to the offer to distribute corresponding source code.</li>
-					</ol>
-					The source code for a work means the preferred form of the work for making modifications to it. For an executable work, complete source code means all the source code for all modules it contains, plus any associated interface definition files, plus the scripts used to control compilation and installation of the executable. However, as a special exception, the source code distributed need not include anything that is normally distributed (in either source or binary form) with the major components (compiler, kernel, and so on) of the operating system on which the executable runs, unless that component itself accompanies the executable.
-					If distribution of executable or object code is made by offering access to copy from a designated place, then offering equivalent access to copy the source code from the same place counts as distribution of the source code, even though third parties are not compelled to copy the source along with the object code.</li>
-				<li>You may not copy, modify, sublicense, or distribute WP SlimStat except as expressly provided under this License. Any attempt otherwise to copy, modify, sublicense or distribute WP SlimStat is void, and will automatically terminate your rights under this License. However, parties who have received copies, or rights, from you under this License will not have their licenses terminated so long as such parties remain in full compliance.</li>
-				<li>You are not required to accept this License, since you have not signed it. However, nothing else grants you permission to modify or distribute WP SlimStat or its derivative works. These actions are prohibited by law if you do not accept this License. Therefore, by modifying or distributing WP SlimStat (or any work based on WP SlimStat), you indicate your acceptance of this License to do so, and all its terms and conditions for copying, distributing or modifying WP SlimStat or works based on it.</li>
-				<li>Each time you redistribute WP SlimStat (or any work based on WP SlimStat), the recipient automatically receives a license from the original licensor to copy, distribute or modify WP SlimStat subject to these terms and conditions. You may not impose any further restrictions on the recipients' exercise of the rights granted herein. You are not responsible for enforcing compliance by third parties to this License.</li>
-				<li>If, as a consequence of a court judgment or allegation of patent infringement or for any other reason (not limited to patent issues), conditions are imposed on you (whether by court order, agreement or otherwise) that contradict the conditions of this License, they do not excuse you from the conditions of this License. If you cannot distribute so as to satisfy simultaneously your obligations under this License and any other pertinent obligations, <strong>then as a consequence you may not distribute WP SlimStat at all</strong>. For example, if a patent license would not permit royalty-free redistribution of WP SlimStat by all those who receive copies directly or indirectly through you, then the only way you could satisfy both it and this License would be to refrain entirely from distribution of WP SlimStat.
-					If any portion of this section is held invalid or unenforceable under any particular circumstance, the balance of the section is intended to apply and the section as a whole is intended to apply in other circumstances.
-					It is not the purpose of this section to induce you to infringe any patents or other property right claims or to contest validity of any such claims; this section has the sole purpose of protecting the integrity of the free software distribution system, which is implemented by public license practices. Many people have made generous contributions to the wide range of software distributed through that system in reliance on consistent application of that system; it is up to the author/donor to decide if he or she is willing to distribute software through any other system and a licensee cannot impose that choice.
-					This section is intended to make thoroughly clear what is believed to be a consequence of the rest of this License.</li>
-				<li>If the distribution and/or use of WP SlimStat is restricted in certain countries either by patents or by copyrighted interfaces, the original copyright holder who places WP SlimStat under this License may add an explicit geographical distribution limitation excluding those countries, so that distribution is permitted only in or among countries not thus excluded. In such case, this License incorporates the limitation as if written in the body of this License.</li>
-				<li>The Free Software Foundation may publish revised and/or new versions of the General Public License from time to time. Such new versions will be similar in spirit to the present version, but may differ in detail to address new problems or concerns.
-					Each version is given a distinguishing version number.</li>
-				<li>If you wish to incorporate parts of WP SlimStat into other free programs whose distribution conditions are different, <strong>write to the author to ask for permission</strong>. For software which is copyrighted by the Free Software Foundation, write to the Free Software Foundation; we sometimes make exceptions for this. Our decision will be guided by the two goals of preserving the free status of all derivatives of our free software and of promoting the sharing and reuse of software generally.</li>
-				<li><strong>NO WARRANTY</strong> - BECAUSE WP SLIMSTAT IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR WP SLIMSTAT, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE WP SLIMSTAT \"AS IS\" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF WP SLIMSTAT IS WITH YOU. SHOULD WP SLIMSTAT PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.</li>
-				<li>IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE WP SLIMSTAT AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE WP SLIMSTAT (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF WP SLIMSTAT TO OPERATE WITH ANY OTHER PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.</li>
-			</ol>
+		else {
+			self::$admin_notice = "
+			<div class='fixed-height'>
+				<p>In order to protect our intellectual property rights (<a href='http://www.youtube.com/watch?v=OeU-RrjolCw' target='_blank'>Keyword Swarm</a>, anyone?), we are asking you to review the following terms of use.</p>
+				<p><strong>GNU General Public License v2</strong></p>
+				<ol>
+					<li>You may copy and distribute verbatim copies of Slimstat's source code as you receive it, in any medium, provided that you conspicuously and appropriately publish on each copy an appropriate copyright notice and disclaimer of warranty; keep intact all the notices that refer to this License and to the absence of any warranty; and give any other recipients of Slimstat a copy of this License along with Slimstat. You may charge a fee for the physical act of transferring a copy, and you may at your option offer warranty protection in exchange for a fee.</li>
+					<li>You may modify your copy or copies of Slimstat or any portion of it, thus forming a work based on Slimstat, and copy and distribute such modifications or work under the terms of Section 1 above, provided that you also meet all of these conditions:
+						<ol>
+							<li>You must cause the modified files to carry prominent notices stating that you changed the files and the date of any change.</li>
+							<li>You must cause any work that you distribute or publish, <strong>that in whole or in part contains or is derived from Slimstat or any part thereof, to be licensed as a whole at no charge</strong> to all third parties under the terms of this License.</li>
+							<li>If the modified program normally reads commands interactively when run, you must cause it, when started running for such interactive use in the most ordinary way, to print or display an announcement including an appropriate copyright notice and a notice that there is no warranty (or else, saying that you provide a warranty) and that users may redistribute Slimstat under these conditions, and telling the user how to view a copy of this License.</li>
+						</ol>
+						These requirements apply to the modified work as a whole. If identifiable sections of that work are not derived from Slimstat, and can be reasonably considered independent and separate works in themselves, then this License, and its terms, do not apply to those sections when you distribute them as separate works. But when you distribute the same sections as part of a whole which is a work based on Slimstat, the distribution of the whole must be on the terms of this License, whose permissions for other licensees extend to the entire whole, and thus to each and every part regardless of who wrote it.
+						Thus, it is not the intent of this section to claim rights or contest your rights to work written entirely by you; rather, the intent is to exercise the right to control the distribution of derivative or collective works based on Slimstat.
+						In addition, mere aggregation of another work not based on Slimstat with Slimstat (or with a work based on Slimstat) on a volume of a storage or distribution medium does not bring the other work under the scope of this License.</li>
+					<li>You may copy and distribute Slimstat (or a work based on it, under Section 2) in object code or executable form under the terms of Sections 1 and 2 above provided that you also do one of the following:
+						<ol>
+							<li>Accompany it with the complete corresponding machine-readable source code, which must be distributed under the terms of Sections 1 and 2 above on a medium customarily used for software interchange; or,</li>
+							<li>Accompany it with a written offer, valid for at least three years, to give any third party, for a charge no more than your cost of physically performing source distribution, a complete machine-readable copy of the corresponding source code, to be distributed under the terms of Sections 1 and 2 above on a medium customarily used for software interchange; or,</li>
+							<li>Accompany it with the information you received as to the offer to distribute corresponding source code.</li>
+						</ol>
+						The source code for a work means the preferred form of the work for making modifications to it. For an executable work, complete source code means all the source code for all modules it contains, plus any associated interface definition files, plus the scripts used to control compilation and installation of the executable. However, as a special exception, the source code distributed need not include anything that is normally distributed (in either source or binary form) with the major components (compiler, kernel, and so on) of the operating system on which the executable runs, unless that component itself accompanies the executable.
+						If distribution of executable or object code is made by offering access to copy from a designated place, then offering equivalent access to copy the source code from the same place counts as distribution of the source code, even though third parties are not compelled to copy the source along with the object code.</li>
+					<li>You may not copy, modify, sublicense, or distribute Slimstat except as expressly provided under this License. Any attempt otherwise to copy, modify, sublicense or distribute Slimstat is void, and will automatically terminate your rights under this License. However, parties who have received copies, or rights, from you under this License will not have their licenses terminated so long as such parties remain in full compliance.</li>
+					<li>You are not required to accept this License, since you have not signed it. However, nothing else grants you permission to modify or distribute Slimstat or its derivative works. These actions are prohibited by law if you do not accept this License. Therefore, by modifying or distributing Slimstat (or any work based on Slimstat), you indicate your acceptance of this License to do so, and all its terms and conditions for copying, distributing or modifying Slimstat or works based on it.</li>
+					<li>Each time you redistribute Slimstat (or any work based on Slimstat), the recipient automatically receives a license from the original licensor to copy, distribute or modify Slimstat subject to these terms and conditions. You may not impose any further restrictions on the recipients' exercise of the rights granted herein. You are not responsible for enforcing compliance by third parties to this License.</li>
+					<li>If, as a consequence of a court judgment or allegation of patent infringement or for any other reason (not limited to patent issues), conditions are imposed on you (whether by court order, agreement or otherwise) that contradict the conditions of this License, they do not excuse you from the conditions of this License. If you cannot distribute so as to satisfy simultaneously your obligations under this License and any other pertinent obligations, <strong>then as a consequence you may not distribute Slimstat at all</strong>. For example, if a patent license would not permit royalty-free redistribution of Slimstat by all those who receive copies directly or indirectly through you, then the only way you could satisfy both it and this License would be to refrain entirely from distribution of Slimstat.
+						If any portion of this section is held invalid or unenforceable under any particular circumstance, the balance of the section is intended to apply and the section as a whole is intended to apply in other circumstances.
+						It is not the purpose of this section to induce you to infringe any patents or other property right claims or to contest validity of any such claims; this section has the sole purpose of protecting the integrity of the free software distribution system, which is implemented by public license practices. Many people have made generous contributions to the wide range of software distributed through that system in reliance on consistent application of that system; it is up to the author/donor to decide if he or she is willing to distribute software through any other system and a licensee cannot impose that choice.
+						This section is intended to make thoroughly clear what is believed to be a consequence of the rest of this License.</li>
+					<li>If the distribution and/or use of Slimstat is restricted in certain countries either by patents or by copyrighted interfaces, the original copyright holder who places Slimstat under this License may add an explicit geographical distribution limitation excluding those countries, so that distribution is permitted only in or among countries not thus excluded. In such case, this License incorporates the limitation as if written in the body of this License.</li>
+					<li>The Free Software Foundation may publish revised and/or new versions of the General Public License from time to time. Such new versions will be similar in spirit to the present version, but may differ in detail to address new problems or concerns.
+						Each version is given a distinguishing version number.</li>
+					<li>If you wish to incorporate parts of Slimstat into other free programs whose distribution conditions are different, <strong>write to the author to ask for permission</strong>. For software which is copyrighted by the Free Software Foundation, write to the Free Software Foundation; we sometimes make exceptions for this. Our decision will be guided by the two goals of preserving the free status of all derivatives of our free software and of promoting the sharing and reuse of software generally.</li>
+					<li><strong>NO WARRANTY</strong> - BECAUSE WP SLIMSTAT IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR WP SLIMSTAT, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE WP SLIMSTAT \"AS IS\" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF WP SLIMSTAT IS WITH YOU. SHOULD WP SLIMSTAT PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.</li>
+					<li>IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE WP SLIMSTAT AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE WP SLIMSTAT (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF WP SLIMSTAT TO OPERATE WITH ANY OTHER PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.</li>
+				</ol>
+				
+				<p><strong>Third Party Text Links</strong></p>
+				<p>Third party text networks supply text for display in Slimstat. These networks may collect your IP addresses, in native or hashed forms, for purposes of controlling the distribution of text links. Slimstat collects anonymous aggregated usage statistics.</p>
+				<p>By clicking the link here below (\"I acknowledge that I have read and agree to the above Terms and Conditions\") you agree to the terms and conditions and give permission to place text links on your website when search engine crawlers access it. Your website's layout, performance and interaction with human visitors should not be altered or affected in any way. Please note that this feature can be deactivated at any time under Setting > Advanced > UAN Netword, without impact on any other feature available in Slimstat.</p>
+				<p>WP Slimstat - Copyright &copy; 2014 Get Used to IT.</p>
+			</div>
 			
-			<p><strong>Third Party Text Links</strong></p>
-			<p>Third party text networks supply text for display in WP SlimStat. These networks may collect your IP addresses, in native or hashed forms, for purposes of controlling the distribution of text links. WP SlimStat collects anonymous aggregated usage statistics.</p>
-			<p>By clicking the link here below (\"I acknowledge that I have read and agree to the above Terms and Conditions\") you agree to the terms and conditions and give permission to place text links on your website when search engine crawlers access it. Your website's layout, performance and interaction with human visitors should not be altered or affected in any way. Please note that this feature can be deactivated at any time under Setting > Advanced > UAN Netword, without impact on any other feature available in WP SlimStat.</p>
-			<p>Copyright &copy; 2014 Get Used to IT.</p>
-		</div>
-		
-		<div><a id='slimstat-enable-ads-toggle' href='#'>I acknowledge that I have read and agree to the above Terms and Conditions</a></div>";
+			<div><a id='slimstat-enable-ads-toggle' href='#'>I acknowledge that I have read and agree to the above Terms and Conditions</a></div>";
+		}
 
 		// Current screen
 		if (!empty($_GET['page'])){
@@ -73,8 +71,7 @@ class wp_slimstat_admin{
 		}
 
 		// Settings URL
-		self::$config_url = ((wp_slimstat::$options['use_separate_menu'] == 'yes')?'admin.php':'options.php').'?page=wp-slim-config&amp;tab=';
-		self::$view_url = ((wp_slimstat::$options['use_separate_menu'] == 'yes')?'admin.php':'options.php').'?page=wp-slim-view-'.self::$current_tab;
+		self::$config_url = 'admin.php?page=wp-slim-config&amp;tab=';
 
 		// Load language files
 		load_plugin_textdomain('wp-slimstat', WP_PLUGIN_DIR .'/wp-slimstat/admin/lang', '/wp-slimstat/admin/lang');
@@ -132,7 +129,8 @@ class wp_slimstat_admin{
 		// Load the library of functions to generate the reports
 		if ((!empty($_GET['page']) && strpos($_GET['page'], 'wp-slim-view') !== false) || (!empty($_POST['action']) && $_POST['action'] == 'slimstat_load_report')){
 			include_once(dirname(__FILE__).'/view/wp-slimstat-reports.php');
-			wp_slimstat_reports::init();
+			$args = array('current_tab' => self::$current_tab);
+			wp_slimstat_reports::init($args);
 		}
 
 		// AJAX Handlers
@@ -221,6 +219,8 @@ class wp_slimstat_admin{
 				plugins VARCHAR(255) DEFAULT '',
 				notes VARCHAR(2048) DEFAULT '',
 				visit_id INT UNSIGNED NOT NULL DEFAULT 0,
+				server_latency INT(10) UNSIGNED DEFAULT 0,
+				page_performance INT(10) UNSIGNED DEFAULT 0,
 				dt INT(10) UNSIGNED DEFAULT 0,
 				CONSTRAINT PRIMARY KEY (id),
 				INDEX idx_{$GLOBALS['wpdb']->prefix}slim_stats_dt (dt),
@@ -370,10 +370,25 @@ class wp_slimstat_admin{
 		}
 		// --- END: Updates for version 3.5.9 ---
 
-		// --- Updates for version 3.6.1 ---
-		if (version_compare(wp_slimstat::$options['version'], '3.6.1', '<')){
-			
+		// --- Updates for version 3.7.3 ---
+		if (version_compare(wp_slimstat::$options['version'], '3.7.3', '<')){
+			$table_structure = $my_wpdb->get_results("SHOW COLUMNS FROM {$GLOBALS['wpdb']->prefix}slim_stats", ARRAY_A);
+			$columns_exist = array('server_latency' => false, 'page_performance' => false);
+
+			foreach($table_structure as $a_row){
+				if (in_array($a_row['Field'], array('server_latency', 'page_performance'))){
+					$columns_exist[$a_row['Field']] = true;
+				}
+			}
+
+			if (!$columns_exist['server_latency']){
+				$my_wpdb->query("ALTER TABLE {$GLOBALS['wpdb']->prefix}slim_stats ADD COLUMN server_latency INT(10) UNSIGNED DEFAULT 0 AFTER visit_id");
+			}
+			if (!$columns_exist['page_performance']){
+				$my_wpdb->query("ALTER TABLE {$GLOBALS['wpdb']->prefix}slim_stats ADD COLUMN page_performance INT(10) UNSIGNED DEFAULT 0 AFTER server_latency");
+			}
 		}
+		// --- END: Updates for version 3.7.3 ---
 
 		// Now we can update the version stored in the database
 		wp_slimstat::$options['version'] = wp_slimstat::$version;
@@ -415,7 +430,7 @@ class wp_slimstat_admin{
 	// end wp_slimstat_stylesheet
 	
 	/**
-	 * Customizes the icon associated to WP SlimStat in the sidebar
+	 * Customizes the icon associated to Slimstat in the sidebar
 	 */
 	public static function wp_slimstat_stylesheet_icon(){
 		if (!array_key_exists('dashicons', $GLOBALS['wp_styles']->registered)){
@@ -473,31 +488,31 @@ class wp_slimstat_admin{
 		$new_entry = array();
 		if (wp_slimstat::$options['use_separate_menu'] == 'yes'){
 			$new_entry[] = add_menu_page(__('SlimStat','wp-slimstat'), __('SlimStat','wp-slimstat'), $minimum_capability, 'wp-slim-view-1', array(__CLASS__, 'wp_slimstat_include_view'));
-			$new_entry[] = add_submenu_page('wp-slim-view-1', __('Activity Log','wp-slimstat'), __('Activity Log','wp-slimstat'), $minimum_capability, 'wp-slim-view-1', array(__CLASS__, 'wp_slimstat_include_view'));
+			$new_entry[] = add_submenu_page('wp-slim-view-1', __('Real-Time Log','wp-slimstat'), __('Real-Time Log','wp-slimstat'), $minimum_capability, 'wp-slim-view-1', array(__CLASS__, 'wp_slimstat_include_view'));
 			$new_entry[] = add_submenu_page('wp-slim-view-1', __('Overview','wp-slimstat'), __('Overview','wp-slimstat'), $minimum_capability, 'wp-slim-view-2', array(__CLASS__, 'wp_slimstat_include_view'));
-			$new_entry[] = add_submenu_page('wp-slim-view-1', __('Visitors','wp-slimstat'), __('Visitors','wp-slimstat'), $minimum_capability, 'wp-slim-view-3', array(__CLASS__, 'wp_slimstat_include_view'));
-			$new_entry[] = add_submenu_page('wp-slim-view-1', __('Content','wp-slimstat'), __('Content','wp-slimstat'), $minimum_capability, 'wp-slim-view-4', array(__CLASS__, 'wp_slimstat_include_view'));
+			$new_entry[] = add_submenu_page('wp-slim-view-1', __('Audience','wp-slimstat'), __('Audience','wp-slimstat'), $minimum_capability, 'wp-slim-view-3', array(__CLASS__, 'wp_slimstat_include_view'));
+			$new_entry[] = add_submenu_page('wp-slim-view-1', __('Site Analysis','wp-slimstat'), __('Site Analysis','wp-slimstat'), $minimum_capability, 'wp-slim-view-4', array(__CLASS__, 'wp_slimstat_include_view'));
 			$new_entry[] = add_submenu_page('wp-slim-view-1', __('Traffic Sources','wp-slimstat'), __('Traffic Sources','wp-slimstat'), $minimum_capability, 'wp-slim-view-5', array(__CLASS__, 'wp_slimstat_include_view'));
-			$new_entry[] = add_submenu_page('wp-slim-view-1', __('World Map','wp-slimstat'), __('World Map','wp-slimstat'), $minimum_capability, 'wp-slim-view-6', array(__CLASS__, 'wp_slimstat_include_view'));
+			$new_entry[] = add_submenu_page('wp-slim-view-1', __('Map Overlay','wp-slimstat'), __('Map Overlay','wp-slimstat'), $minimum_capability, 'wp-slim-view-6', array(__CLASS__, 'wp_slimstat_include_view'));
 			if (has_action('wp_slimstat_custom_report')) $new_entry[] = add_submenu_page('wp-slim-view-1', __('Custom Reports','wp-slimstat'), __('Custom Reports','wp-slimstat'), $minimum_capability, 'wp-slim-view-7', array(__CLASS__, 'wp_slimstat_include_view'));
-			$new_entry[] = add_submenu_page('wp-slim-view-1', __('Add-ons','wp-slimstat'), __('Add-ons','wp-slimstat'), $minimum_capability, 'wp-slim-view-addons', array(__CLASS__, 'wp_slimstat_include_addons'));
+			$new_entry[] = add_submenu_page('wp-slim-view-1', __('Add-ons','wp-slimstat'), __('Add-ons','wp-slimstat'), $minimum_capability, 'wp-slim-addons', array(__CLASS__, 'wp_slimstat_include_addons'));
 		}
 		else{
 			if (!is_admin_bar_showing()){
 				$new_entry[] = add_submenu_page('index.php', __('SlimStat','wp-slimstat'), __('SlimStat','wp-slimstat'), $minimum_capability, 'wp-slim-view-1', array(__CLASS__, 'wp_slimstat_include_view'));
 			}
 			else{
-				$new_entry[] = add_submenu_page('options.php', __('SlimStat','wp-slimstat'), __('SlimStat','wp-slimstat'), $minimum_capability, 'wp-slim-view-1', array(__CLASS__, 'wp_slimstat_include_view'));
+				$new_entry[] = add_submenu_page('admin.php', __('SlimStat','wp-slimstat'), __('SlimStat','wp-slimstat'), $minimum_capability, 'wp-slim-view-1', array(__CLASS__, 'wp_slimstat_include_view'));
 			}
 
 			// Let's tell WordPress that these page exist, without showing them
-			$new_entry[] = add_submenu_page('options.php', __('Overview','wp-slimstat'), __('Overview','wp-slimstat'), $minimum_capability, 'wp-slim-view-2', array(__CLASS__, 'wp_slimstat_include_view'));
-			$new_entry[] = add_submenu_page('options.php', __('Visitors','wp-slimstat'), __('Visitors','wp-slimstat'), $minimum_capability, 'wp-slim-view-3', array(__CLASS__, 'wp_slimstat_include_view'));
-			$new_entry[] = add_submenu_page('options.php', __('Content','wp-slimstat'), __('Content','wp-slimstat'), $minimum_capability, 'wp-slim-view-4', array(__CLASS__, 'wp_slimstat_include_view'));
-			$new_entry[] = add_submenu_page('options.php', __('Traffic Sources','wp-slimstat'), __('Traffic Sources','wp-slimstat'), $minimum_capability, 'wp-slim-view-5', array(__CLASS__, 'wp_slimstat_include_view'));
-			$new_entry[] = add_submenu_page('options.php', __('World Map','wp-slimstat'), __('World Map','wp-slimstat'), $minimum_capability, 'wp-slim-view-6', array(__CLASS__, 'wp_slimstat_include_view'));
-			if (has_action('wp_slimstat_custom_report')) $new_entry[] = add_submenu_page('options.php', __('Custom Reports','wp-slimstat'), __('Custom Reports','wp-slimstat'), $minimum_capability, 'wp-slim-view-7', array(__CLASS__, 'wp_slimstat_include_view'));
-			$new_entry[] = add_submenu_page('options.php', __('Add-ons','wp-slimstat'), __('Add-ons','wp-slimstat'), $minimum_capability, 'wp-slim-view-addons', array(__CLASS__, 'wp_slimstat_include_addons'));
+			$new_entry[] = add_submenu_page('admin.php', __('Overview','wp-slimstat'), __('Overview','wp-slimstat'), $minimum_capability, 'wp-slim-view-2', array(__CLASS__, 'wp_slimstat_include_view'));
+			$new_entry[] = add_submenu_page('admin.php', __('Audience','wp-slimstat'), __('Audience','wp-slimstat'), $minimum_capability, 'wp-slim-view-3', array(__CLASS__, 'wp_slimstat_include_view'));
+			$new_entry[] = add_submenu_page('admin.php', __('Site Analysis','wp-slimstat'), __('Site Analysis','wp-slimstat'), $minimum_capability, 'wp-slim-view-4', array(__CLASS__, 'wp_slimstat_include_view'));
+			$new_entry[] = add_submenu_page('admin.php', __('Traffic Sources','wp-slimstat'), __('Traffic Sources','wp-slimstat'), $minimum_capability, 'wp-slim-view-5', array(__CLASS__, 'wp_slimstat_include_view'));
+			$new_entry[] = add_submenu_page('admin.php', __('Map Overlay','wp-slimstat'), __('Map Overlay','wp-slimstat'), $minimum_capability, 'wp-slim-view-6', array(__CLASS__, 'wp_slimstat_include_view'));
+			if (has_action('wp_slimstat_custom_report')) $new_entry[] = add_submenu_page('admin.php', __('Custom Reports','wp-slimstat'), __('Custom Reports','wp-slimstat'), $minimum_capability, 'wp-slim-view-7', array(__CLASS__, 'wp_slimstat_include_view'));
+			$new_entry[] = add_submenu_page('admin.php', __('Add-ons','wp-slimstat'), __('Add-ons','wp-slimstat'), $minimum_capability, 'wp-slim-addons', array(__CLASS__, 'wp_slimstat_include_addons'));
 		}
 
 		// Load styles and Javascript needed to make the reports look nice and interactive
@@ -557,7 +572,7 @@ class wp_slimstat_admin{
 	// end wp_slimstat_include_addons
 
 	/**
-	 * Includes the appropriate panel to configure WP SlimStat
+	 * Includes the appropriate panel to configure Slimstat
 	 */
 	public static function wp_slimstat_include_config(){
 		include(dirname(__FILE__).'/config/index.php');
@@ -579,13 +594,14 @@ class wp_slimstat_admin{
 	public static function add_post_column($_column_name, $_post_id){
 		if ('wp-slimstat' != $_column_name) return;
 
-		include_once(dirname(__FILE__).'/view/wp-slimstat-db.php');
-
+		include_once(dirname(__FILE__).'/view/wp-slimstat-reports.php');
+		wp_slimstat_reports::init();
+		
 		$parsed_permalink = parse_url( get_permalink($_post_id) );
 		$parsed_permalink = $parsed_permalink['path'].(!empty($parsed_permalink['query'])?'?'.$parsed_permalink['query']:'');
 		wp_slimstat_db::init('resource contains '.$parsed_permalink.'&&&hour equals 0&&&day equals '.date_i18n('d').'&&&month equals '.date_i18n('m').'&&&year equals '.date_i18n('Y').'&&&interval equals -365');
 		$count = wp_slimstat_db::count_records();
-		echo '<a href="'.self::fs_url("resource contains $parsed_permalink&&&day equals ".date_i18n('d').'&&&month equals '.date_i18n('m').'&&&year equals '.date_i18n('Y').'&&&interval equals -365').'">'.$count.'</a>';
+		echo '<a href="'.wp_slimstat_reports::fs_url("resource contains $parsed_permalink&&&day equals ".date_i18n('d').'&&&month equals '.date_i18n('m').'&&&year equals '.date_i18n('Y').'&&&interval equals -365').'">'.$count.'</a>';
 	}
 	// end add_column
 
@@ -611,43 +627,6 @@ class wp_slimstat_admin{
 
 		return $current;
 	}
-	
-	public static function fs_url($_filters = '', $_view_url = ''){
-		$filtered_url = !empty($_view_url)?$_view_url:self::$view_url;
-
-		// Backward compatibility
-		if (is_array($_filters)){
-			$flat_filters = array();
-			foreach($_filters as $a_key => $a_filter_data){
-				$flat_filters[] = "$a_key $a_filter_data";
-			}
-			$_filters = implode('&&&', $flat_filters);
-		}
-
-		// Columns
-		$filters_normalized = wp_slimstat_db::parse_filters($_filters, false);
-		if (!empty($filters_normalized['columns'])){
-			foreach($filters_normalized['columns'] as $a_key => $a_filter){
-				$filtered_url .= "&amp;fs%5B$a_key%5D=".urlencode($a_filter[0].' '.$a_filter[1]);
-			}
-		}
-
-		// Date ranges
-		if (!empty($filters_normalized['date'])){
-			foreach($filters_normalized['date'] as $a_key => $a_filter){
-				$filtered_url .= "&amp;fs%5B$a_key%5D=".urlencode('equals '.$a_filter);
-			}
-		}
-
-		// Misc filters
-		if (!empty($filters_normalized['misc'])){
-			foreach($filters_normalized['misc'] as $a_key => $a_filter){
-				$filtered_url .= "&amp;fs%5B$a_key%5D=".urlencode('equals '.$a_filter);
-			}
-		}
-
-		return $filtered_url;
-	}
 
 	/**
 	 * Displays an alert message
@@ -657,7 +636,7 @@ class wp_slimstat_admin{
 	}
 
 	/**
-	 * Displays a message related to the current version of WP SlimStat
+	 * Displays a message related to the current version of Slimstat
 	 */
 	public static function show_admin_notice(){
 		echo '<div class="updated slimstat-notice" style="padding:10px"><span>'.self::$admin_notice.'</span> <a id="slimstat-hide-admin-notice" class="slimstat-font-cancel" title="'.__('Hide this notice','wp-slimstat').'" href="#"></a></div>';
@@ -676,8 +655,7 @@ class wp_slimstat_admin{
 	 */
 	public static function enable_ads_feature(){
 		wp_slimstat::$options['enable_ads_network'] = 'yes';
-		wp_slimstat::$options['show_admin_notice'] = wp_slimstat::$version;
-		die();
+		self::hide_admin_notice();
 	}
 	
 	/*
@@ -685,14 +663,16 @@ class wp_slimstat_admin{
 	 */
 	public static function update_options($_options = array()){
 		if (!isset($_POST['options']) || empty($_options)) return true;
-		
+
 		foreach($_options as $_option_name => $_option_details){
 			// Some options require a special treatment and are updated somewhere else
-			if (isset($_option_details['skip_update']))
+			if (isset($_option_details['skip_update'])){
 				continue;
+			}
 
-			if (isset($_POST['options'][$_option_name]))
+			if (isset($_POST['options'][$_option_name])){
 				wp_slimstat::$options[$_option_name] = $_POST['options'][$_option_name];
+			}
 		}
 
 		if (!empty(self::$faulty_fields)){
@@ -746,11 +726,27 @@ class wp_slimstat_admin{
 			case 'yesno': ?>
 				<th scope="row"><label for="<?php echo $_option_name ?>"><?php echo $_option_details['description'] ?></label></th>
 				<td>
-					<span class="block-element"><input type="radio"<?php echo $is_disabled ?> name="options[<?php echo $_option_name ?>]" id="<?php echo $_option_name ?>_yes" value="yes"<?php echo (wp_slimstat::$options[$_option_name] == 'yes')?' checked="checked"':''; ?>> <?php echo !empty($_option_details['custom_label_yes'])?$_option_details['custom_label_yes']:__('Yes','wp-slimstat') ?>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span>
+					<span class="block-element"><input type="radio"<?php echo $is_disabled ?> name="options[<?php echo $_option_name ?>]" id="<?php echo $_option_name ?>_yes" value="yes"<?php echo (wp_slimstat::$options[$_option_name] == 'yes')?' checked="checked"':''; ?>> <?php echo !empty($_option_details['custom_label_yes'])?$_option_details['custom_label_yes']:__('Yes','wp-slimstat') ?></span>
 					<span class="block-element"><input type="radio"<?php echo $is_disabled ?> name="options[<?php echo $_option_name ?>]" id="<?php echo $_option_name ?>_no" value="no" <?php echo (wp_slimstat::$options[$_option_name] == 'no')?'  checked="checked"':''; ?>> <?php echo !empty($_option_details['custom_label_no'])?$_option_details['custom_label_no']:__('No','wp-slimstat') ?></span>
+					<?php if (is_network_admin()): ?><span class="block-element"><input type="radio" name="options[<?php echo $_option_name ?>]" id="<?php echo $_option_name ?>_null" value="null" <?php echo (wp_slimstat::$options[$_option_name] == 'null')?'  checked="checked"':''; ?>> <?php echo !empty($_option_details['custom_label_null'])?$_option_details['custom_label_null']:__('Site Specific','wp-slimstat') ?></span><?php endif; ?>
 					<span class="description"><?php echo $_option_details['long_description'] ?></span>
 				</td><?php
 				break;
+			case 'select': ?>
+				<th scope="row"><label for="<?php echo $_option_name ?>"><?php echo $_option_details['description'] ?></label></th>
+				<td>
+					<span class="block-element">
+						<select <?php echo $is_disabled ?> name="options[<?php echo $_option_name ?>]" id="<?php echo $_option_name ?>"><?php
+							foreach($_option_details['values'] as $a_key => $a_value){
+								$is_selected = (wp_slimstat::$options[$_option_name] == $a_key)?' selected':'';
+								echo "<option$is_selected value='$a_key'>$a_value</option>";
+							}
+						?></select>
+					</span>
+					<span class="description"><?php echo $_option_details['long_description'] ?></span>
+				</td><?php
+				break;
+				
 			case 'text':
 			case 'integer': ?>
 				<th scope="row"><label for="<?php echo $_option_name ?>"><?php echo $_option_details['description'] ?></label></th>
@@ -795,7 +791,7 @@ class wp_slimstat_admin{
 				'title' => __('Definitions','wp-slimstat'),
 				'content' => '
 <ul>
-<li><b>'.__('Pageview','wp-slimstat').'</b>: '.__('A request to load a single HTML file ("page"). This should be contrasted with a "hit", which refers to a request for any file from a web server. WP SlimStat logs a pageview each time the tracking code is executed','wp-slimstat').'</li>
+<li><b>'.__('Pageview','wp-slimstat').'</b>: '.__('A request to load a single HTML file ("page"). This should be contrasted with a "hit", which refers to a request for any file from a web server. Slimstat logs a pageview each time the tracking code is executed','wp-slimstat').'</li>
 <li><b>'.__('(Human) Visit','wp-slimstat').'</b>: '.__("A period of interaction between a visitor's browser and your website, ending when the browser is closed or when the user has been inactive on that site for 30 minutes",'wp-slimstat').'</li>
 <li><b>'.__('Known Visitor','wp-slimstat').'</b>: '.__('Any user who has left a comment on your blog, and is thus identified by Wordpress as a returning visitor','wp-slimstat').'</li>
 <li><b>'.__('Unique IP','wp-slimstat').'</b>: '.__('Used to differentiate between multiple requests to download a file from one internet address (IP) and requests originating from many distinct addresses; since this measurement looks only at the internet address a pageview came from, it is useful, but not perfect','wp-slimstat').'</li>

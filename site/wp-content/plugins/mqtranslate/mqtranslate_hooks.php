@@ -64,7 +64,7 @@ function qtrans_localeForCurrentLanguage($locale) {
 	return $q_config['locale'][$q_config['language']];
 }
 
-function qtrans_optionFilter($do='enable') {
+function qtrans_optionFilter($do = true) {
 	$options = array(	'option_widget_pages',
 						'option_widget_archives',
 						'option_widget_meta',
@@ -76,12 +76,12 @@ function qtrans_optionFilter($do='enable') {
 						'option_widget_rss',
 						'option_widget_tag_cloud'
 					);
-	foreach($options as $option) {
-		if($do!='disable') {
+	
+	foreach ($options as $option) {
+		if ($do)
 			add_filter($option, 'qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage',0);
-		} else {
+		else
 			remove_filter($option, 'qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage');
-		}
 	}
 }
 
@@ -102,7 +102,7 @@ function qtrans_adminHeader() {
 	echo "#post-body-content .postarea { margin-bottom: 10px; }";
 	do_action('mqtranslate_css');
 	echo "</style>\n";
-	return qtrans_optionFilter('disable');
+	return qtrans_optionFilter(false);
 }
 
 function qtrans_useCurrentLanguageIfNotFoundShowAvailable($content) {
@@ -139,7 +139,7 @@ function qtrans_excludePages($pages) {
 	static $exclude = 0;
 	if(!$q_config['hide_untranslated']) return $pages;
 	if(is_array($exclude)) return array_merge($exclude, $pages);
-	$query = "SELECT id FROM $wpdb->posts WHERE post_type = 'page' AND post_status = 'publish' AND NOT ($wpdb->posts.post_content LIKE '%<!--:".qtrans_getLanguage()."-->%')" ;
+	$query = "SELECT id FROM $wpdb->posts WHERE post_type = 'page' AND post_status = 'publish' AND NOT ($wpdb->posts.post_title LIKE '%<!--:".qtrans_getLanguage()."-->%')" ;
 	$hide_pages = $wpdb->get_results($query);
 	$exclude = array();
 	foreach($hide_pages as $page) {

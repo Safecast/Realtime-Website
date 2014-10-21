@@ -632,7 +632,7 @@ window['wordfenceAdmin'] = {
 			if(res.issuesLists[issueStatus].length < 1){
 				if(issueStatus == 'new'){
 					if(res.lastScanCompleted == 'ok'){
-						jQuery('#' + containerID).html('<p style="font-size: 20px; color: #0A0;">Congratulations! You have no security issues on your site.</p>');
+						jQuery('#' + containerID).html('<p style="font-size: 20px; color: #0A0;">Congratulations! No security problems were detected by Wordfence.</p>');
 					} else if(res['lastScanCompleted']){
 						//jQuery('#' + containerID).html('<p style="font-size: 12px; color: #A00;">The latest scan failed: ' + res.lastScanCompleted + '</p>');
 					} else {
@@ -962,7 +962,13 @@ window['wordfenceAdmin'] = {
 			} else if(this.activityMode == 'throttledIPs'){
 				tmpl = '#wfThrottledIPsTmpl';
 			} else { return; }
-			jQuery(tmpl).tmpl(res).prependTo(contentElem);
+			var i, j, chunk = 1000;
+			var bigArray = res.results.slice(0);
+			res.results = false;
+			for(i = 0, j = bigArray.length; i < j; i += chunk){
+				res.results = bigArray.slice(i, i + chunk);
+				jQuery(tmpl).tmpl(res).appendTo(contentElem);
+			}
 			this.reverseLookupIPs();
 		} else {
 			if(this.activityMode == 'topScanners' || this.activityMode == 'topLeechers'){
