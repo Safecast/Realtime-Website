@@ -49,7 +49,7 @@ if(function_exists("register_field_group"))
 			array (
 				'key' => 'field_5386e49735466',
 				'label' => 'µSv/h',
-				'name' => 'sensor_measurement_last_msv',
+				'name' => 'sensor_measurement_last_usvh',
 				'type' => 'number',
 				'default_value' => '',
 				'placeholder' => '',
@@ -136,7 +136,7 @@ if(function_exists("register_field_group"))
 			array (
 				'key' => 'field_5386e7e7907c0',
 				'label' => 'µSv/h',
-				'name' => 'sensor_measurement_max_msv',
+				'name' => 'sensor_measurement_max_usvh',
 				'type' => 'number',
 				'default_value' => '',
 				'placeholder' => '',
@@ -626,7 +626,7 @@ if (!function_exists('getAllSensors')) {
 					.($location ? ', '.$location : '');
 				
 				$lastMeasurement = array(
-					'msv'     => get_post_meta(get_the_ID(), 'sensor_measurement_last_msv', true),
+					'msv'     => get_post_meta(get_the_ID(), 'sensor_measurement_last_usvh', true),
 					'cpm'           => get_post_meta(get_the_ID(), 'sensor_measurement_last_cpm', 		true),
 					'gmt'     		=> get_post_meta(get_the_ID(), 'sensor_measurement_last_gmt', 		true),
 					'latitude'      => get_post_meta(get_the_ID(), 'sensor_measurement_last_latitude', 	true),

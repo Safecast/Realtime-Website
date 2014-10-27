@@ -3,7 +3,7 @@
 	$langIsJap     = qtrans_getLanguage() == "jp";
 	
 	$lastCpm       = get_post_meta(get_the_ID(), 'sensor_measurement_last_cpm', true);
-	$lastUsievert  = get_post_meta(get_the_ID(), 'sensor_measurement_last_msv', true);
+	$lastUsievert  = get_post_meta(get_the_ID(), 'sensor_measurement_last_usvh', true);
 	$lastLatitude  = get_post_meta(get_the_ID(), 'sensor_measurement_last_latitude', true);
 	$lastLongitude = get_post_meta(get_the_ID(), 'sensor_measurement_last_longitude', true);
 	$lastGmt       = get_post_meta(get_the_ID(), 'sensor_measurement_last_gmt', true);
@@ -12,7 +12,7 @@
 	$lastTimeAgo   = human_time_diff($lastTimestamp).($langIsJap ? '前' : ' ago');
 	
 	$maxCpm        = get_post_meta(get_the_ID(), 'sensor_measurement_max_cpm', true);
-	$maxUsievert   = get_post_meta(get_the_ID(), 'sensor_measurement_max_msv', true);
+	$maxUsievert   = get_post_meta(get_the_ID(), 'sensor_measurement_max_usvh', true);
 	$maxLatitude   = get_post_meta(get_the_ID(), 'sensor_measurement_max_latitude', true);
 	$maxLongitude  = get_post_meta(get_the_ID(), 'sensor_measurement_max_longitude', true);
 	$maxGmt        = get_post_meta(get_the_ID(), 'sensor_measurement_max_gmt', true);
