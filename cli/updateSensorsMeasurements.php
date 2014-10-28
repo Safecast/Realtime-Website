@@ -27,9 +27,10 @@ function updateSensorMeasurement($postId, $measurement) {
 	$sensorType     = get_post_meta(get_the_ID(), 'sensor_type', TRUE);
 	
 	/* Based on tube type the conversion from cpm differs */
-	if (strpos($sensorType, "LND712") !== false ||
-		strpos($sensorType, "LND 712") !== false) {
+	if (strpos($sensorType, "LND712") !== false || strpos($sensorType, "LND 712") !== false) {
 		$usvh = number_format(($cpm / 120.5), 3);
+	}elseif (strpos($sensorType, "LND78017") !== false || strpos($sensorType, "LND 78017") !== false) {
+		$usvh = number_format(($cpm / 960), 3);
 	} else {
 		$usvh = number_format(($cpm / 334), 3);
 	}
