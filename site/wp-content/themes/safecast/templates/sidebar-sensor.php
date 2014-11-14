@@ -22,9 +22,7 @@
 ?>
 
 <div class="map">
-	<a href="http://maps.googleapis.com/maps/api/staticmap?center=<?php echo $latitude ?>,<?php echo $longitude ?>&zoom=7&size=800x500&maptype=roadmap
-		&markers=color:<?php echo $color ?>%7C<?php echo $latitude ?>,<?php echo $longitude ?>&sensor=false" rel="lightbox" title="<?php echo $location ?>">
-		<img class="img-responsive img-thumbnail" alt="" src="http://maps.googleapis.com/maps/api/staticmap?center=<?php echo $latitude ?>,<?php echo $longitude ?>&zoom=6&size=360x200&maptype=roadmap
-		&markers=color:<?php echo $color ?>%7C<?php echo $latitude ?>,<?php echo $longitude ?>&sensor=false" />
-	</a>
-</div>
+<iframe width="450" height="450" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?&q=<?php echo $latitude ?>%2C<?php echo $longitude ?>&key=AIzaSyDKPc8UZnj4YbrdGb_ccYSGHz9ujHngKec &zoom=11"></iframe>
+  </div>
+  
+
