@@ -76,6 +76,7 @@ require_once(dirname(__FILE__).'/vendor/autoload.php');
 /* Loading functions */
 require_once(dirname(__FILE__).'/updateSensorsMeasurements.php');
 require_once(dirname(__FILE__).'/updateSensorsPlots.php');
+require_once(dirname(__FILE__).'/updateSensorsListFile.php');
 
 try {
 	/* Update sensors measurements in Wordpress */
@@ -83,6 +84,9 @@ try {
 	
 	/* Overwrite the Makefile.config file */
 	updateSensorsPlots();
+
+	/* Update the JSON sensor list file */
+	updateSensorsListFile();
 } catch (Exception $e) {
 	printf("Error : %s\n", $e->getMessage());
 }
