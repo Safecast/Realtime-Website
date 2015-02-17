@@ -70,12 +70,6 @@ class wfLog {
 		$id = get_current_user_id();
 		return $id ? $id : 0;
 	}
-	private function getPagename(){
-		global $wp_query;
-		$post = $wp_query->get_queried_object();
-		$pagename = $post->post_name;
-		return $pagename;
-	}
 	public function logLeechAndBlock($type){ //404 or hit
 		if(wfConfig::get('firewallEnabled')){
 			//Moved the following block into the "is fw enabled section" for optimization. 
@@ -139,6 +133,11 @@ class wfLog {
 						}
 					}
 				}
+			}
+			if(wfConfig::get('other_blockBadPOST') == '1' && $_SERVER['REQUEST_METHOD'] == 'POST' && empty($_SERVER['HTTP_USER_AGENT']) && empty($_SERVER['HTTP_REFERER'])){
+				$this->blockIP($IP, "POST received with blank user-agent and referer");
+				$this->do503(3600, "POST received with blank user-agent and referer");
+				//exits
 			}
 			if(isset($_SERVER['HTTP_USER_AGENT']) && wfCrawl::isCrawler($_SERVER['HTTP_USER_AGENT'])){
 				if($type == 'hit' && wfConfig::get('maxRequestsCrawlers') != 'DISABLED' && $hitsPerMinute > wfConfig::get('maxRequestsCrawlers')){
@@ -234,28 +233,33 @@ class wfLog {
 			if($elem['blockType'] != 'IU'){ continue; } //We only use IU type for now, but have this for future different block types.
 			$elem['ctimeAgo'] = wfUtils::makeTimeAgo($elem['ctimeAgo']);
 			if($elem['lastBlocked'] > 0){
-				$elem['lastBlockedAgo'] = wfUtils::makeTimeAgo($elem['lastBlockedAgo']);
+				$elem['lastBlockedAgo'] = wfUtils::makeTimeAgo($elem['lastBlockedAgo']) . ' ago';
 			} else {
 				$elem['lastBlockedAgo'] = 'Never';
 			}
 			$blockDat = explode('|', $elem['blockString']);
 			$elem['ipPattern'] = "";
-			$haveIPBlock = false;
-			$haveBrowserBlock = false;
+			$numBlockElements = 0;
 			if($blockDat[0]){
-				$haveIPBlock = true;
+				$numBlockElements++;
 				$ipDat = explode('-', $blockDat[0]);
 				$elem['ipPattern'] = "Block visitors with IP addresses in the range: " . wfUtils::inet_ntoa($ipDat[0]) . ' - ' . wfUtils::inet_ntoa($ipDat[1]);
 			} else {
 				$elem['ipPattern'] = 'Allow all IP addresses';
 			}
 			if($blockDat[1]){
-				$haveBrowserBlock = true;
+				$numBlockElements++;
 				$elem['browserPattern'] = "Block visitors whos browsers match the pattern: " . $blockDat[1];
 			} else {
 				$elem['browserPattern'] = 'Allow all browsers';
 			}
-			$elem['patternDisabled'] = (wfConfig::get('cacheType') == 'falcon' && $haveIPBlock && $haveBrowserBlock) ? true : false;
+			if($blockDat[2]){
+				$numBlockElements++;
+				$elem['refererPattern'] = "Block visitors from websites that match the pattern: " . $blockDat[2];
+			} else {
+				$elem['refererPattern'] = "Allow visitors arriving from all websites";
+			}
+			$elem['patternDisabled'] = (wfConfig::get('cacheType') == 'falcon' && $numBlockElements > 1) ? true : false;
 		}
 		return $results;
 	}
@@ -652,10 +656,12 @@ class wfLog {
 			if($blockRec['blockType'] == 'IU'){
 				$ipRangeBlocked = false;
 				$uaPatternBlocked = false;
+				$refBlocked = false;
 
 				$bDat = explode('|', $blockRec['blockString']);
 				$ipRange = $bDat[0];
 				$uaPattern = $bDat[1];
+				$refPattern = isset($bDat[2]) ? $bDat[2] : '';
 				if($ipRange){
 					$ips = explode('-', $ipRange);
 					if($IPnum >= $ips[0] && $IPnum <= $ips[1]){
@@ -667,23 +673,47 @@ class wfLog {
 						$uaPatternBlocked = true;
 					}
 				}
-				$rangeBlockReason = false;
+				if($refPattern){
+					if(wfUtils::isRefererBlocked($refPattern)){
+						$refBlocked = true;
+					}
+				}
+				$doBlock = false;
+				if($uaPattern && $ipRange && $refPattern){
+					if($uaPatternBlocked && $ipRangeBlocked && $refBlocked){
+						$doBlock = true;
+					}
+				}
 				if($uaPattern && $ipRange){
 					if($uaPatternBlocked && $ipRangeBlocked){
-						$rangeBlockReason = "Advanced pattern blocking in effect.";
+						$doBlock = true;
+					}
+				}
+				if($uaPattern && $refPattern){
+					if($uaPatternBlocked && $refBlocked){
+						$doBlock = true;
+					}
+				}
+				if($ipRange && $refPattern){
+					if($ipRangeBlocked && $refBlocked){
+						$doBlock = true;
 					}
 				} else if($uaPattern){
 					if($uaPatternBlocked){
-						$rangeBlockReason = "Advanced pattern blocking in effect.";
+						$doBlock = true;
 					}
 				} else if($ipRange){
 					if($ipRangeBlocked){
-						$rangeBlockReason = "Advanced pattern blocking in effect.";
+						$doBlock = true;
+					}
+				} else if($refPattern){
+					if($refBlocked){
+						$doBlock = true;
 					}
 				}
-				if($rangeBlockReason){
+				if($doBlock){
 					$this->getDB()->queryWrite("update " . $this->ipRangesTable . " set totalBlocked = totalBlocked + 1, lastBlocked = unix_timestamp() where id=%d", $blockRec['id']);
-					$this->do503(3600, $rangeBlockReason);
+					$this->do503(3600, "Advanced blocking in effect.");
 				}
 			}
 		}
@@ -867,7 +897,6 @@ class wfLog {
 			}
 		}
 		$results = $this->getDB()->querySelect("select ctime, level, type, msg from " . $this->statusTable . " where ctime > %f order by ctime asc", $lastCtime);
-		$lastTime = false;
 		$timeOffset = 3600 * get_option('gmt_offset');
 		foreach($results as &$rec){
 			//$rec['timeAgo'] = wfUtils::makeTimeAgo(time() - $rec['ctime']);
@@ -878,7 +907,6 @@ class wfLog {
 	}
 	public function getSummaryEvents(){
 		$results = $this->getDB()->querySelect("select ctime, level, type, msg from " . $this->statusTable . " where level = 10 order by ctime desc limit 100");
-		$lastTime = false;
 		$timeOffset = 3600 * get_option('gmt_offset');
 		foreach($results as &$rec){
 			$rec['date'] = date('M d H:i:s', $rec['ctime'] + $timeOffset);

@@ -40,10 +40,9 @@
 <div class="sensor-page-header container-fluid">
 	<div class="row">
 		<h1 class="entry-title page-header">
-			<?php the_title(); ?>
+			<?php the_title(); ?> (sensor <?php echo $id ?>)
 			<div class="status btn btn-sm btn-<?php echo $statusClass ?>"><?php echo $status ?></div>
-		</h1>
-		<div class="container-fluid">
+		</h1>		<div class="container-fluid">
 			<div class="row">
 				<div class="graph col-md-6 text-center">
 					<table class="table table-hover">

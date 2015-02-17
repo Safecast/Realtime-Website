@@ -50,3 +50,10 @@ function roots_get_avatar($avatar, $type) {
   return $avatar;
 }
 add_filter('get_avatar', 'roots_get_avatar', 10, 2);
+
+
+function wpb_reverse_comments($comments) {
+		return array_reverse($comments);
+	}	
+add_filter ('comments_array', 'wpb_reverse_comments');
+

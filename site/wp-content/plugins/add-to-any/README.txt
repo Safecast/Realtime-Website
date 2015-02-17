@@ -2,25 +2,26 @@
 Contributors: micropat, addtoany
 Tags: sharing, share, share this, bookmarking, social, share button, share buttons, share links, social share, social sharing, social bookmarking, social bookmarks, socialize, bookmark, bookmarks, save, Post, posts, page, pages, images, image, admin, statistics, stats, links, plugin, shortcode, sidebar, widget, responsive, email, e-mail, print, seo, button, delicious, google, tumblr, linkedin, digg, reddit, facebook, facebook share, facebook like, like, twitter, twitter button, twitter share, tweet, tweet button, +1, plus 1, google +1, google plus, google plus one, plus one, pinterest, pin, pin it, pinit, wanelo, buffer, stumbleupon, bitly, whatsapp, lockerz, addthis, sociable, sharedaddy, sharethis, shareaholic, icon, icons, vector, SVG, floating, floating buttons, wpmu, Add to Any, AddToAny
 Requires at least: 2.8
-Tested up to: 4.1
-Stable tag: 1.3.8
+Tested up to: 4.2
+Stable tag: 1.5.1
 
 Share buttons for WordPress including AddToAny's universal sharing button, Facebook, Twitter, Google+, Pinterest, WhatsApp and many more.
 
 == Description ==
 
-The WordPress sharing plugin to help people share, bookmark, and email your posts and pages using any service, such as Facebook, Twitter, Pinterest, Google, Reddit, Tumblr, StumbleUpon, LinkedIn, and well over 100 more sharing and social bookmarking sites.
+The WordPress sharing plugin to help people share, save, and email your posts and pages using any service, such as Facebook, Twitter, Pinterest, Google, Reddit, Tumblr, StumbleUpon, LinkedIn, and well over 100 more sharing and social bookmarking sites.
 
 AddToAny's customizable platform and social share icons let you optimize your site's blog posts & pages for the best social sharing engagement.
 
 = Share Buttons =
 
-* **New**: Floating share buttons — responsive & customizable, vertical & horizontal
+* **New**: AddToAny share counters — fast & official counts in the same style
+* Floating share buttons — responsive & customizable, vertical & horizontal
 * Vector sharing buttons (SVG sharing icons)
 * Universal Share Button and Smart Menu
-* Sharing Kit for individual share links
-* Custom sharing icons
-* Choose from over 100 individual services
+* Individual share links
+* Custom share icons
+* Choose from over 100 services
 * 3rd party buttons include the Facebook Like Button, Twitter Tweet Button, Pinterest Pin It Button, Google+ Share Button and Google +1 Button
 * Universal email sharing makes it easy to share via Gmail, Yahoo! Mail, Outlook.com (Hotmail), AOL Mail, and any other web and native apps
 
@@ -36,6 +37,7 @@ AddToAny's customizable platform and social share icons let you optimize your si
 
 * Automatic Google Analytics integration (<a href="https://www.addtoany.com/ext/google_analytics/">access guide</a>) for sharing analytics
 * Track shared links with bit.ly, awe.sm, goo.gl, and custom URL shorteners
+* Display share counts on posts and pages
 
 = WordPress Optimized =
 
@@ -59,8 +61,8 @@ AddToAny's customizable platform and social share icons let you optimize your si
 
 = Wide Support =
 
-* Over 8 years of active development 
-* Over 3 million downloads
+* Over 8 years of active development
+* Over 3.5 million downloads
 * Translated into dozens of languages
 * Ongoing support from the community
 
@@ -95,7 +97,7 @@ To further customize AddToAny, see the <a href="https://www.addtoany.com/buttons
 
 Try temporarily switching themes and disabling other plugins to identify a potential conflict. If you find a conflict, try contacting that theme or plugin author. If an issue persists on a default theme with all other plugins disabled, perform a google search across the WordPress forums using a query such as: <a href="https://www.google.com/#q=site:wordpress.org%2Fsupport+-reviews+addtoany+">site:wordpress.org/support -reviews addtoany [your issue issue here]</a>
 
-Feel free to <a href="http://wordpress.org/support/plugin/add-to-any">post here</a>, where the community can hopefully help you. Describe the issue, what troubleshooting you have already done, and provide a link to your site, and any other potentially relevant information.
+Feel free to <a href="https://wordpress.org/support/plugin/add-to-any">post here</a>, where the community can hopefully help you. Describe the issue, what troubleshooting you have already done, provide a link to your site, and any other potentially relevant information.
 
 = Why isn't the universal drop-down menu appearing? =
 
@@ -119,9 +121,9 @@ You can also customize the shared URL like so:
 
 Facebook does link sharing differently than most other services. Facebook expects the Title, Description, and Thumbnail of a shared page to be defined in the actual HTML code of a shared page. Unlike other services that accept common parameters, Facebook only accepts a URL, then Facebook scans the actual page for details. To change the title, description or image on Facebook, you will need to modify your theme or use another plugin that filters your theme.
 
-Try running Facebook's <a href="https://developers.facebook.com/tools/debug">URL Debugger</a> on your pages to see how Facebook reads your site.
+Try running Facebook's <a href="https://developers.facebook.com/tools/debug">URL Debugger</a> on your pages to see how Facebook reads your site. "Fetch new scrape information" to test site changes and clear Facebook's cache of a page.
 
-To change the title, description and/or image on Facebook, your theme's header file should be modified according to <a href="https://developers.facebook.com/docs/opengraph/">Facebook's OpenGraph specification</a>. With WordPress, this can be accomplished with plugins such as the <a href="http://wordpress.org/plugins/wordpress-seo/">WordPress SEO by Yoast</a> or the <a href="http://wordpress.org/plugins/all-in-one-seo-pack/">All in One SEO Pack</a>.  Please see those plugins for details, and post in the WordPress or plugin author's forums for more support.
+To change the title, description and/or image on Facebook, your theme's header file should be modified according to <a href="https://developers.facebook.com/docs/opengraph/">Facebook's OpenGraph specification</a>. With WordPress, this can be accomplished with plugins such as the <a href="https://wordpress.org/plugins/wordpress-seo/">WordPress SEO by Yoast</a> or the <a href="https://wordpress.org/plugins/all-in-one-seo-pack/">All in One SEO Pack</a>.  Please see those plugins for details, and post in the WordPress or plugin author's forums for more support.
 
 For more technical information on setting your pages up for Facebook sharing, see "Facebook Sharing Checklist" in <a href="https://developers.facebook.com/docs/plugins/checklist/">Facebook's documentation</a>.
 
@@ -198,12 +200,12 @@ If you want to customize the shared URL and title for these icons, use the follo
 You can create a plugin or customize the following PHP sample code to add to your theme's function.php file:
 
 `function addtoany_add_services( $services ) {
-	$services['google_example'] = array(
-		'name'        => 'Google Example',
-		'icon_url'    => 'http://www.google.com/favicon.ico',
+	$services['example_service'] = array(
+		'name'        => 'Example Service',
+		'icon_url'    => 'https://www.google.com/favicon.ico',
 		'icon_width'  => 16,
 		'icon_height' => 16,
-		'href'        => 'http://www.example.com/add?linkurl=A2A_LINKURL&amp;linkname=A2A_LINKNAME'
+		'href'        => 'http://www.example.com/share?url=A2A_LINKURL&amp;title=A2A_LINKNAME'
 	);
 	return $services;
 }
@@ -265,7 +267,7 @@ Yes, this plugin outputs 100% W3C valid HTML5 & XHTML and W3C valid CSS 3 by def
 
 If you use the Facebook Like, Twitter Tweet or Google +1 buttons in an HTML5 theme, note that the button iframes use the `scrolling` attribute, which is valid XHTML but the attribute has been deprecated in HTML5. It's needed to prevent scrollbars from appearing over the Like, Tweet, and +1 buttons inside of the iframes.
 
-Regardless of circumstances for passing W3C tests, the plugin will always output semantically valid and robot-readable code, so publishers do not have to worry about search engine crawler errors due to invalid code. Both <a href="http://en.wikipedia.org/wiki/Web_standards">web standards</a> and <a href="http://en.wikipedia.org/wiki/Cross-browser">cross-browser</a> are taken very seriously.
+Regardless of circumstances for passing W3C tests, the plugin will always output semantically valid and robot-readable code, so publishers do not have to worry about search engine crawler errors due to invalid code. Both <a href="http://en.wikipedia.org/wiki/Web_standards">web standards</a> and <a href="http://en.wikipedia.org/wiki/Cross-browser">cross-browser</a> compatibility are taken seriously.
 
 = How can I move the plugin's inline CSS into my theme's main external stylesheet? =
 
@@ -290,8 +292,39 @@ Upload the plugin directory (including all files and directories within) to the 
 
 == Changelog ==
 
+= 1.5.1 =
+* Update Print icon
+* Update YouMob icon
+* Update Symbaloo icon
+* Update Qzone (QQ) icon
+* Remove allvoices, arto, bebo, funp, jumptags, khabbr, linkagogo, linkatopia, nowpublic, orkut, phonefavs, startaid, technotizie, wists, xerpi
+
+= 1.5 =
+* Custom icon sizes (applied to AddToAny vector icons)
+* Fix custom standalone service icons when used with large icons
+* Add Kakao
+* Add Qzone
+* Add Yummly
+* Update Wykop icon
+
+= 1.4.1 =
+* Update CSS to fix Facebook Like button verical aligment caused by Facebook's inline styling change
+* Fix issue with shared titles containing unwanted HTML tags caused by some themes
+
+= 1.4 =
+* New: Share counters in the same style for Facebook, Twitter, Pinterest, Linkedin and Reddit!
+ * In Settings > AddToAny > Standalone Buttons, click the down arrow and toggle the "Show count" checkbox for any supported service
+* Floating buttons do not display share counts in this release
+* Update CSS to support AddToAny share counters
+
+= 1.3.8.1 =
+* Add LINE icon (thanks tokyodev)
+* Add Mixi icon
+* Add Hacker News icon
+* Update Twitter icon
+
 = 1.3.8 =
-* Floating share buttons are now dislabed when "Show sharing buttons" is unchecked for a post/page
+* Floating share buttons are now disabled when "Show sharing buttons" is unchecked for a post/page
 * French translation (by Jacques Soulé)
 
 = 1.3.7 =
@@ -1206,6 +1239,9 @@ Upload the plugin directory (including all files and directories within) to the 
 * PHP4 legacy and compatibility fixes
 
 == Upgrade Notice ==
+
+= 1.4 =
+AddToAny share counters are now available for supported standalone buttons! For Facebook, Twitter, Pinterest, Reddit and Linkedin, click the down arrow and toggle the "Show count" checkbox.
 
 = 1.3.1 =
 Floating share buttons are now responsive by default, ready for mobile & tablets. You can toggle responsiveness and set responsive breakpoints in the "Floating" tab of Settings > AddToAny.

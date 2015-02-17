@@ -4,7 +4,7 @@ Plugin Name: UpdraftPlus - Backup/Restore
 Plugin URI: http://updraftplus.com
 Description: Backup and restore: take backups locally, or backup to Amazon S3, Dropbox, Google Drive, Rackspace, (S)FTP, WebDAV & email, on automatic schedules.
 Author: UpdraftPlus.Com, DavidAnderson
-Version: 1.9.26
+Version: 1.9.51
 Donate link: http://david.dw-perspective.org.uk/donate
 License: GPLv3 or later
 Text Domain: updraftplus
@@ -13,9 +13,9 @@ Author URI: http://updraftplus.com
 */
 
 /*
-Portions copyright 2011-14 David Anderson
+Portions copyright 2011-15 David Anderson
 Portions copyright 2010 Paul Kehrer
-Other portions copyright as indicated authors in the relevant files
+Other portions copyright as indicated by authors in the relevant files
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -57,7 +57,6 @@ if (!defined('UPDRAFTPLUS_MAXBATCHFILES')) define('UPDRAFTPLUS_MAXBATCHFILES', 5
 
 // Load add-ons and files that may or may not be present, depending on where the plugin was distributed
 if (is_file(UPDRAFTPLUS_DIR.'/autoload.php')) require_once(UPDRAFTPLUS_DIR.'/autoload.php');
-if (is_file(UPDRAFTPLUS_DIR.'/udaddons/updraftplus-addons.php')) include_once(UPDRAFTPLUS_DIR.'/udaddons/updraftplus-addons.php');
 
 # wp-cron only has hourly, daily and twicedaily, so we need to add some of our own
 function updraftplus_modify_cron_schedules($schedules) {
@@ -72,7 +71,29 @@ function updraftplus_modify_cron_schedules($schedules) {
 add_filter('cron_schedules', 'updraftplus_modify_cron_schedules', 30);
 
 // The checks here before loading are for performance only - unless one of those conditions is met, then none of the hooks will ever be used
-if (!is_admin() && (!defined('DOING_CRON') || !DOING_CRON) && (!defined('XMLRPC_REQUEST') || !XMLRPC_REQUEST) && empty($_SERVER['SHELL']) && empty($_SERVER['USER'])) return;
+
+if (!is_admin() && (!defined('DOING_CRON') || !DOING_CRON) && (!defined('XMLRPC_REQUEST') || !XMLRPC_REQUEST) && empty($_SERVER['SHELL']) && empty($_SERVER['USER'])) {
+	// There is no good way to work out if the cron event is likely to be called under the ALTERNATE_WP_CRON system, other than re-running the calculation
+
+	// If ALTERNATE_WP_CRON is not active, then we are done
+	if ( !defined('ALTERNATE_WP_CRON') || !ALTERNATE_WP_CRON || !empty($_POST) || defined('DOING_AJAX') || isset($_GET['doing_wp_cron'])) return;
+
+	// The check below is the one used by spawn_cron() to decide whether cron events should be run
+	$gmt_time = microtime( true );
+	$lock = get_transient('doing_cron');
+	if ( $lock > $gmt_time + 10 * 60 ) $lock = 0;
+	if ( $lock + WP_CRON_LOCK_TIMEOUT > $gmt_time ) return;
+	if (function_exists('_get_cron_array')) {
+		$crons = _get_cron_array();
+	} else {
+		$crons = get_option('cron');
+	}
+	if (!is_array($crons)) return;
+
+	$keys = array_keys( $crons );
+	if ( isset($keys[0]) && $keys[0] > $gmt_time ) return;
+	// If we got this far, then cron is going to be fired, so we do want to load all our hooks
+}
 
 $updraftplus_have_addons = 0;
 if (is_dir(UPDRAFTPLUS_DIR.'/addons') && $dir_handle = opendir(UPDRAFTPLUS_DIR.'/addons')) {
@@ -91,6 +112,8 @@ if (is_dir(UPDRAFTPLUS_DIR.'/addons') && $dir_handle = opendir(UPDRAFTPLUS_DIR.'
 	}
 	@closedir($dir_handle);
 }
+
+if (is_file(UPDRAFTPLUS_DIR.'/udaddons/updraftplus-addons.php')) include_once(UPDRAFTPLUS_DIR.'/udaddons/updraftplus-addons.php');
 
 require_once(UPDRAFTPLUS_DIR.'/class-updraftplus.php');
 $updraftplus = new UpdraftPlus();

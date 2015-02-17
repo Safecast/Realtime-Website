@@ -288,8 +288,18 @@ function A2A_SHARE_SAVE_options_page() {
 			$active_services = array();
 			if ( ! isset( $_POST['A2A_SHARE_SAVE_active_services'] ) )
 				$_POST['A2A_SHARE_SAVE_active_services'] = array();
-			foreach ( $_POST['A2A_SHARE_SAVE_active_services'] as $dummy=>$sitename )
-				$active_services[] = substr( $sitename, 7 );
+			foreach ( $_POST['A2A_SHARE_SAVE_active_services'] as $dummy=>$sitename ) {
+				$service = substr( $sitename, 7 );
+				$active_services[] = $service;
+				
+				// AddToAny counter enabled?
+				if ( in_array( $service, array( 'facebook', 'twitter', 'pinterest', 'linkedin', 'reddit' ) ) ) {
+					$new_options['special_' . $service . '_options'] = array(
+						'show_count' => ( ( isset( $_POST['addtoany_' . $service . '_show_count'] ) && $_POST['addtoany_' . $service . '_show_count'] == '1') ? '1' : '-1' )
+					);
+				}
+			}
+				
 			$new_options['active_services'] = $active_services;
 			
 			// Store special service options
@@ -400,6 +410,10 @@ function A2A_SHARE_SAVE_options_page() {
 				<label><input type="radio" name="A2A_SHARE_SAVE_icon_size" value="32"<?php if ( ! isset( $options['icon_size'] ) || '32' == $options['icon_size'] ) echo ' checked="checked"'; ?>> <?php _e('Large', 'add-to-any'); ?></label>
 				<br>
 				<label><input type="radio" name="A2A_SHARE_SAVE_icon_size" value="16"<?php if ( isset( $options['icon_size'] ) && '16' == $options['icon_size'] ) echo ' checked="checked"'; ?>> <?php _e('Small', 'add-to-any'); ?></label>
+				<br>
+				<label><input type="radio" name="A2A_SHARE_SAVE_icon_size"<?php if ( isset( $options['icon_size'] ) && ! in_array( $options['icon_size'], array( '32', '16' ) ) ) echo ' value="' . $options['icon_size'] . '" checked="checked"'; ?>> <?php _e('Custom', 'add-to-any'); ?></label>
+				<input class="addtoany_icon_size_custom small-text" id="A2A_SHARE_SAVE_icon_size_custom" maxlength="3" type="text" onclick="document.getElementsByName('A2A_SHARE_SAVE_icon_size')[2].checked=true" value="<?php if ( isset( $options['icon_size'] ) && ! in_array( $options['icon_size'], array( '32', '16' ) ) ) echo $options['icon_size']; ?>">
+				<label class="addtoany_icon_size_custom" for="A2A_SHARE_SAVE_icon_size_custom">pixels</label>
 			</fieldset></td>
 			</tr>
 			
@@ -411,32 +425,36 @@ function A2A_SHARE_SAVE_options_page() {
 				</ul>
 				<p id="addtoany_services_info"><?php _e("Choose the services you want below. &nbsp;Click a chosen service again to remove. &nbsp;Reorder services by dragging and dropping as they appear above.", "add-to-any"); ?></p>
 				<ul id="addtoany_services_selectable" class="addtoany_admin_list">
-					<li id="a2a_wp_facebook_like" class="addtoany_special_service" title="Facebook Like button">
+					<li id="a2a_wp_facebook_like" class="addtoany_special_service addtoany_3p_button" title="Facebook Like button">
 						<span><img src="<?php echo $A2A_SHARE_SAVE_plugin_url_path.'/icons/facebook_like.png'; ?>" width="50" height="20" alt="Facebook Like" /></span>
 					</li>
-					<li id="a2a_wp_twitter_tweet" class="addtoany_special_service" title="Twitter Tweet button">
+					<li id="a2a_wp_twitter_tweet" class="addtoany_special_service addtoany_3p_button" title="Twitter Tweet button">
 						<span><img src="<?php echo $A2A_SHARE_SAVE_plugin_url_path.'/icons/twitter_tweet.png'; ?>" width="55" height="20" alt="Twitter Tweet" /></span>
 					</li>
-					<li id="a2a_wp_google_plusone" class="addtoany_special_service" title="Google +1 button">
+					<li id="a2a_wp_google_plusone" class="addtoany_special_service addtoany_3p_button" title="Google +1 button">
 						<span><img src="<?php echo $A2A_SHARE_SAVE_plugin_url_path.'/icons/google_plusone.png'; ?>" width="32" height="20" alt="Google +1" /></span>
 					</li>
-					<li id="a2a_wp_google_plus_share" class="addtoany_special_service" title="Google+ Share button">
+					<li id="a2a_wp_google_plus_share" class="addtoany_special_service addtoany_3p_button" title="Google+ Share button">
 						<span><img src="<?php echo $A2A_SHARE_SAVE_plugin_url_path.'/icons/google_plus_share.png'; ?>" width="56" height="20" alt="Google+ Share" /></span>
 					</li>
-					<li id="a2a_wp_pinterest_pin" class="addtoany_special_service" title="Pinterest Pin It button">
+					<li id="a2a_wp_pinterest_pin" class="addtoany_special_service addtoany_3p_button" title="Pinterest Pin It button">
 						<span><img src="<?php echo $A2A_SHARE_SAVE_plugin_url_path.'/icons/pinterest_pin.png'; ?>" width="40" height="20" alt="Pinterest Pin It" /></span>
 					</li>
 				<?php
 					// Show all services
 					foreach ($A2A_SHARE_SAVE_services as $service_safe_name=>$site) { 
-						if (isset($site['href']))
+						if ( isset( $site['href'] ) )
 							$custom_service = true;
 						else
 							$custom_service = false;
-						if ( ! isset($site['icon']))
+						
+						if ( ! isset( $site['icon'] ) )
 							$site['icon'] = 'default';
+							
+						$special_service = ( in_array( $service_safe_name, array( 'facebook', 'twitter', 'pinterest', 'linkedin', 'reddit' ) ) ) 
+							? ' class="addtoany_special_service"' : '';
 					?>
-						<li data-addtoany-icon-name="<?php echo $site['icon']; ?>" id="a2a_wp_<?php echo $service_safe_name; ?>" title="<?php echo $site['name']; ?>">
+						<li data-addtoany-icon-name="<?php echo $site['icon']; ?>"<?php echo $special_service; ?> id="a2a_wp_<?php echo $service_safe_name; ?>" title="<?php echo $site['name']; ?>">
 							<span><img src="<?php echo (isset($site['icon_url'])) ? $site['icon_url'] : $A2A_SHARE_SAVE_plugin_url_path.'/icons/'.$site['icon'].'.png'; ?>" width="<?php echo (isset($site['icon_width'])) ? $site['icon_width'] : '16'; ?>" height="<?php echo (isset($site['icon_height'])) ? $site['icon_height'] : '16'; ?>" alt="" /><?php echo $site['name']; ?></span>
 						</li>
 				<?php
@@ -757,33 +775,39 @@ function A2A_SHARE_SAVE_admin_head() {
 					jQuery('input[name="A2A_SHARE_SAVE_button"]:radio:visible:first').attr('checked', true);
 			};
 			
-			if ( jQuery('input[name="A2A_SHARE_SAVE_icon_size"]:checked').val() == '32' ) {
+			var icon_size_value = jQuery('input[name="A2A_SHARE_SAVE_icon_size"]:checked').val();
+			
+			if ( '16' == icon_size_value ) {
+				// Hide large universal buttons
+				jQuery('.addtoany_icon_size_large').hide('fast');
+				// Show small universal button
+				jQuery('.addtoany_icon_size_small').show('fast', select_proper_radio);
+				
+				// Switch to small standalone icons
+				jQuery('#addtoany_services_sortable li').not('.dummy, .addtoany_3p_button, #addtoany_show_services').html(function() {
+					return jQuery(this).data('a2a_16_icon_html');
+				});
+				
+				// Adjust the Add/Remove Services button
+				jQuery('#addtoany_show_services').removeClass('addtoany_line_height_32');
+			}
+			else {
 				// Hide small universal buttons
 				jQuery('.addtoany_icon_size_small').hide('fast');
 				// Show large universal button
 				jQuery('.addtoany_icon_size_large').show('fast', select_proper_radio);
 				
 				// Switch to large standalone icons
-				jQuery('#addtoany_services_sortable li').not('.dummy, .addtoany_special_service, #addtoany_show_services').html(function() {
+				jQuery('#addtoany_services_sortable li').not('.dummy, .addtoany_3p_button, #addtoany_show_services').html(function() {
 					return jQuery(this).data('a2a_32_icon_html');
 				});
 				
 				// Adjust the Add/Remove Services button
 				jQuery('#addtoany_show_services').addClass('addtoany_line_height_32');
 			}
-			else {
-				// Hide small universal buttons
-				jQuery('.addtoany_icon_size_large').hide('fast');
-				// Show large universal button
-				jQuery('.addtoany_icon_size_small').show('fast', select_proper_radio);
-				
-				// Switch to small standalone icons
-				jQuery('#addtoany_services_sortable li').not('.dummy, .addtoany_special_service, #addtoany_show_services').html(function() {
-					return jQuery(this).data('a2a_16_icon_html');
-				});
-				
-				// Adjust the Add/Remove Services button
-				jQuery('#addtoany_show_services').removeClass('addtoany_line_height_32');
+			
+			if ( 0 < icon_size_value.length && 16 != icon_size_value && 32 != icon_size_value ) {
+				jQuery('.addtoany_icon_size_custom').show('fast');
 			}
 		};
 		
@@ -792,6 +816,11 @@ function A2A_SHARE_SAVE_admin_head() {
 		// Display buttons/icons of the selected icon size
 		jQuery('input[name="A2A_SHARE_SAVE_icon_size"]').bind('change', function(e){
 			show_appropriate_universal_buttons();
+		});
+		
+		// Set value on radio from custom text input
+		jQuery('#A2A_SHARE_SAVE_icon_size_custom').bind('change', function(e){
+			jQuery('input[name="A2A_SHARE_SAVE_icon_size"]').eq(2).val( jQuery('#A2A_SHARE_SAVE_icon_size_custom').val() );
 		});
 		
 		// Toggle child options of 'Display in posts'
@@ -817,9 +846,9 @@ function A2A_SHARE_SAVE_admin_head() {
 			
 			var services_array = jQuery(this_sortable).sortable('toArray'),
 				services_size = services_array.length;
-			if(services_size<1) return;
+			if (services_size < 1) return;
 			
-			for(var i=0, service_name, show_count_value, fb_verb_value; i < services_size; i++){
+			for (var i=0, service_name, show_count_value, fb_verb_value; i < services_size; i++) {
 				if(services_array[i]!='') { // Exclude dummy icon
 					jQuery('#addtoany_admin_form').append('<input class="addtoany_hidden_options" name="A2A_SHARE_SAVE_active_services[]" type="hidden" value="'+services_array[i]+'"/>');
 					
@@ -835,6 +864,10 @@ function A2A_SHARE_SAVE_admin_head() {
 							fb_verb_value = (jQuery('#' + services_array[i] + '_verb').val() == 'recommend') ? 'recommend' : 'like';
 							jQuery('#addtoany_admin_form').append('<input class="addtoany_hidden_options" name="addtoany_' + service_name + '_verb" type="hidden" value="' + fb_verb_value + '"/>');
 						}
+					// AddToAny counters
+					} else if ( jQuery.inArray( service_name, ['facebook', 'twitter', 'pinterest', 'linkedin', 'reddit'] ) > -1 ) {
+						show_count_value = (jQuery('#' + services_array[i] + '_show_count').is(':checked')) ? '1' : '-1' ;
+						jQuery('#addtoany_admin_form').append('<input class="addtoany_hidden_options" name="addtoany_' + service_name + '_show_count" type="hidden" value="' + show_count_value + '"/>');
 					}
 				}
 			}
@@ -855,6 +888,7 @@ function A2A_SHARE_SAVE_admin_head() {
 				this_service = jQuery(this),
 				this_service_name = this_service.attr('id').substr(7),
 				this_service_is_special = this_service.hasClass('addtoany_special_service'),
+				this_service_is_3p = this_service.hasClass('addtoany_3p_button'),
 				checked = '',
 				special_options_html = '';
 			
@@ -881,19 +915,21 @@ function A2A_SHARE_SAVE_admin_head() {
 			}
 			
 			var icon_size = jQuery('input:radio[name=A2A_SHARE_SAVE_icon_size]:checked').val();
-				new_service = this_service.toggleClass('addtoany_selected')
+			icon_size = ('16' == icon_size) ? '16' : '32';
+			
+			var new_service = this_service.toggleClass('addtoany_selected')
 					.unbind('click', moveToSortableList)
 					.bind('click', moveToSelectableList)
 					.clone();
 			
 			new_service.data('a2a_16_icon_html', this_service.find('img').clone().attr('alt', this_service.attr('title')).wrap('<p>').parent().html() + configurable_html);
 			
-			if (this_service_is_special)
-				// If special service, set the same HTML as used for '16px icon size'
+			if (this_service_is_3p)
+				// If special third party service, set the same HTML as used for '16px icon size'
 				new_service.data( 'a2a_32_icon_html', new_service.data('a2a_16_icon_html') );
 			else
 				// Set HTML for 32px icon size
-				new_service.data( 'a2a_32_icon_html', '<span class="a2a_svg a2a_s__default a2a_s_' + this_service.attr('data-addtoany-icon-name') + '"></span>' );
+				new_service.data( 'a2a_32_icon_html', '<span class="a2a_svg a2a_s__default a2a_s_' + this_service.attr('data-addtoany-icon-name') + '"></span>' + configurable_html );
 				
 			new_service.html( new_service.data('a2a_' + icon_size + '_icon_html') )
 				.click(function(){
@@ -947,19 +983,34 @@ function A2A_SHARE_SAVE_admin_head() {
 		if($admin_services_saved)
 			$active_services_last = substr($active_services_last, 7); // Remove a2a_wp_
 		$active_services_quoted = '';
+		$counters_enabled_js = '';
 		foreach ($active_services as $service) {
-			if($admin_services_saved)
-				$service = substr($service, 7); // Remove a2a_wp_
+			if ( $admin_services_saved )
+				$service = substr( $service, 7 ); // Remove a2a_wp_
 			$active_services_quoted .= '"' . esc_js( $service ) . '"';
 			if ( $service != $active_services_last )
 				$active_services_quoted .= ',';
+			
+			// AddToAny counter enabled?
+			if ( in_array( $service, array( 'facebook', 'twitter', 'pinterest', 'linkedin', 'reddit' ) ) ) {
+				if ( isset( $_POST['addtoany_' . $service . '_show_count'] ) && $_POST['addtoany_' . $service . '_show_count'] == '1'
+					|| ! isset( $_POST['addtoany_' . $service . '_show_count'] )
+					&& isset( $options['special_' . $service . '_options'] )
+					&& isset( $options['special_' . $service . '_options']['show_count'] ) 
+					&& $options['special_' . $service . '_options']['show_count'] == '1' 
+				) {
+					$counters_enabled_js .= 'service_options.' . $service . ' = {show_count: 1};';
+				}
+			}
 		}
 		?>
 		var services = [<?php echo $active_services_quoted; ?>],
 			service_options = {};
 		
 		<?php		
-		// Special service options
+		// Special service options (enabled counters) if any
+		echo $counters_enabled_js;
+		
 		if ( isset( $_POST['addtoany_facebook_like_verb'] ) && $_POST['addtoany_facebook_like_verb'] == 'recommend'
 			|| ! isset( $_POST['addtoany_facebook_like_verb'] ) 
 			&& isset( $options['special_facebook_like_options'] ) && $options['special_facebook_like_options']['verb'] == 'recommend' ) {
@@ -999,7 +1050,7 @@ function A2A_SHARE_SAVE_admin_head() {
 		});
 		
 		// Adjust the Add/Remove Services button for large or small icons
-		if ( jQuery('input:radio[name=A2A_SHARE_SAVE_icon_size]:checked').val() == '32' )
+		if ( jQuery('input:radio[name=A2A_SHARE_SAVE_icon_size]:checked').val() != '16' )
 			jQuery('#addtoany_show_services').addClass('addtoany_line_height_32');
 		
 		// TBD
@@ -1015,6 +1066,10 @@ function A2A_SHARE_SAVE_admin_head() {
 	.addtoany_admin_list{list-style:none;padding:0;margin:0;}
 	.addtoany_admin_list li{-webkit-border-radius:9px;-moz-border-radius:9px;border-radius:9px;}
 	
+	.addtoany_icon_size_custom,
+	  /* Override WP display */
+	  .form-table td fieldset label.addtoany_icon_size_custom{display:none;}
+	
 	#addtoany_services_selectable{clear:left;display:none;}
 	#addtoany_services_selectable li{cursor:pointer;float:left;width:150px;font-size:11px;margin:0;padding:6px;border:1px solid transparent;_border-color:#FAFAFA/*IE6*/;overflow:hidden;}
 	<?php // white-space:nowrap could go above, but then webkit does not wrap floats if parent has no width set; wrapping in <span> instead (below) ?>
@@ -1023,15 +1078,16 @@ function A2A_SHARE_SAVE_admin_head() {
 	#addtoany_services_selectable li.addtoany_selected:hover{border-color:#F00;}
 	#addtoany_services_selectable li:active{border:1px solid #000;}
 	#addtoany_services_selectable img{margin:0 4px;width:16px;height:16px;border:0;vertical-align:middle;}
-	#addtoany_services_selectable .addtoany_special_service{padding:3px 6px;}
-	#addtoany_services_selectable .addtoany_special_service img{width:auto;height:20px;}
+	#addtoany_services_selectable .addtoany_3p_button{padding:4px 6px;}
+	#addtoany_services_selectable .addtoany_3p_button img{width:auto;height:20px;}
 	
-	#addtoany_services_sortable li, #addtoany_services_sortable li.dummy:hover{cursor:move;float:left;padding:9px;border:1px solid transparent;_border-color:#FAFAFA/*IE6*/;}
+	#addtoany_services_sortable li, #addtoany_services_sortable li.dummy:hover{cursor:move;float:left;padding:14px 10px;border:1px solid transparent;_border-color:#FAFAFA/*IE6*/;}
 	#addtoany_services_sortable li:hover{border:1px solid #AAA;background-color:#FFF;}
 	#addtoany_services_sortable li.dummy, #addtoany_services_sortable li.dummy:hover{cursor:auto;background-color:transparent;}
 	#addtoany_services_sortable img{width:16px;height:16px;border:0;vertical-align:middle;}
-	#addtoany_services_sortable .addtoany_special_service img{width:auto;height:20px;float:left;}
-	#addtoany_services_sortable .addtoany_special_service span.down_arrow{background:url(<?php echo admin_url( '/images/arrows.png' ); ?>) no-repeat 5px 9px;float:right;height:29px;;margin:-6px 0 -6px 4px;width:26px;}
+	#addtoany_services_sortable .addtoany_3p_button img{width:auto;height:20px;float:left;}
+	#addtoany_services_sortable .addtoany_special_service {position: relative;}
+	#addtoany_services_sortable .addtoany_special_service span.down_arrow{background:url(<?php echo admin_url( '/images/arrows.png' ); ?>) no-repeat 2px 9px;bottom: -6px;left: 50%;margin:0 0 0 -10px;position:absolute;height:29px;width:14px;}
 	#addtoany_services_sortable .addtoany_special_service div.special_options{display:none;font-size:11px;margin-top:9px;}
 	#addtoany_services_sortable .addtoany_special_service_options_selected{border:1px solid #AAA;background-color:#FFF;}
 	#addtoany_services_sortable .addtoany_special_service_options_selected span.down_arrow{display:none;}

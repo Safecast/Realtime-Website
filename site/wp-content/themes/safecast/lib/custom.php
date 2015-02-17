@@ -3,9 +3,17 @@
  * Custom functions
  */
 
+
+
 define('ACF_LITE', true);
 
 require_once(WP_CONTENT_DIR.'/plugins/advanced-custom-fields/acf.php');
+
+if( function_exists('acf_add_options_page') ) {
+	
+	acf_add_options_page();
+	
+}
 
 if(function_exists("register_field_group"))
 {
@@ -489,8 +497,8 @@ add_action('save_post', 'update_sensors_post_title');
  *	Sensors table generation
 */
 
-define("TIME_OFFLINE_SHORT", 	660);
-define("TIME_OFFLINE_LONG", 	1560);
+define("TIME_OFFLINE_SHORT", 	1320);
+define("TIME_OFFLINE_LONG", 	3120);
 define("SENSOR_TABLE_PAGE", 	17);
 
 if (!function_exists('generateSensorsTable')) {
