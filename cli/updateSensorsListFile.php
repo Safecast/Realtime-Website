@@ -12,7 +12,7 @@
 function getListFilehandle() {
 	$uploadDir  = wp_upload_dir();
 	$filename   = $uploadDir['basedir'].sprintf("/devices.json", $sensorId);
-	$filehandle = fopen($filename, 'c');
+	$filehandle = fopen($filename, 'w');
 	
 	return $filehandle;
 }
