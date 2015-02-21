@@ -94,19 +94,19 @@ function logMeasurement($filehandle, $postId) {
 	fputcsv($filehandle, $fields);
 }
 
-function getLogFilehandle($sensorId, $reset) {
-	$uploadDir  = wp_upload_dir();
-	$filename   = $uploadDir['basedir'].sprintf("/measurements/device_%s.csv", $sensorId);
-	$filehandle = fopen($filename, $reset ? 'w' : 'a');
+// function getLogFilehandle($sensorId, $reset) {
+// 	$uploadDir  = wp_upload_dir();
+// 	$filename   = $uploadDir['basedir'].sprintf("/measurements/device_%s.csv", $sensorId);
+// 	$filehandle = fopen($filename, $reset ? 'w' : 'a');
 	
-	if ($reset || (0 == filesize($filename))) {
-		fputcsv($filehandle, array('id', 'userId', 'μSv/h', 'cpm',
-			'capturedAt', 'latitude', 'longitude',
-			'device', 'type', 'manufacturer', 'model'));
-	}
+// 	if ($reset || (0 == filesize($filename))) {
+// 		fputcsv($filehandle, array('id', 'userId', 'μSv/h', 'cpm',
+// 			'capturedAt', 'latitude', 'longitude',
+// 			'device', 'type', 'manufacturer', 'model'));
+// 	}
 	
-	return $filehandle;
-}
+// 	return $filehandle;
+// }
 
 function updateSensorsMeasurements() {
 	$args                = array(
@@ -172,16 +172,16 @@ function updateSensorsMeasurements() {
 										printf("> %d new measurement(s)\n", count($measurements));
 									}
 									
-									$filehandle	= getLogFilehandle($sensorId, $reset);
+									// $filehandle	= getLogFilehandle($sensorId, $reset);
 									
 									foreach ($measurements as $measurement) {
 										updateSensorMeasurement(get_the_ID(), $measurement);
-										logMeasurement($filehandle, get_the_ID());
+										// logMeasurement($filehandle, get_the_ID());
 										
 										$reset	= false;
 									}
 									
-									fclose($filehandle);
+									// fclose($filehandle);
 								} else {
 									if (VERBOSE) {
 										printf("> No new measurement\n");

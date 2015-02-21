@@ -38,6 +38,7 @@ function updateSensorsListFile() {
 				$measurementLatitude  = get_post_meta(get_the_ID(), 'sensor_measurement_last_latitude', TRUE);
 				$measurementLongitude = get_post_meta(get_the_ID(), 'sensor_measurement_last_longitude', TRUE);
 				$sensorName			  = get_the_title(get_the_ID());
+				$articleUrl 		  = get_permalink(get_the_ID());
 
 				$sensorList	[]= array(
 					"id" 	=> $sensorId,
@@ -47,6 +48,7 @@ function updateSensorsListFile() {
 					"updated" => $measurementGmt,
 		        	"usvh" => $measurementMsv,
 			        "cpm" => $measurementCpm,
+			        "article_url" => $articleUrl,
 					"chart_url" => sprintf("http://rt.safecast.org/plots/%d_small.png", $sensorId), // Hardcoded
 					"chart_width" => 480, // Hardcoded
 					"chart_height" => 200 // Hardcoded
