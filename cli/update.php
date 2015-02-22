@@ -57,8 +57,8 @@ define('DOING_AJAX', 	true);
 define('WP_USE_THEMES',	false);
 
 $_SERVER          = array(
-	'HTTP_HOST'      => 'realtime.safecast.com',
-	'SERVER_NAME'    => 'realtime.safecast.com',
+	'HTTP_HOST'      => 'realtime.safecast.org',
+	'SERVER_NAME'    => 'realtime.safecast.org',
 	'REQUEST_URI'    => '/',
 	'REQUEST_METHOD' => 'GET',
 	'REMOTE_ADDR'    =>	'127.0.0.1',
