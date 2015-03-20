@@ -3,7 +3,7 @@ Contributors: micropat, addtoany
 Tags: sharing, share, share this, bookmarking, social, share button, share buttons, share links, social share, social sharing, social bookmarking, social bookmarks, socialize, bookmark, bookmarks, save, Post, posts, page, pages, images, image, admin, statistics, stats, links, plugin, shortcode, sidebar, widget, responsive, email, e-mail, print, seo, button, delicious, google, tumblr, linkedin, digg, reddit, facebook, facebook share, facebook like, like, twitter, twitter button, twitter share, tweet, tweet button, +1, plus 1, google +1, google plus, google plus one, plus one, pinterest, pin, pin it, pinit, wanelo, buffer, stumbleupon, bitly, whatsapp, lockerz, addthis, sociable, sharedaddy, sharethis, shareaholic, icon, icons, vector, SVG, floating, floating buttons, wpmu, Add to Any, AddToAny
 Requires at least: 2.8
 Tested up to: 4.2
-Stable tag: 1.5.2
+Stable tag: 1.5.3
 
 Share buttons for WordPress including AddToAny's universal sharing button, Facebook, Twitter, Google+, Pinterest, WhatsApp and many more.
 
@@ -49,7 +49,7 @@ AddToAny's customizable platform and social share icons let you optimize your si
 
 * AddToAny gives users the choice in sharing from a service's native app or from a web app. For example, choose between Twitter's native app or Twitter's mobile web app
 * Responsive Floating Share Buttons are mobile ready by default, and configurable breakpoints make floating buttons work with any theme
-* AddToAny's SVG icons are super-lightweight and pixel-perfect at any size
+* AddToAny's SVG icons are super-lightweight and pixel-perfect at any size, and AddToAny's responsive share menu fits on all displays
 
 = Customizable & Extensible =
 
@@ -287,14 +287,24 @@ Upload the plugin directory (including all files and directories within) to the 
 
 == Screenshots ==
 
-1. Large vector sharing buttons (SVG icons) are pixel-perfect on Retina and high-DPI dispays
-2. Share/Save sharing button features Facebook, Twitter, and a universal share icon
-3. Drop-down universal share menu that appears instantly when visitors use the share button
-4. Modal universal share menu that includes all services
+1. Vector sharing buttons (SVG icons) are pixel-perfect on Retina and high-PPI dispays
+2. Traditional Share/Save button features Facebook, Twitter, and a generic share icon
+3. Mini share menu that drops down when visitors use the universal share button
+4. Full universal share menu modal that includes all services
 5. Settings panel
-6. Color chooser for your universal share menu
+6. Color chooser for your share menus
 
 == Changelog ==
+
+= 1.5.3 =
+* <a href="https://www.addtoany.com/buttons/customize/wordpress/events" title="Track shares, or change the shared URL">Share event handling</a> comes to the WordPress plugin!
+* This means you can track and modify the share with some JavaScripting
+ * Track shares with Adobe Analytics, Clicky, KISSmetrics, Mixpanel, Piwik, Webtrends, Woopra, custom analytics, etc.
+ * Google Analytics integration is automatic as always
+ * Modify the shared URL
+ * Modify the shared Title for services that accept a Title directly (i.e. Twitter, but not Facebook)
+* Add Renren
+* Remove blip, iwiw
 
 = 1.5.2 =
 * Localize More button string
@@ -507,7 +517,7 @@ Upload the plugin directory (including all files and directories within) to the 
 * Large sharing buttons (major new feature!)
  * Scalable vector icons (SVG icons)
  * Mobile ready
- * Retina and high-DPI ready
+ * Retina and high-PPI ready
  * Customizable through CSS code (effects, height & width, border-radius, and much more)
  * Support for older browsers (reverts gracefully to PNG)
  * Large icons are available for the most popular services right now. More services will roll out soon
@@ -1247,6 +1257,9 @@ Upload the plugin directory (including all files and directories within) to the 
 * PHP4 legacy and compatibility fixes
 
 == Upgrade Notice ==
+
+= 1.5.3 =
+Switch to the Large or Custom icon size if you haven't already - AddToAny's vector icons are way better than the traditional Small icons.
 
 = 1.4 =
 AddToAny share counters are now available for supported standalone buttons! For Facebook, Twitter, Pinterest, Reddit and Linkedin, click the down arrow and toggle the "Show count" checkbox.

@@ -2,15 +2,14 @@
 /*
  * Types Access teaser.
  *
- * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.5/plus/types-access.php $
- * $LastChangedDate: 2015-02-04 13:43:06 +0000 (Wed, 04 Feb 2015) $
- * $LastChangedRevision: 1082328 $
+ * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.5.1/plus/types-access.php $
+ * $LastChangedDate: 2015-02-24 10:05:51 +0000 (Tue, 24 Feb 2015) $
+ * $LastChangedRevision: 1097977 $
  * $LastChangedBy: iworks $
  *
  */
 
 add_action( 'plugins_loaded', 'wpcf_access_teaser_init', 15 );
-add_action( 'wpcf_menu_plus', 'wpcf_access_teaser_admin_menu' );
 
 /**
  * Teaser init.
@@ -32,6 +31,7 @@ function wpcf_access_teaser_init() {
         $locale = get_locale();
         load_textdomain( 'wpcf_access',
                 WPCF_ACCESS_ABSPATH . '/locale/types-access-' . $locale . '.mo' );
+        add_action( 'wpcf_menu_plus', 'wpcf_access_teaser_admin_menu' );
     }
 }
 
