@@ -9,7 +9,7 @@
  * @copyright  2014 Safecast
  */
 
-define('USAGE', sprintf("Usage: $ php [-v|r|c] %s\n", $argv[0]));
+define('USAGE', sprintf("Usage: $ php [-v] %s\n", $argv[0]));
 
 /* Checking parameters */
 $usageError	= false;
@@ -23,13 +23,6 @@ if ($argc > 2) {
 			case 'v':
 				defined('VERBOSE') || define('VERBOSE', true);
 				break;
-			case 'r':
-				defined('RESET') || define('RESET', true);
-				break;
-			case 'c':
-				defined('CLEAN_MUTEX') || define('CLEAN_MUTEX', true);
-				break;
-			default:
 				echo sprintf("Unknown option -%s\n", $options[$i]);
 				$usageError = true;
 				break;
@@ -47,10 +40,6 @@ if ($usageError) {
 
 /* Default verbose value */
 defined('VERBOSE') || define('VERBOSE', false);
-/* Default reset value  */
-defined('RESET') || define('RESET', false);
-/* Default mutex value  */
-defined('CLEAN_MUTEX') || define('CLEAN_MUTEX', false);
 
 /* Defining environmental variables necessary to load WP */
 define('DOING_AJAX', 	true);
@@ -81,7 +70,7 @@ require_once(dirname(__FILE__).'/updateSensorsListFile.php');
 try {
 	/* Update sensors measurements in Wordpress */
 	updateSensorsMeasurements();
-	
+
 	/* Overwrite the Makefile.config file */
 	updateSensorsPlots();
 
