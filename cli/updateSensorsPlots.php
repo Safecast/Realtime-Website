@@ -21,15 +21,15 @@ function updateSensorsPlots()
 		/* Update each sensor if we find them in the measurements */
 		while ($query->have_posts()) {
 			$query->the_post();
-			
+
 			$id = get_post_meta(get_the_ID(), 'sensor_id', TRUE);
-			
+
 			if ($id) {
 				$sensorList	.= " $id";
 			}
 		}
 	}
-	
+
 	$configContent = "LIVE_SENSORS := $sensorList
 
 # syntax: option to `find` command
@@ -55,8 +55,8 @@ CONFIG_TZ := 'EDT'
 
 #PUBLISH_CMD := rsync -HavPS --exclude=/.run --delete-excluded --delete out/ WEBSERVER:DIRECTORY/
 #VIEW_CMD := firefox out/index.html";
-	
+
 	file_put_contents(dirname(dirname(__FILE__)).'/../plots/Makefile.config', $configContent);
-	
+
 	wp_reset_query();
 }
