@@ -3,7 +3,7 @@
 Plugin Name: Share Buttons by AddToAny
 Plugin URI: https://www.addtoany.com/
 Description: Share buttons for your pages including AddToAny's universal sharing button, Facebook, Twitter, Google+, Pinterest, WhatsApp and many more.  [<a href="options-general.php?page=add-to-any.php">Settings</a>]
-Version: 1.5.1
+Version: 1.5.2
 Author: AddToAny
 Author URI: https://www.addtoany.com/
 */
@@ -462,6 +462,10 @@ function ADDTOANY_SHARE_SAVE_BUTTON( $args = array() ) {
 function ADDTOANY_SHARE_SAVE_SPECIAL( $special_service_code, $args = array() ) {
 	// $args array = output_later, linkname, linkurl
 	
+	if ( is_feed() ) {
+		return;
+	}
+	
 	$options = get_option( 'addtoany_options' );
 	
 	$linkname = ( isset( $args['linkname'] ) ) ? $args['linkname'] : FALSE;
@@ -534,7 +538,8 @@ if ( ! function_exists( 'A2A_menu_locale' ) ) {
 	BookmarkInstructions: "' . __( "Press Ctrl+D or \u2318+D to bookmark this page", "add-to-any" ) . '",
 	AddToYourFavorites: "' . __( "Add to your favorites", "add-to-any" ) . '",
 	SendFromWebOrProgram: "' . __( "Send from any email address or email program", "add-to-any" ) . '",
-	EmailProgram: "' . __( "Email program", "add-to-any" ) . '"
+	EmailProgram: "' . __( "Email program", "add-to-any" ) . '",
+	More: "' . __( "More&#8230;", "add-to-any" ) . '"
 };
 ';
 		return $A2A_locale;

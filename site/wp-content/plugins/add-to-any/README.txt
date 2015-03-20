@@ -3,7 +3,7 @@ Contributors: micropat, addtoany
 Tags: sharing, share, share this, bookmarking, social, share button, share buttons, share links, social share, social sharing, social bookmarking, social bookmarks, socialize, bookmark, bookmarks, save, Post, posts, page, pages, images, image, admin, statistics, stats, links, plugin, shortcode, sidebar, widget, responsive, email, e-mail, print, seo, button, delicious, google, tumblr, linkedin, digg, reddit, facebook, facebook share, facebook like, like, twitter, twitter button, twitter share, tweet, tweet button, +1, plus 1, google +1, google plus, google plus one, plus one, pinterest, pin, pin it, pinit, wanelo, buffer, stumbleupon, bitly, whatsapp, lockerz, addthis, sociable, sharedaddy, sharethis, shareaholic, icon, icons, vector, SVG, floating, floating buttons, wpmu, Add to Any, AddToAny
 Requires at least: 2.8
 Tested up to: 4.2
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 
 Share buttons for WordPress including AddToAny's universal sharing button, Facebook, Twitter, Google+, Pinterest, WhatsApp and many more.
 
@@ -15,10 +15,10 @@ AddToAny's customizable platform and social share icons let you optimize your si
 
 = Share Buttons =
 
-* **New**: AddToAny share counters — fast & official counts in the same style
-* Floating share buttons — responsive & customizable, vertical & horizontal
-* Vector sharing buttons (SVG sharing icons)
-* Universal Share Button and Smart Menu
+* **Counters** — fast & official share counts in the same style
+* **Floating** share buttons — responsive & customizable, vertical & horizontal
+* **Vector** sharing buttons (SVG sharing icons)
+* **Universal** Share Button and Smart Menu
 * Individual share links
 * Custom share icons
 * Choose from over 100 services
@@ -127,6 +127,10 @@ To change the title, description and/or image on Facebook, your theme's header f
 
 For more technical information on setting your pages up for Facebook sharing, see "Facebook Sharing Checklist" in <a href="https://developers.facebook.com/docs/plugins/checklist/">Facebook's documentation</a>.
 
+= Why do share links route through AddToAny? =
+
+Since 2006, AddToAny is trusted across the web to always route to each service's current endpoint. This routing enables publisher customization, visitor personalization, and keeps the AddToAny plugin remarkably lightweight without the need for constant plugin updates. In AddToAny menus, visitors see the services they actually use. On mobile, AddToAny presents the choice of sharing to a service's native app or mobile site and the preference is used on the next share. Publishers take advantage of AddToAny services such as <a href="https://www.addtoany.com/buttons/customize/wordpress/email_template">email templates</a>, <a href="https://www.addtoany.com/buttons/customize/wordpress/twitter_message">Twitter templates</a>, <a href="https://www.addtoany.com/buttons/customize/wordpress/link_tracking">URL shortener & parameters</a>, and more. Just as service icons change, service endpoints change too, and AddToAny is updated daily to reflect service endpoint and API changes.
+
 = How can I use custom icons? =
 
 Upload sharing icons in a single directory to a public location, and make sure the icon filenames match the icon filenames packaged in the AddToAny plugin. In your Admin panel, go to `Settings` > `AddToAny` > `Advanced Options` > check the "Use custom icons" checkbox and specify the URL to your custom icons directory (including the trailing `/`). For AddToAny's universal button, go to Universal Button, select `Image URL` and specify the exact location of your AddToAny universal share icon (including the filename).
@@ -203,8 +207,8 @@ You can create a plugin or customize the following PHP sample code to add to you
 	$services['example_service'] = array(
 		'name'        => 'Example Service',
 		'icon_url'    => 'https://www.google.com/favicon.ico',
-		'icon_width'  => 16,
-		'icon_height' => 16,
+		'icon_width'  => 32,
+		'icon_height' => 32,
 		'href'        => 'http://www.example.com/share?url=A2A_LINKURL&amp;title=A2A_LINKNAME'
 	);
 	return $services;
@@ -291,6 +295,10 @@ Upload the plugin directory (including all files and directories within) to the 
 6. Color chooser for your universal share menu
 
 == Changelog ==
+
+= 1.5.2 =
+* Localize More button string
+* Improve interoperability among feed readers by removing official service buttons from feeds
 
 = 1.5.1 =
 * Update Print icon
