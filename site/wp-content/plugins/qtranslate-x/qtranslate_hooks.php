@@ -190,7 +190,8 @@ add_filter('sanitize_title', 'qtranxf_useRawTitle',0, 3);
 add_filter('comment_moderation_subject', 'qtranxf_useDefaultLanguage',0);
 add_filter('comment_moderation_text', 'qtranxf_useDefaultLanguage',0);
 
-add_filter('the_content', 'qtranxf_useCurrentLanguageIfNotFoundShowAvailable', 0);
+//add_filter('the_content', 'qtranxf_useCurrentLanguageIfNotFoundShowAvailable', 0);
+add_filter('the_content', 'qtranxf_useCurrentLanguageIfNotFoundShowAvailable', 100);// since 3.1 changed priority from 0 to 100, since other plugins, like https://wordpress.org/plugins/siteorigin-panels generate additional content, which also needs to be translated.
 add_filter('the_excerpt', 'qtranxf_useCurrentLanguageIfNotFoundShowAvailable', 0);
 add_filter('the_excerpt_rss', 'qtranxf_useCurrentLanguageIfNotFoundShowAvailable', 0);
 add_filter('get_comment_date', 'qtranxf_dateFromCommentForCurrentLanguage',0,2);
@@ -226,9 +227,9 @@ add_filter('the_author', 'qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage
 
 add_filter('pre_option_rss_language', 'qtranxf_getLanguage',0);
 
-add_filter('_wp_post_revision_field_post_title', 'qtranxf_showAllSeperated', 0);
-add_filter('_wp_post_revision_field_post_content', 'qtranxf_showAllSeperated', 0);
-add_filter('_wp_post_revision_field_post_excerpt', 'qtranxf_showAllSeperated', 0);
+add_filter('_wp_post_revision_field_post_title', 'qtranxf_showAllSeparated', 0);
+add_filter('_wp_post_revision_field_post_content', 'qtranxf_showAllSeparated', 0);
+add_filter('_wp_post_revision_field_post_excerpt', 'qtranxf_showAllSeparated', 0);
 
 // // Hooks (execution time non-critical filters) 
 add_filter('author_feed_link', 'qtranxf_convertURL');
@@ -263,4 +264,3 @@ add_filter('bloginfo_url', 'qtranxf_convertBlogInfoURL',10,2);
 add_filter('core_version_check_locale', 'qtranxf_versionLocale');
 
 add_filter('redirect_canonical', 'qtranxf_checkCanonical', 10, 2);
-?>

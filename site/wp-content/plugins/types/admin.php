@@ -3,7 +3,7 @@
  *
  * Admin functions
  *
- * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.5/admin.php $
+ * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.5.1/admin.php $
  * $LastChangedDate: 2015-02-04 13:43:06 +0000 (Wed, 04 Feb 2015) $
  * $LastChangedRevision: 1082328 $
  * $LastChangedBy: iworks $

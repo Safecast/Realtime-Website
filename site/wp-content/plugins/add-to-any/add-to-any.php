@@ -3,7 +3,7 @@
 Plugin Name: Share Buttons by AddToAny
 Plugin URI: https://www.addtoany.com/
 Description: Share buttons for your pages including AddToAny's universal sharing button, Facebook, Twitter, Google+, Pinterest, WhatsApp and many more.  [<a href="options-general.php?page=add-to-any.php">Settings</a>]
-Version: 1.5.2
+Version: 1.5.3
 Author: AddToAny
 Author URI: https://www.addtoany.com/
 */
@@ -712,7 +712,8 @@ function A2A_SHARE_SAVE_head_script() {
 			. "}"
 		. "};"
 		
-		. "a2a_config.tracking_callback=['ready',wpa2a.script_onready];"
+		. "a2a_config.callbacks=a2a_config.callbacks||[];"
+		. "a2a_config.callbacks.push({ready:wpa2a.script_onready});"
 		. A2A_menu_locale()
 		. $script_configs
 		

@@ -3,9 +3,9 @@
  *
  * Types Marketing Class
  *
- * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.5/classes/class.wpcf-marketing.php $
- * $LastChangedDate: 2015-02-04 13:43:06 +0000 (Wed, 04 Feb 2015) $
- * $LastChangedRevision: 1082328 $
+ * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.5.1/classes/class.wpcf-marketing.php $
+ * $LastChangedDate: 2015-02-24 10:05:51 +0000 (Tue, 24 Feb 2015) $
+ * $LastChangedRevision: 1097977 $
  * $LastChangedBy: iworks $
  *
  */
@@ -127,12 +127,12 @@ class WPCF_Types_Marketing
         return $this->option_disable;
     }
 
-    protected function add_ga_campain($url)
+    protected function add_ga_campain($url, $utm_medium = 'getting-started')
     {
         $url = add_query_arg(
             array(
                 'utm_source' => 'typesplugin',
-                'utm_medium' => 'save-updated',
+                'utm_medium' =>  $utm_medium,
                 'utm_campaig' => sprintf('%s-howto', $this->get_kind() ),
             ),
             $url

@@ -21,6 +21,233 @@ function qtranxf_detect_admin_language($url_info) {
 }
 add_filter('qtranslate_detect_admin_language','qtranxf_detect_admin_language');
 
+function qtranxf_convert_to_b($text) {
+	$blocks = qtranxf_get_language_blocks($text);
+	if( count($blocks) > 1 ){
+		foreach($blocks as $key => $b){
+			if(empty($b)) unset($blocks[$key]);
+		}
+	}
+	if( count($blocks) <= 1 )
+		return $text;
+
+	$text='';
+	$lang = false;
+	$lang_closed = true;
+	foreach($blocks as $block) {
+		if(preg_match("#^<!--:([a-z]{2})-->$#ism", $block, $matches)) {
+			$lang_closed = false;
+			$lang = $matches[1];
+			$text .= '[:'.$lang.']';
+			continue;
+		} elseif(preg_match("#^\[:([a-z]{2})\]$#ism", $block, $matches)) {
+			$lang_closed = false;
+			$lang = $matches[1];
+			$text .= '[:'.$lang.']';
+			continue;
+		}
+		switch($block){
+			case '[:]':
+			case '<!--:-->':
+				$lang = false;
+				break;
+			default:
+				if( !$lang && !$lang_closed ){
+					$text .= '[:]';
+					$lang_closed = true;
+				}
+				$text .= $block;
+				break;
+		}
+	}
+	$text .= '[:]';
+	return $text;
+}
+
+function qtranxf_convert_to_b_no_closing($text) {
+	$blocks = qtranxf_get_language_blocks($text);
+	if( count($blocks) > 1 ){
+		foreach($blocks as $key => $b){
+			if(empty($b)) unset($blocks[$key]);
+		}
+	}
+	if( count($blocks) > 1 ){
+		$texts = qtranxf_split_blocks($blocks);
+		$text = qtranxf_join_b_no_closing($texts);
+	}
+	return $text;
+}
+
+function qtranxf_convert_to_c($text) {
+	$blocks = qtranxf_get_language_blocks($text);
+	if( count($blocks) > 1 ){
+		foreach($blocks as $key => $b){
+			if(empty($b)) unset($blocks[$key]);
+		}
+	}
+	if( count($blocks) > 1 ){
+		$texts = qtranxf_split_blocks($blocks);
+		$text = qtranxf_join_c($texts);
+	}
+	return $text;
+}
+
+function qtranxf_convert_to_b_deep($text) {
+	if(is_array($text)) {
+		foreach($text as $key => $t) {
+			$text[$key] = qtranxf_convert_to_b_deep($t);
+		}
+		return $text;
+	}
+
+	if( is_object($text) || $text instanceof __PHP_Incomplete_Class ) {
+		foreach(get_object_vars($text) as $key => $t) {
+			$text->$key = qtranxf_convert_to_b_deep($t);
+		}
+		return $text;
+	}
+
+	if(!is_string($text) || empty($text))
+		return $text;
+
+	return qtranxf_convert_to_b($text);
+}
+
+function qtranxf_convert_to_b_no_closing_deep($text) {
+	if(is_array($text)) {
+		foreach($text as $key => $t) {
+			$text[$key] = qtranxf_convert_to_b_no_closing_deep($t);
+		}
+		return $text;
+	}
+
+	if( is_object($text) || $text instanceof __PHP_Incomplete_Class ) {
+		foreach(get_object_vars($text) as $key => $t) {
+			$text->$key = qtranxf_convert_to_b_no_closing_deep($t);
+		}
+		return $text;
+	}
+
+	if(!is_string($text) || empty($text))
+		return $text;
+
+	return qtranxf_convert_to_b_no_closing($text);
+}
+
+function qtranxf_convert_database($action){
+	global $wpdb;
+	$wpdb->show_errors();
+	qtranxf_convert_database_options($action);
+	qtranxf_convert_database_posts($action);
+	qtranxf_convert_database_postmeta($action);
+	switch($action){
+		case 'b_only':
+			return __('Database has been converted to square bracket format.', 'qtranslate').'<br/>'.__('Note: custom entries are not touched.', 'qtranslate');
+		case 'c_dual':
+			return __('Database has been converted to legacy dual-tag format.', 'qtranslate').'<br/>'.__('Note: custom entries are not touched.', 'qtranslate');
+		default: return '';
+	}
+}
+
+function qtranxf_convert_database_options($action){
+	global $wpdb;
+	$result = $wpdb->get_results('SELECT option_id, option_value FROM '.$wpdb->options);
+	if(!$result) return;
+	switch($action){
+		case 'b_only':
+			foreach($result as $row) {
+				if(!preg_match('/(<!--:[a-z]{2}-->|\[:[a-z]{2}\])/im',$row->option_value)) continue;
+				$value = maybe_unserialize($row->option_value);
+				$value_converted=qtranxf_convert_to_b_deep($value);
+				$value_serialized = maybe_serialize($value_converted);
+				if($value_serialized === $row->option_value) continue;
+				//Since 3.2-b3: Replaced mysql_real_escape_string with $wpdb->prepare
+				$wpdb->query($wpdb->prepare('UPDATE '.$wpdb->options.' set option_value = %s WHERE option_id = %d', $value_serialized, $row->option_id));
+				//Old Line:
+				//$wpdb->query('UPDATE '.$wpdb->options.' set option_value = "'.mysql_real_escape_string($value_serialized).'" WHERE option_id='.$row->option_id);
+				//End Changes
+			}
+			break;
+		case 'c_dual':
+			foreach($result as $row) {
+				if(!preg_match('/(<!--:[a-z]{2}-->|\[:[a-z]{2}\])/im',$row->option_value)) continue;
+				$value = maybe_unserialize($row->option_value);
+				$value_converted=qtranxf_convert_to_b_no_closing_deep($value);
+				$value_serialized = maybe_serialize($value_converted);
+				if($value_serialized === $row->option_value) continue;
+				//Since 3.2-b3: Replaced mysql_real_escape_string with $wpdb->prepare
+				$wpdb->query($wpdb->prepare('UPDATE '.$wpdb->options.' set option_value = %s WHERE option_id = %d', $value_serialized, $row->option_id));
+				//Old Line:
+				//$wpdb->query('UPDATE '.$wpdb->options.' set option_value = "'.mysql_real_escape_string($value_serialized).'" WHERE option_id='.$row->option_id);
+				//End Changes
+			}
+			break;
+		default: break;
+	}
+}
+
+function qtranxf_convert_database_posts($action){
+	global $wpdb;
+	$result = $wpdb->get_results('SELECT ID, post_title, post_content, post_excerpt FROM '.$wpdb->posts);
+	if(!$result) return;
+	switch($action){
+		case 'b_only':
+			foreach($result as $row) {
+				$title=qtranxf_convert_to_b($row->post_title);
+				$content=qtranxf_convert_to_b($row->post_content);
+				$excerpt=qtranxf_convert_to_b($row->post_excerpt);
+				if( $title==$row->post_title && $content==$row->post_content && $excerpt==$row->post_excerpt ) continue;
+				//Since 3.2-b3: Replaced mysql_real_escape_string with $wpdb->prepare
+				$wpdb->query($wpdb->prepare('UPDATE '.$wpdb->posts.' set post_content = %s, post_title = %s, post_excerpt = %s WHERE ID = %d',$content, $title, $excerpt, $row->ID));
+				//$wpdb->query('UPDATE '.$wpdb->posts.' set post_content = "'.mysql_real_escape_string($content).'", post_title = "'.mysql_real_escape_string($title).'", post_excerpt = "'.mysql_real_escape_string($excerpt).'" WHERE ID='.$row->ID);
+			}
+			break;
+		case 'c_dual':
+			foreach($result as $row) {
+				$title=qtranxf_convert_to_c($row->post_title);
+				$content=qtranxf_convert_to_c($row->post_content);
+				$excerpt=qtranxf_convert_to_c($row->post_excerpt);
+				if( $title==$row->post_title && $content==$row->post_content && $excerpt==$row->post_excerpt ) continue;
+				//Since 3.2-b3: Replaced mysql_real_escape_string with $wpdb->prepare
+				$wpdb->query($wpdb->prepare('UPDATE '.$wpdb->posts.' set post_content = %s, post_title = %s, post_excerpt = %s WHERE ID = %d',$content, $title, $excerpt, $row->ID));
+				//$wpdb->query('UPDATE '.$wpdb->posts.' set post_content = "'.mysql_real_escape_string($content).'", post_title = "'.mysql_real_escape_string($title).'", post_excerpt = "'.mysql_real_escape_string($excerpt).'" WHERE ID='.$row->ID);
+			}
+			break;
+		default: break;
+	}
+}
+
+function qtranxf_convert_database_postmeta($action){
+	global $wpdb;
+	$result = $wpdb->get_results('SELECT meta_id, meta_value FROM '.$wpdb->postmeta);
+	if(!$result) return;
+	switch($action){
+		case 'b_only':
+			foreach($result as $row) {
+				if(!preg_match('/(<!--:[a-z]{2}-->|\[:[a-z]{2}\])/im',$row->meta_value)) continue;
+				$value = maybe_unserialize($row->meta_value);
+				$value_converted=qtranxf_convert_to_b_deep($value);
+				$value_serialized = maybe_serialize($value_converted);
+				if($value_serialized === $row->meta_value) continue;
+				$wpdb->query($wpdb->prepare('UPDATE '.$wpdb->postmeta.' set meta_value = %s WHERE meta_id = %d', $value_serialized, $row->meta_id));
+				//$wpdb->query('UPDATE '.$wpdb->postmeta.' set meta_value = "'.mysql_real_escape_string($value_serialized).'" WHERE meta_id='.$row->meta_id);
+			}
+			break;
+		case 'c_dual':
+			foreach($result as $row) {
+				if(!preg_match('/(<!--:[a-z]{2}-->|\[:[a-z]{2}\])/im',$row->meta_value)) continue;
+				$value = maybe_unserialize($row->meta_value);
+				$value_converted=qtranxf_convert_to_b_no_closing_deep($value);
+				$value_serialized = maybe_serialize($value_converted);
+				if($value_serialized === $row->meta_value) continue;
+				$wpdb->query($wpdb->prepare('UPDATE '.$wpdb->postmeta.' set meta_value = %s WHERE meta_id = %d', $value_serialized, $row->meta_id));
+				//$wpdb->query('UPDATE '.$wpdb->postmeta.' set meta_value = "'.mysql_real_escape_string($value_serialized).'" WHERE meta_id='.$row->meta_id);
+			}
+			break;
+		default: break;
+	}
+}
+
 function qtranxf_mark_default($text) {
 	global $q_config;
 	$blocks = qtranxf_get_language_blocks($text);
@@ -33,7 +260,7 @@ function qtranxf_mark_default($text) {
 			$content[$language] = '';
 		}
 	}
-	return qtranxf_join_c($content);
+	return qtranxf_join_b($content);
 }
 
 function qtranxf_get_term_joined($obj,$taxonomy=null) {
@@ -75,6 +302,7 @@ function qtranxf_useAdminTermLibJoin($obj, $taxonomies=null, $args=null) {
 	switch($pagenow){
 		case 'nav-menus.php':
 		case 'edit-tags.php':
+		case 'edit.php':
 			return qtranxf_get_terms_joined($obj);
 		default: return qtranxf_useTermLib($obj);
 	}
@@ -178,7 +406,7 @@ function qtranxf_languageColumnHeader($columns){
 	if(isset($columns['categories'])) $new_columns['categories'] = '';
 	if(isset($columns['tags'])) $new_columns['tags'] = '';
 	$new_columns['language'] = __('Languages', 'qtranslate');
-	return array_merge($new_columns, $columns);;
+	return array_merge($new_columns, $columns);
 }
 
 function qtranxf_languageColumn($column) {
@@ -187,7 +415,6 @@ function qtranxf_languageColumn($column) {
 		$available_languages = qtranxf_getAvailableLanguages($post->post_content);
 		$missing_languages = array_diff($q_config['enabled_languages'], $available_languages);
 		$available_languages_name = array();
-		$missing_languages_name = array();
 		foreach($available_languages as $language) {
 			$available_languages_name[] = $q_config['language_name'][$language];
 		}
@@ -208,7 +435,8 @@ function qtranxf_admin_list_cats($text) {
 			$blocks = qtranxf_get_language_blocks($text);
 			if(count($blocks)<=1) return $text;
 			$texts = qtranxf_split_blocks($blocks);
-			$text = qtranxf_join_c($texts);
+			//$text = qtranxf_join_c($texts);
+			$text = qtranxf_join_b($texts);//with closing tag
 			return $text;
 		default: return qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage($text);
 	}
@@ -292,9 +520,40 @@ function qtranxf_the_editor($editor_div)
 //applied in /wp-includes/class-wp-editor.php
 add_filter('the_editor', 'qtranxf_the_editor');
 
+function qtranxf_filter_options_general($value)
+{
+	global $q_config;
+	global $pagenow;
+	switch($pagenow){
+		case 'options-general.php':
+		case 'customize.php'://there is more work to do for this case
+			return $value;
+		default: break;
+	}
+	$lang = $q_config['language'];
+	return qtranxf_use_language($lang,$value,false,false);
+}
+add_filter('option_blogname', 'qtranxf_filter_options_general');
+add_filter('option_blogdescription', 'qtranxf_filter_options_general');
+
+/* this did not work, need more investigation
+function qtranxf_enable_blog_title_filters($name)
+{
+	add_filter('option_blogname', 'qtranxf_filter_options_general');
+	add_filter('option_blogdescription', 'qtranxf_filter_options_general');
+}
+add_action( 'get_header', 'qtranxf_enable_blog_title_filters' );
+
+function qtranxf_disable_blog_title_filters($name)
+{
+	remove_filter('option_blogname', 'qtranxf_filter_options_general');
+	remove_filter('option_blogdescription', 'qtranxf_filter_options_general');
+}
+add_action( 'wp_head', 'qtranxf_disable_blog_title_filters' );
+*/
+
 add_filter('manage_language_columns', 'qtranxf_language_columns');
 add_filter('manage_posts_columns', 'qtranxf_languageColumnHeader');
 add_filter('manage_posts_custom_column', 'qtranxf_languageColumn');
 add_filter('manage_pages_columns', 'qtranxf_languageColumnHeader');
 add_filter('manage_pages_custom_column', 'qtranxf_languageColumn');
-?>

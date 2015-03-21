@@ -2,7 +2,7 @@
 /*
  * Post relationship class.
  *
- * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.5/embedded/classes/relationship.php $
+ * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.5.1/embedded/classes/relationship.php $
  * $LastChangedDate: 2015-01-16 14:28:15 +0000 (Fri, 16 Jan 2015) $
  * $LastChangedRevision: 1069430 $
  * $LastChangedBy: iworks $

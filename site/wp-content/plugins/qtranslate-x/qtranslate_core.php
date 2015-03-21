@@ -28,11 +28,8 @@ function qtranxf_init_language() {
 
 	$q_config['cookie_enabled'] = isset($_COOKIE[QTX_COOKIE_NAME_FRONT]) || isset($_COOKIE[QTX_COOKIE_NAME_ADMIN]);
 
-	$host=$_SERVER['HTTP_HOST'];
-	if(isset($_SERVER['SERVER_PORT']) && !empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT']!='80'){
-		$host.=':'.$_SERVER['SERVER_PORT'];
-	}
-
+	$https = is_ssl();
+	$host = $_SERVER['HTTP_HOST'];
 	$url = $_SERVER['REQUEST_URI'];
 
 	$url_info = array();
@@ -44,17 +41,21 @@ function qtranxf_init_language() {
 		if(defined('DOING_CRON')) $url_info['DOING_CRON_POST'] = $_POST;
 	}
 
+	$url_info['https'] = $https;//not in use so far, but might come handy?
 	$url_info['host'] = $host;
 	$url_info['url'] = $url;
 	$url_info['original_url'] = $url;//move below for debugging purpose only
 
 	$url_info['language'] = qtranxf_detect_language($url_info);
 	$q_config['url_info'] = $url_info;
+	//qtranxf_dbg_log('qtranxf_init_language: url_info: ',$url_info);
+
+	$q_config['language'] = apply_filters('qtranslate_language', $url_info['language'], $url_info);
 
 	if(isset($url_info['doredirect'])){
-		if(!defined('WP_ADMIN') && !defined('DOING_AJAX') && !defined('DOING_CRON') && empty($_POST)){
+		if(!defined('WP_ADMIN') && !defined('DOING_AJAX') && !defined('WP_CLI') && !defined('DOING_CRON') && empty($_POST)){
 			$lang = $url_info['language'];
-			$scheme = isset($_SERVER['HTTPS'])?'https://':'http://';
+			$scheme = $https ? 'https://' : 'http://';
 			$urlorg = $scheme.$host.$url;
 			$urlstd = $scheme.$url_info['host'].$url_info['url'];
 			$urlnew = qtranxf_convertURL($urlstd,$lang);
@@ -68,14 +69,16 @@ function qtranxf_init_language() {
 				$url_info['doredirect'] .= ' - cancelled, because it goes to the same target.';
 			}
 		}else{
-			$url_info['doredirect'] .= ' - cancelled by WP_ADMIN or DOING_AJAX or DOING_CRON or not empty POST';
+			$url_info['doredirect'] .= ' - cancelled by WP_ADMIN or DOING_AJAX or WP_CLI or DOING_CRON or not empty POST';
 		}
 	}
 
-	$q_config['language'] = apply_filters('qtranslate_language', $url_info['language'], $url_info);
-
-	// fix url to prevent xss
+	// fix url to prevent xss - how does this prevents xss?
 	$q_config['url_info']['url'] = qtranxf_convertURL(add_query_arg('lang',$q_config['default_language'],$q_config['url_info']['url']));
+
+	// load plugin translations
+	// since 3.2-b3 moved it here as https://codex.wordpress.org/Function_Reference/load_plugin_textdomain seem to recommend to run load_plugin_textdomain in 'plugins_loaded' action, which is this function respond to
+	load_plugin_textdomain('qtranslate', false, dirname(plugin_basename( __FILE__ )).'/lang');
 
 	// Filter all options for language tags
 	if($q_config['url_info']['doing_front_end']) {
@@ -88,30 +91,34 @@ function qtranxf_init_language() {
 		require_once(dirname(__FILE__).'/qtranslate_configuration.php');
 		require_once(dirname(__FILE__).'/admin/admin_utils.php');
 
-		// load qTranslate Services if available
-		if(file_exists(dirname(__FILE__).'/qtranslate_services.php'))
-			require_once(dirname(__FILE__).'/qtranslate_services.php');
+		// load qTranslate Services if available // disabled since 3.1
+		//if(file_exists(dirname(__FILE__).'/qtranslate_services.php'))
+		//	require_once(dirname(__FILE__).'/qtranslate_services.php');
 	}
 
-	$q_config['qtrans_compatibility'] = apply_filters('qtranslate_compatibility', $q_config['qtrans_compatibility']);
-	if(isset($q_config['qtrans_compatibility']) && $q_config['qtrans_compatibility']){
-		require_once(dirname(__FILE__).'/qtranslate_compatibility.php');
-	}
+	qtranxf_load_option_qtrans_compatibility();
 
 	//allow other plugins to initialize whatever they need for language
 	do_action('qtranslate_init_language',$url_info);
 	//qtranxf_dbg_log('qtranxf_init_language: url_info: ',$url_info);
 }
 
+function qtranxf_load_option_qtrans_compatibility(){
+	global $q_config;
+	qtranxf_load_option_bool('qtrans_compatibility');
+	$q_config['qtrans_compatibility'] = apply_filters('qtranslate_compatibility', $q_config['qtrans_compatibility']);
+	if( !isset($q_config['qtrans_compatibility']) || !$q_config['qtrans_compatibility'] ) return;
+	require_once(dirname(__FILE__).'/qtranslate_compatibility.php');
+}
+
 if(!function_exists('qtranxf_detect_language')){
 function qtranxf_detect_language(&$url_info) {
-	global $q_config, $pagenow;
+	global $q_config;
 
 	$home_info = qtranxf_parseURL( get_option('home') );
 	$home_info['path'] = isset($home_info['path']) ? trailingslashit($home_info['path']) : '/';
 	$url_info['home'] = $home_info['path'];
 
-	$site_info;
 	if(defined('WP_ADMIN')){
 		$site_info = qtranxf_parseURL( get_option('siteurl') );
 		$site_info['path'] = isset($site_info['path']) ? trailingslashit($site_info['path']) : '/';
@@ -122,7 +129,10 @@ function qtranxf_detect_language(&$url_info) {
 
 	$lang = qtranxf_parse_language_info($url_info);
 
-	if( (!$lang || !isset($url_info['doing_front_end'])) && defined('DOING_AJAX') && isset($_SERVER['HTTP_REFERER'])){
+	if( (!$lang || !isset($url_info['doing_front_end']))
+		&& (defined('DOING_AJAX') || !$q_config['cookie_enabled'])
+		&& isset($_SERVER['HTTP_REFERER'])
+	){
 		//assert(WP_ADMIN);
 		//get language from HTTP_REFERER, if needed, and detect front- vs back-end
 		$http_referer = $_SERVER['HTTP_REFERER'];
@@ -341,7 +351,7 @@ function qtranxf_parse_language_info(&$url_info, $link=false) {
 	if(!$link){
 		if(isset($_GET['lang'])){
 			$lang = qtranxf_resolveLangCase($_GET['lang'],$doredirect);
-			if($lang) $url_info['lang_query_get'] = $lang;//todo excessive?
+			if($lang) $url_info['lang_query_get'] = $lang;
 		}else if(isset($_POST['lang'])){
 			$lang = qtranxf_resolveLangCase($_POST['lang'],$doredirect);
 			if($lang) $url_info['lang_query_post'] = $lang;//todo excessive?
@@ -430,23 +440,29 @@ function qtranxf_get_browser_language(){
 		if(qtranxf_isEnabled($language))
 			return $language;
 	}
+	return null;
 }
 
 function qtranxf_http_negotiate_language(){
 	global $q_config;
 	if(function_exists('http_negotiate_language')){
 		$supported=array();
-		$supported[]=str_replace('_','-',$q_config['locale'][$q_config['default_language']]);
+		$supported[]=str_replace('_','-',$q_config['locale'][$q_config['default_language']]);//needs to be the first
 		foreach($q_config['enabled_languages'] as $lang){
+			if($lang == $q_config['default_language']) continue;
 			$supported[]=str_replace('_','-',$q_config['locale'][$lang]);
 		}
-		$lang = http_negotiate_language($supported);
-		//qtranxf_dbg_log('qtranxf_http_negotiate_language:http_negotiate_language: lang=',$lang);
+		$locale_negotiated = http_negotiate_language($supported);
+		//since 3.2-b3 added search, since locale may be different from two-letter code and not even started with language code.
+		foreach($q_config['enabled_languages'] as $lang){
+			$locale = str_replace('_','-',$q_config['locale'][$lang]);
+			if($locale == $locale_negotiated)
+				return $lang;
+		}
 	}else{
-		$lang = qtranxf_get_browser_language();
-		//qtranxf_dbg_log('qtranxf_http_negotiate_language:qtranxf_get_browser_language: lang=',$lang);
+		return qtranxf_get_browser_language();
 	}
-	return $lang;
+	return null;
 }
 
 function qtranxf_resolveLangCase($lang,&$caseredirect)
@@ -480,7 +496,8 @@ function qtranxf_init() {
 */
 
 	// load plugin translations
-	load_plugin_textdomain('qtranslate', false, dirname(plugin_basename( __FILE__ )).'/lang');
+	// since 3.2-b3 moved to qtranxf_init_language
+	//load_plugin_textdomain('qtranslate', false, dirname(plugin_basename( __FILE__ )).'/lang');
 
 	if($q_config['url_info']['doing_front_end']){
 		// don't filter untranslated posts in admin
@@ -492,14 +509,7 @@ function qtranxf_init() {
 			add_filter($nm, 'qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage');
 		}
 	}
-/*
-	//"WordPress SEO" plugin support - not yet
-	//if(is_plugin_active( 'wordpress-seo/wp-seo.php' )){//in admin only
-	if ( defined( 'WPSEO_FILE' ) ) {
-		//add_filter('wpseo_replacements', 'qtranxf_wpseo_replacements', 0);
-		add_filter('wpseo_replacements', 'qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage', 0);
-	}
-*/
+
 	//allow other plugins to initialize whatever they need for qTranslate
 	do_action('qtranslate_init');
 }
@@ -622,7 +632,6 @@ function qtranxf_loadConfig() {
 	qtranxf_load_option_bool('show_displayed_language_prefix');
 	qtranxf_load_option_bool('auto_update_mo');
 	qtranxf_load_option_bool('hide_default_language');
-	qtranxf_load_option_bool('qtrans_compatibility');
 
 	// check for invalid permalink/url mode combinations
 	$permalink_structure = get_option('permalink_structure');
@@ -656,6 +665,16 @@ function qtranxf_loadConfig() {
 	$q_config['term_name'] = $term_name;
 
 	do_action('qtranslate_loadConfig');
+}
+
+function qtranxf_reloadConfig() {
+	global $q_config;
+	qtranxf_set_config_default();
+	qtranxf_loadConfig();
+	if(isset($q_config['url_info']['language']))
+		$q_config['language'] = $q_config['url_info']['language'];
+	qtranxf_load_option_qtrans_compatibility();
+	//qtranxf_dbg_echo('qtranxf_reloadConfig: $q_config[url_info]: ',$q_config['url_info']);
 }
 
 /* BEGIN DATE TIME FUNCTIONS */
@@ -813,8 +832,8 @@ function qtranxf_get_url_for_language($url, $lang, $showLanguage) {
 	// check if it's an external link
 	$urlinfo = qtranxf_parseURL($url);
 	$home = rtrim(get_option('home'),'/');
-	//qtranxf_dbg_log('qtranxf_convertURL: $home: ',$home);
-	//qtranxf_dbg_log('qtranxf_convertURL: $urlinfo: ',$urlinfo);
+	//qtranxf_dbg_log('qtranxf_get_url_for_language: $home: ',$home);
+	//qtranxf_dbg_log('qtranxf_get_url_for_language: $urlinfo: ',$urlinfo);
 	//if($urlinfo['host']!='') {
 	if(!empty($urlinfo['host'])){
 		// check for already existing pre-domain language information
@@ -902,14 +921,14 @@ function qtranxf_get_url_for_language($url, $lang, $showLanguage) {
 	}
 
 	// see if cookies are activated
-	//if($q_config['hide_default_language'] && !$showDefaultLanguage) &&
-	//if(!$showDefaultLanguage && $lang == $q_config['default_language'] &&
-	//if(!($showDefaultLanguage || $lang != $q_config['default_language']) &&
-	if( !$showLanguage
-		//&& !$q_config['cookie_enabled']
-		//&& !isset($q_config['url_info']['internal_referer'])
-		&& $urlinfo['path'] == ''
-		&& $q_config['language'] != $q_config['default_language']) {
+	if( !$showLanguage//there still no language information in the converted URL
+		&& !$q_config['cookie_enabled']// there will be no way to take language from the cookie
+		//&& empty($urlinfo['path']) //why this was here?
+		//&& !isset($q_config['url_info']['internal_referer'])//three below replace this one?
+		&& $q_config['language'] != $q_config['default_language']//we need to be able to get language other than default
+		&& empty($q_config['url_info']['lang_url'])//we will not be able to get language from referrer path
+		&& empty($q_config['url_info']['lang_query_get'])//we will not be able to get language from referrer query
+		) {
 		// :( now we have to make unpretty URLs
 		//$url=add_query_arg('lang',$lang,$url);//it is doing much more than needed here
 		//$url = preg_replace("#(&|\?)lang=".$match[2]."&?#i","$1",$url);//already removed above
@@ -939,7 +958,7 @@ function qtranxf_convertURL($url='', $lang='', $forceadmin = false, $showDefault
 
 	if($lang=='') $lang = $q_config['language'];
 	if(empty($url)){
-		if( !defined('WP_ADMIN') && defined('QTS_VERSION') ){
+		if( $q_config['url_info']['doing_front_end'] && defined('QTS_VERSION') && $q_config['url_mode'] != QTX_URL_QUERY){
 			//quick workaround, but need a permanent solution
 			$url = qts_get_url($lang);
 			//qtranxf_dbg_echo('qtranxf_convertURL: url=',$url);
@@ -951,7 +970,7 @@ function qtranxf_convertURL($url='', $lang='', $forceadmin = false, $showDefault
 		}
 		$url = esc_url($q_config['url_info']['url']);
 	}
-	if(defined('WP_ADMIN')&&!$forceadmin) return $url;
+	if( !$q_config['url_info']['doing_front_end'] && !$forceadmin ) return $url;
 	if(!qtranxf_isEnabled($lang)) return '';
 
 	// & workaround
@@ -983,20 +1002,20 @@ function qtranxf_convertURL($url='', $lang='', $forceadmin = false, $showDefault
 //if (!function_exists('qtranxf_get_split_blocks')){
 // split text at all language comments and quick tags
 function qtranxf_get_language_blocks($text) {
-	$split_regex = "#(<!--:[a-z]{2}-->|<!--:-->|\[:[a-z]{2}\])#ism";
+	$split_regex = "#(<!--:[a-z]{2}-->|<!--:-->|\[:[a-z]{2}\]|\[:\])#ism";
 	return preg_split($split_regex, $text, -1, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
 }
 //}
 
 if (!function_exists('qtranxf_split')){
-function qtranxf_split($text, $quicktags = true) {
+function qtranxf_split($text) {
 	$blocks = qtranxf_get_language_blocks($text);
-	return qtranxf_split_blocks($blocks,$quicktags);
+	return qtranxf_split_blocks($blocks);
 }
 }
 
 if (!function_exists('qtranxf_split_blocks')){
-function qtranxf_split_blocks($blocks, $quicktags = true) {
+function qtranxf_split_blocks($blocks) {
 	global $q_config;
 	$result = array();
 	foreach($q_config['enabled_languages'] as $language) {
@@ -1004,30 +1023,32 @@ function qtranxf_split_blocks($blocks, $quicktags = true) {
 	}
 	$current_language = false;
 	foreach($blocks as $block) {
-		# detect language tags
+		// detect c-tags
 		if(preg_match("#^<!--:([a-z]{2})-->$#ism", $block, $matches)) {
 			$current_language = $matches[1];
-			//if(!qtranxf_isEnabled($current_language)) $current_language = false;//still need it
 			continue;
-		// detect quicktags
-		} elseif($quicktags && preg_match("#^\[:([a-z]{2})\]$#ism", $block, $matches)) {
+		// detect b-tags
+		}elseif(preg_match("#^\[:([a-z]{2})\]$#ism", $block, $matches)) {
 			$current_language = $matches[1];
-			//if(!qtranxf_isEnabled($current_language)) $current_language = false;//still need it
-			continue;
-		// detect ending tags
-		} elseif(preg_match("#^<!--:-->$#ism", $block, $matches)) {
-			$current_language = false;
 			continue;
 		}
-		// correctly categorize text block
-		if($current_language){
-			if(!isset($result[$current_language])) $result[$current_language]='';
-			$result[$current_language] .= $block;
-			$current_language = false;
-		}else{
-			foreach($q_config['enabled_languages'] as $language) {
-				$result[$language] .= $block;
-			}
+		switch($block){
+			case '[:]':
+			case '<!--:-->':
+				$current_language = false;
+				break;
+			default:
+				// correctly categorize text block
+				if($current_language){
+					if(!isset($result[$current_language])) $result[$current_language]='';
+					$result[$current_language] .= $block;
+					$current_language = false;
+				}else{
+					foreach($q_config['enabled_languages'] as $language) {
+						$result[$language] .= $block;
+					}
+				}
+			break;
 		}
 	}
 	//it gets trimmed later in qtranxf_use() anyway, better to do it here
@@ -1096,10 +1117,11 @@ function qtranxf_split($text, $quicktags = true) {
 }// */
 }
 
-function qtranxf_join($texts) {
-	if(!is_array($texts)) $texts = qtranxf_split($texts, false);
-	qtranxf_join_c($texts);
-}
+// not in use?
+//function qtranxf_join($texts) {
+//	if(!is_array($texts)) $texts = qtranxf_split($texts);
+//	qtranxf_join_c($texts);
+//}
 
 function qtranxf_join_c($texts) {
 	$text = '';
@@ -1130,12 +1152,18 @@ function qtranxf_join_c($texts) {
 	return $text;
 }
 
-function qtranxf_join_b($texts) {
+function qtranxf_join_b_no_closing($texts) {
 	$text = '';
 	foreach($texts as $lang => $lang_text) {
 		if(empty($lang_text)) continue;
 		$text .= '[:'.$lang.']'.$lang_text;
 	}
+	return $text;
+}
+
+function qtranxf_join_b($texts) {
+	$text = qtranxf_join_b_no_closing($texts);
+	if(!empty($text)) $text .= '[:]';
 	return $text;
 }
 
@@ -1178,7 +1206,7 @@ function qtranxf_use($lang, $text, $show_available=false, $show_empty=false) {
 		return $text;
 	}
 
-	if(is_object($text)||@get_class($text) == '__PHP_Incomplete_Class') {
+	if( is_object($text) || $text instanceof __PHP_Incomplete_Class ) {//since 3.2-b1 instead of @get_class($text) == '__PHP_Incomplete_Class'
 		foreach(get_object_vars($text) as $key => $t) {
 			$text->$key = qtranxf_use($lang,$text->$key,$show_available,$show_empty);
 		}
@@ -1207,7 +1235,6 @@ if (!function_exists('qtranxf_use_block')){
 function qtranxf_use_block($lang, $blocks, $show_available=false, $show_empty=false) {
 	global $q_config;
 	$content = qtranxf_split_blocks($blocks);
-	//$content = qtranxf_split($text);
 
 	// if content is available show the content in the requested language
 	if(!empty($content[$lang])) {
@@ -1261,13 +1288,13 @@ function qtranxf_use_block($lang, $blocks, $show_available=false, $show_empty=fa
 	$available_languages = array_unique($available_languages);
 	$language_list = "";
 	if(preg_match('/%LANG:([^:]*):([^%]*)%/',$q_config['not_available'][$lang],$match)) {
-		$normal_seperator = $match[1];
-		$end_seperator = $match[2];
+		$normal_separator = $match[1];
+		$end_separator = $match[2];
 		// build available languages string backward
 		$i = 0;
 		foreach($available_languages as $language) {
-			if($i==1) $language_list  = $end_seperator.$language_list;
-			if($i>1) $language_list  = $normal_seperator.$language_list;
+			if($i==1) $language_list  = $end_separator.$language_list;
+			if($i>1) $language_list  = $normal_separator.$language_list;
 			$language_list = '<a href="'.qtranxf_convertURL('', $language, false, true).'">'.$q_config['language_name'][$language].'</a>'.$language_list;
 			$i++;
 		}
@@ -1280,7 +1307,7 @@ function qtranxf_use_block($lang, $blocks, $show_available=false, $show_empty=fa
 }
 }
 
-function qtranxf_showAllSeperated($text) {
+function qtranxf_showAllSeparated($text) {
 	if(empty($text)) return $text;
 	global $q_config;
 	$result = '';
@@ -1317,4 +1344,3 @@ function qtranxf_optionFilter($do='enable') {//do we need it?
 			remove_filter($option, 'qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage',0);
 	}
 }
-?>

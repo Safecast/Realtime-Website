@@ -37,29 +37,13 @@ function qtranxf_add_lang_icons_css ()
 function qtranxf_head(){
 	global $q_config;
 	$lang=$q_config['language'];
-	//echo "\n<meta http-equiv=\"Content-Language\" content=\"".str_replace('_','-',$q_config['locale'][$lang])."\" />\n";
+	//echo "\n<meta http-equiv=\"Content-Language\" content=\"".str_replace('_','-',$q_config['locale'][$lang])."\" />\n"; //obsolete way 
 	qtranxf_add_lang_icons_css();
-/*
-	$css = "<style type=\"text/css\" media=\"screen\">\n";
-	$css .=".qtranxs_flag span { display:none }\n";
-	$css .=".qtranxs_flag { height:12px; width:18px; display:block }\n";
-	$css .=".qtranxs_flag_and_text { padding-left:20px }\n";
-	$baseurl = WP_CONTENT_URL;
-	if(isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == '1' || $_SERVER['HTTPS'] == 'on')) {
-		$baseurl = preg_replace('#^http://#','https://', $baseurl);
-	}
-	foreach($q_config['enabled_languages'] as $language) {
-		$css .=".qtranxs_flag_".$language." { background:url(".$baseurl.'/'.$q_config['flag_location'].$q_config['flag'][$language].") no-repeat }\n";
-	}
-	//$css .= get_option('qtranslate_widget_css',QTX_WIDGET_CSS);
-	$css .="</style>\n";
-	echo apply_filters('qtranslate_header_css',$css);
-*/
 	// skip the rest if 404 //what if the menu is still shown through 404.php?
 	//if(is_404()) return;
 	// set links to translations of current page
 	foreach($q_config['enabled_languages'] as $language) {
-		//if($language != qtranxf_getLanguage())
+		//if($language != qtranxf_getLanguage())//standard requires them all
 		echo '<link hreflang="'.$language.'" href="'.qtranxf_convertURL('',$language,false,true).'" rel="alternate" />'.PHP_EOL;
 	}
 	qtranxf_add_css();
@@ -96,9 +80,9 @@ function qtranxf_wp_get_nav_menu_items( $items, $menu, $args )
 	$flag_location=qtranxf_flag_location();
 	$itemid=0;
 	$menu_order=0;
-  $qtransmenu=null;
+	$qtransmenu=null;
 	$altlang=null;
-	$url='';//it will keep the same page
+	$url = '';//esc_url($q_config['url_info']['url']);
 	//options
 	$type='LM';//[LM|AL]
 	$title='Language';//[none|Language|Current]
@@ -182,7 +166,7 @@ function qtranxf_wp_get_nav_menu_items( $items, $menu, $args )
 		}
 		if($topflag){
 			if(!empty($item->title)) $item->title.=':&nbsp;';
-			$item->title.='<img src="'.$flag_location.$q_config['flag'][$toplang].'">';
+			$item->title.='<img src="'.$flag_location.$q_config['flag'][$toplang].'" alt="'.$q_config['language_name'][$toplang].' '.__('Flag', 'qtranslate').'" />';
 		}
 		//$item->classes[] = 'qtranxs_flag_'.$language;
 		$item->classes[] = 'qtranxs-lang-menu';
@@ -209,7 +193,7 @@ function qtranxf_wp_get_nav_menu_items( $items, $menu, $args )
 		$item->type_label='Custom';
 		$item->title=$q_config['language_name'][$lang];
 		if($flags){
-			$item->title='<img src="'.$flag_location.$q_config['flag'][$lang].'">&nbsp;'.$item->title;
+			$item->title='<img src="'.$flag_location.$q_config['flag'][$lang].'" alt="'.$q_config['language_name'][$lang].' '.__('Flag', 'qtranslate').'" />&nbsp;'.$item->title;
 		}
 		$item->post_title=$item->title;
 		$item->post_name='language-menuitem-'.$lang;
@@ -330,7 +314,7 @@ function qtranxf_excludeUntranslatedPosts($where,&$query) {//WP_Query
 	//qtranxf_dbg_echo('qtranxf_excludeUntranslatedPosts: post_type is empty: $query: ',$query, true);
 	//qtranxf_dbg_echo('qtranxf_excludeUntranslatedPosts: $where: ',$where);
 	//qtranxf_dbg_echo('qtranxf_excludeUntranslatedPosts: is_singular(): ',is_singular());
-	$single_post_query=is_singular();
+	$single_post_query=$query->is_singular();//since 3.1 instead of top is_singular()
 	if($single_post_query){
 		$single_post_query = preg_match('/ID\s*=\s*[\'"]*(\d+)[\'"]*/i',$where,$matches)==1;
 		//qtranxf_dbg_echo('qtranxf_excludeUntranslatedPosts: $single_post_query: ',$single_post_query);
@@ -339,8 +323,13 @@ function qtranxf_excludeUntranslatedPosts($where,&$query) {//WP_Query
 		//}
 	}
 	if(!$single_post_query){
-		//$where .= " AND ($wpdb->posts.post_content LIKE '%<!--:".qtranxf_getLanguage()."-->%' OR $wpdb->posts.post_content='')";
-		$where .= " AND ($wpdb->posts.post_content LIKE '%<!--:".qtranxf_getLanguage()."-->%')";
+		$lang = qtranxf_getLanguage();
+		/**
+		 * since 3.1-b3 new query to pass empty content and content without closing tags (sliders, galleries and other special kind of posts that never get translated)
+		 * the query must be the same as in qtranxf_excludeUntranslatedPostComments
+		 */
+		$where .= " AND ($wpdb->posts.post_content='' OR $wpdb->posts.post_content LIKE '%![:".$lang."!]%' ESCAPE '!' OR $wpdb->posts.post_content LIKE '%<!--:".$lang."-->%' OR ($wpdb->posts.post_content NOT LIKE '%![:!]%' ESCAPE '!' AND $wpdb->posts.post_content NOT LIKE '%<!--:-->%'))";
+		//$where .= " AND ($wpdb->posts.post_content LIKE '%<!--:".qtranxf_getLanguage()."-->%')";
 	}
 	return $where;
 }
@@ -365,7 +354,12 @@ function qtranxf_excludeUntranslatedPostComments($clauses, &$q/*WP_Comment_Query
 		$single_post_query = preg_match('/comment_post_ID\s*=\s*[\'"]*(\d+)[\'"]*/i',$clauses['where'])==1;
 	}
 	if(!$single_post_query){
-		$clauses['where'] .= " AND $wpdb->posts.post_content LIKE '%<!--:".qtranxf_getLanguage()."-->%'";
+		$lang = qtranxf_getLanguage();
+		/**
+		 * since 3.1-b3 new query to pass empty content and content without closing tags (sliders, galleries and other special kind of posts that never get translated)
+		 * the query must be the same as in qtranxf_excludeUntranslatedPosts
+		 */
+		$clauses['where'] .= " AND ($wpdb->posts.post_content='' OR $wpdb->posts.post_content LIKE '%![:".$lang."!]%' ESCAPE '!' OR $wpdb->posts.post_content LIKE '%<!--:".$lang."-->%' OR ($wpdb->posts.post_content NOT LIKE '%![:!]%' ESCAPE '!' AND $wpdb->posts.post_content NOT LIKE '%<!--:-->%'))";
 	}
 	return $clauses;
 }
@@ -432,10 +426,14 @@ function qtranxf_home_url($url, $path, $orig_scheme, $blog_id)
 add_filter('home_url', 'qtranxf_home_url', 0, 4);
 
 function qtranxf_esc_html($text) {
-	//qtranxf_dbg_echo('qtranxf_esc_html:text='.$text,null,true);
-	//never saw a case when this needs to be translated at all ...
-	return qtranxf_useDefaultLanguage($text);//this does not make sense, does it?
-	//return qtranxf_useCurrentLanguageIfNotFoundShowEmpty($text);
+	//qtranxf_dbg_echo('qtranxf_esc_html:text=',$text,true);
+	//return qtranxf_useDefaultLanguage($text);//this does not make sense, does it? - original code
+	//return qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage($text);
+	/**
+	 * since 3.1-b1
+	 * used to return qtranxf_useDefaultLanguage($text)
+	*/
+	return qtranxf_useCurrentLanguageIfNotFoundShowEmpty($text);
 }
 // filter options
 add_filter('esc_html', 'qtranxf_esc_html', 0);
@@ -486,4 +484,16 @@ add_filter('the_category', 'qtranxf_useTermLib',0);
 add_filter('get_term', 'qtranxf_useTermLib',0);
 add_filter('get_terms', 'qtranxf_useTermLib',0);
 add_filter('get_category', 'qtranxf_useTermLib',0);
-?>
+
+/**
+ * Since 3.2
+ * wp-includes\category-template.php:1230 calls:
+ * $description = get_term_field( 'description', $term, $taxonomy );
+ *
+ * which calls wp-includes\taxonomy.php:1503
+ * return sanitize_term_field($field, $term->$field, $term->term_id, $taxonomy, $context);
+ *
+ * which calls wp-includes\taxonomy.php:2276:
+ * apply_filters( "term_{$field}", $value, $term_id, $taxonomy, $context );
+*/
+add_filter('term_description', 'qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage',0);
