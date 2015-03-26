@@ -1,7 +1,7 @@
 <?php
 	$id            = get_post_meta(get_the_ID(), 'sensor_id', true);
 	$langIsJap     = qtrans_getLanguage() == "jp";
-	
+
 	$lastCpm       = get_post_meta(get_the_ID(), 'sensor_measurement_last_cpm', true);
 	$lastUsievert  = get_post_meta(get_the_ID(), 'sensor_measurement_last_usvh', true);
 	$lastLatitude  = get_post_meta(get_the_ID(), 'sensor_measurement_last_latitude', true);
@@ -10,7 +10,7 @@
 	$lastTimestamp = strtotime($lastGmt);
 	$lastTimeSince = time() - $lastTimestamp;
 	$lastTimeAgo   = human_time_diff($lastTimestamp).($langIsJap ? '前' : ' ago');
-	
+
 	$maxCpm        = get_post_meta(get_the_ID(), 'sensor_measurement_max_cpm', true);
 	$maxUsievert   = get_post_meta(get_the_ID(), 'sensor_measurement_max_usvh', true);
 	$maxLatitude   = get_post_meta(get_the_ID(), 'sensor_measurement_max_latitude', true);
@@ -19,7 +19,7 @@
 	$maxTimestamp  = strtotime($maxGmt);
 	$maxTimeSince  = time() - $maxTimestamp;
 	$maxTimeAgo    = human_time_diff($maxTimestamp).($langIsJap ? '前' : ' ago');
-	
+
 	$status      = $langIsJap ? 'オンライン' : 'Online';
 	$statusClass = 'info';
 
@@ -30,11 +30,11 @@
 		$status      = $langIsJap ? 'オフライン（短）' : 'Offline short';
 		$statusClass = 'warning';
 	}
-	
-	
-	$download  = $langIsJap ? 'データセットのダウンロード' : 'Download the dataset';
+
+
+	$download  = $langIsJap ? 'APIのリンク' : 'Link to the API';
 	$uploadDir = wp_upload_dir();
-	$fileURI   = $uploadDir['baseurl'].sprintf("/measurements/device_%s.csv", $id);
+	$fileURI   = sprintf("https://api.safecast.org/en-US/devices/%s/measurements", $id);
 ?>
 
 <div class="sensor-page-header container-fluid">
@@ -59,19 +59,19 @@
 								<td><span class="last value"><?php echo $lastUsievert ?></span><span class="last unit">μSv/h</span></td>
 								<td><span class="max value"><?php echo $maxUsievert ?></span><span class="max unit">μSv/h</span></td>
 							</tr>
-						</tbody>	
+						</tbody>
 					</table>
 				</div>
 				<div class="graph col-md-6">
 					<a href="/plots/<?php echo $id ?>.png" rel="lightbox">
 						<img class="img-responsive" alt="" src="/plots/<?php echo $id ?>_small.png" />
 					</a>
-<!-- 					<div class="download">
+					<div class="download">
 						<a href="<?php echo $fileURI; ?>" target="_blank" class="btn btn-default btn-primary"><?php echo $download; ?></a>
-					</div> -->
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
-	  
+
