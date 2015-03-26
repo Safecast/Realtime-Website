@@ -32,9 +32,9 @@
 	}
 
 
-	$download  = $langIsJap ? 'APIのリンク' : 'Link to the API';
+	$download  = $langIsJap ? '詳細データ' : 'More sensor data';
 	$uploadDir = wp_upload_dir();
-	$fileURI   = sprintf("https://api.safecast.org/en-US/devices/%s/measurements", $id);
+	$fileURI   = sprintf("https://api.safecast.org/en-US/devices/%s/measurements?order=captured_at+desc", $id);
 ?>
 
 <div class="sensor-page-header container-fluid">
