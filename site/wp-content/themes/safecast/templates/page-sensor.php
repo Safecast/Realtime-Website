@@ -67,7 +67,7 @@
 						<img class="img-responsive" alt="" src="/plots/<?php echo $id ?>_small.png" />
 					</a>
 					<div class="download">
-						<a href="<?php echo $fileURI; ?>" target="_blank" class="btn btn-default btn-primary"><?php echo $download; ?></a>
+						<a href="<?php echo $fileURI; ?>" target="_blank"><?php echo $download; ?></a>
 					</div>
 				</div>
 			</div>
