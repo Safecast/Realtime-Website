@@ -11,3 +11,5 @@ site/wp-content/updraft/*
 site/wp-content/themes/safecast/assets/map/*
 site/wp-config.php
 plots/
+
+.DS_Store

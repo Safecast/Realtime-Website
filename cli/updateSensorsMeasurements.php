@@ -110,9 +110,9 @@ function updateSensorsMeasurements() {
 							sprintf(API_URI_LAST_FORMAT, $sensorId),
 							'sensor_measurement_last');
 
-						// updateSensorMeasurement(get_the_ID(),
-						// 	sprintf(API_URI_MAXIMUM_FORMAT, $sensorId),
-						// 	'sensor_measurement_max');
+						updateSensorMeasurement(get_the_ID(),
+							sprintf(API_URI_MAXIMUM_FORMAT, $sensorId),
+							'sensor_measurement_max');
 					}
 				} catch (\Exception $e) {
 					printf("Error while updating device %s : %s\n", $sensorId, $e->getMessage());
