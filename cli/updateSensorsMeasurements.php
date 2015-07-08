@@ -11,8 +11,8 @@
 
 /* Safecast API URL format */
 define('API_URI_INFO_FORMAT', 'https://api.safecast.org/devices/%s.json');
-define('API_URI_MAXIMUM_FORMAT', 'https://api.safecast.org/en-US/measurements.json?device_id=%s&per_page=1&order=value+desc');
-define('API_URI_LAST_FORMAT', 'https://api.safecast.org/en-US/measurements.json?device_id=%s&per_page=1&order=captured_at+desc');
+define('API_URI_MAXIMUM_FORMAT', 'https://api.safecast.org/en-US/measurements.json?device_id=%s&unit=cpm&per_page=1&order=value+desc');
+define('API_URI_LAST_FORMAT', 'https://api.safecast.org/en-US/measurements.json?device_id=%s&unit=cpm&per_page=1&order=captured_at+desc');
 
 function updateSensorInformation($postId, $information) {
 	update_post_meta($postId, 'sensor_type', $information->sensor);
