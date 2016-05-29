@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-<?php $general_settings = get_option('easy_maintenance_mode_general_settings');
-$text_design = get_option('easy_maintenance_mode_text_design_setting');
-$background = get_option('easy_maintenance_mode_background_setting_save');
+<?php 
+$general_settings = wp_parse_args( get_option('easy_maintenance_mode_general_settings',array()), general_setting());
+$text_design = wp_parse_args( get_option('easy_maintenance_mode_text_design_setting', array()), text_design_setting());
+$background = wp_parse_args( get_option('easy_maintenance_mode_background_setting_save',array()), background_setting());
 
 ?>
 

@@ -2,14 +2,17 @@
 /*
 Plugin Name: Simple History
 Plugin URI: http://simple-history.com
+Text Domain: simple-history
+Domain Path: /languages
 Description: Plugin that logs various things that occur in WordPress and then presents those events in a very nice GUI.
-Version: 2.0.22
+Version: 2.6
 Author: Pär Thernström
 Author URI: http://simple-history.com/
 License: GPL2
+GitHub Plugin URI: https://github.com/bonny/WordPress-Simple-History
 */
 
-/*  Copyright 2014  Pär Thernström (email: par.thernstrom@gmail.com)
+/*  Copyright 2015  Pär Thernström (email: par.thernstrom@gmail.com)
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License, version 2, as
@@ -31,16 +34,53 @@ if ( ! defined( 'WPINC' ) ) {
 
 if ( version_compare( phpversion(), "5.3", ">=") ) {
 
-	/** Load required files */
-	require_once(__DIR__ . "/inc/SimpleHistory.php");
-	require_once(__DIR__ . "/inc/SimpleHistoryLogQuery.php");
-
 	/**
 	 * Register function that is called when plugin is installed
 	 *
 	 * @TODO: make activatigon multi site aware, as in https://github.com/scribu/wp-proper-network-activation
 	 */
 	// register_activation_hook( trailingslashit(WP_PLUGIN_DIR) . trailingslashit( plugin_basename(__DIR__) ) . "index.php" , array("SimpleHistory", "on_plugin_activate" ) );
+
+	if ( ! defined( 'SIMPLE_HISTORY_VERSION' ) ) {
+		define( 'SIMPLE_HISTORY_VERSION', '2.6' );
+	}
+
+	if ( ! defined( 'SIMPLE_HISTORY_PATH' ) ) {
+		define( 'SIMPLE_HISTORY_PATH', plugin_dir_path( __FILE__ ) );
+	}
+
+	if ( ! defined( 'SIMPLE_HISTORY_BASENAME' ) ) {
+		define( 'SIMPLE_HISTORY_BASENAME', plugin_basename( __FILE__ ) );
+	}
+
+	if ( ! defined( 'SIMPLE_HISTORY_DIR_URL' ) ) {
+		define( 'SIMPLE_HISTORY_DIR_URL', plugin_dir_url( __FILE__ ) );
+	}
+
+	if ( ! defined( 'SIMPLE_HISTORY_FILE' ) ) {
+		define( 'SIMPLE_HISTORY_FILE', __FILE__ );
+	}
+
+	/** Load required files */
+	require_once(__DIR__ . "/inc/SimpleHistory.php");
+	require_once(__DIR__ . "/inc/SimpleHistoryLogQuery.php");
+
+	// Prev behavior:
+	/*
+	define( 'SIMPLE_HISTORY_FILE', __FILE__ );
+	define( 'SIMPLE_HISTORY_PATH', plugin_dir_path( SIMPLE_HISTORY_FILE ) );
+	define( 'SIMPLE_HISTORY_BASENAME', plugin_basename( SIMPLE_HISTORY_FILE ) );
+	*/
+
+	// Constants will be like:
+	/*
+	SIMPLE_HISTORY_FILE:
+	Var is string with length 57: /Users/username/GIT/Simple-History/index.php
+	SIMPLE_HISTORY_PATH:
+	Var is string with length 48: /Users/username/GIT/Simple-History/
+	SIMPLE_HISTORY_BASENAME:
+	Var is string with length 24: simple-history/index.php
+	*/
 
 	/** Boot up */
 	SimpleHistory::get_instance();
@@ -65,4 +105,3 @@ if ( version_compare( phpversion(), "5.3", ">=") ) {
 	}
 
 }
-

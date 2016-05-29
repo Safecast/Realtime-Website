@@ -1,5 +1,7 @@
 <?php
 
+defined( 'ABSPATH' ) or die();
+
 /*
 Dropin Name: Global RSS Feed
 Dropin URI: http://simple-history.com/
@@ -18,6 +20,9 @@ class SimpleHistoryRSSDropin {
 		if ( ! function_exists('get_editable_roles') ) {
 			require_once( ABSPATH . '/wp-admin/includes/user.php' );
 		}
+		
+		//Check the status of the RSS feed
+		$this->is_rss_enabled();
 
 		// Generate a rss secret, if it does not exist
 		if ( ! get_option("simple_history_rss_secret") ) {
@@ -36,6 +41,9 @@ class SimpleHistoryRSSDropin {
 	 * + also regenerates the secret if requested
 	 */
 	public function add_settings() {
+		
+		//we register a setting to keep track of the RSS feed status (enabled/disabled)
+                register_setting( SimpleHistory::SETTINGS_GENERAL_OPTION_GROUP, 'simple_history_enable_rss_feed', array($this, 'update_rss_status') );
 
 		/**
 		 * Start new section for RSS feed
@@ -48,24 +56,38 @@ class SimpleHistoryRSSDropin {
 			array($this, "settings_section_output"),
 			SimpleHistory::SETTINGS_MENU_SLUG // same slug as for options menu page
 		);
-
-		// RSS address
+		
+		// Enable/Disabled RSS feed
 		add_settings_field(
-			"simple_history_rss_feed",
-			__("Address", "simple-history"),
-			array($this, "settings_field_rss"),
+			"simple_history_enable_rss_feed",
+			__("Enable", "simple-history"),
+			array($this, "settings_field_rss_enable"),
 			SimpleHistory::SETTINGS_MENU_SLUG,
 			$settings_section_rss_id
 		);
+		
+		//if RSS is activated we display other fields
+		if($this->is_rss_enabled()){
 
-		// Regnerate address
-		add_settings_field(
-			"simple_history_rss_feed_regenerate_secret",
-			__("Regenerate", "simple-history"),
-			array($this, "settings_field_rss_regenerate"),
-			SimpleHistory::SETTINGS_MENU_SLUG,
-			$settings_section_rss_id
-		);
+			// RSS address
+			add_settings_field(
+				"simple_history_rss_feed",
+				__("Address", "simple-history"),
+				array($this, "settings_field_rss"),
+				SimpleHistory::SETTINGS_MENU_SLUG,
+				$settings_section_rss_id
+			);
+	
+			// Regnerate address
+			add_settings_field(
+				"simple_history_rss_feed_regenerate_secret",
+				__("Regenerate", "simple-history"),
+				array($this, "settings_field_rss_regenerate"),
+				SimpleHistory::SETTINGS_MENU_SLUG,
+				$settings_section_rss_id
+			);
+		
+		}
 
 		// Create new RSS secret
 		$create_new_secret = false;
@@ -82,13 +104,64 @@ class SimpleHistoryRSSDropin {
 			add_settings_error( "simple_history_rss_feed_regenerate_secret", "simple_history_rss_feed_regenerate_secret", $msg, "updated" );
 			set_transient('settings_errors', get_settings_errors(), 30);
 
-			$goback = add_query_arg( 'settings-updated', 'true',  wp_get_referer() );
+			$goback = esc_url_raw( add_query_arg( 'settings-updated', 'true',  wp_get_referer() ) );
 			wp_redirect( $goback );
 			exit;
 
 		}
 
 	} // settings
+	
+	/**
+	 * Check if RSS feed is enabled or disabled
+	 */
+	function is_rss_enabled() {
+				
+		// User has never used the plugin we disable RSS feed
+		if ( get_option("simple_history_rss_secret") === false && get_option("simple_history_enable_rss_feed") === false ) {
+			//We disable RSS by default, we use 0/1 to prevent fake disabled with bools from functions returning false for unset
+			update_option("simple_history_enable_rss_feed" , "0" );
+		}
+		// User was using the plugin before RSS feed became disabled by default
+		// We activate RSS to prevent a "breaking change"
+		else if(get_option("simple_history_enable_rss_feed") === false){
+			update_option("simple_history_enable_rss_feed" , "1" );
+			return true;
+		}
+		else if( get_option("simple_history_enable_rss_feed") === "1" ){
+			return true;
+		}
+		
+		return false;
+
+	}
+	
+	/**
+	 * Output for settings field that show current RSS address
+	 */
+	function settings_field_rss_enable() {
+		
+		?>
+		
+		<input value="1" type="checkbox" id="simple_history_enable_rss_feed" name="simple_history_enable_rss_feed" <?php checked( $this->is_rss_enabled(), 1 ); ?> />
+		<label for="simple_history_enable_rss_feed"><?php _e( "Enable RSS feed", 'simple-history' )?></label>
+		
+		<?php
+
+	}
+	
+	/**
+	 * Sanitize RSS enabled/disabled status on update settings
+	 */
+	function update_rss_status($field) {
+
+		if( $field === "1" ){
+			return "1";
+		}
+		
+		return "0";
+		
+	}
 
 
 	/**
@@ -132,7 +205,7 @@ class SimpleHistoryRSSDropin {
 
 			$rss_show = true;
 			$rss_show = apply_filters("simple_history/rss_feed_show", $rss_show);
-			if( ! $rss_show ) {
+			if( ! $rss_show  || ! $this->is_rss_enabled() ) {
 				wp_die( 'Nothing here.' );
 			}
 
@@ -173,14 +246,29 @@ class SimpleHistoryRSSDropin {
 						// Remove capability override after query is done
 						// remove_action( $action_tag, array($this, "on_can_read_single_logger") );
 
-						foreach ($queryResults["log_rows"] as $row) {
+						foreach ( $queryResults["log_rows"] as $row ) {
 
 							$header_output = $this->sh->getLogRowHeaderOutput( $row );
 							$text_output = $this->sh->getLogRowPlainTextOutput( $row );
 							$details_output = $this->sh->getLogRowDetailsOutput( $row );
-							$item_guid = home_url() . "?SimpleHistoryGuid=" . $row->id;
+							
+							// http://cyber.law.harvard.edu/rss/rss.html#ltguidgtSubelementOfLtitemgt
+							//$item_guid = home_url() . "?SimpleHistoryGuid=" . $row->id;
+							$item_guid = esc_url( add_query_arg("SimpleHistoryGuid", $row->id, home_url()) );
+							$item_link = esc_url( add_query_arg("SimpleHistoryGuid", $row->id, home_url()) );
 
-							#$item_title = wp_kses( $header_output . ": " . $text_output, array() );
+							/**
+							 * Filter the guid/link URL used in RSS feed.
+							 * Link will be esc_url'ed by simple history, so no need to do that in your filter
+							 *
+							 * @since 2.0.23
+							 *
+							 * @param string $item_guid link.
+							 * @param array $row
+							 */
+							$item_link = apply_filters("simple_history/rss_item_link", $item_link, $row);
+							$item_link = esc_url($item_link);
+
 							$item_title = $this->sh->getLogLevelTranslated( $row->level ) . ": " . wp_kses( $text_output, array() );
 
 							$level_output = sprintf( __('Severity level: %1$s'), $this->sh->getLogLevelTranslated( $row->level ));
@@ -205,8 +293,8 @@ class SimpleHistoryRSSDropin {
 								/* <author><?php echo $row->initiator ?></author> */
 								?>
 								<pubDate><?php echo date("D, d M Y H:i:s", strtotime($row->date)) ?> GMT</pubDate>
-								<guid isPermaLink="false"><?php echo $item_guid ?></guid>
-								<link><?php echo $item_guid ?></link>
+								<guid isPermaLink="false"><![CDATA[<?php echo $item_guid ?>]]></guid>
+								<link><![CDATA[<?php echo $item_link ?>]]></link>
 							</item>
 							<?php
 							/*
@@ -311,7 +399,7 @@ class SimpleHistoryRSSDropin {
 	 */
 	function settings_field_rss_regenerate() {
 
-		$update_link = add_query_arg("", "");
+		$update_link = esc_url( add_query_arg("", "") );
 		$update_link = wp_nonce_url( $update_link, "simple_history_rss_update_secret", "simple_history_rss_secret_regenerate_nonce" );
 
 		echo "<p>";
@@ -327,13 +415,15 @@ class SimpleHistoryRSSDropin {
 
 	/**
 	 * Get the URL to the RSS feed
+	 *
 	 * @return string URL
 	 */
 	function get_rss_address() {
 
 		$rss_secret = get_option("simple_history_rss_secret");
 		$rss_address = add_query_arg(array("simple_history_get_rss" => "1", "rss_secret" => $rss_secret), get_bloginfo("url") . "/");
-		$rss_address = htmlspecialchars($rss_address, ENT_COMPAT, "UTF-8");
+		$rss_address = esc_url( $rss_address );
+		// $rss_address = htmlspecialchars($rss_address, ENT_COMPAT, "UTF-8");
 
 		return $rss_address;
 

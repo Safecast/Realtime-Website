@@ -2,15 +2,13 @@
 Contributors: sc0ttkclark
 Donate link: http://scottkclark.com/
 Tags: exports, reports, reporting, exporting, csv, tab, xml, json
-Requires at least: 3.0
-Tested up to: 4.1.1
-Stable tag: 0.6.2
+Requires at least: 3.8
+Tested up to: 4.4
+Stable tag: 0.7.2
 
 Define custom exports / reports for users, based off of any custom MySQL SELECT query you define.
 
 == Description ==
-
-**THIS IS A BETA VERSION - Currently in development**
 
 Define custom exports / reports for users, based off of any MySQL SELECT query you create. This plugin interacts with your SELECT query and does all the hard work for you: exporting, pagination, ordering, searching/filtering, and display formatting for you.
 
@@ -75,6 +73,26 @@ Scott Kingsley Clark from SKC Development -- Scott specializes in WordPress and 
 * Get paginated / full data from a report in JSON format
 
 == Changelog ==
+
+= 0.7.2 =
+* Fix for files not downloading completely (on some environments)
+* Additional escaping fixes for WP_Admin_UI (reported by Sathish Kumar from cybersecurity works)
+
+= 0.7.1 =
+* Escaping fixes for WP_Admin_UI (reported by Sathish Kumar from cybersecurity works)
+
+= 0.7.0 =
+* Added: Using WP AJAX URL instead of Admin.class.php directly for downloads of exports
+
+= 0.6.4 =
+* Added: New constant to change the exports directory (WP_ADMIN_UI_EXPORT_DIR / WP_ADMIN_UI_EXPORT_URL)
+* Added: New filter to change the exported filename (wp_admin_ui_export_file, filter is passed filename and export type)
+* Added: Ability to use the API to export and then download the file (previously only JSON was available about file)
+* Added: New filter to override the WP_Admin_UI options array (exports_reports_report_options, filter is passed an array of options)
+* Fixed: JSON API for downloading data (full or paginated) now returns data properly, previously wasn't returning the actual data
+
+= 0.6.3 =
+* Security fix for orderby handling
 
 = 0.6.2 =
 * Added: Export JSON response now includes export file and message OR Error message from Cronjob URL (props to @adminatvbds for the idea)

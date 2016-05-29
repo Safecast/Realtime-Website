@@ -277,6 +277,8 @@ Style different log levels.
 	margin-top: 0.4em;
 	font-size: 15px;
 	color: #333;
+	/* break long lines so content always fit, even if very long (like very long url from http_api-logger */
+	word-break: break-word;
 }
 
 .SimpleHistoryLogitem__details p {
@@ -502,7 +504,7 @@ i.e. the log is inside a .postbox element
 	}
 
 	.postbox .SimpleHistoryLogitem:first-child {
-		padding-top: 0;
+		/*padding-top: 0;*/
 	}
 
 	.postbox .SimpleHistoryLogitem::before {
@@ -512,6 +514,12 @@ i.e. the log is inside a .postbox element
 	.postbox .SimpleHistoryLogitem__senderImage {
 		width: 24px;
 		height: 24px;;
+	}
+
+	.postbox .SimpleHistoryLogitem--initiator-wp .SimpleHistoryLogitem__senderImage:before,
+	.postbox .SimpleHistoryLogitem--initiator-wp_cli .SimpleHistoryLogitem__senderImage:before,
+	.postbox .SimpleHistoryLogitem--initiator-web_user .SimpleHistoryLogitem__senderImage:before {
+		font-size: 24px;
 	}
 
 	.postbox .SimpleHistoryLogitem__secondcol {
@@ -530,7 +538,7 @@ i.e. the log is inside a .postbox element
 	.postbox .SimpleHistoryLogitem__text,
 	.postbox .SimpleHistoryLogitem__details,
 	.postbox .SimpleHistoryLogitem__details p {
-		line-height: 1.1;
+		line-height: 1.5;
 	}
 
 	.postbox .SimpleHistoryPaginationLink,
@@ -593,8 +601,8 @@ Pagination, below logRows
 }
 
 .SimpleHistoryPaginationLink.SimpleHistoryPaginationLink:hover {
-	color: rgb(255, 255, 255);
-	background: rgb(46, 162, 204);
+	/*color: rgb(255, 255, 255);*/
+	/*background: rgb(46, 162, 204);*/
 }
 
 .SimpleHistoryPaginationLink.SimpleHistoryPaginationLink.disabled {
@@ -689,9 +697,9 @@ Modal window with detailss
 }
 
 @media only screen and (max-width: 850px) {
-	
+
 	.SimpleHistory-modal__content {
-		left: 10px /* admin meny width is 160 px */
+		left: 10px; /* admin meny width is 160 px */
 	}
 
 }
@@ -774,7 +782,7 @@ Modal window with detailss
 
 .SimpleHistoryLogitem__moreDetailsContext {
 	font-family: monospace;
-	white-space: pre-line;
+	white-space: pre-wrap;
 	font-size: 12px;
 	border-collapse: collapse;
 }
@@ -791,7 +799,7 @@ Modal window with detailss
 
 
 @media only screen and (max-width: 850px) {
-	
+
 	.SimpleHistoryLogitem__moreDetails {
 		margin-left: -60px;
 	}
@@ -829,6 +837,7 @@ Modal window with detailss
 	vertical-align: top;
 	color: #999;
 }
+
 
 .SimpleHistoryLogitem--initiator-wp .SimpleHistoryLogitem__senderImage:before,
 .SimpleHistoryLogitem--initiator-wp_cli .SimpleHistoryLogitem__senderImage:before {
@@ -877,7 +886,12 @@ Modal window with detailss
 	color: rgb(63, 147, 73);
 }
 
-/* if not hits when using filter function */
+/* For WP < 4.3 */
+.branch-4-2 .SimpleHistoryPageHeadline__icon {
+	line-height: 18px;
+}
+
+/* if not hits when using filter function + if ajax error */
 .SimpleHistory--hasNoHits {
 }
 
@@ -893,8 +907,15 @@ Modal window with detailss
 	display: none;
 }
 
-.SimpleHistory--hasNoHits .SimpleHistoryLogitems__noHits {
+.SimpleHistory--hasNoHits .SimpleHistoryLogitems__noHits,
+.SimpleHistory--ajaxHasErrors .SimpleHistoryLogitems__ajaxError {
 	display: block;
+	padding: 20px;
+}
+
+.SimpleHistory--ajaxHasErrors .SimpleHistoryLogitems__ajaxError {
+	max-height: 20em;
+	overflow: auto;
 }
 
 .postbox .SimpleHistory--hasNoHits .SimpleHistoryLogitems__noHits {
@@ -902,3 +923,8 @@ Modal window with detailss
 	margin-right: 13px;
 }
 
+.SimpleHistoryLogitems__ajaxError__infoMessage {
+	background: rgb(255, 255, 183);
+	padding: 10px;
+	font-weight: bold;
+}

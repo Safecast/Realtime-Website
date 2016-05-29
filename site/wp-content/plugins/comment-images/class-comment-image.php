@@ -3,10 +3,10 @@
  * Comment Image
  *
  * @package   Comment_Image
- * @author    Tom McFarlin <tom@tommcfarlin.com>
+ * @author    Carmen Sancheze <sanchezecarmen@gmail.com>
  * @license   GPL-2.0+
- * @link      http://tommcfarlin.com
- * @copyright 2013 - 2015 Tom McFarlin
+ * @link      https://wordpress.org/plugins/comment-images/
+ * @copyright 2013 - 2015 Carmen Sancheze
  */
 
 /**
@@ -23,7 +23,7 @@ require_once(ABSPATH . 'wp-admin/includes/image.php');
  * Comment Image
  *
  * @package Comment_Image
- * @author  Tom McFarlin <tom@tommcfarlin.com>
+ * @author  Carmen Sancheze <sanchezecarmen@gmail.com>
  */
 class Comment_Image {
 

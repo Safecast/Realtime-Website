@@ -5,18 +5,17 @@
  * Allow your readers easily to attach an image to their comments on posts and pages.
  *
  * @package   Comment_Image
- * @author    Tom McFarlin <tom@tommcfarlin.com>
+ * @author    Carmen Sancheze <sanchezecarmen@gmail.com>
  * @license   GPL-2.0+
- * @link      http://tommcfarlin.com
- * @copyright 2013 - 2015 Tom McFarlin
+ * @link      https://wordpress.org/plugins/comment-images/
+ * @copyright 2013 - 2015 Carmen Sancheze
  *
  * @wordpress-plugin
  * Plugin Name: Comment Images
- * Plugin URI:  http://tommcfarlin.com/comment-images/
+ * Plugin URI:  https://wordpress.org/plugins/comment-images/
  * Description: Allow your readers easily to attach an image to their comments on posts and pages.
- * Version:     1.20.0
- * Author:      Tom McFarlin
- * Author URI:  http://tommcfarlin.com
+ * Version:     1.24.1
+ * Author:      Carmen Sancheze
  * Text Domain: comment-image-locale
  * License:     GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt

@@ -2,7 +2,16 @@
 
 var simple_history = (function($) {
 
-	var api_base_url = window.ajaxurl + "?action=simple_history_api";
+	var api_base_url = window.ajaxurl;
+
+	// Plugins may have modified the Ajax URL so it already contains query params
+	if (api_base_url.indexOf("?") >= 0) {
+		api_base_url += "&";
+	} else {
+		api_base_url += "?";
+	}
+
+	api_base_url += "action=simple_history_api";
 
 	var debug = function(what) {
 
@@ -67,12 +76,16 @@ var simple_history = (function($) {
 				data: url_data,
 				// called on 404 and similar
 				error: function(collection, response, options) {
-					collection.trigger("reloadError");
-					$(document).trigger("SimpleHistory:logRowsCollectionReloadError");
+
+					collection.trigger("reloadError", [ response, options ]);
+					$(document).trigger("SimpleHistory:logRowsCollectionReloadError", [ response, options ]);
+
 				},
 				success: function(collection, response, options) {
-					collection.trigger("reloadDone");
-					$(document).trigger("SimpleHistory:logRowsCollectionReloadDone");
+
+					collection.trigger("reloadDone", [ response, options ]);
+					$(document).trigger("SimpleHistory:logRowsCollectionReloadDone", [ response, options ]);
+
 				}
 			});
 
@@ -133,7 +146,8 @@ var simple_history = (function($) {
 				data: {
 					logRowID: options.logRowID,
 					occasionsID: options.occasionsID,
-					occasionsCount: options.occasionsCount
+					occasionsCount: options.occasionsCount,
+					occasionsCountMaxReturn: options.occasionsCountMaxReturn
 				}
 			});
 
@@ -167,6 +181,8 @@ var simple_history = (function($) {
 
 			var logRowID = this.attributes.logRow.data("rowId");
 			var occasionsCount = this.attributes.logRow.data("occasionsCount");
+			var occasionsCountMaxReturn = 15;
+			this.occasionsCountMaxReturn = occasionsCountMaxReturn;
 			var occasionsID = this.attributes.logRow.data("occasionsId");
 
 			this.attributes.logRow.addClass("SimpleHistoryLogitem--occasionsOpening");
@@ -175,7 +191,8 @@ var simple_history = (function($) {
 				logRow: this.attributes.logRow,
 				logRowID: logRowID,
 				occasionsID: occasionsID,
-				occasionsCount: occasionsCount
+				occasionsCount: occasionsCount,
+				occasionsCountMaxReturn: occasionsCountMaxReturn
 			});
 
 			this.logRows.on("reset", this.render, this);
@@ -196,6 +213,15 @@ var simple_history = (function($) {
 				$li.addClass("SimpleHistoryLogitem--occasion");
 				$html = $html.add($li);
 			});
+
+			// If occasionsCount is more than occasionsCountMaxReturn then show a message
+			var occasionsCount = this.attributes.logRow.data("occasionsCount");
+			if (occasionsCount > this.occasionsCountMaxReturn) {
+
+				var templateTooMany = wp.template("simple-history-occasions-too-many");
+				$html = $html.add(templateTooMany({ occasionsCount: occasionsCount, occasionsCountMaxReturn: this.occasionsCountMaxReturn }));
+
+			}
 
 			this.$el.html($html);
 
@@ -303,11 +329,48 @@ var simple_history = (function($) {
 			this.collection.on("reset", this.render, this);
 			this.collection.on("reload", this.onReload, this);
 			this.collection.on("reloadDone", this.onReloadDone, this);
+			this.collection.on("reloadError", this.onReloadError, this);
 
 			// Trigger event for plugins
 			this.collection.on("reset", function() {
 				$(document).trigger("SimpleHistory:logLoaded");
 			}, this);
+
+		},
+
+		onReloadError: function(args) {
+
+			// If we get an error while loading the log it can be because the AJAX response
+			// is returning parts of HTML because of plugins giving errors
+			// not our fault, but instead of just ajax spinning forever we can 
+			// tell the user about this perhaps and they can do something about it
+			// or else they will uninstall the plugin (worst) or post in support forum (better)
+			// or we can help them solve it here (best)
+			var response = args[0];
+			
+			if ( response && response.responseText ) {
+				
+				// console.log( response.responseText );
+				$("html").removeClass("SimpleHistory-isLoadingPage");
+				$(".SimpleHistory__waitingForFirstLoad").addClass("SimpleHistory__waitingForFirstLoad--isLoaded");
+
+				var $mainViewElm = this.collection.mainView.$el;
+				$mainViewElm.addClass("SimpleHistory--ajaxHasErrors");
+
+				var noHitsClass = "SimpleHistoryLogitems__ajaxError";
+
+				// Remove maybe previous div with message
+				$mainViewElm.find("." + noHitsClass).remove();
+
+				// Add div with message
+				var $noHitsElm = $("<div />")
+					.html( "<div class='SimpleHistoryLogitems__ajaxError__infoMessage'>" + simple_history_script_vars.ajaxLoadError + "</div>" + response.responseText )
+					.addClass(noHitsClass)
+					.appendTo( $mainViewElm.find(".SimpleHistoryLogitems__above") )
+					;
+
+
+			}
 
 		},
 
@@ -325,6 +388,9 @@ var simple_history = (function($) {
 
 			var $mainViewElm = this.collection.mainView.$el;
 
+			// Remove maybe previous div with ajax error message
+			$mainViewElm.find(".SimpleHistoryLogitems__ajaxError").remove();
+
 			// Add message if no hits
 			$mainViewElm.removeClass("SimpleHistory--hasNoHits");
 			if (! this.collection.length ) {
@@ -333,7 +399,7 @@ var simple_history = (function($) {
 
 				var noHitsClass = "SimpleHistoryLogitems__noHits";
 
-				// Remove maybe previos div with message
+				// Remove maybe previous div with message
 				$mainViewElm.find("." + noHitsClass).remove();
 
 				// Add div with message
@@ -670,6 +736,9 @@ var simple_history = (function($) {
 
 })(jQuery);
 
+/**
+ * When the clear-log-button in admin is clicked then check that users really wants to clear the log
+ */
 jQuery(".js-SimpleHistory-Settings-ClearLog").on("click", function(e) {
 
 	if (confirm(simple_history_script_vars.settingsConfirmClearLog)) {
@@ -679,3 +748,27 @@ jQuery(".js-SimpleHistory-Settings-ClearLog").on("click", function(e) {
 	}
 
 });
+
+/**
+ * Add support for TimeAgo
+ */
+(function($) {
+
+	var $document = $(document);
+	
+	// called on first load + on pagination
+	$document.on("SimpleHistory:logLoaded", addTimeAgo); 
+
+	// when log is loaded and when occassions are loaded
+	$document.on("SimpleHistory:logRowsCollectionOccasionsLoaded", addTimeAgo);
+
+
+	function addTimeAgo() {
+	
+		$(".SimpleHistoryLogitem__when time").timeago();
+
+	}
+
+
+})(jQuery);
+

@@ -1,10 +1,9 @@
 === Comment Images ===
-Contributors: tommcfarlin
-Donate link: http://tommcfarlin.com/donate/
+Contributors: CarmenSanchez3
 Tags: comments, image
 Requires at least: 3.4.1
 Tested up to: 4.1
-Stable tag: 1.20.0
+Stable tag: 1.24.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,8 +22,6 @@ Comment Images...
 * Provides dashboard functionality for seeing the images that are attached to each comment
 * Makes the images available in the Media Uploader
 * Is fully localized and ready for translation
-
-For more information or to follow the project, check out the [project page](http://tommcfarlin.com/projects/comment-images/).
 
 == Installation ==
 

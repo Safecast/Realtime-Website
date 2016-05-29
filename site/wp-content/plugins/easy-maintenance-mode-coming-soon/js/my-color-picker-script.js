@@ -17,4 +17,4 @@ var myOptions = {
     palettes: true
 };
  
-jQuery('.my-color-field').wpColorPicker(myOptions);
+jQuery('#headline_color,#background_color,#description_color').wpColorPicker(myOptions);

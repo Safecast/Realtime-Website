@@ -16,6 +16,116 @@ define("SIMPLE_HISTORY_LOG_DEBUG", true);
  * Some examples of filter usage and so on
  */
 
+// Disable all logging
+add_filter( "simple_history/log/do_log", "__return_false" );
+
+/**
+ * Example that modifies the parameters sent to the message template
+ * This example will change the post type from "post" or "page" or similar to "my own page type"
+ */
+add_filter( "simple_history/logger/interpolate/context", function($context, $message, $row) {
+
+        if ( empty( $row ) ) {
+                return $context;
+        }
+
+        if ( $row->logger == "SimplePostLogger" && $row->context_message_key == "post_updated" ) {
+                $context["post_type"] = "my own page type";
+        }
+
+        return $context;
+
+}, 10, 3);
+
+
+
+/**
+ * Change capability required to manage the options page of simple history.
+ * Default capability is "manage_options"
+ */
+add_filter("simple_history/view_settings_capability", function($capability) {
+    
+    $capability = "manage_options";
+    return $capability;
+
+});
+
+
+/**
+ * Change capability required to view main simple history page.
+ * Default capability is "edit_pages". Change to for example "manage options" 
+ * to only allow admins to view the history log.
+ */
+add_filter("simple_history/view_history_capability", function($capability) {
+    
+    $capability = "manage_options";
+    return $capability;
+
+});
+
+
+// Skip adding things to the context table during logging. 
+// Useful if you don't want to add cool and possible super useful info to your logged events.
+// Also nice to have if you want to make sure your database does not grow.
+add_filter("simple_history/log_insert_context", function($context, $data) {
+
+	unset($context["_user_id"]);
+	unset($context["_user_login"]);
+	unset($context["_user_email"]);
+	unset($context["server_http_user_agent"]);
+
+	return $context;
+
+}, 10, 2);
+
+// Hide some columns from the detailed context view popup window
+add_filter("simple_history/log_html_output_details_table/row_keys_to_show", function($logRowKeysToShow, $oneLogRow) {
+	
+	$logRowKeysToShow["id"] = false;
+	$logRowKeysToShow["logger"] = false;
+	$logRowKeysToShow["level"] = false;
+	$logRowKeysToShow["message"] = false;
+
+	return $logRowKeysToShow;
+
+}, 10, 2);
+
+
+// Hide some more columns from the detailed context view popup window
+add_filter("simple_history/log_html_output_details_table/context_keys_to_show", function($logRowContextKeysToShow, $oneLogRow) {
+	
+	$logRowContextKeysToShow["plugin_slug"] = false;
+	$logRowContextKeysToShow["plugin_name"] = false;
+	$logRowContextKeysToShow["plugin_title"] = false;
+	$logRowContextKeysToShow["plugin_description"] = false;
+
+	return $logRowContextKeysToShow;
+
+}, 10, 2);
+
+
+
+// Allow only the users specified in $allowed_users to show the history page, the history widget on the dashboard, or the history settings page
+add_filter("simple_history/show_dashboard_page", "function_show_history_dashboard_or_page");
+add_filter("simple_history/show_dashboard_widget", "function_show_history_dashboard_or_page");
+add_filter("simple_history/show_settings_page", "function_show_history_dashboard_or_page");
+function function_show_history_dashboard_or_page($show) {
+
+	$allowed_users = array(
+		"user1@example.com",
+		"anotheruser@example.com"
+	);
+
+	$user = wp_get_current_user();
+	
+	if ( ! in_array( $user->user_email, $allowed_users ) ) {
+		$show = false;
+	}
+
+	return $show;
+
+}
+
 
 // Skip loading of loggers
 add_filter("simple_history/logger/load_logger", function($load_logger, $oneLoggerFile) {
@@ -28,6 +138,22 @@ add_filter("simple_history/logger/load_logger", function($load_logger, $oneLogge
 	return $load_logger;
 
 }, 10, 2);
+
+/**
+ * Load only the loggers that are specified in the $do_log_us array
+ */
+add_filter("simple_history/logger/load_logger", function($load_logger, $logger_basename) {
+
+	$load_logger = false;
+	$do_log_us = array("SimplePostLogger", "SimplePluginLogger", "SimpleLogger");
+
+	if ( in_array( $logger_basename, $do_log_us ) ) {
+		$load_logger = true;
+	}
+
+	return $load_logger;
+
+}, 10, 2 );
 
 
 // Skip the loading of dropins
@@ -67,6 +193,15 @@ add_filter("simple_history/simple_logger/log_message_key", function($doLog, $log
 
 // Never clear the log (default is 60 days)
 add_filter("simple_history/db_purge_days_interval", "__return_zero");
+
+// Clear items that are older than a 7 days (i.e. keep only the most recent 7 days in the log)
+add_filter( "simple_history/db_purge_days_interval", function( $days ) {
+	
+	$days = 7;
+	
+	return $days;
+
+} );
 
 // Don't let anyone - even with the correct secret - view the RSS feed
 add_filter("simple_history/rss_feed_show", "__return_false");

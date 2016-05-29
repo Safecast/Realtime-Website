@@ -77,13 +77,20 @@ class UpdraftPlus_S3
 	* @param boolean $useSSL Enable SSL
 	* @return void
 	*/
-	public function __construct($accessKey = null, $secretKey = null, $useSSL = true, $sslCACert = true, $endpoint = 's3.amazonaws.com')
+	public function __construct($accessKey = null, $secretKey = null, $useSSL = true, $sslCACert = true, $endpoint = null)
 	{
 		if ($accessKey !== null && $secretKey !== null)
 			self::setAuth($accessKey, $secretKey);
 		self::$useSSL = $useSSL;
 		self::$sslCACert = $sslCACert;
-		self::$endpoint = $endpoint;
+		if (!empty($endpoint)) self::$endpoint = $endpoint;
+
+		if (!function_exists('curl_init')) {
+			global $updraftplus;
+			$updraftplus->log('The PHP cURL extension must be installed and enabled to use this remote storage method');
+			throw new Exception('The PHP cURL extension must be installed and enabled to use this remote storage method');
+		}
+
 	}
 
 
@@ -269,7 +276,7 @@ class UpdraftPlus_S3
 		return $results;
 	}
 
-	public static function useDNSBucketName($use = true) {
+	public static function useDNSBucketName($use = true, $bucket = '') {
 		self::$use_dns_bucket_name = $use;
 		return true;
 	}
@@ -2007,7 +2014,6 @@ final class UpdraftPlus_S3Request
 
 		//var_dump('bucket: ' . $this->bucket, 'uri: ' . $this->uri, 'resource: ' . $this->resource, 'url: ' . $url);
 
-		// Basic setup
 		$curl = curl_init();
 		curl_setopt($curl, CURLOPT_USERAGENT, 'S3/php');
 
@@ -2089,16 +2095,19 @@ final class UpdraftPlus_S3Request
 				{
 					curl_setopt($curl, CURLOPT_PUT, true);
 					curl_setopt($curl, CURLOPT_INFILE, $this->fp);
-					if ($this->size >= 0)
+					if ($this->size >= 0) {
 						curl_setopt($curl, CURLOPT_INFILESIZE, $this->size);
+					}
 				}
 				elseif ($this->data !== false)
 				{
 					curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $this->verb);
 					curl_setopt($curl, CURLOPT_POSTFIELDS, $this->data);
+					curl_setopt($curl, CURLOPT_INFILESIZE, strlen($this->data));
 				}
-				else
+				else {
 					curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $this->verb);
+				}
 			break;
 			case 'HEAD':
 				curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'HEAD');
@@ -2224,16 +2233,16 @@ final class UpdraftPlus_S3Request
 			$data = trim($data);
 			if (strpos($data, ': ') === false) return $strlen;
 			list($header, $value) = explode(': ', $data, 2);
-			if ($header == 'Last-Modified')
+			if (strtolower($header) == 'last-modified')
 				$this->response->headers['time'] = strtotime($value);
-			elseif ($header == 'Content-Length')
+			elseif (strtolower($header) == 'content-length')
 				$this->response->headers['size'] = (int)$value;
-			elseif ($header == 'Content-Type')
+			elseif (strtolower($header) == 'content-type')
 				$this->response->headers['type'] = $value;
-			elseif ($header == 'ETag')
+			elseif (strtolower($header) == 'etag')
 				$this->response->headers['hash'] = $value{0} == '"' ? substr($value, 1, -1) : $value;
-			elseif (preg_match('/^x-amz-meta-.*$/', $header))
-				$this->response->headers[$header] = $value;
+			elseif (preg_match('/^x-amz-meta-.*$/i', $header))
+				$this->response->headers[strtolower($header)] = $value;
 		}
 		return $strlen;
 	}

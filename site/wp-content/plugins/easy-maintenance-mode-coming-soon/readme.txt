@@ -1,14 +1,14 @@
 === Easy Maintenance Mode ===
-Contributors: a.ankit, deepeshpaliwal
+Contributors: a.ankit
 Donate link: http://www.webriti.com/
 Tags:  maintenance, maintenance mode, coming soon, coming soon page, construction, landing page, launch, launch page, newsletter, offline, unavailable, under construction, wordpress coming soon, wordpress maintenance mode, wordpress under construction
 Requires at least: 3.3+
-Tested up to: 3.9
-Stable tag: 0.7
+Tested up to: 4.4.2
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Easy maintenace mode plugin allow to display a Maintenance Mode page to your visitors Work on your website also provide social network connectivity.
+Easy maintenance mode plugin allow to display a Maintenance Mode page to your visitors Work on your website also provide social network connectivity.
 
 == Description ==
 
@@ -96,6 +96,20 @@ The **Easy maintenance Mode** plugin allows to you quckly create a maintenance p
 
 
 == Changelog ==
+
+= 1.2.2 =
+1. Updated upload media code for fixing background image url issue.
+
+= 1.2.1 =
+Added nonce for applying security 
+= 1.2 =
+Changed video url.
+= 1.1 =
+1. Simplfied option panel
+2. Added video link.
+= 1.0 =
+1. Optin panel Revamp.
+2. Compatibility with latest wordpress version
 
 = 0.7 =
 1. Add Google Analytics Support.

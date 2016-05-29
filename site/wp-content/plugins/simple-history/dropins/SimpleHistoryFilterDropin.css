@@ -25,8 +25,15 @@
 	/* width: 310px; */
 }
 
-.SimpleHistory__filters__filter--date {
+.SimpleHistory__filters__filter--date,
+.SimpleHistoryFilterDropin-searchInput {
 	width: 310px;
+}
+
+/* set height on date input or it will "jump" during page load */
+.wp-admin select[multiple].SimpleHistory__filters__filter--date {
+	height: 2.2em;
+	overflow: hidden;
 }
 
 /**
@@ -75,7 +82,7 @@
 }
 
 .SimpleHistory__filters.is-showingMoreFilters .SimpleHistoryFilterDropin-searchInput {
-	width: 310px;
+	/*width: 310px;*/
 }
 
 .SimpleHistory__filters.is-showingMoreFilters .SimpleHistoryFilterDropin-showMoreFilters--first {
