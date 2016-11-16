@@ -1,0 +1,27 @@
+0000.007 () Opened log file at time: Thu, 04 Jun 2015 15:34:24 +0000 on http://dev.rt.safecast.org
+0000.007 () UpdraftPlus WordPress backup plugin (http://updraftplus.com): 1.10.1 WP: 4.2.2 PHP: 5.4.39-0+deb7u2 (Linux dev 2.6.32-042stab093.5 #1 SMP Thu Jan 29 12:58:41 MSK 2015 x86_64) MySQL: 5.5.43-0+deb7u1 Server: nginx/1.6.2 safe_mode: 0 max_execution_time: 900 memory_limit: 256M (used: 18.8M | 19M) multisite: N mcrypt: Y LANG:  ZipArchive::addFile: Y
+0000.007 () Free space on disk containing Updraft's temporary directory: 65437.6 Mb
+0000.007 () Restore job started. Entities to restore: plugins, themes
+0000.021 () Entity: plugins
+0000.021 () restore_backup(backup_file=backup_2015-06-04-1438_SAFECAST_d5acc61fcb1b-plugins.zip, type=plugins, info=a:2:{s:4:"path";s:47:"/var/www/dev.rt.safecast.org/wp-content/plugins";s:11:"description";s:7:"Plugins";}, last_one=)
+0000.021 () Unpacking backup... (backup_2015-06-04-1438_SAFECAST_d5acc61fcb1b-plugins.zip, 22.2 Mb)
+0001.714 () Moving old data: filesystem method / updraft_dir is potentially possible
+0001.714 () Moving old data: can potentially use wp_filesystem method / -old
+0001.714 () Moving old data out of the way...
+0001.892 () Top-level entities being moved: hello.php, index.php, updraftplus, akismet
+0001.895 () Moving unpacked backup into place...
+0002.667 () Top-level entities being moved: use-google-libraries, simple-history, all-in-one-favicon, google-analytics-dashboard-for-wp, tinymce-advanced, advanced-custom-fields, responsive-lightbox, qtranslate-x, p3-profiler, index.php, easy-maintenance-mode-coming-soon, mqtranslate, wordfence, add-to-any, comment-images, advanced-custom-fields-pro, footable, exports-and-reports, google-analytics-for-wordpress, advanced-tinymce-configuration, wp-super-cache, wp-optimize, updraftplus, types, google-sitemap-generator, all-in-one-seo-pack, akismet
+0002.684 () Cleaning up rubbish...
+0002.684 () Entity: themes
+0002.684 () restore_backup(backup_file=backup_2015-06-04-1438_SAFECAST_d5acc61fcb1b-themes.zip, type=themes, info=a:2:{s:4:"path";s:46:"/var/www/dev.rt.safecast.org/wp-content/themes";s:11:"description";s:6:"Themes";}, last_one=1)
+0002.684 () Unpacking backup... (backup_2015-06-04-1438_SAFECAST_d5acc61fcb1b-themes.zip, 6.2 Mb)
+0003.664 () Moving old data: filesystem method / updraft_dir is potentially possible
+0003.664 () Moving old data: can potentially use wp_filesystem method / -old
+0003.664 () Moving old data out of the way...
+0003.716 () Top-level entities being moved: twentyfourteen, fortunato, index.php, twentythirteen, twentyfifteen
+0003.717 () Moving unpacked backup into place...
+0004.188 () Top-level entities being moved: safecast, index.php, twentyfifteen
+0004.198 () Cleaning up rubbish...
+0004.209 () The current theme was not found; to prevent this stopping the site from loading, your theme has been reverted to the default theme
+0004.210 () Restore successful!
+0004.210 () Restore successful

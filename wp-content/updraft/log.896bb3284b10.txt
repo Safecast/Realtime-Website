@@ -1,0 +1,100 @@
+0001.160 () Opened log file at time: Mon, 07 Nov 2016 15:03:17 +0000 on http://dev.rt.safecast.org
+0001.160 () UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.12.23 WP: 4.6.1 PHP: 5.4.45-0+deb7u5 (fpm-fcgi, Linux dev 2.6.32-042stab116.2 #1 SMP Fri Jun 24 15:33:57 MSK 2016 x86_64) MySQL: 5.5.52 WPLANG: en_US Server: nginx/1.10.1 safe_mode: 0 max_execution_time: 900 memory_limit: 268435456 (used: 54.6M | 55M) multisite: N openssl: OpenSSL 1.0.1e 11 Feb 2013 mcrypt: Y LANG:  ZipArchive::addFile: Y
+0001.160 () Free space on disk containing Updraft's temporary directory: 32498.8 MB
+0002.097 () Restore job started. Entities to restore: themes, db. Restore options: {"updraft_restorer_replacesiteurl":false,"updraft_encryptionphrase":"","updraft_restorer_wpcore_includewpconfig":false}
+0002.138 () Will not delete any archives after unpacking them, because there was no cloud storage for this backup
+0003.557 () Entity: db
+0003.558 () restore_backup(backup_file=backup_2016-11-07-1334_SAFECAST_Development_Site_2ac731879bd1-db.gz, type=db, info=a:0:{}, last_one=)
+0003.558 () Unpacking backup... (backup_2016-11-07-1334_SAFECAST_Development_Site_2ac731879bd1-db.gz, 0.8 Mb)
+0003.563 () Database successfully unpacked
+0003.564 () Restoring the database (on a large site this can take a long time - if it times out (which can happen if your web hosting company has configured your hosting to limit resources) then you should use a different method, such as phpMyAdmin)...
+0003.564 () Using direct MySQL access; value of use_mysqli is: 0
+0003.569 () Tried to raise max_allowed_packet from 16 MB to 32 MB, but failed (Access denied; you need (at least one of) the SUPER privilege(s) for this operation, b:0;)
+0003.569 () Max packet size: 16 MB
+0003.569 () Entering maintenance mode
+0003.569 () Enabling Maintenance mode&#8230;
+0003.571 () <strong>Backup of:</strong> http://dev.rt.safecast.org
+0003.571 () Content URL: http://dev.rt.safecast.org/wp-content
+0003.571 () Uploads URL: http://dev.rt.safecast.org/wp-content/uploads
+0003.571 () Old table prefix: wp_
+0003.572 () Site information: multisite=0
+0003.574 () New table prefix: wp_
+0003.601 () Processing table (InnoDB): wp_options
+0003.751 () Restoring prior UD configuration (table: wp_options; keys: 3)
+0003.774 () Processing table (InnoDB): wp_users
+0003.781 () Processing table (InnoDB): wp_usermeta
+0003.819 () Processing table (InnoDB): wp_commentmeta
+0003.836 () Processing table (InnoDB): wp_comments
+0003.851 () Processing table (InnoDB): wp_links
+0003.860 () Processing table (InnoDB): wp_postmeta
+0004.042 () Processing table (InnoDB): wp_posts
+0004.116 () Processing table (InnoDB): wp_term_relationships
+0004.119 () Database queries processed: 50 in 0.55 seconds
+0004.122 () Processing table (InnoDB): wp_term_taxonomy
+0004.127 () Processing table (InnoDB): wp_termmeta
+0004.131 () Processing table (InnoDB): wp_terms
+0004.136 () Processing table (InnoDB): wp_exportsreports_groups
+0004.140 () Processing table (InnoDB): wp_exportsreports_log
+0004.149 () Processing table (InnoDB): wp_exportsreports_reports
+0004.154 () Processing table (MyISAM): wp_hl_twitter_replies
+0004.159 () Processing table (MyISAM): wp_hl_twitter_tweets
+0004.163 () Processing table (MyISAM): wp_hl_twitter_users
+0004.167 () Processing table (InnoDB): wp_ngg_album
+0004.173 () Processing table (InnoDB): wp_ngg_gallery
+0004.179 () Processing table (InnoDB): wp_ngg_pictures
+0004.185 () Processing table (InnoDB): wp_simple_history
+0004.202 () Processing table (InnoDB): wp_simple_history_contexts
+0004.347 () Processing table (InnoDB): wp_slim_stats_archive
+0004.352 () Processing table (InnoDB): wp_wfBadLeechers
+0004.359 () Processing table (InnoDB): wp_wfBlockedIPLog
+0004.364 () Processing table (InnoDB): wp_wfBlocks
+0004.371 () Processing table (InnoDB): wp_wfBlocksAdv
+0004.376 () Processing table (InnoDB): wp_wfConfig
+0004.400 () Processing table (InnoDB): wp_wfCrawlers
+0004.401 () Database queries processed: 100 in 0.84 seconds
+0004.406 () Processing table (InnoDB): wp_wfFileMods
+0004.608 () Processing table (InnoDB): wp_wfHits
+0004.761 () Processing table (InnoDB): wp_wfHoover
+0004.765 () Processing table (InnoDB): wp_wfIssues
+0004.772 () Processing table (InnoDB): wp_wfLeechers
+0004.779 () Processing table (InnoDB): wp_wfLockedOut
+0004.783 () Processing table (InnoDB): wp_wfLocs
+0004.788 () Processing table (InnoDB): wp_wfLogins
+0004.867 () Processing table (InnoDB): wp_wfNet404s
+0004.871 () Processing table (InnoDB): wp_wfReverseCache
+0004.875 () Processing table (InnoDB): wp_wfScanners
+0004.876 () Database queries processed: 150 in 1.31 seconds
+0004.879 () Processing table (InnoDB): wp_wfStatus
+0004.988 () Processing table (InnoDB): wp_wfThrottleLog
+0004.991 () Processing table (InnoDB): wp_wfVulnScanners
+0004.995 () Processing table (InnoDB): wp_wpeditor_settings
+0005.002 () Processing table (InnoDB): wp_wpgmza
+0005.005 () Processing table (InnoDB): wp_wpgmza_categories
+0005.009 () Processing table (InnoDB): wp_wpgmza_category_maps
+0005.014 () Processing table (InnoDB): wp_wpgmza_maps
+0005.019 () Processing table (InnoDB): wp_wpgmza_polygon
+0005.023 () Processing table (InnoDB): wp_wpgmza_polylines
+0005.027 () Processing table (InnoDB): wp_wppa_albums
+0005.032 () Processing table (InnoDB): wp_wppa_comments
+0005.036 () Processing table (InnoDB): wp_wppa_exif
+0005.040 () Processing table (InnoDB): wp_wppa_index
+0005.043 () Processing table (InnoDB): wp_wppa_iptc
+0005.049 () Processing table (InnoDB): wp_wppa_photos
+0005.054 () Processing table (InnoDB): wp_wppa_rating
+0005.057 () Processing table (InnoDB): wp_wppa_session
+0005.060 () Unlocking database and leaving maintenance mode
+0005.060 () Disabling Maintenance mode&#8230;
+0005.060 () Finished: lines processed: 196 in 1.49 seconds
+0005.061 () Cleaning up rubbish...
+0005.071 () Entity: themes
+0005.071 () restore_backup(backup_file=backup_2016-11-07-1334_SAFECAST_Development_Site_2ac731879bd1-themes.zip, type=themes, info=a:2:{s:4:"path";s:46:"/var/www/dev.rt.safecast.org/wp-content/themes";s:11:"description";s:6:"Themes";}, last_one=1)
+0005.071 () Unpacking backup... (backup_2016-11-07-1334_SAFECAST_Development_Site_2ac731879bd1-themes.zip, 6.6 Mb)
+0005.671 () Moving old data: filesystem method / updraft_dir is potentially possible
+0005.671 () Moving old data: can potentially use wp_filesystem method / -old
+0005.671 () Moving old data out of the way...
+0005.996 () Top-level entities being moved: index.php, safecast, twentyfifteen
+0006.003 () Moving unpacked backup into place...
+0006.329 () Top-level entities being moved: index.php, safecast, twentyfifteen
+0006.337 () Cleaning up rubbish...
+0006.365 () Restore successful!
+0006.365 () Restore successful

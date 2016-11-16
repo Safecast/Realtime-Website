@@ -1,0 +1,99 @@
+0000.003 () Opened log file at time: Wed, 19 Aug 2015 06:41:31 +0000 on http://dev.rt.safecast.org
+0000.004 () UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.11.3 WP: 4.3 PHP: 5.4.41-0+deb7u1 (Linux dev 2.6.32-042stab104.1 #1 SMP Thu Jan 29 12:58:41 MSK 2015 x86_64) MySQL: 5.5.44 Server: nginx/1.8.0 safe_mode: 0 max_execution_time: 900 memory_limit: 256M (used: 38.5M | 39M) multisite: N mcrypt: Y LANG:  ZipArchive::addFile: Y
+0000.004 () Free space on disk containing Updraft's temporary directory: 55205.1 Mb
+0000.004 () Restore job started. Entities to restore: plugins, db
+0000.019 () Will not delete any archives after unpacking them, because there was no cloud storage for this backup
+0000.019 () Entity: db
+0000.019 () restore_backup(backup_file=backup_2015-08-18-1238_SAFECAST_Development_Site_0c431cba327d-db.gz, type=db, info=a:0:{}, last_one=)
+0000.019 () Unpacking backup...
+0000.038 () Database successfully unpacked
+0000.038 () Restoring the database (on a large site this can take a long time - if it times out (which can happen if your web hosting company has configured your hosting to limit resources) then you should use a different method, such as phpMyAdmin)...
+0000.038 () Using direct MySQL access; value of use_mysqli is: 0
+0000.039 () Tried to raise max_allowed_packet from 16 Mb to 32 Mb, but failed (Access denied; you need (at least one of) the SUPER privilege(s) for this operation, b:0;)
+0000.039 () Max packet size: 16 Mb
+0000.039 () Entering maintenance mode
+0000.040 () Enabling Maintenance mode&#8230;
+0000.041 () Backup created by: 1.11.3
+0000.041 () <strong>Backup of:</strong> http://dev.rt.safecast.org
+0000.041 () Content URL: http://dev.rt.safecast.org/wp-content
+0000.042 () Old table prefix: wp_
+0000.042 () Site information: multisite=0
+0000.044 () New table prefix: wp_
+0000.056 () Restoring table (InnoDB): wp_options
+0000.257 () Restoring prior UD configuration (table: wp_options; keys: 2)
+0000.260 () Restoring table (InnoDB): wp_users
+0000.277 () Restoring table (InnoDB): wp_usermeta
+0000.322 () Restoring table (InnoDB): wp_commentmeta
+0000.333 () Restoring table (InnoDB): wp_comments
+0000.342 () Restoring table (InnoDB): wp_links
+0000.373 () Restoring table (InnoDB): wp_postmeta
+0000.788 () Restoring table (InnoDB): wp_posts
+0000.848 () Restoring table (InnoDB): wp_term_relationships
+0000.899 () Restoring table (InnoDB): wp_term_taxonomy
+0000.996 () Restoring table (InnoDB): wp_terms
+0001.018 () Restoring table (InnoDB): wp_exportsreports_groups
+0001.057 () Restoring table (InnoDB): wp_exportsreports_log
+0001.153 () Restoring table (InnoDB): wp_exportsreports_reports
+0001.204 () Database queries processed: 50 in 1.17 seconds
+0001.206 () Restoring table (MyISAM): wp_hl_twitter_replies
+0001.298 () Restoring table (MyISAM): wp_hl_twitter_tweets
+0001.372 () Restoring table (MyISAM): wp_hl_twitter_users
+0001.379 () Restoring table (InnoDB): wp_ngg_album
+0001.386 () Restoring table (InnoDB): wp_ngg_gallery
+0001.403 () Restoring table (InnoDB): wp_ngg_pictures
+0001.437 () Restoring table (InnoDB): wp_simple_history
+0001.540 () Restoring table (InnoDB): wp_simple_history_contexts
+0002.104 () Restoring table (InnoDB): wp_slim_stats_archive
+0002.119 () Restoring table (InnoDB): wp_termmeta
+0002.140 () Restoring table (InnoDB): wp_wfBadLeechers
+0002.147 () Restoring table (InnoDB): wp_wfBlockedIPLog
+0002.159 () Restoring table (InnoDB): wp_wfBlocks
+0002.167 () Restoring table (InnoDB): wp_wfBlocksAdv
+0002.186 () Restoring table (InnoDB): wp_wfConfig
+0002.231 () Restoring table (InnoDB): wp_wfCrawlers
+0002.267 () Restoring table (InnoDB): wp_wfFileMods
+0003.298 () Restoring table (InnoDB): wp_wfHits
+0003.464 () Database queries processed: 100 in 3.43 seconds
+0003.650 () Restoring table (InnoDB): wp_wfHoover
+0003.672 () Restoring table (InnoDB): wp_wfIssues
+0003.700 () Restoring table (InnoDB): wp_wfLeechers
+0003.726 () Restoring table (InnoDB): wp_wfLockedOut
+0003.733 () Restoring table (InnoDB): wp_wfLocs
+0003.769 () Restoring table (InnoDB): wp_wfLogins
+0003.882 () Restoring table (InnoDB): wp_wfNet404s
+0003.920 () Restoring table (InnoDB): wp_wfReverseCache
+0003.926 () Restoring table (InnoDB): wp_wfScanners
+0003.933 () Restoring table (InnoDB): wp_wfStatus
+0004.118 () Restoring table (InnoDB): wp_wfThrottleLog
+0004.140 () Restoring table (InnoDB): wp_wfVulnScanners
+0004.166 () Restoring table (InnoDB): wp_wpgmza
+0004.412 () Restoring table (InnoDB): wp_wpgmza_categories
+0004.487 () Restoring table (InnoDB): wp_wpgmza_category_maps
+0004.550 () Restoring table (InnoDB): wp_wpgmza_maps
+0004.591 () Restoring table (InnoDB): wp_wpgmza_polygon
+0004.601 () Restoring table (InnoDB): wp_wpgmza_polylines
+0004.617 () Restoring table (InnoDB): wp_wppa_albums
+0004.626 () Restoring table (InnoDB): wp_wppa_comments
+0004.658 () Database queries processed: 150 in 4.62 seconds
+0004.662 () Restoring table (InnoDB): wp_wppa_exif
+0004.718 () Restoring table (InnoDB): wp_wppa_index
+0004.723 () Restoring table (InnoDB): wp_wppa_iptc
+0004.732 () Restoring table (InnoDB): wp_wppa_photos
+0004.752 () Restoring table (InnoDB): wp_wppa_rating
+0004.758 () Restoring table (InnoDB): wp_wppa_session
+0004.763 () Leaving maintenance mode
+0004.763 () Disabling Maintenance mode&#8230;
+0004.763 () Finished: lines processed: 168 in 4.72 seconds
+0004.763 () Cleaning up rubbish...
+0004.771 () Entity: plugins
+0004.771 () restore_backup(backup_file=backup_2015-08-18-1238_SAFECAST_Development_Site_0c431cba327d-plugins.zip, type=plugins, info=a:2:{s:4:"path";s:47:"/var/www/dev.rt.safecast.org/wp-content/plugins";s:11:"description";s:7:"Plugins";}, last_one=1)
+0004.771 () Unpacking backup... (backup_2015-08-18-1238_SAFECAST_Development_Site_0c431cba327d-plugins.zip, 19.3 Mb)
+0006.808 () Moving old data: filesystem method / updraft_dir is potentially possible
+0006.808 () Moving old data: can potentially use wp_filesystem method / -old
+0006.808 () Moving old data out of the way...
+0007.426 () Top-level entities being moved: use-google-libraries, simple-history, all-in-one-favicon, google-analytics-dashboard-for-wp, polylang, check-email, tinymce-advanced, advanced-custom-fields, responsive-lightbox, p3-profiler, index.php, easy-maintenance-mode-coming-soon, mqtranslate, wordfence, add-to-any, comment-images, footable, exports-and-reports, google-analytics-for-wordpress, advanced-tinymce-configuration, wp-optimize, updraftplus, php-enkoder, google-sitemap-generator, all-in-one-seo-pack, akismet
+0007.439 () Moving unpacked backup into place...
+0007.954 () Top-level entities being moved: use-google-libraries, simple-history, all-in-one-favicon, google-analytics-dashboard-for-wp, check-email, tinymce-advanced, advanced-custom-fields, responsive-lightbox, p3-profiler, index.php, easy-maintenance-mode-coming-soon, mqtranslate, wordfence, add-to-any, comment-images, footable, exports-and-reports, google-analytics-for-wordpress, advanced-tinymce-configuration, wp-optimize, updraftplus, php-enkoder, google-sitemap-generator, all-in-one-seo-pack, akismet
+0007.967 () Cleaning up rubbish...
+0007.983 () Restore successful!
+0008.097 () Restore successful

@@ -1,0 +1,510 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Easy maintenance mode\n"
+"POT-Creation-Date: 2016-08-31 13:43+0530\n"
+"PO-Revision-Date: 2016-08-31 13:43+0530\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.5\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
+"X-Poedit-Basepath: C:\\xampp\\htdocs\\wordpress-plugin-lite\\wp-content"
+"\\plugins\\easy-maintenance-mode-coming-soon\n"
+"X-Poedit-SearchPath-0: C:\\xampp\\htdocs\\wordpress-plugin-lite\\wp-content"
+"\\plugins\\easy-maintenance-mode-coming-soon\n"
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/easy-maintenance-mode-plugin.php:37
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/webriti_option_pannel.php:26
+msgid "Easy Maintenance Mode"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/background.php:50
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/webriti_option_pannel.php:40
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/backgorund_page_settings.php:29
+msgid "Background Settings"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/background.php:54
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/backgorund_page_settings.php:44
+msgid "Select Background"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/background.php:58
+msgid "Select coming soon page background options"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/background.php:62
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/backgorund_page_settings.php:46
+msgid "No background Selected"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/background.php:64
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/backgorund_page_settings.php:48
+msgid "Static Background Color"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/background.php:65
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/backgorund_page_settings.php:49
+msgid "Static Background Image"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/background.php:87
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/backgorund_page_settings.php:56
+msgid "Background Color"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/background.php:91
+msgid "Select page background color here"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/background.php:99
+msgid "Background Effect"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/background.php:103
+msgid "Apply noisy background effect here"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/background.php:106
+msgid "None"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/background.php:107
+msgid "Noise"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/background.php:118
+msgid "Background Iamge"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/background.php:122
+msgid "Select coming soon page background image"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/background.php:125
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/background.php:132
+msgid "No media Selected"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/background.php:127
+msgid "Upload"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/background.php:128
+msgid "preview"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/background.php:129
+msgid "none"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/background.php:144
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/general.php:128
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/text-design.php:229
+msgid "Save Changes"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/background.php:150
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/general.php:133
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/text-design.php:235
+msgid "Data save sucessfully"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/general.php:50
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/webriti_option_pannel.php:38
+msgid "General Settings"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/general.php:55
+msgid "Status"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/general.php:59
+msgid "Enable coming soon page from here."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/general.php:62
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/header_page_settings.php:52
+msgid "Disabled"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/general.php:64
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/header_page_settings.php:53
+msgid "Enable Maintenance Mode"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/general.php:68
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/header_page_settings.php:59
+msgid "Headline"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/general.php:72
+msgid "Enter your coming page headline which is display before description."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/general.php:75
+msgid "Site coming soon!"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/general.php:79
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/header_page_settings.php:66
+msgid "Description"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/general.php:83
+msgid "Enter coming soon page description."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/general.php:86
+msgid "Page decribe here..."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/general.php:90
+msgid "Google Analytics Code"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/general.php:94
+msgid ""
+"Insert the tracking code here. For example Google Analytics code can be "
+"inserted here.Get your"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/general.php:94
+msgid "Google Analytics"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/general.php:94
+msgid "code."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/general.php:101
+msgid "Social Media Links"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/general.php:105
+msgid "Enter your social media url with http://"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/general.php:107
+msgid "Enter your social profiles with complete url"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/templates.php:1
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/webriti_option_pannel.php:46
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/templates_settings.php:5
+msgid "Templates"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/text-design.php:97
+msgid "Text Settings"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/text-design.php:102
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/text_color_page_setting.php:50
+msgid "Headline Font Color"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/text-design.php:106
+msgid "Select Headline Color."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/text-design.php:113
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/text_color_page_setting.php:57
+msgid "Description Font Color"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/text-design.php:117
+msgid "Select Desscription Color."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/text-design.php:125
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/text_color_page_setting.php:64
+msgid "Headline Font size"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/text-design.php:129
+msgid "Select headline font-size"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/text-design.php:140
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/text_color_page_setting.php:75
+msgid "Description Font size"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/text-design.php:144
+msgid "Select Description font-size."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/text-design.php:157
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/text_color_page_setting.php:86
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/text_color_page_setting.php:115
+msgid "Headline Font Style"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/text-design.php:161
+msgid "Select headline font style"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/text-design.php:193
+msgid "Description Font Style"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/includes/text-design.php:197
+msgid "Select description font style."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/webriti_option_pannel.php:22
+msgid "Settings >>"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/webriti_option_pannel.php:27
+msgid "Preview"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/webriti_option_pannel.php:28
+msgid "Upgrade to Pro version"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/webriti_option_pannel.php:29
+msgid "Rate us on wordpress"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/webriti_option_pannel.php:42
+msgid "Text & Color"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/webriti_option_pannel.php:44
+msgid "Live Preview"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/webriti_option_pannel.php:48
+msgid "Pro Features"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/webriti_option_pannel.php:50
+msgid "Whats included in the Pro Version"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/webriti_option_pannel.php:52
+msgid "Pricing"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/webriti_option_pannel.php:54
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/webriti_option_pannel.php:203
+msgid "Show Some Love"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/webriti_option_pannel.php:56
+msgid "Video Tutorial"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/webriti_option_pannel.php:240
+msgid "Fully Functional Coming Soon Page in 30 minutes"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/webriti_option_pannel.php:289
+msgid "Restore All Defaults"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/backgorund_page_settings.php:32
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/header_page_settings.php:37
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/text_color_page_setting.php:37
+msgid "Options data successfully Saved"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/backgorund_page_settings.php:33
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/header_page_settings.php:38
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/text_color_page_setting.php:38
+msgid "Options data successfully reset"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/backgorund_page_settings.php:62
+msgid "Background Noise Effect"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/backgorund_page_settings.php:71
+msgid "Select background image"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/header_page_settings.php:34
+msgid "Quick Start Settings"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/header_page_settings.php:41
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/header_page_settings.php:102
+msgid "Restore Defaults"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/header_page_settings.php:42
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/header_page_settings.php:101
+msgid "Save Options"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/header_page_settings.php:51
+msgid "Select status"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/header_page_settings.php:74
+msgid "Google Codes"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/header_page_settings.php:81
+msgid "Enter facebook url"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/header_page_settings.php:88
+msgid "Enter twitter url"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/header_page_settings.php:95
+msgid "Enter google-plus url"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/live_preview_settings.php:5
+msgid "Live Preview Page"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pricing_settings.php:36
+msgid "Upgrade To Pro Version"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pricing_settings.php:37
+msgid "View Live demo"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:257
+msgid "Plugin is work with any wordpress theme easily."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:265
+msgid ""
+"Plugin template is compatible with all devices. It have completely resposive "
+"feature."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:273
+msgid "Defalut template is availale in both pro and free ."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:280
+msgid "Easily customizable admin panel and very user friendly."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:288
+msgid "Default fonts are availabel in both."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:297
+msgid "Buddy Press Supportive."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:306
+msgid ""
+"Visible only non loggeed user, if you are not login then you are not able to "
+"view regular site."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:315
+msgid "Easily collect user notify mail."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:327
+msgid "Google Analytics supportive."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:335
+msgid "Get social support."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:343
+msgid "Google fonts api are integreted with coming soon."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:351
+msgid "Get our fast and friendly support."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:360
+msgid "laguage Translation is available in premium."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:368
+msgid "limit access with clients who want to view regular sites."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:376
+msgid "Multiple page template is available for coming soon page."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:384
+msgid "Add user whitelist who access the site after login."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:392
+msgid "Add ip access for user."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:400
+msgid ""
+"page landing mode is available that mean you will able to add coming soon "
+"template for single site page ."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:408
+msgid "Add fullscreen background slideshow."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:416
+msgid "Add youtube video background."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:424
+msgid "Mailchimp Integration for Email Marketing & Data Capture."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:432
+msgid "Compaign Monitor for Email Marketing & Data Capture."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:439
+msgid "Constant Contact for Email Marketing & Data Capture."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:446
+msgid "Madmimi Integration for Email Marketing & Data Capture."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:453
+msgid "Aweber Integration for Email Marketing & Data Capture."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:461
+msgid "feedburner Integration for Email Marketing & Data Capture."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:470
+msgid "Add countdown timer for coming soon page."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:480
+msgid "progress bar enable"
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:488
+msgid "SEO supportive. Add meta title, description and favicon image. "
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:496
+msgid ""
+"Get multiple mode of coming soon like Maintanance mode,Landing mode etc."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/pro_features_settings.php:503
+msgid "Company logo and credit image insertig option."
+msgstr ""
+
+#: C:\xampp\htdocs\wordpress-plugin-lite\wp-content\plugins\easy-maintenance-mode-coming-soon/theme_options/pages/text_color_page_setting.php:34
+msgid "Text font & color settings"
+msgstr ""

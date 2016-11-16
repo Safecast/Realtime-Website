@@ -1,0 +1,524 @@
+0000.053 (0) Opened log file at time: Sat, 22 Oct 2016 11:49:02 +0000 on http://dev.rt.safecast.org
+0000.070 (0) UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.12.20 WP: 4.6.1 PHP: 5.4.45-0+deb7u5 (Linux dev 2.6.32-042stab116.2 #1 SMP Fri Jun 24 15:33:57 MSK 2016 x86_64) MySQL: 5.5.52 WPLANG: en_US Server: nginx/1.10.1 safe_mode: 0 max_execution_time: 900 memory_limit: 268435456 (used: 36.8M | 37.5M) multisite: N openssl: OpenSSL 1.0.1e 11 Feb 2013 mcrypt: Y LANG:  ZipArchive::addFile: Y
+0000.089 (0) Free space on disk containing Updraft's temporary directory: 35215.6 MB
+0000.198 (0) Tasks: Backup files: 1 (schedule: weekly) Backup DB:  (schedule: daily)
+0000.409 (0) Processed schedules. Combining jobs from co-inciding events. Tasks now: Backup files: 1 Backup DB: 1
+0000.566 (0) Requesting semaphore lock (fd) (apparently via scheduler: last_scheduled_action_called_at=1476532142, seconds_ago=604800)
+0000.603 (0) Set semaphore last lock (fd) time to 2016-10-22 11:49:02
+0000.604 (0) Semaphore lock (fd) complete
+0000.628 (0) Backup run: resumption=0, nonce=78c21f739c20, begun at=1477136942 (0s ago), job type=backup
+0000.630 (0) Scheduling a resumption (1) after 300 seconds (1477137242) in case this run gets aborted
+0000.667 (0) OpenVZ; reported memory: 2048 MB
+0000.669 (0) Checking if we have a zip executable available
+0000.682 (0) Testing: /usr/bin/zip
+0000.721 (0) Output: zip warning: binziptest/test.zip not found or empty
+0000.723 (0) Output: adding: binziptest/subdir1/	(in=0) (out=0) (stored 0%)
+0000.724 (0) Output: adding: binziptest/subdir1/subdir2/	(in=0) (out=0) (stored 0%)
+0000.725 (0) Output: adding: binziptest/subdir1/subdir2/test.html	(in=131) (out=107) (deflated 18%)
+0000.728 (0) Output: total bytes=131, compressed=107 -> 18% savings
+0000.777 (0) Output: adding: binziptest/subdir1/subdir2/test2.html	(in=138) (out=113) (deflated 18%)
+0000.780 (0) Output: total bytes=269, compressed=220 -> 18% savings
+0000.874 (0) Working binary zip found: /usr/bin/zip
+0000.877 (0) Zip engine: found/will use a binary zip: /usr/bin/zip
+0000.878 (0) Creation of backups of directories: beginning
+0000.881 (0) Beginning creation of dump of plugins (split every: 800 MB)
+0002.630 (0) Total entities for the zip file: 652 directories, 5360 files (0 skipped as non-modified), 74.3 MB
+0002.642 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 100 files added (on-disk size: 0 KB)
+0002.652 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 200 files added (on-disk size: 0 KB)
+0002.662 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 300 files added (on-disk size: 0 KB)
+0002.671 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 400 files added (on-disk size: 0 KB)
+0002.679 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 500 files added (on-disk size: 0 KB)
+0002.681 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (8.4 MB, 5360 files batched, 501 (501) added so far); re-opening (prior size: 0 KB)
+0004.744 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: size is now: 3.10 MB
+0004.754 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 600 files added (on-disk size: 3180.4 KB)
+0004.762 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 700 files added (on-disk size: 3180.4 KB)
+0004.769 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 800 files added (on-disk size: 3180.4 KB)
+0004.776 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 900 files added (on-disk size: 3180.4 KB)
+0004.784 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 1000 files added (on-disk size: 3180.4 KB)
+0004.785 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (3.8 MB, 5360 files batched, 501 (1002) added so far); re-opening (prior size: 3180.4 KB)
+0005.950 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: size is now: 4.50 MB
+0005.959 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 1100 files added (on-disk size: 4646.9 KB)
+0005.965 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 1200 files added (on-disk size: 4646.9 KB)
+0005.970 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 1300 files added (on-disk size: 4646.9 KB)
+0005.975 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 1400 files added (on-disk size: 4646.9 KB)
+0005.981 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 1500 files added (on-disk size: 4646.9 KB)
+0005.982 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (12.1 MB, 5360 files batched, 501 (1503) added so far); re-opening (prior size: 4646.9 KB)
+0007.175 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: size is now: 8.10 MB
+0007.184 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 1600 files added (on-disk size: 8284.5 KB)
+0007.190 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 1700 files added (on-disk size: 8284.5 KB)
+0007.195 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 1800 files added (on-disk size: 8284.5 KB)
+0007.201 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 1900 files added (on-disk size: 8284.5 KB)
+0007.207 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 2000 files added (on-disk size: 8284.5 KB)
+0007.209 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (4 MB, 5360 files batched, 501 (2004) added so far); re-opening (prior size: 8284.5 KB)
+0007.746 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 2100 files added (on-disk size: 9804.4 KB)
+0007.753 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 2200 files added (on-disk size: 9804.4 KB)
+0007.758 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 2300 files added (on-disk size: 9804.4 KB)
+0007.765 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 2400 files added (on-disk size: 9804.4 KB)
+0007.771 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 2500 files added (on-disk size: 9804.4 KB)
+0007.773 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (8.4 MB, 5360 files batched, 501 (2505) added so far); re-opening (prior size: 9804.4 KB)
+0008.564 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: size is now: 16.40 MB
+0008.574 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 2600 files added (on-disk size: 16788.9 KB)
+0008.580 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 2700 files added (on-disk size: 16788.9 KB)
+0008.585 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 2800 files added (on-disk size: 16788.9 KB)
+0008.591 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 2900 files added (on-disk size: 16788.9 KB)
+0008.596 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 3000 files added (on-disk size: 16788.9 KB)
+0008.597 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (16.4 MB, 5360 files batched, 501 (3006) added so far); re-opening (prior size: 16788.9 KB)
+0009.658 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: size is now: 20.00 MB
+0009.668 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 3100 files added (on-disk size: 20488.4 KB)
+0009.672 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 3200 files added (on-disk size: 20488.4 KB)
+0009.677 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 3300 files added (on-disk size: 20488.4 KB)
+0009.683 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 3400 files added (on-disk size: 20488.4 KB)
+0009.687 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 3500 files added (on-disk size: 20488.4 KB)
+0009.689 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (6.1 MB, 5360 files batched, 501 (3507) added so far); re-opening (prior size: 20488.4 KB)
+0010.995 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 3600 files added (on-disk size: 23700.9 KB)
+0011.001 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 3700 files added (on-disk size: 23700.9 KB)
+0011.005 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 3800 files added (on-disk size: 23700.9 KB)
+0011.010 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 3900 files added (on-disk size: 23700.9 KB)
+0011.015 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 4000 files added (on-disk size: 23700.9 KB)
+0011.016 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (3.4 MB, 5360 files batched, 501 (4008) added so far); re-opening (prior size: 23700.9 KB)
+0011.844 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 4100 files added (on-disk size: 25757.1 KB)
+0011.850 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 4200 files added (on-disk size: 25757.1 KB)
+0011.855 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 4300 files added (on-disk size: 25757.1 KB)
+0011.860 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 4400 files added (on-disk size: 25757.1 KB)
+0011.865 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 4500 files added (on-disk size: 25757.1 KB)
+0011.867 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (3.4 MB, 5360 files batched, 501 (4509) added so far); re-opening (prior size: 25757.1 KB)
+0013.123 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 4600 files added (on-disk size: 27905.3 KB)
+0013.133 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 4700 files added (on-disk size: 27905.3 KB)
+0013.143 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 4800 files added (on-disk size: 27905.3 KB)
+0013.152 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 4900 files added (on-disk size: 27905.3 KB)
+0013.162 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 5000 files added (on-disk size: 27905.3 KB)
+0013.182 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (2.8 MB, 5360 files batched, 501 (5010) added so far); re-opening (prior size: 27905.3 KB)
+0013.894 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 5100 files added (on-disk size: 29697.2 KB)
+0013.905 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 5200 files added (on-disk size: 29697.2 KB)
+0013.918 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip.tmp: 5300 files added (on-disk size: 29697.2 KB)
+0015.055 (0) Created plugins zip (0) - 31853 KB in 14.1 s (2258.9 KB/s) (SHA1 checksum: 36a3ce6032bac160e5c5e7aa9f47ecf9734c4fdd)
+0015.060 (0) Beginning creation of dump of themes (split every: 800 MB)
+0017.441 (0) Total entities for the zip file: 566 directories, 2253 files (0 skipped as non-modified), 19.4 MB
+0017.448 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 100 files added (on-disk size: 0 KB)
+0017.453 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 200 files added (on-disk size: 0 KB)
+0017.459 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 300 files added (on-disk size: 0 KB)
+0017.465 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 400 files added (on-disk size: 0 KB)
+0017.470 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 500 files added (on-disk size: 0 KB)
+0017.472 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (6.2 MB, 2253 files batched, 501 (501) added so far); re-opening (prior size: 0 KB)
+0019.159 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: size is now: 2.10 MB
+0019.168 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 600 files added (on-disk size: 2132.1 KB)
+0019.175 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 700 files added (on-disk size: 2132.1 KB)
+0019.211 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 800 files added (on-disk size: 2132.1 KB)
+0019.222 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 900 files added (on-disk size: 2132.1 KB)
+0019.230 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 1000 files added (on-disk size: 2132.1 KB)
+0019.232 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (2.6 MB, 2253 files batched, 501 (1002) added so far); re-opening (prior size: 2132.1 KB)
+0020.270 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: size is now: 3.10 MB
+0020.330 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 1100 files added (on-disk size: 3142.5 KB)
+0020.342 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 1200 files added (on-disk size: 3142.5 KB)
+0020.353 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 1300 files added (on-disk size: 3142.5 KB)
+0020.364 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 1400 files added (on-disk size: 3142.5 KB)
+0020.375 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 1500 files added (on-disk size: 3142.5 KB)
+0020.378 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (5.5 MB, 2253 files batched, 501 (1503) added so far); re-opening (prior size: 3142.5 KB)
+0022.575 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: size is now: 4.50 MB
+0022.592 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 1600 files added (on-disk size: 4564.4 KB)
+0022.603 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 1700 files added (on-disk size: 4564.4 KB)
+0022.615 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 1800 files added (on-disk size: 4564.4 KB)
+0022.625 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 1900 files added (on-disk size: 4564.4 KB)
+0022.636 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 2000 files added (on-disk size: 4564.4 KB)
+0022.640 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (2.8 MB, 2253 files batched, 501 (2004) added so far); re-opening (prior size: 4564.4 KB)
+0024.037 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: size is now: 5.50 MB
+0024.048 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 2100 files added (on-disk size: 5581.3 KB)
+0024.052 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: 2200 files added (on-disk size: 5581.3 KB)
+0024.649 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip.tmp: size is now: 6.60 MB
+0024.687 (0) Created themes zip (0) - 6755.6 KB in 9.6 s (701.9 KB/s) (SHA1 checksum: f1f2c6e7b3019f9a7db6fd23d4b07d7012c655ea)
+0024.692 (0) Exclusion option setting (uploads): backup*,*backups,backwpup*,wp-clone
+0024.694 (0) Looking for candidates to back up in: /var/www/dev.rt.safecast.org/wp-content/uploads
+0024.695 (0) finding files: 2016: adding to list (1)
+0024.696 (0) finding files: profiles: adding to list (2)
+0024.697 (0) finding files: 2015: adding to list (3)
+0024.698 (0) finding files: 2014: adding to list (4)
+0024.700 (0) finding files: measurements: adding to list (5)
+0024.701 (0) finding files: devices.json: adding to list (6)
+0024.702 (0) Beginning creation of dump of uploads (split every: 800 MB)
+0025.191 (0) Total entities for the zip file: 35 directories, 195 files (0 skipped as non-modified), 226.6 MB
+0025.203 (0) Zip: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-uploads.zip.tmp: 100 files added (on-disk size: 0 KB)
+0025.213 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 25 MB added on this batch (26.8 MB, 195 files batched, 165 (165) added so far); re-opening (prior size: 0 KB)
+0029.222 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-uploads.zip.tmp: size is now: 23.20 MB
+0029.229 (0) A useful amount of data was added after this amount of zip processing: 5.4 s (normalised: 5 s, rate: 5124.7 KB/s)
+0029.232 (0) Performance is good - will increase the amount of data we attempt to batch (time=5.3531589508057, normalised_time=4.9953805228862, max_time=-1, data points known=0, old_max_bytes=26214400, new_max_bytes=31486370)
+0029.238 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 30 MB added on this batch (77.9 MB, 195 files batched, 10 (175) added so far); re-opening (prior size: 23753.6 KB)
+0031.062 (0) A useful amount of data was added after this amount of zip processing: 2.2 s (normalised: 0.8 s, rate: 36499.1 KB/s)
+0031.067 (0) Performance is good - will increase the amount of data we attempt to batch (time=2.1866910457611, normalised_time=0.84244321684884, max_time=-1, data points known=0, old_max_bytes=31486370, new_max_bytes=209715200)
+0034.502 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-uploads.zip.tmp: size is now: 33.00 MB
+0034.740 (0) Created uploads zip (0) - 33835.2 KB in 10 s (3371.8 KB/s) (SHA1 checksum: cfe0fb8778a4ad146835f34bb2d88eb390e70b2c)
+0034.745 (0) Beginning backup of other directories found in the content directory (index: 0)
+0034.747 (0) Exclusion option setting (others): upgrade,cache,updraft,backup*,*backups
+0034.748 (0) Looking for candidates to back up in: /var/www/dev.rt.safecast.org/wp-content
+0034.750 (0) finding files: updraft: skipping: this is the updraft directory
+0034.751 (0) finding files: wfcache: adding to list (1)
+0034.753 (0) finding files: db.php: adding to list (2)
+0034.754 (0) finding files: index.php: adding to list (3)
+0034.756 (0) finding files: exports: adding to list (4)
+0034.757 (0) finding files: wppa-depot: adding to list (5)
+0034.759 (0) finding files: mu-plugins: adding to list (6)
+0034.761 (0) finding files: themes: skipping: this is the themes directory
+0034.762 (0) finding files: nfwlog: adding to list (7)
+0034.763 (0) finding files: uploads: skipping: this is the uploads directory
+0034.765 (0) finding files: plugins: skipping: this is the plugins directory
+0034.766 (0) finding files: languages: adding to list (8)
+0034.768 (0) finding files: upgrade: skipping: excluded by options
+0034.843 (0) Total entities for the zip file: 10 directories, 92 files (0 skipped as non-modified), 4.5 MB
+0035.975 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-others.zip.tmp: size is now: 1.10 MB
+0036.006 (0) Created others zip (0) - 1120.6 KB in 1.2 s (908.1 KB/s) (SHA1 checksum: 8b0d36cad1347aeae34b8c9d118ee77f459f1a02)
+0036.016 (0) Saving backup status to database (elements: 8)
+0036.024 (0) Beginning creation of database dump (WordPress DB)
+0036.028 (0) Testing: /usr/bin/mysqldump
+0036.271 (0) Working binary mysqldump found: /usr/bin/mysqldump
+0036.352 (0) Table wp_options: Total expected rows (approximate): 2859
+0036.453 (0) Table wp_options: Total rows added: 1059 in 0.10 seconds
+0036.457 (0) Table wp_options: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_options.table.gz - 173.9 KB)
+0036.464 (0) Table wp_users: Total expected rows (approximate): 19
+0036.470 (0) Table wp_users: Total rows added: 19 in 0.00 seconds
+0036.472 (0) Table wp_users: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_users.table.gz - 1.8 KB)
+0036.482 (0) Table wp_usermeta: Total expected rows (approximate): 322
+0036.497 (0) Table wp_usermeta: Total rows added: 339 in 0.01 seconds
+0036.500 (0) Table wp_usermeta: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_usermeta.table.gz - 5.8 KB)
+0036.507 (0) Table wp_commentmeta: Total expected rows (approximate): 6
+0036.511 (0) Table wp_commentmeta: Total rows added: 6 in 0.00 seconds
+0036.530 (0) Table wp_commentmeta: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_commentmeta.table.gz - 1.2 KB)
+0036.537 (0) Table wp_comments: Total expected rows (approximate): 22
+0036.543 (0) Table wp_comments: Total rows added: 22 in 0.00 seconds
+0036.545 (0) Table wp_comments: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_comments.table.gz - 1.9 KB)
+0036.548 (0) Table wp_links: Total expected rows (approximate): 0
+0036.550 (0) Table wp_links: Total rows added: 0 in 0.00 seconds
+0036.551 (0) Table wp_links: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_links.table.gz - 0.4 KB)
+0036.557 (0) Table wp_postmeta: Total expected rows (approximate): 8484
+0036.609 (0) Table wp_postmeta: binary mysqldump finished (writes: 32) in 0.05 seconds
+0036.612 (0) Table wp_postmeta: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_postmeta.table.gz - 64.8 KB)
+0036.619 (0) Table wp_posts: Total expected rows (approximate): 423
+0036.667 (0) Table wp_posts: Total rows added: 414 in 0.05 seconds
+0036.670 (0) Table wp_posts: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_posts.table.gz - 33 KB)
+0036.674 (0) Table wp_term_relationships: Total expected rows (approximate): 12
+0036.676 (0) Table wp_term_relationships: Total rows added: 12 in 0.00 seconds
+0036.677 (0) Table wp_term_relationships: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_term_relationships.table.gz - 0.4 KB)
+0036.681 (0) Table wp_term_taxonomy: Total expected rows (approximate): 3
+0036.683 (0) Table wp_term_taxonomy: Total rows added: 3 in 0.00 seconds
+0036.684 (0) Table wp_term_taxonomy: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_term_taxonomy.table.gz - 0.4 KB)
+0036.688 (0) Table wp_termmeta: Total expected rows (approximate): 0
+0036.690 (0) Table wp_termmeta: Total rows added: 0 in 0.00 seconds
+0036.691 (0) Table wp_termmeta: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_termmeta.table.gz - 0.3 KB)
+0036.697 (0) Table wp_terms: Total expected rows (approximate): 3
+0036.700 (0) Table wp_terms: Total rows added: 3 in 0.00 seconds
+0036.701 (0) Table wp_terms: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_terms.table.gz - 0.4 KB)
+0036.706 (0) Table wp_exportsreports_groups: Total expected rows (approximate): 1
+0036.709 (0) Table wp_exportsreports_groups: Total rows added: 1 in 0.00 seconds
+0036.711 (0) Table wp_exportsreports_groups: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_exportsreports_groups.table.gz - 0.4 KB)
+0036.715 (0) Table wp_exportsreports_log: Total expected rows (approximate): 20
+0036.718 (0) Table wp_exportsreports_log: Total rows added: 20 in 0.00 seconds
+0036.719 (0) Table wp_exportsreports_log: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_exportsreports_log.table.gz - 0.8 KB)
+0036.723 (0) Table wp_exportsreports_reports: Total expected rows (approximate): 6
+0036.726 (0) Table wp_exportsreports_reports: Total rows added: 6 in 0.00 seconds
+0036.727 (0) Table wp_exportsreports_reports: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_exportsreports_reports.table.gz - 1.1 KB)
+0036.731 (0) Table wp_hl_twitter_replies: Total expected rows (approximate): 0
+0036.733 (0) Table wp_hl_twitter_replies: Total rows added: 0 in 0.00 seconds
+0036.734 (0) Table wp_hl_twitter_replies: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_hl_twitter_replies.table.gz - 0.4 KB)
+0036.738 (0) Table wp_hl_twitter_tweets: Total expected rows (approximate): 0
+0036.740 (0) Table wp_hl_twitter_tweets: Total rows added: 0 in 0.00 seconds
+0036.742 (0) Table wp_hl_twitter_tweets: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_hl_twitter_tweets.table.gz - 0.4 KB)
+0036.747 (0) Table wp_hl_twitter_users: Total expected rows (approximate): 0
+0036.750 (0) Table wp_hl_twitter_users: Total rows added: 0 in 0.00 seconds
+0036.752 (0) Table wp_hl_twitter_users: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_hl_twitter_users.table.gz - 0.4 KB)
+0036.759 (0) Table wp_ngg_album: Total expected rows (approximate): 0
+0036.763 (0) Table wp_ngg_album: Total rows added: 0 in 0.00 seconds
+0036.766 (0) Table wp_ngg_album: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_ngg_album.table.gz - 0.4 KB)
+0036.773 (0) Table wp_ngg_gallery: Total expected rows (approximate): 0
+0036.777 (0) Table wp_ngg_gallery: Total rows added: 0 in 0.00 seconds
+0036.778 (0) Table wp_ngg_gallery: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_ngg_gallery.table.gz - 0.4 KB)
+0036.785 (0) Table wp_ngg_pictures: Total expected rows (approximate): 0
+0036.788 (0) Table wp_ngg_pictures: Total rows added: 0 in 0.00 seconds
+0036.790 (0) Table wp_ngg_pictures: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_ngg_pictures.table.gz - 0.4 KB)
+0036.804 (0) Table wp_simple_history: Total expected rows (approximate): 4753
+0037.191 (0) Table wp_simple_history: Total rows added: 4610 in 0.38 seconds
+0037.194 (0) Table wp_simple_history: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_simple_history.table.gz - 33.7 KB)
+0037.207 (0) Table wp_simple_history_contexts: Total expected rows (approximate): 29928
+0037.378 (0) Table wp_simple_history_contexts: binary mysqldump finished (writes: 33) in 0.17 seconds
+0037.383 (0) Table wp_simple_history_contexts: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_simple_history_contexts.table.gz - 190 KB)
+0037.390 (0) Table wp_slim_stats_archive: Total expected rows (approximate): 0
+0037.394 (0) Table wp_slim_stats_archive: Total rows added: 0 in 0.00 seconds
+0037.397 (0) Table wp_slim_stats_archive: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_slim_stats_archive.table.gz - 0.5 KB)
+0037.423 (0) Table wp_wfBadLeechers: Total expected rows (approximate): 0
+0037.427 (0) Table wp_wfBadLeechers: Total rows added: 0 in 0.00 seconds
+0037.429 (0) Table wp_wfBadLeechers: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfBadLeechers.table.gz - 0.3 KB)
+0037.436 (0) Table wp_wfBlockedIPLog: Total expected rows (approximate): 0
+0037.439 (0) Table wp_wfBlockedIPLog: Total rows added: 0 in 0.00 seconds
+0037.441 (0) Table wp_wfBlockedIPLog: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfBlockedIPLog.table.gz - 0.3 KB)
+0037.448 (0) Table wp_wfBlocks: Total expected rows (approximate): 0
+0037.451 (0) Table wp_wfBlocks: Total rows added: 0 in 0.00 seconds
+0037.453 (0) Table wp_wfBlocks: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfBlocks.table.gz - 0.4 KB)
+0037.481 (0) Table wp_wfBlocksAdv: Total expected rows (approximate): 0
+0037.484 (0) Table wp_wfBlocksAdv: Total rows added: 0 in 0.00 seconds
+0037.486 (0) Table wp_wfBlocksAdv: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfBlocksAdv.table.gz - 0.3 KB)
+0037.493 (0) Table wp_wfConfig: Total expected rows (approximate): 103
+0037.503 (0) Table wp_wfConfig: Total rows added: 129 in 0.01 seconds
+0037.507 (0) Table wp_wfConfig: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfConfig.table.gz - 18.8 KB)
+0037.513 (0) Table wp_wfCrawlers: Total expected rows (approximate): 10
+0037.517 (0) Table wp_wfCrawlers: Total rows added: 10 in 0.00 seconds
+0037.519 (0) Table wp_wfCrawlers: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfCrawlers.table.gz - 0.6 KB)
+0037.528 (0) Table wp_wfFileMods: Total expected rows (approximate): 8945
+0037.698 (0) Table wp_wfFileMods: binary mysqldump finished (writes: 32) in 0.17 seconds
+0037.703 (0) Table wp_wfFileMods: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfFileMods.table.gz - 440.7 KB)
+0037.714 (0) Table wp_wfHits: Total expected rows (approximate): 1386
+0037.816 (0) Table wp_wfHits: Total rows added: 1237 in 0.10 seconds
+0037.821 (0) Table wp_wfHits: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfHits.table.gz - 20.7 KB)
+0037.830 (0) Table wp_wfHoover: Total expected rows (approximate): 0
+0037.835 (0) Table wp_wfHoover: Total rows added: 0 in 0.00 seconds
+0037.837 (0) Table wp_wfHoover: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfHoover.table.gz - 0.3 KB)
+0037.845 (0) Table wp_wfIssues: Total expected rows (approximate): 23
+0037.852 (0) Table wp_wfIssues: Total rows added: 18 in 0.00 seconds
+0037.854 (0) Table wp_wfIssues: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfIssues.table.gz - 3.7 KB)
+0037.864 (0) Table wp_wfLeechers: Total expected rows (approximate): 26
+0037.869 (0) Table wp_wfLeechers: Total rows added: 26 in 0.00 seconds
+0037.871 (0) Table wp_wfLeechers: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfLeechers.table.gz - 0.5 KB)
+0037.880 (0) Table wp_wfLockedOut: Total expected rows (approximate): 0
+0037.885 (0) Table wp_wfLockedOut: Total rows added: 0 in 0.00 seconds
+0037.887 (0) Table wp_wfLockedOut: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfLockedOut.table.gz - 0.3 KB)
+0037.897 (0) Table wp_wfLocs: Total expected rows (approximate): 1
+0037.903 (0) Table wp_wfLocs: Total rows added: 1 in 0.00 seconds
+0037.906 (0) Table wp_wfLocs: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfLocs.table.gz - 0.4 KB)
+0037.917 (0) Table wp_wfLogins: Total expected rows (approximate): 643
+0037.986 (0) Table wp_wfLogins: Total rows added: 690 in 0.07 seconds
+0037.991 (0) Table wp_wfLogins: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfLogins.table.gz - 12.5 KB)
+0038.002 (0) Table wp_wfNet404s: Total expected rows (approximate): 0
+0038.008 (0) Table wp_wfNet404s: Total rows added: 0 in 0.00 seconds
+0038.011 (0) Table wp_wfNet404s: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfNet404s.table.gz - 0.3 KB)
+0038.039 (0) Table wp_wfReverseCache: Total expected rows (approximate): 2
+0038.043 (0) Table wp_wfReverseCache: Total rows added: 2 in 0.00 seconds
+0038.045 (0) Table wp_wfReverseCache: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfReverseCache.table.gz - 0.4 KB)
+0038.051 (0) Table wp_wfScanners: Total expected rows (approximate): 0
+0038.054 (0) Table wp_wfScanners: Total rows added: 0 in 0.00 seconds
+0038.055 (0) Table wp_wfScanners: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfScanners.table.gz - 0.3 KB)
+0038.061 (0) Table wp_wfStatus: Total expected rows (approximate): 979
+0038.087 (0) Table wp_wfStatus: Total rows added: 963 in 0.02 seconds
+0038.089 (0) Table wp_wfStatus: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfStatus.table.gz - 15.7 KB)
+0038.094 (0) Table wp_wfThrottleLog: Total expected rows (approximate): 0
+0038.096 (0) Table wp_wfThrottleLog: Total rows added: 0 in 0.00 seconds
+0038.098 (0) Table wp_wfThrottleLog: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfThrottleLog.table.gz - 0.3 KB)
+0038.102 (0) Table wp_wfVulnScanners: Total expected rows (approximate): 0
+0038.104 (0) Table wp_wfVulnScanners: Total rows added: 0 in 0.00 seconds
+0038.105 (0) Table wp_wfVulnScanners: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfVulnScanners.table.gz - 0.3 KB)
+0038.109 (0) Table wp_wpeditor_settings: Total expected rows (approximate): 24
+0038.112 (0) Table wp_wpeditor_settings: Total rows added: 24 in 0.00 seconds
+0038.113 (0) Table wp_wpeditor_settings: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wpeditor_settings.table.gz - 0.6 KB)
+0038.117 (0) Table wp_wpgmza: Total expected rows (approximate): 0
+0038.120 (0) Table wp_wpgmza: Total rows added: 0 in 0.00 seconds
+0038.121 (0) Table wp_wpgmza: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wpgmza.table.gz - 0.3 KB)
+0038.126 (0) Table wp_wpgmza_categories: Total expected rows (approximate): 0
+0038.128 (0) Table wp_wpgmza_categories: Total rows added: 0 in 0.00 seconds
+0038.130 (0) Table wp_wpgmza_categories: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wpgmza_categories.table.gz - 0.3 KB)
+0038.134 (0) Table wp_wpgmza_category_maps: Total expected rows (approximate): 0
+0038.136 (0) Table wp_wpgmza_category_maps: Total rows added: 0 in 0.00 seconds
+0038.138 (0) Table wp_wpgmza_category_maps: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wpgmza_category_maps.table.gz - 0.3 KB)
+0038.143 (0) Table wp_wpgmza_maps: Total expected rows (approximate): 2
+0038.146 (0) Table wp_wpgmza_maps: Total rows added: 2 in 0.00 seconds
+0038.148 (0) Table wp_wpgmza_maps: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wpgmza_maps.table.gz - 0.9 KB)
+0038.152 (0) Table wp_wpgmza_polygon: Total expected rows (approximate): 0
+0038.154 (0) Table wp_wpgmza_polygon: Total rows added: 0 in 0.00 seconds
+0038.155 (0) Table wp_wpgmza_polygon: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wpgmza_polygon.table.gz - 0.3 KB)
+0038.159 (0) Table wp_wpgmza_polylines: Total expected rows (approximate): 0
+0038.161 (0) Table wp_wpgmza_polylines: Total rows added: 0 in 0.00 seconds
+0038.162 (0) Table wp_wpgmza_polylines: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wpgmza_polylines.table.gz - 0.3 KB)
+0038.166 (0) Table wp_wppa_albums: Total expected rows (approximate): 1
+0038.169 (0) Table wp_wppa_albums: Total rows added: 1 in 0.00 seconds
+0038.170 (0) Table wp_wppa_albums: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wppa_albums.table.gz - 0.5 KB)
+0038.175 (0) Table wp_wppa_comments: Total expected rows (approximate): 0
+0038.177 (0) Table wp_wppa_comments: Total rows added: 0 in 0.00 seconds
+0038.179 (0) Table wp_wppa_comments: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wppa_comments.table.gz - 0.3 KB)
+0038.184 (0) Table wp_wppa_exif: Total expected rows (approximate): 0
+0038.186 (0) Table wp_wppa_exif: Total rows added: 0 in 0.00 seconds
+0038.187 (0) Table wp_wppa_exif: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wppa_exif.table.gz - 0.3 KB)
+0038.191 (0) Table wp_wppa_index: Total expected rows (approximate): 0
+0038.194 (0) Table wp_wppa_index: Total rows added: 0 in 0.00 seconds
+0038.195 (0) Table wp_wppa_index: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wppa_index.table.gz - 0.3 KB)
+0038.199 (0) Table wp_wppa_iptc: Total expected rows (approximate): 8
+0038.202 (0) Table wp_wppa_iptc: Total rows added: 8 in 0.00 seconds
+0038.204 (0) Table wp_wppa_iptc: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wppa_iptc.table.gz - 0.4 KB)
+0038.208 (0) Table wp_wppa_photos: Total expected rows (approximate): 3
+0038.212 (0) Table wp_wppa_photos: Total rows added: 3 in 0.00 seconds
+0038.213 (0) Table wp_wppa_photos: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wppa_photos.table.gz - 0.6 KB)
+0038.217 (0) Table wp_wppa_rating: Total expected rows (approximate): 0
+0038.219 (0) Table wp_wppa_rating: Total rows added: 0 in 0.00 seconds
+0038.221 (0) Table wp_wppa_rating: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wppa_rating.table.gz - 0.3 KB)
+0038.225 (0) Table wp_wppa_session: Total expected rows (approximate): 3
+0038.227 (0) Table wp_wppa_session: Total rows added: 3 in 0.00 seconds
+0038.229 (0) Table wp_wppa_session: finishing file (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wppa_session.table.gz - 0.6 KB)
+0038.233 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_options.table.gz (1/59): adding to final database dump
+0038.262 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_users.table.gz (2/59): adding to final database dump
+0038.264 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_usermeta.table.gz (3/59): adding to final database dump
+0038.268 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_commentmeta.table.gz (4/59): adding to final database dump
+0038.270 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_comments.table.gz (5/59): adding to final database dump
+0038.272 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_links.table.gz (6/59): adding to final database dump
+0038.274 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_postmeta.table.gz (7/59): adding to final database dump
+0038.294 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_posts.table.gz (8/59): adding to final database dump
+0038.306 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_term_relationships.table.gz (9/59): adding to final database dump
+0038.308 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_term_taxonomy.table.gz (10/59): adding to final database dump
+0038.310 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_termmeta.table.gz (11/59): adding to final database dump
+0038.311 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_terms.table.gz (12/59): adding to final database dump
+0038.313 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_exportsreports_groups.table.gz (13/59): adding to final database dump
+0038.315 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_exportsreports_log.table.gz (14/59): adding to final database dump
+0038.316 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_exportsreports_reports.table.gz (15/59): adding to final database dump
+0038.318 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_hl_twitter_replies.table.gz (16/59): adding to final database dump
+0038.319 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_hl_twitter_tweets.table.gz (17/59): adding to final database dump
+0038.322 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_hl_twitter_users.table.gz (18/59): adding to final database dump
+0038.323 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_ngg_album.table.gz (19/59): adding to final database dump
+0038.325 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_ngg_gallery.table.gz (20/59): adding to final database dump
+0038.326 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_ngg_pictures.table.gz (21/59): adding to final database dump
+0038.328 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_simple_history.table.gz (22/59): adding to final database dump
+0038.367 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_simple_history_contexts.table.gz (23/59): adding to final database dump
+0038.470 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_slim_stats_archive.table.gz (24/59): adding to final database dump
+0038.473 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfBadLeechers.table.gz (25/59): adding to final database dump
+0038.475 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfBlockedIPLog.table.gz (26/59): adding to final database dump
+0038.478 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfBlocks.table.gz (27/59): adding to final database dump
+0038.480 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfBlocksAdv.table.gz (28/59): adding to final database dump
+0038.483 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfConfig.table.gz (29/59): adding to final database dump
+0038.490 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfCrawlers.table.gz (30/59): adding to final database dump
+0038.492 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfFileMods.table.gz (31/59): adding to final database dump
+0038.570 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfHits.table.gz (32/59): adding to final database dump
+0038.584 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfHoover.table.gz (33/59): adding to final database dump
+0038.586 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfIssues.table.gz (34/59): adding to final database dump
+0038.588 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfLeechers.table.gz (35/59): adding to final database dump
+0038.590 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfLockedOut.table.gz (36/59): adding to final database dump
+0038.593 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfLocs.table.gz (37/59): adding to final database dump
+0038.594 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfLogins.table.gz (38/59): adding to final database dump
+0038.603 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfNet404s.table.gz (39/59): adding to final database dump
+0038.605 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfReverseCache.table.gz (40/59): adding to final database dump
+0038.607 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfScanners.table.gz (41/59): adding to final database dump
+0038.609 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfStatus.table.gz (42/59): adding to final database dump
+0038.617 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfThrottleLog.table.gz (43/59): adding to final database dump
+0038.619 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wfVulnScanners.table.gz (44/59): adding to final database dump
+0038.621 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wpeditor_settings.table.gz (45/59): adding to final database dump
+0038.623 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wpgmza.table.gz (46/59): adding to final database dump
+0038.624 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wpgmza_categories.table.gz (47/59): adding to final database dump
+0038.626 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wpgmza_category_maps.table.gz (48/59): adding to final database dump
+0038.627 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wpgmza_maps.table.gz (49/59): adding to final database dump
+0038.629 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wpgmza_polygon.table.gz (50/59): adding to final database dump
+0038.630 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wpgmza_polylines.table.gz (51/59): adding to final database dump
+0038.632 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wppa_albums.table.gz (52/59): adding to final database dump
+0038.634 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wppa_comments.table.gz (53/59): adding to final database dump
+0038.635 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wppa_exif.table.gz (54/59): adding to final database dump
+0038.636 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wppa_index.table.gz (55/59): adding to final database dump
+0038.638 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wppa_iptc.table.gz (56/59): adding to final database dump
+0038.639 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wppa_photos.table.gz (57/59): adding to final database dump
+0038.641 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wppa_rating.table.gz (58/59): adding to final database dump
+0038.642 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db-table-wp_wppa_session.table.gz (59/59): adding to final database dump
+0038.643 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db.gz: finished writing out complete database file (1016 KB)
+0038.654 (0) Total database tables backed up: 59 (backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db.gz, size: 1051069, checksum (SHA1): 4f721d06e3644fa01738d88e2ae8eec51448b9c7)
+0038.664 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip: plugins: This file has not yet been successfully uploaded: will queue
+0038.666 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip: themes: This file has not yet been successfully uploaded: will queue
+0038.667 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-uploads.zip: uploads: This file has not yet been successfully uploaded: will queue
+0038.668 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-others.zip: others: This file has not yet been successfully uploaded: will queue
+0038.670 (0) backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db.gz: db: This file has not yet been successfully uploaded: will queue
+0038.671 (0) Saving backup history. Total backup size: 72.8 MB
+0038.676 (0) Requesting upload of the files that have not yet been successfully uploaded (5)
+0038.681 (0) Cloud backup selection (1/1): none (last)
+0038.683 (0) No remote despatch: user chose no remote backup service
+0038.686 (0) Recording as successfully uploaded: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-plugins.zip (09eb8a7d5a91bb884db001a2d448e51a)
+0038.693 (0) Recording as successfully uploaded: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-themes.zip (3af107a2b8a90c31849c84235a272966)
+0038.699 (0) Recording as successfully uploaded: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-uploads.zip (1017cec3a34c9fe50fa66b652051e9cf)
+0038.704 (0) Recording as successfully uploaded: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-others.zip (7bbbfa59a0e7eb94fac7ed32d1c0440e)
+0038.710 (0) Recording as successfully uploaded: backup_2016-10-22-1149_SAFECAST_Development_Site_78c21f739c20-db.gz (cd9e531ccbd44f7331f73d4c78036d6b)
+0038.715 (0) Retain: beginning examination of existing backup sets; user setting: retain_files=10, retain_db=10
+0038.718 (0) Number of backup sets in history: 20; groups (db): 1
+0038.719 (0) Examining (for databases) backup set with group_id=0, nonce=78c21f739c20, datestamp=1477136942 (Oct 22 2016 11:49:02)
+0038.720 (0) This backup set is the backup set just made, so will not be deleted.
+0038.722 (0) Examining (for databases) backup set with group_id=0, nonce=26ea3d7347e6, datestamp=1477050542 (Oct 21 2016 11:49:02)
+0038.723 (0) This backup set remains non-empty (f=0/d=1); will retain in history
+0038.724 (0) Examining (for databases) backup set with group_id=0, nonce=de4cdeceecea, datestamp=1476964142 (Oct 20 2016 11:49:02)
+0038.725 (0) This backup set remains non-empty (f=0/d=1); will retain in history
+0038.726 (0) Examining (for databases) backup set with group_id=0, nonce=7f8a587c6766, datestamp=1476877742 (Oct 19 2016 11:49:02)
+0038.728 (0) This backup set remains non-empty (f=0/d=1); will retain in history
+0038.729 (0) Examining (for databases) backup set with group_id=0, nonce=d5fe32e92588, datestamp=1476791342 (Oct 18 2016 11:49:02)
+0038.730 (0) This backup set remains non-empty (f=0/d=1); will retain in history
+0038.731 (0) Examining (for databases) backup set with group_id=0, nonce=8fd6fb943303, datestamp=1476704942 (Oct 17 2016 11:49:02)
+0038.732 (0) This backup set remains non-empty (f=0/d=1); will retain in history
+0038.733 (0) Examining (for databases) backup set with group_id=0, nonce=45c452654d05, datestamp=1476618544 (Oct 16 2016 11:49:04)
+0038.735 (0) This backup set remains non-empty (f=0/d=1); will retain in history
+0038.736 (0) Examining (for databases) backup set with group_id=0, nonce=d8fc92e5d90d, datestamp=1476532142 (Oct 15 2016 11:49:02)
+0038.737 (0) This backup set remains non-empty (f=1/d=1); will retain in history
+0038.739 (0) Examining (for databases) backup set with group_id=0, nonce=577d809ef4be, datestamp=1476445742 (Oct 14 2016 11:49:02)
+0038.740 (0) This backup set remains non-empty (f=0/d=1); will retain in history
+0038.741 (0) Examining (for databases) backup set with group_id=0, nonce=31a13ecc02d1, datestamp=1476359342 (Oct 13 2016 11:49:02)
+0038.742 (0) This backup set remains non-empty (f=0/d=1); will retain in history
+0038.743 (0) Examining (for databases) backup set with group_id=0, nonce=33db8dde1b27, datestamp=1476272942 (Oct 12 2016 11:49:02)
+0038.744 (0) 1476272942: db: this set includes a database (backup_2016-10-12-1149_SAFECAST_Development_Site_33db8dde1b27-db.gz); db count is now 10
+0038.745 (0) 1476272942: db: over retain limit (10); will delete this database
+0038.746 (0) Delete file: backup_2016-10-12-1149_SAFECAST_Development_Site_33db8dde1b27-db.gz, service=none
+0038.747 (0) Deleting local copy (backup_2016-10-12-1149_SAFECAST_Development_Site_33db8dde1b27-db.gz)
+0038.774 (0) This backup set is now empty; will remove from history
+0038.775 (0) Deleting log file (log.33db8dde1b27.txt)
+0038.776 (0) Examining (for databases) backup set with group_id=0, nonce=5875cecafe85, datestamp=1475927342 (Oct 08 2016 11:49:02)
+0038.777 (0) Examining (for databases) backup set with group_id=0, nonce=ef8fdc826e4a, datestamp=1475322542 (Oct 01 2016 11:49:02)
+0038.778 (0) Examining (for databases) backup set with group_id=0, nonce=8e0bbccf3662, datestamp=1474717742 (Sep 24 2016 11:49:02)
+0038.779 (0) Examining (for databases) backup set with group_id=0, nonce=4a50437c4494, datestamp=1474112943 (Sep 17 2016 11:49:03)
+0038.780 (0) Examining (for databases) backup set with group_id=0, nonce=6acd25aed22b, datestamp=1473508143 (Sep 10 2016 11:49:03)
+0038.781 (0) Examining (for databases) backup set with group_id=0, nonce=83397be09220, datestamp=1472903342 (Sep 03 2016 11:49:02)
+0038.782 (0) Examining (for databases) backup set with group_id=0, nonce=cf76e489f31a, datestamp=1472298543 (Aug 27 2016 11:49:03)
+0038.783 (0) Examining (for databases) backup set with group_id=0, nonce=ace13ca72f39, datestamp=1471693742 (Aug 20 2016 11:49:02)
+0038.784 (0) Examining (for databases) backup set with group_id=0, nonce=9890095ea582, datestamp=1471088942 (Aug 13 2016 11:49:02)
+0038.785 (0) Number of backup sets in history: 19; groups (files): 1
+0038.786 (0) Examining (for files) backup set with nonce=78c21f739c20, datestamp=1477136942 (Oct 22 2016 11:49:02)
+0038.787 (0) This backup set is the backup set just made, so will not be deleted.
+0038.788 (0) This backup set is the backup set just made, so will not be deleted.
+0038.788 (0) This backup set is the backup set just made, so will not be deleted.
+0038.789 (0) This backup set is the backup set just made, so will not be deleted.
+0038.789 (0) This backup set remains non-empty (f=1/d=1); will retain in history
+0038.790 (0) Examining (for files) backup set with nonce=26ea3d7347e6, datestamp=1477050542 (Oct 21 2016 11:49:02)
+0038.791 (0) This backup set remains non-empty (f=0/d=1); will retain in history
+0038.792 (0) Examining (for files) backup set with nonce=de4cdeceecea, datestamp=1476964142 (Oct 20 2016 11:49:02)
+0038.793 (0) This backup set remains non-empty (f=0/d=1); will retain in history
+0038.794 (0) Examining (for files) backup set with nonce=7f8a587c6766, datestamp=1476877742 (Oct 19 2016 11:49:02)
+0038.795 (0) This backup set remains non-empty (f=0/d=1); will retain in history
+0038.796 (0) Examining (for files) backup set with nonce=d5fe32e92588, datestamp=1476791342 (Oct 18 2016 11:49:02)
+0038.797 (0) This backup set remains non-empty (f=0/d=1); will retain in history
+0038.798 (0) Examining (for files) backup set with nonce=8fd6fb943303, datestamp=1476704942 (Oct 17 2016 11:49:02)
+0038.799 (0) This backup set remains non-empty (f=0/d=1); will retain in history
+0038.801 (0) Examining (for files) backup set with nonce=45c452654d05, datestamp=1476618544 (Oct 16 2016 11:49:04)
+0038.802 (0) This backup set remains non-empty (f=0/d=1); will retain in history
+0038.803 (0) Examining (for files) backup set with nonce=d8fc92e5d90d, datestamp=1476532142 (Oct 15 2016 11:49:02)
+0038.804 (0) This backup set remains non-empty (f=1/d=1); will retain in history
+0038.805 (0) Examining (for files) backup set with nonce=577d809ef4be, datestamp=1476445742 (Oct 14 2016 11:49:02)
+0038.806 (0) This backup set remains non-empty (f=0/d=1); will retain in history
+0038.807 (0) Examining (for files) backup set with nonce=31a13ecc02d1, datestamp=1476359342 (Oct 13 2016 11:49:02)
+0038.808 (0) This backup set remains non-empty (f=0/d=1); will retain in history
+0038.809 (0) Examining (for files) backup set with nonce=5875cecafe85, datestamp=1475927342 (Oct 08 2016 11:49:02)
+0038.810 (0) This backup set remains non-empty (f=1/d=0); will retain in history
+0038.811 (0) Examining (for files) backup set with nonce=ef8fdc826e4a, datestamp=1475322542 (Oct 01 2016 11:49:02)
+0038.812 (0) This backup set remains non-empty (f=1/d=0); will retain in history
+0038.813 (0) Examining (for files) backup set with nonce=8e0bbccf3662, datestamp=1474717742 (Sep 24 2016 11:49:02)
+0038.814 (0) This backup set remains non-empty (f=1/d=0); will retain in history
+0038.815 (0) Examining (for files) backup set with nonce=4a50437c4494, datestamp=1474112943 (Sep 17 2016 11:49:03)
+0038.816 (0) This backup set remains non-empty (f=1/d=0); will retain in history
+0038.817 (0) Examining (for files) backup set with nonce=6acd25aed22b, datestamp=1473508143 (Sep 10 2016 11:49:03)
+0038.818 (0) This backup set remains non-empty (f=1/d=0); will retain in history
+0038.819 (0) Examining (for files) backup set with nonce=83397be09220, datestamp=1472903342 (Sep 03 2016 11:49:02)
+0038.820 (0) This backup set remains non-empty (f=1/d=0); will retain in history
+0038.821 (0) Examining (for files) backup set with nonce=cf76e489f31a, datestamp=1472298543 (Aug 27 2016 11:49:03)
+0038.822 (0) This backup set remains non-empty (f=1/d=0); will retain in history
+0038.823 (0) Examining (for files) backup set with nonce=ace13ca72f39, datestamp=1471693742 (Aug 20 2016 11:49:02)
+0038.824 (0) This backup set remains non-empty (f=1/d=0); will retain in history
+0038.825 (0) Examining (for files) backup set with nonce=9890095ea582, datestamp=1471088942 (Aug 13 2016 11:49:02)
+0038.826 (0) plugins: over retain limit (10); will delete this file entity
+0038.826 (0) themes: over retain limit (10); will delete this file entity
+0038.827 (0) uploads: over retain limit (10); will delete this file entity
+0038.828 (0) others: over retain limit (10); will delete this file entity
+0038.830 (0) Delete file: backup_2016-08-13-1149_SAFECAST_Development_Site_9890095ea582-plugins.zip, service=none
+0038.831 (0) Deleting local copy (backup_2016-08-13-1149_SAFECAST_Development_Site_9890095ea582-plugins.zip)
+0038.852 (0) Delete file: backup_2016-08-13-1149_SAFECAST_Development_Site_9890095ea582-themes.zip, service=none
+0038.859 (0) Deleting local copy (backup_2016-08-13-1149_SAFECAST_Development_Site_9890095ea582-themes.zip)
+0038.879 (0) Delete file: backup_2016-08-13-1149_SAFECAST_Development_Site_9890095ea582-uploads.zip, service=none
+0038.881 (0) Deleting local copy (backup_2016-08-13-1149_SAFECAST_Development_Site_9890095ea582-uploads.zip)
+0038.883 (0) Delete file: backup_2016-08-13-1149_SAFECAST_Development_Site_9890095ea582-others.zip, service=none
+0038.885 (0) Deleting local copy (backup_2016-08-13-1149_SAFECAST_Development_Site_9890095ea582-others.zip)
+0038.887 (0) This backup set is now empty; will remove from history
+0038.888 (0) Deleting log file (log.9890095ea582.txt)
+0038.889 (0) Retain: saving new backup history (sets now: 18) and finishing retain operation
+0038.894 (0) Resume backup (78c21f739c20, 0): finish run
+0038.897 (0) Decremented the semaphore (fd) by 1
+0038.898 (0) Semaphore (fd) unlocked
+0038.899 (0) There were no errors in the uploads, so the 'resume' event (1) is being unscheduled
+0038.903 (0) No email will/can be sent - the user has not configured an email address.
+0038.904 (0) The backup apparently succeeded and is now complete
