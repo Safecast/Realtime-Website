@@ -1,6 +1,7 @@
 site/.htaccess
 site/wp-content/blogs.dir/*
 site/wp-content/upgrade/*
+site/wp-content/updraft/*
 site/wp-content/backup-db/*
 site/wp-content/advanced-cache.php
 site/wp-content/wp-cache-config.php
