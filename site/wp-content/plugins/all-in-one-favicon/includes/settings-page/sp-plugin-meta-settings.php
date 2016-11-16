@@ -10,9 +10,8 @@
  */
 ?>
 <div id="aio-favicon-meta-settings" class="postbox">
-    <h3 id="meta-settings"><?php _e('Settings', AIOFAVICON_TEXTDOMAIN); ?></h3>
-
     <div class="inside">
+        <h3 id="meta-settings"><?php _e('Settings', AIOFAVICON_TEXTDOMAIN); ?></h3>
         <table class="form-table">
             <tr>
                 <th scope="row">

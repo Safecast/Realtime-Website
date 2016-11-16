@@ -3,7 +3,7 @@ Contributors: biztechc
 Tags: All Comments in one page, manage all comments in one page, show all comments, eazy comments management,comments filter,search comment,filter comment.comment search
 Requires at least: 3.6.1
 Tested up to: 4.6.0
-Stable tag: 4.0.1
+Stable tag: 4.0.2
 License: GPLv2 or later
 
 This plugin displays all the comments received on your various posts in a single page with filter, enabling the readers to read all the comments in a single page.
@@ -41,6 +41,9 @@ Is this plugin prepared for multisites? Yes.
 1. screenshot-2.png
 
 == Changelog ==
+= 4.0.2 =
+* Translation support.
+
 = 4.0.1 =
 * minor bug fixing in ordering.
 

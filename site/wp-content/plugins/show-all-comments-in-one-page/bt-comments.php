@@ -4,7 +4,7 @@
  * Description: Show all comments in one page with filter.
  * Author: biztechc
  * Author URI: http://www.biztechconsultancy.com
- * Version: 4.0.1
+ * Version: 4.0.2
  */
 add_action('admin_menu', 'bt_comments_create_menu');
 
@@ -61,7 +61,7 @@ function bt_comments_settings_page() {
             <table class="form-table">
 
                 <tr valign="top">
-                    <th scope="row">Post Type</th>
+                    <th scope="row"><?php _e( 'Post Type' ); ?></th>
                     <td>
                         <fieldset>
                             <?php
@@ -86,19 +86,19 @@ function bt_comments_settings_page() {
                 </tr>
 
                 <tr valign="top">
-                    <th scope="row">Pagination</th>
+                    <th scope="row"><?php _e( 'Pagination' ); ?></th>
                     <td>
                         <fieldset>
                             <?php
                             if ($set_bt_pagination == 'yes') {
                                 ?>
-                                <label><input type="radio"  value="yes" name="bt_pagination" checked="checked"> <span>Yes</span></label><br>
-                                <label><input type="radio"  value="no"  name="bt_pagination"> <span>No</span></label>
+                                <label><input type="radio"  value="yes" name="bt_pagination" checked="checked"> <span><?php _e( 'Yes' ); ?></span></label><br>
+                                <label><input type="radio"  value="no"  name="bt_pagination"> <span><?php _e( 'No' ); ?></span></label>
                                 <?php
                             } else {
                                 ?>
-                                <label><input type="radio"  value="yes" name="bt_pagination"> <span>Yes</span></label><br>
-                                <label><input type="radio"  value="no"  name="bt_pagination" checked="checked"> <span>No</span></label>
+                                <label><input type="radio"  value="yes" name="bt_pagination"> <span><?php _e( 'Yes' ); ?></span></label><br>
+                                <label><input type="radio"  value="no"  name="bt_pagination" checked="checked"> <span><?php _e( 'No' ); ?></span></label>
                                 <?php
                             }
                             ?>
@@ -107,17 +107,17 @@ function bt_comments_settings_page() {
                 </tr>
 
                 <tr valign="top">
-                    <th scope="row">Comments Per Page</th>
+                    <th scope="row"><?php _e( 'Comments Per Page' ); ?></th>
                     <td><input type="number" class="small-text" value="<?php echo $set_bt_comments_per_page; ?>"  min="1" step="1" name="bt_comments_per_page"></td>
                 </tr>
 
                 <tr valign="top">
-                    <th scope="row">Exclude Post Id</th>
-                    <td><input type="text" name="bt_exclude_post" value="<?php echo $set_bt_exclude_post; ?>" /> Exclude post id with comma separated. like 11,22,33</td>
+                    <th scope="row"><?php _e( 'Exclude Post Id' ); ?></th>
+                    <td><input type="text" name="bt_exclude_post" value="<?php echo $set_bt_exclude_post; ?>" /> <?php _e( 'Exclude post id with comma separated. like 11,22,33' ); ?></td>
                 </tr>
 
                 <tr valign="top">
-                    <th scope="row">Avatar Size</th>
+                    <th scope="row"><?php _e( 'Avatar Size' ); ?></th>
                     <td><input type="number" class="small-text" value="<?php
                         if ($set_biztech_sac_avatar == NULL) {
                             echo "50";
@@ -128,7 +128,7 @@ function bt_comments_settings_page() {
                 </tr>
 
                 <tr valign="top">
-                    <th scope="row">Show Comment Date</th>
+                    <th scope="row"><?php _e( 'Show Comment Date' ); ?></th>
                     <td>
                         <fieldset>
                             <?php {
@@ -146,7 +146,7 @@ function bt_comments_settings_page() {
                 </tr>
 
                 <tr valign="top">
-                    <th scope="row">Open Comment in New TAB</th>
+                    <th scope="row"><?php _e( 'Open Comment in New TAB' ); ?></th>
                     <td>
                         <fieldset>
                             <?php {
@@ -165,20 +165,20 @@ function bt_comments_settings_page() {
 
 
                 <tr valign="top">
-                    <th scope="row">Comments Order</th>
+                    <th scope="row"><?php _e( 'Comments Order' ); ?></th>
                     <td>
                         <fieldset>
                             <?php
                             if ($set_comments_order == 'no') {
                                 ?>
 
-                                <label><input type="radio"  value="yes" name="biztech_comments_order"> <span>Newest comments First</span></label><br>
+                                <label><input type="radio"  value="yes" name="biztech_comments_order"> <span><?php _e( 'Newest comments First' ); ?></span></label><br>
                                 <label><input type="radio"  value="no"  name="biztech_comments_order" checked="checked"> <span>Oldest comments First</span></label>
                                 <?php
                             } else {
                                 ?>
-                                <label><input type="radio"  value="yes" name="biztech_comments_order" checked="checked"> <span>Newest comments First</span></label><br>
-                                <label><input type="radio"  value="no"  name="biztech_comments_order"> <span>Oldest comments First</span></label>
+                                <label><input type="radio"  value="yes" name="biztech_comments_order" checked="checked"> <span><?php _e( 'Newest comments First' ); ?></span></label><br>
+                                <label><input type="radio"  value="no"  name="biztech_comments_order"> <span><?php _e( 'Oldest comments First' ); ?></span></label>
 
                                 <?php
                             }
@@ -187,19 +187,19 @@ function bt_comments_settings_page() {
                     </td>
                 </tr>
                 <tr valign="top">
-                    <th scope="row">Display Filter</th>
+                    <th scope="row"><?php _e( 'Display Filter' ); ?></th>
                     <td>
                         <fieldset>
                             <?php
                             if ($set_display_filter == 'yes') {
                                 ?>
-                                <label><input type="radio"  value="yes" name="bt_display_filter" checked="checked"> <span>Yes</span></label><br>
-                                <label><input type="radio"  value="no"  name="bt_display_filter"> <span>No</span></label>
+                                <label><input type="radio"  value="yes" name="bt_display_filter" checked="checked"> <span><?php _e( 'Yes' ); ?></span></label><br>
+                                <label><input type="radio"  value="no"  name="bt_display_filter"> <span><?php _e( 'No' ); ?></span></label>
                                 <?php
                             } else {
                                 ?>
-                                <label><input type="radio"  value="yes" name="bt_display_filter"> <span>Yes</span></label><br>
-                                <label><input type="radio"  value="no"  name="bt_display_filter" checked="checked"> <span>No</span></label>
+                                <label><input type="radio"  value="yes" name="bt_display_filter"> <span><?php _e( 'Yes' ); ?></span></label><br>
+                                <label><input type="radio"  value="no"  name="bt_display_filter" checked="checked"> <span><?php _e( 'No' ); ?></span></label>
                                 <?php
                             }
                             ?>
@@ -605,8 +605,8 @@ function custom_comments_template($comment, $args, $depth) {
         <div class="avatar-custom"><?php echo get_avatar($comment, $getAvatarSize); ?></div>
         <div class="custom-comment-wrap">
             <h4 class="custom-comment-meta">
-                From <span class="custom-comment-author"><?php echo $comment->comment_author; ?></span> 
-                on <span class="custom-comment-on-title"><a href="<?php echo esc_url(get_permalink($comment->comment_post_ID)); ?>" target="_blank"><?php echo $comment->post_title; ?></a></span>
+                <?php _e( 'From' ); ?> <span class="custom-comment-author"><?php echo $comment->comment_author; ?></span> 
+                <?php _e( 'on' ); ?> <span class="custom-comment-on-title"><a href="<?php echo esc_url(get_permalink($comment->comment_post_ID)); ?>" target="_blank"><?php echo $comment->post_title; ?></a></span>
             </h4>
             <blockquote><?php echo apply_filters("the_content", $comment->comment_content); ?></blockquote>
             <?php
@@ -614,7 +614,7 @@ function custom_comments_template($comment, $args, $depth) {
                 $new_tab = 'target="_blank"';
             }
             ?>
-            <span class="custom-comment-link"><a href="<?php echo $comment->guid . '#comment-' . $comment->comment_ID; ?>" <?php echo $new_tab; ?>>Go to comment</a></span><br>
+            <span class="custom-comment-link"><a href="<?php echo $comment->guid . '#comment-' . $comment->comment_ID; ?>" <?php echo $new_tab; ?>><?php _e( 'Go to comment' ); ?></a></span><br>
             <?php
             if (isset($getdate) && $getdate == 'on') {
                 ?>

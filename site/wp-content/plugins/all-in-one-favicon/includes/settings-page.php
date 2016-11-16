@@ -28,7 +28,7 @@
   ?>
   <div>
     <?php screen_icon(); ?>
-    <h2><?php echo AIOFAVICON_NAME . ' ' . __('Settings', AIOFAVICON_TEXTDOMAIN); ?></h2>
+    <h1><?php echo AIOFAVICON_NAME . ' ' . __('Settings', AIOFAVICON_TEXTDOMAIN); ?></h1>
     <br class="clear"/>
 
     <div class="updated" id="javascriptWarning" style="background-color:#f66;">
@@ -37,10 +37,10 @@
 
 <?php
     require_once 'settings-page/sp-left-column.php';
-    require_once 'settings-page/sp-right-column.php';
+    //require_once 'settings-page/sp-right-column.php';
     ?>
   </div>
 <?php
-  require_once 'settings-page/sp-footer.php';
+  //require_once 'settings-page/sp-footer.php';
   ?>
 </div>

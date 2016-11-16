@@ -10,9 +10,8 @@
  */
 ?>
 <div id="aio-favicon-<?php echo $this->identifier ?>-settings" class="postbox">
-    <h3 id="<?php echo $this->identifier ?>-settings"><?php echo $this->translatedIdentifier; echo " "; _e('Settings', AIOFAVICON_TEXTDOMAIN); ?></h3>
-
     <div class="inside">
+        <h3 id="<?php echo $this->identifier ?>-settings"><?php echo $this->translatedIdentifier; echo " "; _e('Settings', AIOFAVICON_TEXTDOMAIN); ?></h3>
         <table class="form-table">
 <?php
           // Loop over this list of icons.

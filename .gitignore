@@ -1,4 +1,5 @@
 site/.htaccess
+site/wp-content/nfwlog/*
 site/wp-content/blogs.dir/*
 site/wp-content/upgrade/*
 site/wp-content/updraft/*

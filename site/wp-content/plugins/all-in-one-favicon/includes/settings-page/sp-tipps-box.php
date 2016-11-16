@@ -11,9 +11,8 @@
 ?>
 <div id="poststuff">
   <div id="aio-favicon-tips" class="postbox">
-    <h3 id="tips"><?php _e('Tips', AIOFAVICON_TEXTDOMAIN) ?></h3>
-
     <div class="inside">
+      <h3 id="tips"><?php _e('Tips', AIOFAVICON_TEXTDOMAIN) ?></h3>
       <table class="form-table">
         <tr>
           <th scope="row">
