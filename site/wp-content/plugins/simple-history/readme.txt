@@ -1,10 +1,10 @@
-﻿=== Simple History ===
+=== Simple History ===
 Contributors: eskapism
 Donate link: http://eskapism.se/sida/donate/
-Tags: history, log, changes, changelog, audit, trail, pages, attachments, users, cms, dashboard, admin, syslog, feed, activity, stream, audit trail, brute-force
+Tags: history, log, changes, changelog, audit, trail, pages, attachments, users, dashboard, admin, syslog, feed, activity, stream, audit trail, brute-force
 Requires at least: 4.5.1
-Tested up to: 4.5.2
-Stable tag: 2.6
+Tested up to: 4.6
+Stable tag: 2.12
 
 View changes made by users within WordPress. See who created a page, uploaded an attachment or approved an comment, and more.
 
@@ -38,17 +38,23 @@ see when someone has tried to log in, but failed. The log will then include ip a
 * **Option screens**<br>
 view details about changes made in the differnt settings sections of WordPress. Things like changes to the site title and the permalink structure will be logged.
 
+
 #### Support for third party plugins
 
-By default Simple History comes with support for these third party plugins:
+By default Simple History comes with built in support for the following plugins:
 
-**User Switching**  
-The [User Switching plugin](https://wordpress.org/plugins/user-switching/) allows you to quickly swap between user accounts in WordPress at the click of a button. Simple History will log each user switch being made.
+**User Switching**
+The [User Switching plugin](https://wordpress.org/plugins/user-switching/) allows you to quickly swap between user accounts in WordPress at the click of a button.
+Simple History will log each user switch being made.
 
-**Enable Media Replace**  
-The [Enable Media Replace plugin](https://wordpress.org/plugins/enable-media-replace/) allows you to replace a file in your media library by uploading a new file in its place. Simple history will log details about the file being replaced and details about the new file.
+**Enable Media Replace**
+The [Enable Media Replace plugin](https://wordpress.org/plugins/enable-media-replace/) allows you to replace a file in your media library by uploading a new file in its place.
+Simple history will log details about the file being replaced and details about the new file.
 
-Support for more plugins are coming.
+**Limit Login Attempts**
+The plugin [Limit Login Attempts](https://sv.wordpress.org/plugins/limit-login-attempts/) is old
+and has not been updated for 4 years. However it still has +1 million installs, so many users will benefit from
+Simple History logging login attempts, lockouts, and configuration changes made in the plugin Limit Login Attempts.
 
 #### RSS feed available
 
@@ -132,7 +138,7 @@ initiated by a specific user.
 
 2. The __Post Quick Diff__ feature will make it quick and easy for a user of a site to see what updates other users have done to posts and pages.
 
-3. Events with different severity – Simple History uses the log levels specified in the PHP PSR-3 standard.
+3. When users are created or changed you can see details on what have changed.
 
 4. Events have context with extra details - Each logged event can include useful rich formatted extra information. For example: a plugin install can contain author info and a the url to the plugin, and an uploaded image can contain a thumbnail of the image.
 
@@ -140,14 +146,103 @@ initiated by a specific user.
 
 6. See even more details about a logged event (by clicking on the date and time of the event).
 
+7. A chart with some quick statistics is available, so you can see the number of events that has been logged each day.
+A simple way to see any uncommon activity, for example an increased number of logins or similar.
 
 == Changelog ==
 
 ## Changelog
 
+= 2.12 (September 2016) =
+
+- You can show a different number of log items in the log on the dashboard and on the dedicated history page. By default the dashboard will show 5 items and the page will show 30.
+- On multisites the user search filter now only search users in the current site.
+- The statistics chart using Chart.js now uses the namespace window.Simple_History_Chart instead of window.Chart, decreasing the risk that two versions of the Chart.js library overwriting each others. Fixes https://wordpress.org/support/topic/comet-cache-breaks-simple-history/. (Note to future me: this was fixed by renaming the `window.chart` variable to `window.chart.Simple_history_chart` in the line `window.Chart = module.exports = Chart;`)
+- If spam comments are logged they are now included in the log. Change made to make sql query shorter and easier. Should not actually show any spam comments anyway because we don't log them since version 2.5.5 anyway. If you want to revert this behavior for some reason you can use the filter `simple_history/comments_logger/include_spam`.
+
+= 2.11 (September 2016) =
+
+- Added support for plugin [Redirection](https://wordpress.org/plugins/redirection/).
+  Redirects and groups that are created, changed, enabled and disabled will be logged. Also when the plugin global settings are changed that will be logged.
+- Fix possible notice error from User logger.
+- "View changelog" link now works on multisite.
+
+= 2.10 (September 2016) =
+
+- Available updates to plugins, themes, and WordPress itself is now logged.
+  Pretty great if you subscribe to the RSS feed to get the changes on a site. No need to manually check the updates-page to see if there are any updates.
+- Changed to logic used to determine if a post edit should be logged or not. Version 2.9 used a version that started to log a bit to much for some plugins. This should fix the problems with the Nextgen Gallery, All-In-One Events Calendar, and Membership 2 plugins. If you still have problems with a plugin that is causing to many events to be logged, please let me know!
+
+= 2.9.1 (August 2016) =
+
+- Fixed an issue where the logged time was off by some hours, due to timezone being manually set elsewhere.
+  Should fix https://wordpress.org/support/topic/logged-time-off-by-2-hours and https://wordpress.org/support/topic/different-time-between-dashboard-and-logger.
+- Fixed Nextgen Gallery and Nextgen Gallery Plus logging lots and lots of event when viewing posts with galleries. The posts was actually updated, so this plugin did nothing wrong. But it was indeed a bit annoying and most likely something you didn't want in your log. Fixes https://wordpress.org/support/topic/non-stop-logging-nextgen-gallery-items.
+
+= 2.9 (August 2016) =
+
+- Added custom date ranges to the dates filter. Just select "Custom date range..." in the dates dropdown and you can choose to see the log between any two exact dates.
+- The values in the statistics graph can now be clicked and when clicked the log is filtered to only show logged events from that day. Very convenient if you have a larger number of events logged for one day and quickly want to find out what exactly was logged that day.
+- Dates filter no longer accepts multi values. It was indeed a bit confusing that you could select both "Last 7 days" and "Last 3 days".
+- Fix for empty previous plugin version (the `{plugin_prev_version}` placeholder) when updating plugins.
+- Post and pages updates done in the WordPress apps for Ios and Android should be logged again.
+
+= 2.8 (August 2016) =
+
+- Theme installs are now logged
+- ...and so are theme updates
+- ...and theme deletions. Awesome!
+- Support for plugin [Limit Login Attempts](https://wordpress.org/plugins/limit-login-attempts/).
+  Failed login attempts, lockouts and configuration changes will be logged.
+- Correct message is now used when a plugin update fails, i.e. the message for key `plugin_update_failed`.
+- The original untranslated strings for plugin name and so on are stored when storing info for plugin installs and updates and similar.
+- Default number of events to show is now 10 instead of 5.
+
+= 2.7.5 (August 2016) =
+
+- User logins using e-mail are now logged correctly. Previously the user would be logged in successfully but the log said that they failed.
+- Security fix: only users with [`list_users`](https://codex.wordpress.org/Roles_and_Capabilities#list_users) capability can view the users filter and use the autocomplete api for users.
+  Previously the autocomplete function could be used by all logged in users.
+- Add labels to search filters. (I do really hate label-less forms so it's kinda very strange that this was not in place before.)
+- Misc other internal fixes
+
+= 2.7.4 (July 2016) =
+
+- Log a warning message if a plugin gets disabled automatically by WordPress because of any of these errors: "Plugin file does not exist.", "Invalid plugin path.", "The plugin does not have a valid header."
+- Fix warning error if `on_wp_login()` was called without second argument.
+- Fix options diff not being shown correctly.
+- Fix notice if no message key did exist for a log message.
+
+= 2.7.3 (June 2016) =
+
+- Removed the usage of the mb_* functions and mbstring is no longer a requirement.
+- Added a new debug tab to the settings page. On the debug page you can see stuff like how large your database is and how many rows that are stored in the database. Also, a list of all loggers are listed there together with some useful (for developers anyway) information.
+
+= 2.7.2 (June 2016) =
+
+- Fixed message about mbstring required not being echo'ed.
+- Fixed notice errors for users not allowed to view the log.
+
+= 2.7.1 (June 2016) =
+
+- Added: Add shortcut to history in Admin bar for current site and in Network Admin Bar for each site where plugin is installed. Can be disabled using filters `simple_history/add_admin_bar_menu_item` and `simple_history/add_admin_bar_network_menu_item`.
+- Added: Add check that [´mbstring´](http://php.net/manual/en/book.mbstring.php) is enabled and show a warning if it's not.
+- Changed: Changes to "Front Page Displays" in "Reading Settings" now show the name of the old and new page (before only id was logged).
+- Changed: Changes to "Default Post Category" and "Default Mail Category" in "Writing Settings" now show the name of the old and new category (before only id was logged).
+- Fixed: When changing "Front Page Displays" in "Reading Settings" the option "rewrite_rules" also got logged.
+- Fixed: Changes in Permalink Settings were not logged correctly.
+- Fixed: Actions done with [WP-CLI](https://wp-cli.org/) was not correctly attributed. Now the log should say "WP-CLI" intead of "Other" for actions done in WP CLI.
+
+= 2.7 (May 2016) =
+
+- Added: When a user is created or edited the log now shows what fields have changed and from what old value to what new value. A much requested feature!
+- Fixed: If you edited your own profile the log would say that you edited "their profile". Now it says that you edited "your profile" instead.
+- Changed: Post diffs could get very tall. Now they are max approx 8 rows by default, but if you hover the diff (or give it focus with your keyboard) you get a scrollbar and can scroll the contents. Fixes https://wordpress.org/support/topic/dashboard-max-length-of-content and https://wordpress.org/support/topic/feature-request-make-content-diff-report-expandable-and-closed-by-default.
+- Fixed: Maybe fix a notice varning if a transient was missing a name or value.
+
 = 2.6 (May 2016) =
 
-- Added: A nice little graph in the sidebar that displays the number of logged events per day the last 28 days. Graph is powered by [Graph.js](http://www.chartjs.org/).
+- Added: A nice little graph in the sidebar that displays the number of logged events per day the last 28 days. Graph is powered by [Chart.js](http://www.chartjs.org/).
 - Added: Function `get_num_events_last_n_days()`
 - Added: Function `get_num_events_per_day_last_n_days()`
 - Changed: Switched to transients from cache at some places, because more people will benefit from transients instead of cache (that requires object cache to be installed).

@@ -2,17 +2,26 @@
 /*
 Plugin Name:Easy Maintenance Mode
 Description: Easy Maintenance Mode plugin allows you to quickly create under construction, launch , coming soon, landing  page for your website. Collect E-mails and connect with users on Social Networks.
-Version: 1.2.2
+Version: 1.4.1
 Author:Ankit Agarwal,Priyanshu Mittal
-Author URI: http://webriti.com
-Plugin URI: http://webriti.com/easy-coming-soon-pro-detail-page/
+Author URI: http://easycomingsoon.com/
+Plugin URI: http://easycomingsoon.com/
+Text Domain: easy-maintenance-mode-coming-soon
 */
 
 require 'default_settings.php';
 
 define( 'WBR_EM_PLUGIN_PATH', plugin_dir_path( __FILE__ ) ); 
 define( 'WBR_EM_PLUGIN_URL', plugin_dir_url( __FILE__ ) ); 
+define("easymaintenance", "easy-maintenance-mode-coming-soon");
 
+/*
+* Loading a text domain code for plugin translation 
+*/
+add_action('plugins_loaded', 'wan_load_textdomain');
+function wan_load_textdomain() {
+	load_plugin_textdomain( 'easymaintenance', false, dirname( plugin_basename(__FILE__) ) . '/languages/' );
+}
 
 /*
 * Webriti coming soon admin menu hook add
@@ -25,7 +34,7 @@ add_action('admin_menu','easy_maintenance_mode_menu');
 function easy_maintenance_mode_menu()
 {
     //plugin menu name for coming soon plugin
-    $menu = add_menu_page('Easy Maintenance Mode', 'Easy Maintenance Mode','administrator', 'easy-maintenance-mode','easy_maintenance_mode_plugin_construction');
+    $menu = add_menu_page('Easy Maintenance Mode', __('Easy Maintenance Mode','easymaintenance'),'administrator', 'easy-maintenance-mode','easy_maintenance_mode_plugin_construction');
     //add hook to add styles and scripts for coming soon admin page
     add_action( 'admin_print_styles-' . $menu, 'easy_maintenance_mode_plugin_js_css' );
 }

@@ -15,6 +15,66 @@ if( function_exists('acf_add_options_page') ) {
 	
 }
 
+if (!function_exists('mass_update_posts')) {
+    function mass_update_posts() {
+            
+        $args = array(    'post_type'=>'sensors', //whatever post type you need to update 
+                        'posts_per_page'   => -1);
+            
+        $my_posts = get_posts($args);
+        
+        foreach($my_posts as $key => $my_post){
+            $meta_values = get_post_meta( $my_post->ID);
+            foreach($meta_values as $meta_key => $meta_value ){
+                update_field($meta_key, $meta_value[0], $my_post->ID);
+            }
+        }
+    }
+}
+
+if(function_exists("register_field_group"))
+{
+	register_field_group(array (
+		'id' => 'acf_alarm',
+		'title' => 'Alarm',
+		'fields' => array (
+			array (
+				'key' => 'field_57f50ca516276',
+				'label' => '',
+				'name' => 'alarm',
+				'type' => 'number',
+				'instructions' => 'Alarm is three times the average CPM',
+				'default_value' => 150,
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'min' => '',
+				'max' => '',
+				'step' => '',
+			),
+		),
+		'location' => array (
+			array (
+				array (
+					'param' => 'post_type',
+					'operator' => '==',
+					'value' => 'sensors',
+					'order_no' => 0,
+					'group_no' => 0,
+				),
+			),
+		),
+		'options' => array (
+			'position' => 'normal',
+			'layout' => 'no_box',
+			'hide_on_screen' => array (
+			),
+		),
+		'menu_order' => 0,
+	));
+}
+
+
 if(function_exists("register_field_group"))
 {
 	register_field_group(array (
@@ -537,8 +597,8 @@ add_action('save_post', 'update_sensors_post_title');
  *	Sensors table generation
 */
 
-define("TIME_OFFLINE_SHORT", 	660);
-define("TIME_OFFLINE_LONG", 	1560);
+define("TIME_OFFLINE_SHORT",	1560);
+define("TIME_OFFLINE_LONG", 	3120);
 define("SENSOR_TABLE_PAGE", 	17);
 
 if (!function_exists('generateSensorsTable')) {
@@ -593,6 +653,13 @@ if (!function_exists('generateSensorsTable')) {
 				$status      = ($lang == 'jp' ? 'オフライン（短）' : 'Offline short');
 				$statusClass = 'warning';
 				$statusValue = 1;
+				$to      = 'rob@yr-design.biz';
+                		$subject = 'Offline';
+                		$message = "$id";
+                		$headers = 'From: root@realtime.safecast.org' . "\r\n" .
+                   				 'Reply-To: root@realtime.safecast.org' . "\r\n" .
+                   				 'X-Mailer: PHP/' . phpversion();
+                    				mail($to, $subject, $message, $headers);
 			}
 
 			$html 		.= sprintf('

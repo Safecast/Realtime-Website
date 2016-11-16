@@ -22,6 +22,7 @@
 
 	$status      = $langIsJap ? 'オンライン' : 'Online';
 	$statusClass = 'info';
+	$alarm	     =get_post_meta(get_the_ID(), 'alarm', true);
 
 	if ($lastTimeSince >= TIME_OFFLINE_LONG) {
 		$status      = $langIsJap ? 'オフライン（長）' : 'Offline long';
@@ -72,6 +73,7 @@
 					</div>
                                       <div class="author_info">
                                         Tube:<?php echo $sensorType ?> <br>           
+ 					Alarm:<?php echo $alarm ?><br>
                                     </div>
 				</div>
 			</div>

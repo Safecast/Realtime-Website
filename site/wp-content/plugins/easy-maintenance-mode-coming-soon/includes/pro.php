@@ -27,8 +27,8 @@ font-style: normal;
 font-weight: 300;
 color: #707070;
 text-align: center;">The premium version allows you to capture Visitor Email address, integrates with various AutoResponders , Comes with 2 different Template and provide loads of Design Customization Options. <br><br>
-<a class="btn btn-danger  btn-large" href="http://webriti.com/easy-coming-soon-pro-detail-page/" target="_new">Upgrade To Pro Version</a>
-<a class="btn btn-success  btn-large" href="http://webriti.com/easy-coming-soon-pro-detail-page/" target="_new">View Live demo</a>  
+<a class="btn btn-danger  btn-large" href="http://easycomingsoon.com/" target="_new">Upgrade To Pro Version</a>
+<a class="btn btn-success  btn-large" href="http://easycomingsoon.com/demos/" target="_new">View Live demo</a>  
 </p>
 	</div>
 			
@@ -231,8 +231,8 @@ font-style: normal;
 font-weight: 300;
 color: #707070;
 text-align: center;">
-<a class="btn btn-danger  btn-large" href="http://webriti.com/easy-coming-soon-pro-detail-page/" target="_new">Upgrade To Pro Version</a>&nbsp;
-<a class="btn btn-success  btn-large" href="http://webriti.com/easy-coming-soon-pro-detail-page/" target="_new">View Live demo</a> 
+<a class="btn btn-danger  btn-large" href="http://easycomingsoon.com/" target="_new">Upgrade To Pro Version</a>&nbsp;
+<a class="btn btn-success  btn-large" href="http://easycomingsoon.com/demos/" target="_new">View Live demo</a> 
 </p>
 	</div>
 			

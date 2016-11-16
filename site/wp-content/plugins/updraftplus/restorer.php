@@ -33,6 +33,8 @@ class Updraft_Restorer extends WP_Upgrader {
 	
 	private $ud_restore_options;
 	
+	private $restore_this_site = array();
+	
 	private $restore_this_table = array();
 
 	private $line = 0;
@@ -279,7 +281,9 @@ class Updraft_Restorer extends WP_Upgrader {
 
 		@set_time_limit(1800);
 
-		$this->skin->feedback('unpack_package');
+		$packsize = round(filesize($backup_dir.$package)/1048576, 1).' Mb';
+		
+		$this->skin->feedback($this->strings['unpack_package'].' ('.basename($package).', '.$packsize.')');
 
 		$upgrade_folder = $wp_filesystem->wp_content_dir() . 'upgrade/';
 		@$wp_filesystem->mkdir($upgrade_folder, octdec($this->calculate_additive_chmod_oct(FS_CHMOD_DIR, 0775)));
@@ -1413,18 +1417,20 @@ ENDHERE;
 		$this->lock_forbidden = false;
 
 		$this->last_error = '';
-		$random_table_name = 'updraft_tmp_'.rand(0,9999999).md5(microtime(true));
+		$random_table_name = 'updraft_tmp_'.rand(0, 9999999).md5(microtime(true));
 
 		// The only purpose in funnelling queries directly here is to be able to get the error number
 		if ($this->use_wpdb) {
-			$req = $wpdb->query("CREATE TABLE $random_table_name");
+			$req = $wpdb->query("CREATE TABLE $random_table_name (test INT)");
+			// WPDB, for several query types, returns the number of rows changed; in distinction from an error, indicated by (bool)false
+			if (0 === $req) { $req = true; }
 			if (!$req) $this->last_error = $wpdb->last_error;
 			$this->last_error_no = false;
 		} else {
 			if ($this->use_mysqli) {
-				$req = mysqli_query($this->mysql_dbh, "CREATE TABLE $random_table_name");
+				$req = mysqli_query($this->mysql_dbh, "CREATE TABLE $random_table_name (test INT)");
 			} else {
-				$req = mysql_unbuffered_query("CREATE TABLE $random_table_name", $this->mysql_dbh);
+				$req = mysql_unbuffered_query("CREATE TABLE $random_table_name (test INT)", $this->mysql_dbh);
 			}
 			if (!$req) {
 				$this->last_error = ($this->use_mysqli) ? mysqli_error($this->mysql_dbh) : mysql_error($this->mysql_dbh);
@@ -1437,7 +1443,8 @@ ENDHERE;
 			# If we can't create, then there's no point dropping
 			$this->drop_forbidden = true;
 			echo '<strong>'.__('Warning:', 'updraftplus').'</strong> ';
-			$updraftplus->log_e('Your database user does not have permission to create tables. We will attempt to restore by simply emptying the tables; this should work as long as a) you are restoring from a WordPress version with the same database structure, and b) Your imported database does not contain any tables which are not already present on the importing site.', ' ('.$this->last_error.')');
+			$updraftplus->log_e('Your database user does not have permission to create tables. We will attempt to restore by simply emptying the tables; this should work as long as a) you are restoring from a WordPress version with the same database structure, and b) Your imported database does not contain any tables which are not already present on the importing site.');
+			$updraftplus->log('Error was: '.$this->last_error.' ('.$this->last_error_no.')');
 		} else {
 		
 			if (1142 === $this->lock_table($random_table_name)) {
@@ -1447,6 +1454,8 @@ ENDHERE;
 		
 			if ($this->use_wpdb) {
 				$req = $wpdb->query("DROP TABLE $random_table_name");
+				// WPDB, for several query types, returns the number of rows changed; in distinction from an error, indicated by (bool)false
+				if (0 === $req) { $req = true; }
 				if (!$req) $this->last_error = $wpdb->last_error;
 				$this->last_error_no = false;
 			} else {
@@ -1463,7 +1472,7 @@ ENDHERE;
 			if (!$req && ($this->use_wpdb || $this->last_error_no === 1142)) {
 				$this->drop_forbidden = true;
 				echo '<strong>'.__('Warning:','updraftplus').'</strong> ';
-				$updraftplus->log_e('Your database user does not have permission to drop tables. We will attempt to restore by simply emptying the tables; this should work as long as you are restoring from a WordPress version with the same database structure (%s)', ' ('.$this->last_error.')');
+				$updraftplus->log_e('Your database user does not have permission to drop tables. We will attempt to restore by simply emptying the tables; this should work as long as you are restoring from a WordPress version with the same database structure (%s)', ' ('.$this->last_error.', '.$this->last_error_no.')');
 			}
 		}
 
@@ -1722,10 +1731,10 @@ ENDHERE;
 					}
 				}
 
-				echo '<strong>'.sprintf(__('Restoring table (%s)','updraftplus'), $engine).":</strong> ".htmlspecialchars($this->table_name);
-				$logline = "Restoring table ($engine): ".$this->table_name;
+				echo '<strong>'.sprintf(__('Processing table (%s)','updraftplus'), $engine).":</strong> ".htmlspecialchars($this->table_name);
+				$logline = "Processing table ($engine): ".$this->table_name;
 				if ('' != $this->old_table_prefix && $import_table_prefix != $this->old_table_prefix) {
-					if (!isset($this->restore_this_table[$this->table_name]) || $this->restore_this_table[$this->table_name]) {
+					if ($this->restore_this_table($this->table_name)) {
 						echo ' - '.__('will restore as:', 'updraftplus').' '.htmlspecialchars($this->new_table_name);
 						$logline .= " - will restore as: ".$this->new_table_name;
 					} else {
@@ -1835,7 +1844,7 @@ ENDHERE;
 		return;
 		// Not yet working
 		if ($this->use_wpdb) {
-			$$wpdb->query("UNLOCK TABLES;");
+			$wpdb->query("UNLOCK TABLES;");
 		} elseif ($this->use_mysqli) {
 			$req = mysqli_query($this->mysql_dbh, "UNLOCK TABLES;");
 		} else {
@@ -1850,7 +1859,7 @@ ENDHERE;
 		// Remember, if modifying this, that a restoration can include restoring a destroyed site from a backup onto a fresh WP install on the same URL. So, it is not necessarily desirable to retain the current settings and drop the ones in the backup.
 		$keys_to_save = array('updraft_remotesites', 'updraft_migrator_localkeys', 'updraft_central_localkeys');
 
-		if ($this->old_siteurl != $this->our_siteurl) {
+		if ($this->old_siteurl != $this->our_siteurl || @constant('UPDRAFTPLUS_RESTORE_ALL_SETTINGS')) {
 			global $updraftplus;
 			$keys_to_save = array_merge($keys_to_save, $updraftplus->get_settings_keys());
 			$keys_to_save[] = 'updraft_backup_history';
@@ -1863,11 +1872,12 @@ ENDHERE;
 
 	// The table here is just for logging/info. The actual restoration itself is done via the standard options class.
 	private function restore_configuration_bundle($table) {
+
 		if (!is_array($this->configuration_bundle)) return;
 		global $updraftplus;
 		$updraftplus->log("Restoring prior UD configuration (table: $table; keys: ".count($this->configuration_bundle).")");
 		foreach ($this->configuration_bundle as $key => $value) {
-			UpdraftPlus_Options::delete_updraft_option($key, $value);
+			UpdraftPlus_Options::delete_updraft_option($key);
 			UpdraftPlus_Options::update_updraft_option($key, $value);
 		}
 	}
@@ -1879,23 +1889,72 @@ ENDHERE;
 		echo '<strong>'.__('Warning:', 'updraftplus').'</strong> '.sprintf(__("An SQL line that is larger than the maximum packet size and cannot be split was found; this line will not be processed, but will be dropped: %s", 'updraftplus'), '('.strlen($sql_line).', '.$this->max_allowed_packet.', '.$logit.' ...)')."<br>";
 	}
 
+	private function restore_this_table($table_name) {
+	
+		global $updraftplus;
+		$unprefixed_table_name = substr($table_name, strlen($this->old_table_prefix));
+	
+		// First, check whether it's a multisite site which we're not restoring. This is stored in restore_this_site (once we know the site).
+		if (!empty($this->ud_multisite_selective_restore)) {
+error_log("ud_multisite_selective_restore: ".$this->ud_multisite_selective_restore);
+			if (preg_match('/^(\d+)_.*$/', $unprefixed_table_name, $matches)) {
+				$site_id = $matches[1];
+error_log("restore_this_table $table_name site_id=$site_id");
+			
+				if (!isset($this->restore_this_site[$site_id])) {
+error_log("Need to look it up");
+					$this->restore_this_site[$site_id] = apply_filters(
+						'updraftplus_restore_this_site',
+						true,
+						$site_id,
+						$unprefixed_table_name,
+						$this->ud_restore_options
+					);
+				}
+				
+				if (false === $this->restore_this_site[$site_id]) {
+					// The first time it's looked into, it gets logged
+					$updraftplus->log_e('Skipping site %s: this table (%s) and others from the site will not be restored', $site_id, $table_name);
+					$this->restore_this_site[$site_id] = 0;
+				}
+				
+				if (!$this->restore_this_site[$site_id]) {
+				error_log("skipped - not restoring this site: $site_id");
+					return false;
+				}
+				
+			}
+		
+		}
+		
+		// Secondly, if we're still intending to proceed, check the table specifically
+		if (!isset($this->restore_this_table[$table_name])) {
+		
+			$this->restore_this_table[$table_name] = apply_filters(
+				'updraftplus_restore_this_table',
+				true,
+				$unprefixed_table_name,
+				$this->ud_restore_options
+			);
+			
+			if (false === $this->restore_this_table[$table_name]) {
+				// The first time it's looked into, it gets logged
+				$updraftplus->log_e('Skipping table %s: this table will not be restored', $table_name);
+				$this->restore_this_table[$table_name] = 0;
+			}
+			
+		}
+		
+		return $this->restore_this_table[$table_name];
+	}
+	
 	# UPDATE is sql_type=5 (not used in the function, but used in Migrator and so noted here for reference)
 	# $import_table_prefix is only use in one place in this function (long INSERTs), and otherwise need/should not be supplied
 	public function sql_exec($sql_line, $sql_type, $import_table_prefix = '', $check_skipping = true) {
 
 		global $wpdb, $updraftplus;
 
-		if ($check_skipping && !empty($this->table_name)) {
-			if (!isset($this->restore_this_table[$this->table_name])) {
-				// Valid values: true (= yes, restore it); false (= no, don't restore it, and log the fact); 0 (= don't restore, and don't log)
-				$this->restore_this_table[$this->table_name] = apply_filters('updraftplus_restore_this_table', true, substr($this->table_name, strlen($this->old_table_prefix)), $this->ud_restore_options);
-			}
-			if (false === $this->restore_this_table[$this->table_name]) {
-				$updraftplus->log_e('Skipping table %s: this table will not be restored', $this->table_name);
-				$this->restore_this_table[$this->table_name] = 0;
-			}
-			if (!$this->restore_this_table[$this->table_name]) return;
-		}
+		if ($check_skipping && !empty($this->table_name) && !$this->restore_this_table($this->table_name)) return;
 		
 		$ignore_errors = false;
 		# Type 2 = CREATE TABLE
@@ -1936,6 +1995,8 @@ ENDHERE;
 
 			if ($this->use_wpdb) {
 				$req = $wpdb->query($sql_line);
+				// WPDB, for several query types, returns the number of rows changed; in distinction from an error, indicated by (bool)false
+				if (0 === $req) { $req = true; }
 				if (!$req) $this->last_error = $wpdb->last_error;
 			} else {
 				if ($this->use_mysqli) {
@@ -2039,7 +2100,11 @@ ENDHERE;
 
 		global $wpdb, $updraftplus;
 		
-		if ($table == $import_table_prefix.UpdraftPlus_Options::options_table()) $this->restore_configuration_bundle($table);
+		if ($table == $import_table_prefix.UpdraftPlus_Options::options_table()) {
+			// This became necessary somewhere around WP 4.5 - otherwise deleting and re-saving options stopped working
+			wp_cache_flush();
+			$this->restore_configuration_bundle($table);
+		}
 
 		if (preg_match('/^([\d+]_)?options$/', substr($table, strlen($import_table_prefix)), $matches)) {
 			// The second prefix here used to have a '!$this->is_multisite' on it (i.e. 'options' table on non-multisite). However, the user_roles entry exists in the main options table on multisite too.

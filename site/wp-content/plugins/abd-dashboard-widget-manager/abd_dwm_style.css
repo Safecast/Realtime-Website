@@ -1,0 +1,51 @@
+/* A few styles here */
+
+
+.abd_dwm_clear {
+	clear:both;
+}
+#abd_dwm_custom_widget .inside ul {
+	list-style-type: disc;
+	margin-left: 2em;
+	list-style-position: inside;
+}
+
+#abd_dwm_custom_widget .inside ol {
+	list-style-type: decimal;
+	margin-left: 2em;
+	list-style-position: inside;
+}
+
+#abd_dwm_custom_widget .inside .alignleft {
+	margin-right:1em;	
+	margin-bottom: 1em;
+}
+
+#abd_dwm_custom_widget .inside .alignright {
+	margin-left:1em;	
+	margin-bottom: 1em;
+}
+
+#widget_title_input {
+	width:150px;
+}
+
+.abd_dwm_widget_column {
+	float:left;
+	width:22.5%;
+	margin-right:2.5%;
+	padding: .5em 0;
+}
+
+.optionsbox h3 {
+	cursor:default !important;
+}
+
+@media handheld, only screen and (max-width: 700px) {
+	.abd_dwm_widget_column {
+		width:45%;
+		margin-right:5%;
+		padding: .5em 0;
+	}
+	
+}

@@ -11,19 +11,21 @@ function A2A_SHARE_SAVE_add_meta_box() {
 	
 	$title = apply_filters( 'A2A_SHARE_SAVE_meta_box_title', __( 'AddToAny', 'add-to-any' ) );
 	foreach( $post_types as $post_type ) {
-		// If automatic placement is disabled for the post type
 		if (
-			'post' == $post_type && isset( $options['display_in_posts'] ) && $options['display_in_posts'] == '-1' ||
-			'page' == $post_type && isset( $options['display_in_pages'] ) && $options['display_in_pages'] == '-1' ||
-			// Custom post type
-			isset( $options['display_in_cpt_' . $post_type] ) && $options['display_in_cpt_' . $post_type] == '-1'
+			// If automatic placement is enabled
+			// for either floating bar
+			isset( $options['floating_vertical'] ) && 'none' != $options['floating_vertical'] ||
+			isset( $options['floating_horizontal'] ) && 'none' != $options['floating_horizontal'] ||
+			// for standard buttons in posts
+			'post' == $post_type && isset( $options['display_in_posts'] ) && $options['display_in_posts'] != '-1' ||
+			// for standard buttons in pages
+			'page' == $post_type && isset( $options['display_in_pages'] ) && $options['display_in_pages'] != '-1' ||
+			// for standard buttons in a custom post type
+			isset( $options['display_in_cpt_' . $post_type] ) && $options['display_in_cpt_' . $post_type] != '-1'
 		) {
-			// Skip current post type
-			continue;
+			// Add meta box
+			add_meta_box( 'A2A_SHARE_SAVE_meta', $title, 'A2A_SHARE_SAVE_meta_box_content', $post_type, 'advanced', 'high' );
 		}
-		
-		// Add meta box (unless we skipped this post type above)
-		add_meta_box( 'A2A_SHARE_SAVE_meta', $title, 'A2A_SHARE_SAVE_meta_box_content', $post_type, 'advanced', 'high' );
 	}
 }
 
@@ -67,6 +69,7 @@ function A2A_SHARE_SAVE_meta_box_save( $post_id ) {
 
 add_action( 'admin_init', 'A2A_SHARE_SAVE_add_meta_box' );
 add_action( 'save_post', 'A2A_SHARE_SAVE_meta_box_save' );
+add_action( 'edit_attachment', 'A2A_SHARE_SAVE_meta_box_save' );
 
 /**
  * Migrate old AddToAny options
@@ -81,7 +84,6 @@ function A2A_SHARE_SAVE_migrate_options() {
 		'display_in_posts' => '1',
 		'display_in_pages' => '1',
 		'display_in_feed' => '1',
-		'show_title' => '-1',
 		'onclick' => '-1',
 		'button' => 'A2A_SVG_32',
 		'button_custom' => '',
@@ -113,6 +115,7 @@ function A2A_SHARE_SAVE_migrate_options() {
 	$deprecated_options = array(
 		'button_opens_new_window',
 		'hide_embeds',
+		'show_title',
 	);
 	
 	foreach ( $deprecated_options as $option_name ) {
@@ -270,8 +273,8 @@ function A2A_SHARE_SAVE_options_page() {
 			$new_options['display_in_excerpts'] = ( isset( $_POST['A2A_SHARE_SAVE_display_in_excerpts'] ) && $_POST['A2A_SHARE_SAVE_display_in_excerpts'] == '1' ) ? '1' : '-1';
 			$new_options['display_in_posts'] = ( isset( $_POST['A2A_SHARE_SAVE_display_in_posts'] ) && $_POST['A2A_SHARE_SAVE_display_in_posts'] == '1' ) ? '1' : '-1';
 			$new_options['display_in_pages'] = ( isset( $_POST['A2A_SHARE_SAVE_display_in_pages'] ) && $_POST['A2A_SHARE_SAVE_display_in_pages'] == '1' ) ? '1' : '-1';
+			$new_options['display_in_attachments'] = ( isset( $_POST['A2A_SHARE_SAVE_display_in_attachments'] ) && $_POST['A2A_SHARE_SAVE_display_in_attachments'] == '1' ) ? '1' : '-1';
 			$new_options['display_in_feed'] = ( isset( $_POST['A2A_SHARE_SAVE_display_in_feed'] ) && $_POST['A2A_SHARE_SAVE_display_in_feed'] == '1' ) ? '1' : '-1';
-			$new_options['show_title'] = ( isset( $_POST['A2A_SHARE_SAVE_show_title'] ) && $_POST['A2A_SHARE_SAVE_show_title'] == '1' ) ? '1' : '-1';
 			$new_options['onclick'] = ( isset( $_POST['A2A_SHARE_SAVE_onclick'] ) && $_POST['A2A_SHARE_SAVE_onclick'] == '1' ) ? '1' : '-1';
 			$new_options['icon_size'] = ( isset( $_POST['A2A_SHARE_SAVE_icon_size'] ) ) ? $_POST['A2A_SHARE_SAVE_icon_size'] : '';
 			$new_options['button'] = ( isset( $_POST['A2A_SHARE_SAVE_button'] ) ) ? $_POST['A2A_SHARE_SAVE_button'] : '';
@@ -359,7 +362,7 @@ function A2A_SHARE_SAVE_options_page() {
 		update_option( 'addtoany_options', $new_options );
 		
 		?>
-		<div class="updated fade"><p><strong><?php _e( 'Settings saved.' ); ?></strong></p></div>
+		<div class="updated"><p><?php _e( 'Settings saved.' ); ?></p></div>
 		<?php
 		
 	} else if ( isset( $_POST['Reset'] ) ) {
@@ -607,6 +610,13 @@ function A2A_SHARE_SAVE_options_page() {
 					<input name="A2A_SHARE_SAVE_display_in_pages" type="checkbox"<?php if ( ! isset( $options['display_in_pages'] ) || $options['display_in_pages'] != '-1' ) echo ' checked="checked"'; ?> value="1"/>
 					<?php printf(__('Display at the %s of pages', 'add-to-any'), position_in_content( $options, false )); ?>
 				</label>
+				<br/>
+				<label>
+					<input name="A2A_SHARE_SAVE_display_in_attachments" type="checkbox"<?php 
+						if ( ! isset( $options['display_in_attachments'] ) || $options['display_in_attachments'] != '-1' ) echo ' checked="checked"';
+						?> value="1"/>
+					<?php printf(__('Display at the %s of media pages', 'add-to-any'), position_in_content( $options, false )); ?>
+				</label>
 				
 			<?php 
 				$custom_post_types = array_values( get_post_types( array( 'public' => true, '_builtin' => false ), 'objects' ) );
@@ -635,16 +645,11 @@ function A2A_SHARE_SAVE_options_page() {
 					<input name="A2A_SHARE_SAVE_onclick" type="checkbox"<?php if ( isset( $options['onclick'] ) && $options['onclick'] == '1' ) echo ' checked="checked"'; ?> value="1"/>
 					<?php _e('Only show the universal share menu when the user <em>clicks</em> the universal share button', 'add-to-any'); ?>
 				</label>
-				<br />
-				<label>
-					<input name="A2A_SHARE_SAVE_show_title" type="checkbox"<?php if ( isset( $options['show_title'] ) && $options['show_title'] == '1' ) echo ' checked="checked"'; ?> value="1"/>
-					<?php _e('Show the title of the page within the universal share menu', 'add-to-any'); ?>
-				</label>
 				<label>
 					<p><?php _e("You can use AddToAny's Menu Styler to customize the colors of your universal share menu. When you're done, be sure to paste the generated code in the <a href=\"#\" onclick=\"document.getElementById('A2A_SHARE_SAVE_additional_js_variables').focus();return false\">Additional JavaScript</a> box below.", 'add-to-any'); ?></p>
 				</label>
 				<p>
-					<a href="https://www.addtoany.com/buttons/share_save/menu_style/wordpress" class="button-secondary" title="<?php _e("Open the AddToAny Menu Styler in a new window", 'add-to-any'); ?>" target="_blank" onclick="document.getElementById('A2A_SHARE_SAVE_additional_js_variables').focus(); document.getElementById('A2A_SHARE_SAVE_menu_styler_note').style.display='';"><?php _e("Open Menu Styler", 'add-to-any'); ?></a>
+					<a href="https://www.addtoany.com/buttons/share/menu_style/wordpress" class="button-secondary" title="<?php _e("Open the AddToAny Menu Styler in a new window", 'add-to-any'); ?>" target="_blank" onclick="document.getElementById('A2A_SHARE_SAVE_additional_js_variables').focus(); document.getElementById('A2A_SHARE_SAVE_menu_styler_note').style.display='';"><?php _e("Open Menu Styler", 'add-to-any'); ?></a>
 				</p>
 			</fieldset></td>
 			</tr>
@@ -815,8 +820,11 @@ function A2A_SHARE_SAVE_options_page() {
 	<p><?php _e('Search the <a href="http://wordpress.org/tags/add-to-any">support forums</a>.','add-to-any'); ?></p>
 	</div>
 	
-	<script type="text/javascript" src="http<?php if ( is_ssl() ) echo 's'; ?>://static.addtoany.com/menu/page.js"></script>
-	<script type="text/javascript">if ( a2a && a2a.svg_css ) a2a.svg_css();</script>
+	<script src="http<?php if ( is_ssl() ) echo 's'; ?>://static.addtoany.com/menu/page.js"></script>
+	<script>
+	if ( window.a2a && a2a.svg_css ) a2a.svg_css();
+	jQuery(document).ready( function() { if ( ! window.a2a) jQuery('<div class="error"><p><strong>Something is preventing AddToAny from loading. Try disabling content blockers such as ad-blocking add-ons, or try another web browser.</strong></p></div>').insertBefore('.nav-tab-wrapper:eq(0)'); });	
+	</script>
 
 <?php
 

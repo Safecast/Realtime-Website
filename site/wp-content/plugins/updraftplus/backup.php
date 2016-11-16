@@ -407,7 +407,7 @@ class UpdraftPlus_Backup {
 			return;
 		}
 
-		if (method_exists($wpdb, 'check_connection')) {
+		if (method_exists($wpdb, 'check_connection') && (!defined('UPDRAFTPLUS_SUPPRESS_CONNECTION_CHECKS') || !UPDRAFTPLUS_SUPPRESS_CONNECTION_CHECKS)) {
 			if (!$wpdb->check_connection(false)) {
 				$updraftplus->reschedule(60);
 				$updraftplus->log("It seems the database went away; scheduling a resumption and terminating for now");
@@ -1375,7 +1375,7 @@ class UpdraftPlus_Backup {
 		$total_tables = 0;
 
 		# WP 3.9 onwards - https://core.trac.wordpress.org/browser/trunk/src/wp-includes/wp-db.php?rev=27925 - check_connection() allows us to get the database connection back if it had dropped
-		if ('wp' == $whichdb && method_exists($this->wpdb_obj, 'check_connection')) {
+		if ('wp' == $whichdb && method_exists($this->wpdb_obj, 'check_connection') && (!defined('UPDRAFTPLUS_SUPPRESS_CONNECTION_CHECKS') || !UPDRAFTPLUS_SUPPRESS_CONNECTION_CHECKS)) {
 			if (!$this->wpdb_obj->check_connection(false)) {
 				$updraftplus->reschedule(60);
 				$updraftplus->log("It seems the database went away; scheduling a resumption and terminating for now");
@@ -1479,7 +1479,15 @@ class UpdraftPlus_Backup {
 						if  ('wp' == $this->whichdb && (!empty($this->table_prefix) && strtolower($this->table_prefix.'sitemeta') == strtolower($table))) {
 							$where = 'meta_key NOT LIKE "updraft_jobdata_%"';
 						} elseif ('wp' == $this->whichdb && (!empty($this->table_prefix) && strtolower($this->table_prefix.'options') == strtolower($table))) {
-							$where = 'option_name NOT LIKE "updraft_jobdata_%" AND option_name NOT LIKE "_site_transient_update_%"';
+							if (strtolower(substr(PHP_OS, 0, 3)) == 'win') {
+								$updraft_jobdata = "'updraft_jobdata_%'";
+								$site_transient_update = "'_site_transient_update_%'";
+							} else {
+								$updraft_jobdata = '"updraft_jobdata_%"';
+								$site_transient_update = '"_site_transient_update_%"';
+							}
+							
+							$where = 'option_name NOT LIKE '.$updraft_jobdata.' AND option_name NOT LIKE '.$site_transient_update.'';
 						} else {
 							$where = '';
 						}
@@ -1575,7 +1583,7 @@ class UpdraftPlus_Backup {
 			if ($sind % 100 == 0) $updraftplus->something_useful_happened();
 		}
 
-		if (defined("DB_CHARSET")) {
+		if (@constant("DB_CHARSET")) {
 			$this->stow("/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;\n/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;\n/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;\n");
 		}
 
@@ -1614,11 +1622,17 @@ class UpdraftPlus_Backup {
 		$pfile = md5(time().rand()).'.tmp';
 		file_put_contents($this->updraft_dir.'/'.$pfile, "[mysqldump]\npassword=".$this->dbinfo['pass']."\n");
 
-		# Note: escapeshellarg() adds quotes around the string
+		// Note: escapeshellarg() adds quotes around the string
 		if ($where) $where="--where=".escapeshellarg($where);
 
-		$exec = "cd ".escapeshellarg($this->updraft_dir)."; $potsql  --defaults-file=$pfile $where --max_allowed_packet=1M --quote-names --add-drop-table --skip-comments --skip-set-charset --allow-keywords --dump-date --extended-insert --user=".escapeshellarg($this->dbinfo['user'])." --host=".escapeshellarg($this->dbinfo['host'])." ".$this->dbinfo['name']." ".escapeshellarg($table_name);
+		if (strtolower(substr(PHP_OS, 0, 3)) == 'win') {
+			$exec = "cd ".escapeshellarg(str_replace('/', '\\', $this->updraft_dir))." & ";
+		} else {
+			$exec = "cd ".escapeshellarg($this->updraft_dir)."; ";
+		}
 
+		$exec .= "$potsql  --defaults-file=$pfile $where --max_allowed_packet=1M --quote-names --add-drop-table --skip-comments --skip-set-charset --allow-keywords --dump-date --extended-insert --user=".escapeshellarg($this->dbinfo['user'])." --host=".escapeshellarg($this->dbinfo['host'])." ".$this->dbinfo['name']." ".escapeshellarg($table_name);
+		
 		$ret = false;
 		$any_output = false;
 		$writes = 0;
@@ -1909,7 +1923,7 @@ class UpdraftPlus_Backup {
 		$this->stow("# Database: ".$updraftplus->backquote($this->dbinfo['name'])."\n");
 		$this->stow("# --------------------------------------------------------\n");
 
-		if (defined("DB_CHARSET")) {
+		if (@constant("DB_CHARSET")) {
 			$this->stow("/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;\n");
 			$this->stow("/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;\n");
 			$this->stow("/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;\n");
@@ -2291,7 +2305,7 @@ class UpdraftPlus_Backup {
 		
 		// Uploads: can/should we get it back from the cache?
 		// || 'others' == $whichone
-		if (('uploads' == $whichone ) && function_exists('gzopen') && function_exists('gzread')) {
+		if (('uploads' == $whichone || 'others' == $whichone) && function_exists('gzopen') && function_exists('gzread')) {
 			$use_cache_files = false;
 			$cache_file_base = $this->zip_basename.'-cachelist-'.$this->makezip_if_altered_since;
 			// Cache file suffixes: -zfd.gz.tmp, -zfb.gz.tmp, -info.tmp, (possible)-zfs.gz.tmp
@@ -2376,20 +2390,42 @@ class UpdraftPlus_Backup {
 
 		// Cache the file scan, if it looks like it'll be useful
 		// We use gzip to reduce the size as on hosts which limit disk I/O, the cacheing may make things worse
-		// || 'others' == $whichone
-		if (('uploads' == $whichone) && !$error_occurred && function_exists('gzopen') && function_exists('gzwrite')) {
+		// 	|| 'others' == $whichone
+		if (('uploads' == $whichone|| 'others' == $whichone) && !$error_occurred && function_exists('gzopen') && function_exists('gzwrite')) {
 			$cache_file_base = $this->zip_basename.'-cachelist-'.$this->makezip_if_altered_since;
 
 			// Just approximate - we're trying to avoid an otherwise-unpredictable PHP fatal error. Cacheing only happens if file enumeration took a long time - so presumably there are very many.
 			$memory_needed_estimate = 0;
 			foreach ($this->zipfiles_batched as $k => $v) { $memory_needed_estimate += strlen($k)+strlen($v)+12; }
-			// Let us suppose we need 15% overhead for gzipping
-			$memory_needed_estimate = $memory_needed_estimate * 0.15;
 
 			// We haven't bothered to check if we just fetched the files from cache, as that shouldn't take a long time and so shouldn't trigger this
-			if ($time_counting_ended-$time_counting_began > 20 && $updraftplus->verify_free_memory($memory_needed_estimate) && $whandle = gzopen($cache_file_base.'-zfb.gz.tmp', 'w')) {
-				$updraftplus->log("File counting took a long time (".($time_counting_ended - $time_counting_began)."s); will attempt to cache results");
-				if (!gzwrite($whandle, serialize($this->zipfiles_batched))) {
+			// Let us suppose we need 15% overhead for gzipping
+			
+			$memory_limit = ini_get('memory_limit');
+			$memory_usage = round(@memory_get_usage(false)/1048576, 1);
+			$memory_usage2 = round(@memory_get_usage(true)/1048576, 1);
+			
+			if ($time_counting_ended-$time_counting_began > 20 && $updraftplus->verify_free_memory($memory_needed_estimate*0.15) && $whandle = gzopen($cache_file_base.'-zfb.gz.tmp', 'w')) {
+				$updraftplus->log("File counting took a long time (".($time_counting_ended - $time_counting_began)."s); will attempt to cache results (memory_limit: $memory_limit (used: ${memory_usage}M | ${memory_usage2}M), estimated uncompressed bytes: ".round($memory_needed_estimate/1024, 1)." Kb)");
+				
+				$buf = 'a:'.count($this->zipfiles_batched).':{';
+				foreach ($this->zipfiles_batched as $file => $add_as) {
+					$k = addslashes($file);
+					$v = addslashes($add_as);
+					$buf .= 's:'.strlen($k).':"'.$k.'";s:'.strlen($v).':"'.$v.'";';
+					if (strlen($buf) > 1048576) {
+						gzwrite($whandle, $buf, strlen($buf));
+						$buf = '';
+					}
+				}
+				$buf .= '}';
+				$final = gzwrite($whandle, $buf);
+				unset($buf);
+				
+// 				$serialised = serialize($this->zipfiles_batched);
+// 				$updraftplus->log("Actual uncompressed bytes: ".round(strlen($serialised)/1024, 1)." Kb");
+// 				if (!gzwrite($whandle, $serialised)) {
+				if (!$final) {
 					@unlink($cache_file_base.'-zfb.gz.tmp');
 					@gzclose($whandle);
 				} else {

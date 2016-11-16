@@ -63,8 +63,8 @@ class SimpleHistory {
 	/** Slug for the settings menu */
 	const SETTINGS_MENU_SLUG = "simple_history_settings_menu_slug";
 
-        /** Slug for the settings menu */
-        const SETTINGS_GENERAL_OPTION_GROUP = "simple_history_settings_group";
+    /** Slug for the settings menu */
+    const SETTINGS_GENERAL_OPTION_GROUP = "simple_history_settings_group";
 
 	/** ID for the general settings section */
 	const SETTINGS_SECTION_GENERAL_ID = "simple_history_settings_section_general";
@@ -114,6 +114,9 @@ class SimpleHistory {
 
 		add_filter( 'gettext', array( $this, "filter_gettext_storeLatestTranslations" ), 10, 3 );
 
+		add_action( 'admin_bar_menu', array( $this, 'add_admin_bar_network_menu_item' ), 40 );
+		add_action( 'admin_bar_menu', array( $this, 'add_admin_bar_menu_item' ), 40 );
+
 		if ( is_admin() ) {
 
 			$this->add_admin_actions();
@@ -151,6 +154,10 @@ class SimpleHistory {
 				$postdata = file_get_contents( "php://input" );
 				$context["_debug_http_raw_post_data"] = $sh->json_encode( $postdata );
 
+				$context["_debug_wp_debug_backtrace_summary"] = wp_debug_backtrace_summary();
+				$context["_debug_is_admin"] = json_encode( is_admin() );
+				$context["_debug_is_doing_cron"] = json_encode( defined('DOING_CRON') && DOING_CRON );
+
 				return $context;
 
 			}, 10, 4 );
@@ -183,7 +190,143 @@ class SimpleHistory {
 
 		add_filter( 'plugin_action_links_simple-history/index.php', array( $this, 'plugin_action_links' ), 10, 4 );
 
+
 	}
+
+	/**
+	 * Adds a "View history" item/shortcut to the network admin, on blogs where Simple History is installed
+	 *
+	 * Useful because Simple History is something at least the author of this plugin often use on a site :)
+	 *
+	 * @since 2.7.1
+	 */
+	function add_admin_bar_network_menu_item( $wp_admin_bar ) {
+
+		/**
+		 * Filter to control if admin bar shortcut should be added
+		 *
+		 * @since 2.7.1
+		 *
+		 * @param bool Add item
+		 */
+		$add_items = apply_filters( "simple_history/add_admin_bar_network_menu_item", true );
+
+		if ( ! $add_items ) {
+			return;
+		}
+
+		// Don't show for logged out users or single site mode.
+		if ( ! is_user_logged_in() || ! is_multisite() )
+			return;
+
+		// Show only when the user has at least one site, or they're a super admin.
+		if ( count( $wp_admin_bar->user->blogs ) < 1 && ! is_super_admin() )
+			return;
+
+		// Setting to show as page must be true
+		if ( ! $this->setting_show_as_page() ) {
+			return;
+		}
+
+		// User must have capability to view the history page
+		if ( ! current_user_can( $this->get_view_history_capability() ) ) {
+			return;
+		}
+
+		/* menu_page_url() is defined in the WordPress Plugin Administration API, which is not loaded here by default */
+		/* dito for is_plugin_active() */
+		require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+
+		foreach ( (array) $wp_admin_bar->user->blogs as $blog ) {
+
+			switch_to_blog( $blog->userblog_id );
+
+			if ( is_plugin_active( SIMPLE_HISTORY_BASENAME ) ) {
+
+				$menu_id = "simple-history-blog-" . $blog->userblog_id;
+				$parent_menu_id  = 'blog-' . $blog->userblog_id;
+				$url = admin_url( "index.php?page=simple_history_page" );
+
+				// Each network site is added by WP core with id "blog-1", "blog-2" ... "blog-n"
+				// https://codex.wordpress.org/Function_Reference/add_node
+				$args = array(
+					'id'    => $menu_id,
+					'parent' => $parent_menu_id,
+					'title' => _x("View History", "Admin bar network name", "simple-history"),
+					'href'  => $url,
+					'meta'  => array(
+						'class' => 'ab-item--simplehistory'
+					)
+				);
+
+				$wp_admin_bar->add_node( $args );
+
+			} // if plugin active
+
+			restore_current_blog();
+
+		} // foreach blog
+
+	} // func
+
+
+	/**
+	 * Adds a "View history" item/shortcut to the admin bar
+	 *
+	 * Useful because Simple History is something at least the author of this plugin often use on a site :)
+	 *
+	 * @since 2.7.1
+	 */
+	function add_admin_bar_menu_item( $wp_admin_bar ) {
+
+		/**
+		 * Filter to control if admin bar shortcut should be added
+		 *
+		 * @since 2.7.1
+		 *
+		 * @param bool Add item
+		 */
+		$add_item = apply_filters( "simple_history/add_admin_bar_menu_item", true );
+
+		if ( ! $add_item ) {
+			return;
+		}
+
+		// Don't show for logged out users
+		if ( ! is_user_logged_in() )
+			return;
+
+		// Setting to show as page must be true
+		if ( ! $this->setting_show_as_page() ) {
+			return;
+		}
+
+		// User must have capability to view the history page
+		if ( ! current_user_can( $this->get_view_history_capability() ) ) {
+			return;
+		}
+
+		/* menu_page_url() is defined in the WordPress Plugin Administration API, which is not loaded here by default */
+		/* dito for is_plugin_active() */
+		require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+
+		$menu_id = "simple-history-view-history";
+		$parent_menu_id  = 'site-name';
+		$url = admin_url( "index.php?page=simple_history_page" );
+
+		$args = array(
+			'id'    => $menu_id,
+			'parent' => $parent_menu_id,
+			'title' => _x("Simple History", "Admin bar name", "simple-history"),
+			'href'  => $url,
+			'meta'  => array(
+				'class' => 'ab-item--simplehistory'
+			)
+		);
+
+		$wp_admin_bar->add_node( $args );
+
+	} // func
 
 	/**
 	 * Get singleton intance
@@ -446,6 +589,11 @@ class SimpleHistory {
 
 		}
 
+		// User must have capability to view the history page
+		if ( ! current_user_can( $this->get_view_history_capability() ) ) {
+			wp_send_json_error( array("error" => "CAPABILITY_ERROR") );
+		}
+
 		if ( isset( $args["id"] ) ) {
 			$args["post__in"] = array(
 				$args["id"],
@@ -485,7 +633,7 @@ class SimpleHistory {
 
 				} else {
 
-					$data["logRows"] = $logRows;
+					// $data["logRows"] = $logRows;
 				}
 
 				break;
@@ -693,11 +841,14 @@ class SimpleHistory {
 			$loggersDir . "SimpleThemeLogger.php",
 			$loggersDir . "SimpleUserLogger.php",
 			$loggersDir . "SimpleCategoriesLogger.php",
+			$loggersDir . "AvailableUpdatesLogger.php",
 
 			// Loggers for third party plugins
 			$loggersDir . "PluginUserSwitchingLogger.php",
 			$loggersDir . "PluginEnableMediaReplaceLogger.php",
-			$loggersDir . "Plugin_UltimateMembers_Logger.php"
+			$loggersDir . "Plugin_UltimateMembers_Logger.php",
+			$loggersDir . "Plugin_LimitLoginAttempts.php",
+			$loggersDir . "Plugin_Redirection.php",
 	    );
 
 		// SimpleLogger.php must be loaded first and always since the other loggers extend it
@@ -886,6 +1037,7 @@ class SimpleHistory {
 			$dropinsDir . "SimpleHistoryRSSDropin.php",
 			$dropinsDir . "SimpleHistorySettingsLogtestDropin.php",
 			$dropinsDir . "SimpleHistorySettingsStatsDropin.php",
+			$dropinsDir . "SimpleHistorySettingsDebugDropin.php",
 			$dropinsDir . "SimpleHistorySidebarDropin.php",
 			$dropinsDir . "SimpleHistorySidebarStats.php",
 		);
@@ -986,7 +1138,7 @@ class SimpleHistory {
 	 */
 	function get_pager_size() {
 
-		$pager_size = get_option( "simple_history_pager_size", 5 );
+		$pager_size = get_option( "simple_history_pager_size", 20 );
 
 		/**
 		 * Filter the pager size setting
@@ -996,6 +1148,31 @@ class SimpleHistory {
 		 * @param int $pager_size
 		 */
 		$pager_size = apply_filters( "simple_history/pager_size", $pager_size );
+
+		return $pager_size;
+
+	}
+
+
+	/**
+	 * Gets the pager size,
+	 * i.e. the number of items to show on each page in the history
+	 *
+	 * @since 2.12
+	 * @return int
+	 */
+	function get_pager_size_dashboard() {
+
+		$pager_size = get_option( "simple_history_pager_size_dashboard", 5 );
+
+		/**
+		 * Filter the pager size setting
+		 *
+		 * @since 2.12
+		 *
+		 * @param int $pager_size
+		 */
+		$pager_size = apply_filters( "simple_history/pager_size_dashboard", $pager_size );
 
 		return $pager_size;
 
@@ -1049,7 +1226,7 @@ class SimpleHistory {
 	 */
 	function dashboard_widget_output() {
 
-		$pager_size = $this->get_pager_size();
+		$pager_size = $this->get_pager_size_dashboard();
 
 		/**
 		 * Filter the pager size setting for the dashboard
@@ -1525,22 +1702,22 @@ Because Simple History was just recently installed, this feed does not contain m
 
 			<?php
 
-		// Output contents for selected tab
-		$arr_active_tab = wp_filter_object_list( $arr_settings_tabs, array( "slug" => $active_tab ) );
-		$arr_active_tab = current( $arr_active_tab );
+			// Output contents for selected tab
+			$arr_active_tab = wp_filter_object_list( $arr_settings_tabs, array( "slug" => $active_tab ) );
+			$arr_active_tab = current( $arr_active_tab );
 
-		// We must have found an active tab and it must have a callable function
-		if ( ! $arr_active_tab || ! is_callable( $arr_active_tab["function"] ) ) {
-			wp_die( __( "No valid callback found", "simple-history" ) );
-		}
+			// We must have found an active tab and it must have a callable function
+			if ( ! $arr_active_tab || ! is_callable( $arr_active_tab["function"] ) ) {
+				wp_die( __( "No valid callback found", "simple-history" ) );
+			}
 
-		$args = array(
-			"arr_active_tab" => $arr_active_tab,
-		);
+			$args = array(
+				"arr_active_tab" => $arr_active_tab,
+			);
 
-		call_user_func_array( $arr_active_tab["function"], $args );
+			call_user_func_array( $arr_active_tab["function"], $args );
 
-		?>
+			?>
 
 		</div>
 		<?php
@@ -1667,20 +1844,34 @@ Because Simple History was just recently installed, this feed does not contain m
 		);
 
 		// Nonces for show where inputs
-                register_setting( SimpleHistory::SETTINGS_GENERAL_OPTION_GROUP, "simple_history_show_on_dashboard" );
-                register_setting( SimpleHistory::SETTINGS_GENERAL_OPTION_GROUP, "simple_history_show_as_page" );
+        register_setting( SimpleHistory::SETTINGS_GENERAL_OPTION_GROUP, "simple_history_show_on_dashboard" );
+        register_setting( SimpleHistory::SETTINGS_GENERAL_OPTION_GROUP, "simple_history_show_as_page" );
 
-		// Dropdown number if items to show
+		// Number if items to show on the history page
 		add_settings_field(
 			"simple_history_number_of_items",
-			__( "Number of items per page", "simple-history" ),
+			__( "Number of items per page on the log page", "simple-history" ),
 			array( $this, "settings_field_number_of_items" ),
 			SimpleHistory::SETTINGS_MENU_SLUG,
 			$settings_section_general_id
 		);
 
 		// Nonces for number of items inputs
-                register_setting( SimpleHistory::SETTINGS_GENERAL_OPTION_GROUP, "simple_history_pager_size" );
+        register_setting( SimpleHistory::SETTINGS_GENERAL_OPTION_GROUP, "simple_history_pager_size" );
+
+
+		// Number if items to show on dashboard
+		add_settings_field(
+			"simple_history_number_of_items_dashboard",
+			__( "Number of items per page on the dashboard", "simple-history" ),
+			array( $this, "settings_field_number_of_items_dashboard" ),
+			SimpleHistory::SETTINGS_MENU_SLUG,
+			$settings_section_general_id
+		);
+
+		// Nonces for number of items inputs
+        register_setting( SimpleHistory::SETTINGS_GENERAL_OPTION_GROUP, "simple_history_pager_size_dashboard" );
+
 
 		// Link to clear log
 		add_settings_field(
@@ -1786,12 +1977,13 @@ Because Simple History was just recently installed, this feed does not contain m
 
 		$setting = get_option( "simple_history_show_as_page", 1 );
 		$setting = apply_filters( "simple_history_show_as_page", $setting );
+
 		return (bool) $setting;
 
 	}
 
 	/**
-	 * Settings field for how many rows/items to show in log
+	 * Settings field for how many rows/items to show in log on the log page
 	 */
 	function settings_field_number_of_items() {
 
@@ -1815,12 +2007,37 @@ Because Simple History was just recently installed, this feed does not contain m
 	}
 
 	/**
+	 * Settings field for how many rows/items to show in log on the dashboard
+	 */
+	function settings_field_number_of_items_dashboard() {
+
+		$current_pager_size = $this->get_pager_size_dashboard();
+
+		?>
+		<select name="simple_history_pager_size_dashboard">
+			<option <?php echo $current_pager_size == 5 ? "selected" : ""?> value="5">5</option>
+			<option <?php echo $current_pager_size == 10 ? "selected" : ""?> value="10">10</option>
+			<option <?php echo $current_pager_size == 15 ? "selected" : ""?> value="15">15</option>
+			<option <?php echo $current_pager_size == 20 ? "selected" : ""?> value="20">20</option>
+			<option <?php echo $current_pager_size == 25 ? "selected" : ""?> value="25">25</option>
+			<option <?php echo $current_pager_size == 30 ? "selected" : ""?> value="30">30</option>
+			<option <?php echo $current_pager_size == 40 ? "selected" : ""?> value="40">40</option>
+			<option <?php echo $current_pager_size == 50 ? "selected" : ""?> value="50">50</option>
+			<option <?php echo $current_pager_size == 75 ? "selected" : ""?> value="75">75</option>
+			<option <?php echo $current_pager_size == 100 ? "selected" : ""?> value="100">100</option>
+		</select>
+		<?php
+
+	}
+
+	/**
 	 * Settings field for where to show the log, page or dashboard
 	 */
 	function settings_field_where_to_show() {
 
 		$show_on_dashboard = $this->setting_show_on_dashboard();
 		$show_as_page = $this->setting_show_as_page();
+
 		?>
 
 		<input <?php echo $show_on_dashboard ? "checked='checked'" : ""?> type="checkbox" value="1" name="simple_history_show_on_dashboard" id="simple_history_show_on_dashboard" class="simple_history_show_on_dashboard" />
@@ -2979,7 +3196,7 @@ Because Simple History was just recently installed, this feed does not contain m
 	function get_num_events_last_n_days( $period_days = 28 ) {
 
 		$transient_key = "sh_" . md5( __METHOD__  . $period_days . "_2");
-		
+
 		$count = get_transient( $transient_key );
 
 
@@ -2991,8 +3208,8 @@ Because Simple History was just recently installed, this feed does not contain m
 
 			$sql = sprintf(
 				'
-					SELECT count(*) 
-					FROM %1$s 
+					SELECT count(*)
+					FROM %1$s
 					WHERE UNIX_TIMESTAMP(date) >= %2$d
 					AND logger IN %3$s
 				',
@@ -3000,13 +3217,13 @@ Because Simple History was just recently installed, this feed does not contain m
 				strtotime("-$period_days days"),
 				$sqlStringLoggersUserCanRead
 			);
-			
+
 			$count = $wpdb->get_var( $sql );
 
 			set_transient( $transient_key, $count, HOUR_IN_SECONDS );
 
 		}
-		
+
 		return $count;
 
 	} // get_num_events_last_n_days
@@ -3015,7 +3232,7 @@ Because Simple History was just recently installed, this feed does not contain m
 	function get_num_events_per_day_last_n_days( $period_days = 28 ) {
 
 		$transient_key = "sh_" . md5( __METHOD__  . $period_days . "_2");
-		
+
 		$dates = get_transient( $transient_key );
 
 		if ( false === $dates ) {
@@ -3026,12 +3243,12 @@ Because Simple History was just recently installed, this feed does not contain m
 
 			$sql = sprintf(
 				'
-					SELECT 
+					SELECT
 						date_format(date, "%%Y-%%m-%%d") AS yearDate,
 						count(date) AS count
-					FROM  
+					FROM
 						%1$s
-					WHERE 
+					WHERE
 						UNIX_TIMESTAMP(date) >= %2$d
 						AND logger IN (%3$d)
 					GROUP BY yearDate
@@ -3048,7 +3265,7 @@ Because Simple History was just recently installed, this feed does not contain m
 			// echo "set";exit;
 
 		} else {
-			// echo "get";exit;			
+			// echo "get";exit;
 		}
 
 		return $dates;
@@ -3069,13 +3286,13 @@ Because Simple History was just recently installed, this feed does not contain m
 		$numEvents = get_transient( $cache_key );
 
 		if ( false == $numEvents ) {
-		
+
 			$sql = $wpdb->prepare("
 				SELECT count( DISTINCT occasionsID )
 				FROM $table_name
-				WHERE date >= DATE_ADD(CURDATE(), INTERVAL -%d DAY) 
+				WHERE date >= DATE_ADD(CURDATE(), INTERVAL -%d DAY)
 			", $days);
-	
+
 			$numEvents = $wpdb->get_var($sql);
 
 			set_transient( $cache_key, $numEvents, HOUR_IN_SECONDS );
@@ -3190,7 +3407,12 @@ function simple_history_text_diff( $left_string, $right_string, $args = null ) {
 	if ( ! $diff )
 		return '';
 
-	$r  = "<table class='diff SimpleHistory__diff'>\n";
+	$r = "";
+
+	$r .= "<div class='SimpleHistory__diff__contents' tabindex='0'>";
+	$r .= "<div class='SimpleHistory__diff__contentsInner'>";
+
+	$r  .= "<table class='diff SimpleHistory__diff'>\n";
 
 	if ( ! empty( $args[ 'show_split_view' ] ) ) {
 		$r .= "<col class='content diffsplit left' /><col class='content diffsplit middle' /><col class='content diffsplit right' />";
@@ -3211,8 +3433,11 @@ function simple_history_text_diff( $left_string, $right_string, $args = null ) {
 	if ( $args['title'] || $args['title_left'] || $args['title_right'] )
 		$r .= "</thead>\n";
 
-	$r .= "<tbody>\n$diff\n</tbody>\n";
+	$r .= "<tbody>\n$diff</div>\n</tbody>\n";
 	$r .= "</table>";
+
+	$r .= "</div>";
+	$r .= "</div>";
 
 	return $r;
 }
