@@ -6,7 +6,13 @@ if (!defined('ABSPATH')) die ('No direct access allowed');
 class UpdraftPlus_Options {
 
 	public static function user_can_manage() {
-		return current_user_can(apply_filters('option_page_capability_updraft-options-group', 'manage_options'));
+		$user_can_manage = current_user_can(apply_filters('option_page_capability_updraft-options-group', 'manage_options'));
+		// false: allows the filter to know that the request is not coming from the multisite add-on
+		return apply_filters('updraft_user_can_manage', $user_can_manage, false);
+	}
+
+	public static function options_table() {
+		return 'options';
 	}
 
 	public static function admin_page_url() {
@@ -21,8 +27,9 @@ class UpdraftPlus_Options {
 		return get_option($option, $default);
 	}
 
+	// The apparently unused parameter is used in the alternative class in the Multisite add-on
 	public static function update_updraft_option($option, $value, $use_cache = true) {
-		update_option($option, $value);
+		return update_option($option, $value);
 	}
 
 	public static function delete_updraft_option($option) {
@@ -58,17 +65,48 @@ class UpdraftPlus_Options {
 
 		if (!$allow_autocomplete) echo ' autocomplete="off"';
 		echo '>';
-		if ($settings_fields) settings_fields('updraft-options-group');
+		if ($settings_fields) {
+			// This is settings_fields('updraft-options-group'), but with the referer pruned
+			echo "<input type='hidden' name='option_page' value='" . esc_attr('updraft-options-group') . "' />";
+			echo '<input type="hidden" name="action" value="update" />';
+			// $action = -1, $name = "_wpnonce", $referer = true , $echo = true 
+			wp_nonce_field("updraft-options-group-options", '_wpnonce', false);
+
+			$remove_query_args = array('state', 'action', 'updraftcopycomparms', 'oauth_verifier');
+
+			// wp_unslash() does not exist until after WP 3.5
+			if (function_exists('wp_unslash')) {
+				$referer = wp_unslash( remove_query_arg( $remove_query_args, $_SERVER['REQUEST_URI']) );
+			} else {
+				$referer = stripslashes_deep( remove_query_arg( $remove_query_args, $_SERVER['REQUEST_URI']) );
+			}
+
+			// Add back the page parameter if it looks like we were on the settings page via an OAuth callback that has now had all parameters removed. This is likely unnecessarily conservative, but there's nothing requiring more than this at the current time.
+			if (substr($referer, -19, 19) == 'options-general.php' && false !== strpos($_SERVER['REQUEST_URI'], '?')) $referer .= '?page=updraftplus';
+
+			$referer_field = '<input type="hidden" name="_wp_http_referer" value="'. esc_attr($referer) . '" />';
+			echo $referer_field;
+		}
 	}
 
 	public static function admin_init() {
 
+		static $already_inited = false;
+		if ($already_inited) return;
+		
+		$already_inited = true;
+	
+		// If being called outside of the admin context, this may not be loaded yet
+		if (!function_exists('register_setting')) include_once(ABSPATH.'wp-admin/includes/plugin.php');
+	
 		global $updraftplus, $updraftplus_admin;
 		register_setting('updraft-options-group', 'updraft_interval', array($updraftplus, 'schedule_backup') );
 		register_setting('updraft-options-group', 'updraft_interval_database', array($updraftplus, 'schedule_backup_database') );
 		register_setting('updraft-options-group', 'updraft_interval_increments');
 		register_setting('updraft-options-group', 'updraft_retain', array($updraftplus, 'retain_range') );
 		register_setting('updraft-options-group', 'updraft_retain_db', array($updraftplus, 'retain_range') );
+		register_setting('updraft-options-group', 'updraft_retain_extrarules' );
+
 		register_setting('updraft-options-group', 'updraft_encryptionphrase');
 		register_setting('updraft-options-group', 'updraft_service', array($updraftplus, 'just_one'));
 
@@ -82,9 +120,12 @@ class UpdraftPlus_Options {
 		register_setting('updraft-options-group', 'updraft_openstack');
 		register_setting('updraft-options-group', 'updraft_dropbox', array($updraftplus, 'dropbox_checkchange'));
 		register_setting('updraft-options-group', 'updraft_googledrive', array($updraftplus, 'googledrive_checkchange'));
+		register_setting('updraft-options-group', 'updraft_onedrive', array($updraftplus, 'onedrive_checkchange'));
+		register_setting('updraft-options-group', 'updraft_azure', array($updraftplus, 'azure_checkchange'));
+		register_setting('updraft-options-group', 'updraft_googlecloud', array($updraftplus, 'googlecloud_checkchange'));
 
 		register_setting('updraft-options-group', 'updraft_sftp_settings');
-		register_setting('updraft-options-group', 'updraft_webdav_settings', array($updraftplus, 'replace_http_with_webdav'));
+		register_setting('updraft-options-group', 'updraft_webdav_settings', array($updraftplus, 'construct_webdav_url'));
 
 		register_setting('updraft-options-group', 'updraft_ssl_nossl', 'absint');
 		register_setting('updraft-options-group', 'updraft_log_syslog', 'absint');
@@ -119,8 +160,8 @@ class UpdraftPlus_Options {
 		register_setting('updraft-options-group', 'updraft_starttime_files', array('UpdraftPlus_Options', 'hourminute') );
 		register_setting('updraft-options-group', 'updraft_starttime_db', array('UpdraftPlus_Options', 'hourminute') );
 
-		register_setting('updraft-options-group', 'updraft_startday_files', array('UpdraftPlus_Options', 'weekday') );
-		register_setting('updraft-options-group', 'updraft_startday_db', array('UpdraftPlus_Options', 'weekday') );
+		register_setting('updraft-options-group', 'updraft_startday_files', array('UpdraftPlus_Options', 'week_or_month_day') );
+		register_setting('updraft-options-group', 'updraft_startday_db', array('UpdraftPlus_Options', 'week_or_month_day') );
 
 		global $pagenow;
 		if (is_multisite() && $pagenow == 'options-general.php' && isset($_REQUEST['page']) && 'updraftplus' == substr($_REQUEST['page'], 0, 11)) {
@@ -134,14 +175,14 @@ class UpdraftPlus_Options {
 		return '00:00';
 	}
 
-	public static function weekday($pot) {
+	public static function week_or_month_day($pot) {
 		$pot = absint($pot);
-		return ($pot>6) ? 0 : $pot;
+		return ($pot>28) ? 1 : $pot;
 	}
 
 	public static function show_admin_warning_multisite() {
 		global $updraftplus_admin;
-		$updraftplus_admin->show_admin_warning('<strong>'.__('UpdraftPlus warning:', 'updraftplus').'</strong> '.__('This is a WordPress multi-site (a.k.a. network) installation.', 'updraftplus').' <a href="http://updraftplus.com">'.__('WordPress Multisite is supported, with extra features, by UpdraftPlus Premium, or the Multisite add-on.', 'updraftplus').'</a> '.__('Without upgrading, UpdraftPlus allows <strong>every</strong> blog admin who can modify plugin settings to back up (and hence access the data, including passwords, from) and restore (including with customised modifications, e.g. changed passwords) <strong>the entire network</strong>.', 'updraftplus').' '.__('(This applies to all WordPress backup plugins unless they have been explicitly coded for multisite compatibility).', 'updraftplus'), 'error');
+		$updraftplus_admin->show_admin_warning('<strong>'.__('UpdraftPlus warning:', 'updraftplus').'</strong> '.__('This is a WordPress multi-site (a.k.a. network) installation.', 'updraftplus').' <a href="https://updraftplus.com/shop/">'.__('WordPress Multisite is supported, with extra features, by UpdraftPlus Premium, or the Multisite add-on.', 'updraftplus').'</a> '.__('Without upgrading, UpdraftPlus allows <strong>every</strong> blog admin who can modify plugin settings to back up (and hence access the data, including passwords, from) and restore (including with customised modifications, e.g. changed passwords) <strong>the entire network</strong>.', 'updraftplus').' '.__('(This applies to all WordPress backup plugins unless they have been explicitly coded for multisite compatibility).', 'updraftplus'), 'error');
 	}
 
 }

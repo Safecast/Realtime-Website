@@ -1,10 +1,10 @@
 <?php
 
-// This is a compatibility library, using Amazon's official PHP SDK (PHP 5.3.3+), but providing the methods of Donovan Schönknecht's S3.php library (which we used to always use) - but we've only cared about making code-paths in UpdraftPlus work, so be careful if re-reploying this in another project. And, we have a few bits of UpdraftPlus-specific code below, for logging.
+// This is a compatibility library, using Amazon's official PHP SDK (PHP 5.3.3+), but providing the methods of Donovan Schönknecht's S3.php library (which we used to always use) - but we've only cared about making code-paths in UpdraftPlus work, so be careful if re-deploying this in another project. And, we have a few bits of UpdraftPlus-specific code below, for logging.
 
 /**
 *
-* Copyright (c) 2012-5, David Anderson (http://www.simbahosting.co.uk).  All rights reserved.
+* Copyright (c) 2012-5, David Anderson (https://www.simbahosting.co.uk).  All rights reserved.
 * Portions copyright (c) 2011, Donovan Schönknecht.  All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,7 @@
 * Amazon S3 is a trademark of Amazon.com, Inc. or its affiliates.
 */
 
-require_once(UPDRAFTPLUS_DIR.'/oc/autoload.php');
+require_once(UPDRAFTPLUS_DIR.'/vendor/autoload.php');
 
 # SDK uses namespacing - requires PHP 5.3 (actually the SDK states its requirements as 5.3.3)
 use Aws\S3;
@@ -70,6 +70,8 @@ class UpdraftPlus_S3_Compat
 	public $useSSLValidation = true;
 	public $useExceptions = false;
 
+	private $_serverSideEncryption = null;
+
 	// SSL CURL SSL options - only needed if you are experiencing problems with your OpenSSL configuration
 	public $sslKey = null;
 	public $sslCert = null;
@@ -84,10 +86,10 @@ class UpdraftPlus_S3_Compat
 	* @param string|boolean $sslCACert - certificate authority (true = bundled Guzzle version; false = no verify, 'system' = system version; otherwise, path)
 	* @return void
 	*/
-	public function __construct($accessKey = null, $secretKey = null, $useSSL = true, $sslCACert = true, $endpoint = 's3.amazonaws.com')
+	public function __construct($accessKey = null, $secretKey = null, $useSSL = true, $sslCACert = true, $endpoint = null)
 	{
 		if ($accessKey !== null && $secretKey !== null)
-			self::setAuth($accessKey, $secretKey);
+			$this->setAuth($accessKey, $secretKey);
 
 		$this->useSSL = $useSSL;
 		$this->sslCACert = $sslCACert;
@@ -95,17 +97,25 @@ class UpdraftPlus_S3_Compat
 		$opts = array(
 			'key' => $accessKey,
 			'secret' => $secretKey,
-			'signature' => 'v4',
 			'scheme' => ($useSSL) ? 'https' : 'http',
-// 			'defaults' => array(
-// 				'verify' => $ssl_ca
-// 			)
-			'region' => $this->region
+			// Using signature v4 requires a region
+// 			'signature' => 'v4',
+// 			'region' => $this->region
+// 			'endpoint' => 'somethingorother.s3.amazonaws.com'
 		);
+
+		if ($endpoint) {
+			// Can't specify signature v4, as that requires stating the region - which we don't necessarily yet know.
+			$this->endpoint = $endpoint;
+			$opts['endpoint'] = $endpoint;
+		} else {
+			// Using signature v4 requires a region. Also, some regions (EU Central 1, China) require signature v4 - and all support it, so we may as well use it if we can.
+			$opts['signature'] = 'v4';
+			$opts['region'] = $this->region;
+		}
 
 		if ($useSSL) $opts['ssl.certificate_authority'] = $sslCACert;
 
-		// Force V4, since there doesn't seem to be a way to change this later - and we don't yet know the region (though v4 also requires a region to be initially set...)
 		$this->client = Aws\S3\S3Client::factory($opts);
 	}
 
@@ -120,6 +130,13 @@ class UpdraftPlus_S3_Compat
 	{
 		$this->__accessKey = $accessKey;
 		$this->__secretKey = $secretKey;
+	}
+
+	// Example value: 'AES256'. See: https://docs.aws.amazon.com/AmazonS3/latest/dev/SSEUsingPHPSDK.html
+	// Or, false to turn off.
+	public function setServerSideEncryption($value)
+	{
+		$this->_serverSideEncryption = $value;
 	}
 
 	/**
@@ -285,9 +302,12 @@ class UpdraftPlus_S3_Compat
 	}
 
 	// A no-op in this compatibility layer (for now - not yet found a use)...
-	public function useDNSBucketName($use = true)
+	public function useDNSBucketName($use = true, $bucket = '')
 	{
 		$this->use_dns_bucket_name = $use;
+		if ($use && $bucket) {
+			$this->setEndpoint($bucket.'.s3.amazonaws.com', $this->region);
+		}
 		return true;
 	}
 
@@ -376,10 +396,26 @@ class UpdraftPlus_S3_Compat
 			return $results;
 
 		} catch (Exception $e) {
-			return $this->trigger_from_exception($e);
+			if ($this->useExceptions) {
+				throw $e;
+			} else {
+				return $this->trigger_from_exception($e);
+			}
 		}
 	}
 
+	// This is crude - nothing is returned
+	public function waitForBucket($bucket) {
+		try {
+			$this->client->waitUntil('BucketExists', array('Bucket' => $bucket));
+		} catch (Exception $e) {
+			if ($this->useExceptions) {
+				throw $e;
+			} else {
+				return $this->trigger_from_exception($e);
+			}
+		}
+	}
 
 	/**
 	* Put a bucket
@@ -391,12 +427,17 @@ class UpdraftPlus_S3_Compat
 	*/
 	public function putBucket($bucket, $acl = self::ACL_PRIVATE, $location = false)
 	{
+		if (!$location) {
+			$location = $this->region;
+		} else {
+			$this->setRegion($location);
+		}
 		$bucket_vars = array(
 			'Bucket' => $bucket,
 			'ACL' => $acl,
 		);
 		// http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.S3.S3Client.html#_createBucket
-		$location_constraint = apply_filters('updraftplus_s3_putbucket_defaultlocation', $this->region);
+		$location_constraint = apply_filters('updraftplus_s3_putbucket_defaultlocation', $location);
 		if ('us-east-1' != $location_constraint) $bucket_vars['LocationConstraint'] = $location_constraint;
 		try {
 			$result = $this->client->createBucket($bucket_vars);
@@ -435,6 +476,8 @@ class UpdraftPlus_S3_Compat
 		);
 
 		$vars['ContentType'] = ('.gz' == strtolower(substr($uri, -3, 3))) ? 'application/octet-stream' : 'application/zip';
+
+		if (!empty($this->_serverSideEncryption)) $vars['ServerSideEncryption'] = $this->_serverSideEncryption;
 
 		try {
 			$result = $this->client->createMultipartUpload($vars);
@@ -570,6 +613,7 @@ class UpdraftPlus_S3_Compat
 				'ACL' => $acl
 			);
 			if ($contentType) $options['ContentType'] = $contentType;
+			if (!empty($this->_serverSideEncryption)) $options['ServerSideEncryption'] = $this->_serverSideEncryption;
 			if (!empty($metaHeaders)) $options['Metadata'] = $metaHeaders;
 			$result = $this->client->putObject($options);
 			if (is_object($result) && method_exists($result, 'get') && '' != $result->get('RequestId')) return true;
@@ -623,17 +667,19 @@ class UpdraftPlus_S3_Compat
 	* @param string $bucket Bucket name
 	* @param string $uri Object URI
 	* @param mixed $saveTo Filename or resource to write to
-	* @param boolean resume, if possible
+	* @param mixed $resume - if $saveTo is a resource, then this is either false or the value for a Range: header; otherwise, a boolean, indicating whether to resume if possible.
 	* @return mixed
 	*/
-	// In UpdraftPlus, $saveTo is always a filename
 	public function getObject($bucket, $uri, $saveTo = false, $resume = false)
 	{
 		try {
 			// SaveAs: "Specify where the contents of the object should be downloaded. Can be the path to a file, a resource returned by fopen, or a Guzzle\Http\EntityBodyInterface object." - http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.S3.S3Client.html#_getObject
 
 			$range_header = false;
-			if (file_exists($saveTo)) {
+			if (is_resource($saveTo)) {
+				$fp = $saveTo;
+				if (!is_bool($resume)) $range_header = $resume;
+			} elseif (file_exists($saveTo)) {
 				if ($resume && ($fp = @fopen($saveTo, 'ab')) !== false) {
 					$range_header = "bytes=".filesize($saveTo).'-';
 				} else {
@@ -719,6 +765,22 @@ class UpdraftPlus_S3_Compat
 			}
 		}
 		return false;
+	}
+
+	public function setCORS($policy)
+	{
+		try {
+			$cors = $this->client->putBucketCors($policy);
+			if (is_object($cors) && method_exists($cors, 'get') && '' != $cors->get('RequestId')) return true;
+		} catch (Exception $e) {
+			if ($this->useExceptions) {
+				throw $e;
+			} else {
+				return $this->trigger_from_exception($e);
+			}
+		}
+		return false;
+		
 	}
 
 }

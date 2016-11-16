@@ -25,7 +25,7 @@ class UpdraftPlus_BackupModule_email {
 			if (file_exists($fullpath) && filesize($fullpath) > UPDRAFTPLUS_WARN_EMAIL_SIZE) {
 				$size_in_mb_of_big_file = round(filesize($fullpath)/1048576, 1);
 				$toobig_hash = md5($file);
-				$updraftplus->log($file.': '.sprintf(__('This backup archive is %s Mb in size - the attempt to send this via email is likely to fail (few email servers allow attachments of this size). If so, you should switch to using a different remote storage method.', 'updraftplus'), $size_in_mb_of_big_file), 'warning', 'toobigforemail_'.$toobig_hash);
+				$updraftplus->log($file.': '.sprintf(__('This backup archive is %s MB in size - the attempt to send this via email is likely to fail (few email servers allow attachments of this size). If so, you should switch to using a different remote storage method.', 'updraftplus'), $size_in_mb_of_big_file), 'warning', 'toobigforemail_'.$toobig_hash);
 			}
 
 			$any_attempted = false;
@@ -68,14 +68,19 @@ class UpdraftPlus_BackupModule_email {
 		<tr class="updraftplusmethod email">
 			<th><?php _e('Note:', 'updraftplus');?></th>
 			<td><?php
-				$used = apply_filters('updraftplus_email_whichaddresses', sprintf(__("Your site's admin email address (%s) will be used.", 'updraftplus'), get_bloginfo('admin_email')).' <a href="http://updraftplus.com/shop/reporting/">'.sprintf(__('For more options, use the "%s" add-on.', 'updraftplus'), __('Reporting', 'updraftplus')).'</a>');
-				echo str_replace('&gt;','>', str_replace('&lt;','<',htmlspecialchars($used.' '.sprintf(__('Be aware that mail servers tend to have size limits; typically around %s Mb; backups larger than any limits will likely not arrive.','updraftplus'), '10-20'))));?>
+
+				$used = apply_filters('updraftplus_email_whichaddresses',
+					sprintf(__("Your site's admin email address (%s) will be used.", 'updraftplus'), get_bloginfo('admin_email').' - <a href="'.esc_attr(admin_url('options-general.php')).'">'.__("configure it here", 'updraftplus').'</a>').
+					' <a href="'.apply_filters("updraftplus_com_link","https://updraftplus.com/shop/reporting/").'">'.sprintf(__('For more options, use the "%s" add-on.', 'updraftplus'), __('Reporting', 'updraftplus')).'</a>'
+				);
+
+				echo $used.' '.sprintf(__('Be aware that mail servers tend to have size limits; typically around %s MB; backups larger than any limits will likely not arrive.','updraftplus'), '10-20');?>
 			</td>
 		</tr>
 		<?php
 	}
 
-	public function delete($files) {
+	public function delete($files, $data = null, $sizeinfo = array()) {
 		return true;
 	}
 

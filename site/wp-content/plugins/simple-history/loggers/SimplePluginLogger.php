@@ -1,91 +1,102 @@
 <?php
 
+defined( 'ABSPATH' ) or die();
+
 /**
  * Logs plugin installs, updates, and deletions
  */
-class SimplePluginLogger extends SimpleLogger
-{
+class SimplePluginLogger extends SimpleLogger {
 
 	// The logger slug. Defaulting to the class name is nice and logical I think
 	public $slug = __CLASS__;
 
 	/**
 	 * Get array with information about this logger
-	 * 
+	 *
 	 * @return array
 	 */
 	function getInfo() {
 
-		$arr_info = array(			
+		$arr_info = array(
 			"name" => "Plugin Logger",
 			"description" => "Logs plugin installs, uninstalls and updates",
-			"capability" => "activate_plugins", // install_plugins, activate_plugins, 
+			"capability" => "activate_plugins", // install_plugins, activate_plugins,
 			"messages" => array(
 
 				'plugin_activated' => _x(
-					'Activated plugin "{plugin_name}"', 
+					'Activated plugin "{plugin_name}"',
 					'Plugin was non-silently activated by a user',
 					'simple-history'
 				),
 
 				'plugin_deactivated' => _x(
-					'Deactivated plugin "{plugin_name}"', 
+					'Deactivated plugin "{plugin_name}"',
 					'Plugin was non-silently deactivated by a user',
 					'simple-history'
 				),
 
 				'plugin_installed' => _x(
-					'Installed plugin "{plugin_name}"', 
+					'Installed plugin "{plugin_name}"',
 					'Plugin was installed',
 					'simple-history'
 				),
 
 				'plugin_installed_failed' => _x(
-					'Failed to install plugin "{plugin_name}"', 
+					'Failed to install plugin "{plugin_name}"',
 					'Plugin failed to install',
 					'simple-history'
 				),
 
 				'plugin_updated' => _x(
-					'Updated plugin "{plugin_name}" to version {plugin_version} from {plugin_prev_version}', 
+					'Updated plugin "{plugin_name}" to version {plugin_version} from {plugin_prev_version}',
 					'Plugin was updated',
 					'simple-history'
 				),
 
 				'plugin_update_failed' => _x(
-					'Updated plugin "{plugin_name}"', 
+					'Failed to update plugin "{plugin_name}"',
 					'Plugin update failed',
 					'simple-history'
 				),
 
 				'plugin_file_edited' => _x(
-					'Edited plugin file "{plugin_edited_file}"', 
+					'Edited plugin file "{plugin_edited_file}"',
 					'Plugin file edited',
 					'simple-history'
 				),
 
 				'plugin_deleted' => _x(
-					'Deleted plugin "{plugin_name}"', 
+					'Deleted plugin "{plugin_name}"',
 					'Plugin files was deleted',
 					'simple-history'
 				),
 
 				// bulk versions
 				'plugin_bulk_updated' => _x(
-					'Updated plugin "{plugin_name}" to {plugin_version} from {plugin_prev_version}', 
+					'Updated plugin "{plugin_name}" to {plugin_version} from {plugin_prev_version}',
 					'Plugin was updated in bulk',
 					'simple-history'
 				),
+
+				// plugin disabled due to some error
+				'plugin_disabled_because_error' => _x(
+					'Deactivated a plugin because of an error: {error_message}',
+					'Plugin was disabled because of an error',
+					'simple-history'
+				),
+
 			), // messages
 			"labels" => array(
 				"search" => array(
 					"label" => _x("Plugins", "Plugin logger: search", "simple-history"),
+					"label_all" => _x("All plugin activity", "Plugin logger: search", "simple-history"),
 					"options" => array(
 						_x("Activated plugins", "Plugin logger: search", "simple-history") => array(
 							'plugin_activated'
 						),
 						_x("Deactivated plugins", "Plugin logger: search", "simple-history") => array(
-							'plugin_deactivated'
+							'plugin_deactivated',
+							'plugin_disabled_because_error'
 						),
 						_x("Installed plugins", "Plugin logger: search", "simple-history") => array(
 							'plugin_installed'
@@ -110,18 +121,12 @@ class SimplePluginLogger extends SimpleLogger
 				) // search array
 			) // labels
 		);
-		
+
 		return $arr_info;
 
 	}
 
 	public function loaded() {
-
-		#sf_d(get_plugins(), 'get_plugins()');
-
-		//do_action( 'current_screen', $current_screen );
-		// The first hook where current screen is available
-		//add_action( 'current_screen', array( $this, "save_versions_before_update" ) );
 
 		/**
 		 * At least the plugin bulk upgrades fires this action before upgrade
@@ -130,13 +135,14 @@ class SimplePluginLogger extends SimpleLogger
 		add_filter( 'upgrader_pre_install', array( $this, "save_versions_before_update"), 10, 2);
 
 		// Clear our transient after an update is done
-		add_action( 'delete_site_transient_update_plugins', array( $this, "remove_saved_versions" ) );
+		// Removed because something probably changed in core and this was fired earlier than it used to be
+		// add_action( 'delete_site_transient_update_plugins', array( $this, "remove_saved_versions" ) );
 
 		// Fires after a plugin has been activated.
 		// If a plugin is silently activated (such as during an update),
 		// this hook does not fire.
 		add_action( 'activated_plugin', array( $this, "on_activated_plugin" ), 10, 2 );
-		
+
 		// Fires after a plugin is deactivated.
 		// If a plugin is silently deactivated (such as during an update),
 		// this hook does not fire.
@@ -154,6 +160,157 @@ class SimplePluginLogger extends SimpleLogger
 
 		add_action("admin_action_delete-selected", array($this, "on_action_delete_selected"), 10, 1);
 
+		// Ajax function to get info from GitHub repo. Used by "View plugin info"-link for plugin installs
+		add_action("wp_ajax_SimplePluginLogger_GetGitHubPluginInfo", array($this, "ajax_GetGitHubPluginInfo"));
+
+		// If the Github Update plugin is not installed we need to get extra fields used by it.
+		// So need to hook filter "extra_plugin_headers" ourself.
+		add_filter( "extra_plugin_headers", function($arr_headers) {
+			$arr_headers[] = "GitHub Plugin URI";
+			return $arr_headers;
+		} );
+
+		// There is no way to ue a filter and detect a plugin that is disabled because it can't be found or similar error.
+		// So we hook into gettext and look for the usage of the error that is returned when this happens.
+		add_filter( 'gettext', array( $this, "on_gettext" ), 10, 3 );
+
+	}
+
+	/**
+	 * There is no way to ue a filter and detect a plugin that is disabled because it can't be found or similar error.
+	 * we hook into gettext and look for the usage of the error that is returned when this happens.
+	 */
+	function on_gettext( $translation, $text, $domain ) {
+
+		// The errors we can get is:
+		// return new WP_Error('plugin_invalid', __('Invalid plugin path.'));
+		// return new WP_Error('plugin_not_found', __('Plugin file does not exist.'));
+		// return new WP_Error('no_plugin_header', __('The plugin does not have a valid header.'));
+
+		global $pagenow;
+
+		// We only act on page plugins.php
+		if ( ! isset( $pagenow ) || $pagenow !== "plugins.php" ) {
+			return $translation;
+		}
+
+		// We only act if the untranslated text is among the following ones
+		// (Literally these, no translation)
+		$untranslated_texts = array(
+			"Plugin file does not exist.",
+			"Invalid plugin path.",
+			"The plugin does not have a valid header."
+		);
+
+		if ( ! in_array( $text, $untranslated_texts )) {
+			return $translation;
+		}
+
+		// We don't know what plugin that was that got this error and currently there does not seem to be a way to determine that
+		// So that's why we use such generic log messages
+		$this->warningMessage(
+			"plugin_disabled_because_error",
+			array(
+				"_initiator" => SimpleLoggerLogInitiators::WORDPRESS,
+				"error_message" => $text
+			)
+		);
+
+		return $translation;
+
+	} // on_gettext
+
+
+	/**
+	 * Show readme from github in a modal win
+	 */
+	function ajax_GetGitHubPluginInfo() {
+
+		if ( ! current_user_can("install_plugins") ) {
+			wp_die( __("You don't have access to this page.", "simple-history" ));
+		}
+
+		$repo = isset( $_GET["repo"] ) ? (string) $_GET["repo"] : "";
+
+		if ( ! $repo ) {
+			wp_die( __("Could not find GitHub repository.", "simple-history" ));
+		}
+
+		$repo_parts = explode("/", rtrim($repo, "/"));
+		if ( count($repo_parts) !== 5 ) {
+			wp_die( __("Could not find GitHub repository.", "simple-history" ));
+		}
+
+		$repo_username = $repo_parts[3];
+		$repo_repo = $repo_parts[4];
+
+		// https://developer.github.com/v3/repos/contents/
+		// https://api.github.com/repos/<username>/<repo>/readme
+		$api_url = sprintf('https://api.github.com/repos/%1$s/%2$s/readme', urlencode( $repo_username ), urlencode( $repo_repo ));
+
+		// Get file. Use accept-header to get file as HTML instead of JSON
+		$response = wp_remote_get( $api_url, array(
+			"headers" => array(
+				"accept" => "application/vnd.github.VERSION.html"
+			)
+		) );
+
+		$response_body = wp_remote_retrieve_body( $response );
+
+		$repo_info = sprintf(
+						__('<p>Viewing <code>readme</code> from repository <code><a target="_blank" href="%1$s">%2$s</a></code>.</p>', "simple-history"),
+						esc_url( $repo ),
+						esc_html( $repo )
+					);
+
+		$github_markdown_css_path = SIMPLE_HISTORY_PATH . "/css/github-markdown.css";
+
+		printf(
+			'
+				<!doctype html>
+				<style>
+					body {
+						font-family: sans-serif;
+						font-size: 16px;
+					}
+					.repo-info {
+						padding: 1.25em 1em;
+						background: #fafafa;
+						line-height: 1;
+					}
+					.repo-info p {
+						margin: 0;
+					}
+					    .markdown-body {
+				        min-width: 200px;
+				        max-width: 790px;
+				        margin: 0 auto;
+				        padding: 30px;
+				    }
+
+					@import url("%3$s");
+
+				</style>
+
+				<base href="%4$s/raw/master/">
+
+				<header class="repo-info">
+					%1$s
+				</header>
+
+				<div class="markdown-body readme-contents">
+					%2$s
+				</div>
+			',
+			$repo_info,
+			$response_body,
+			$github_markdown_css_path,
+			esc_url( $repo ) // 4
+		);
+
+		#echo($response_body);
+
+		exit;
 
 	}
 
@@ -163,14 +320,11 @@ class SimplePluginLogger extends SimpleLogger
 	 * So before a plugin is deleted we save all needed info in a transient
 	 */
 	function on_action_delete_selected() {
-			
+
 		// Same as in plugins.php
 		if ( ! current_user_can('delete_plugins') ) {
 			wp_die(__('You do not have sufficient permissions to delete plugins for this site.'));
 		}
-
-		// Same as in plugins.php
-		check_admin_referer('bulk-plugins');
 
 		// Verify delete must be set
 		if ( ! isset( $_POST["verify-delete"] ) || ! $_POST["verify-delete"] ) {
@@ -194,11 +348,14 @@ class SimplePluginLogger extends SimpleLogger
 	 * Saves info about all installed plugins to an option.
 	 * When we are done logging then we remove the option.
 	 */
-	function save_versions_before_update($bool, $hook_extra) {
+    function save_versions_before_update($bool = null, $hook_extra = null) {
 
 		$plugins = get_plugins();
 
-		update_option( $this->slug . "_plugin_info_before_update", SimpleHistory::json_encode( $plugins ) );
+		// does not work
+		$option_name = $this->slug . "_plugin_info_before_update";
+
+		$r = update_option( $option_name, SimpleHistory::json_encode( $plugins ) );
 
 		return $bool;
 
@@ -210,9 +367,9 @@ class SimplePluginLogger extends SimpleLogger
 	 * set_transient('plugins_delete_result_' . $user_ID, $delete_result);
 	 *
 	 * We detect when that transient is set and then we have all info needed to log the plugin delete
-	 *	 
+	 *
 	 */
-	public function on_setted_transient_for_remove_files($transient, $value) {
+	public function on_setted_transient_for_remove_files( $transient = "", $value = "" ) {
 
 		if ( ! $user_id = get_current_user_id() ) {
 			return;
@@ -224,7 +381,7 @@ class SimplePluginLogger extends SimpleLogger
 		}
 
 		// We found the transient we were looking for
-		if ( 
+		if (
 				isset( $_POST["action"] )
 				&& "delete-selected" == $_POST["action"]
 				&& isset( $_POST["checked"] )
@@ -242,7 +399,7 @@ class SimplePluginLogger extends SimpleLogger
 			$plugins_before_update = json_decode( get_option( $this->slug . "_plugin_info_before_update", false ), true );
 
 			foreach ( $plugins_deleted as $plugin ) {
-				
+
 				$context = array(
 					"plugin" => $plugin // plugin-name-folder/plugin-main-file.php
 				);
@@ -264,7 +421,7 @@ class SimplePluginLogger extends SimpleLogger
 			}
 
 		}
-		
+
 		$this->remove_saved_versions();
 
 	}
@@ -274,29 +431,29 @@ class SimplePluginLogger extends SimpleLogger
 	 * This way we can know both the old (pre updated/removed) and the current version of the plugin
 	 */
 	/*public function save_versions_before_update() {
-		
+
 		$current_screen = get_current_screen();
 		$request_uri = $_SERVER["SCRIPT_NAME"];
 
 		// Only add option on pages where needed
 		$do_store = false;
 
-		if ( 
+		if (
 				SimpleHistory::ends_with( $request_uri, "/wp-admin/update.php" )
-				&& isset( $current_screen->base ) 
-				&& "update" == $current_screen->base 
+				&& isset( $current_screen->base )
+				&& "update" == $current_screen->base
 			) {
-			
+
 			// Plugin update screen
 			$do_store = true;
 
-		} else if ( 
+		} else if (
 				SimpleHistory::ends_with( $request_uri, "/wp-admin/plugins.php" )
-				&& isset( $current_screen->base ) 
+				&& isset( $current_screen->base )
 				&& "plugins" == $current_screen->base
 				&& ( isset( $_POST["action"] ) && "delete-selected" == $_POST["action"] )
 			) {
-			
+
 			// Plugin delete screen, during delete
 			$do_store = true;
 
@@ -317,7 +474,7 @@ class SimplePluginLogger extends SimpleLogger
 	  * delete_site_transient_update_plugins
 	  */
 	public function remove_saved_versions() {
-		
+
 		delete_option( $this->slug . "_plugin_info_before_update" );
 
 	}
@@ -326,14 +483,14 @@ class SimplePluginLogger extends SimpleLogger
 
 		// Var is string with length 113: /wp-admin/plugin-editor.php?file=my-plugin%2Fviews%2Fplugin-file.php
 		$referer = wp_get_referer();
-		
+
 		// contains key "path" with value like "/wp-admin/plugin-editor.php"
 		$referer_info = parse_url($referer);
 
 		if ( "/wp-admin/plugin-editor.php" === $referer_info["path"] ) {
 
 			// We are in plugin editor
-			// Check for plugin edit saved		
+			// Check for plugin edit saved
 			if ( isset( $_POST["newcontent"] ) && isset( $_POST["action"] ) && "update" == $_POST["action"] && isset( $_POST["file"] ) && ! empty( $_POST["file"] ) ) {
 
 				// A file was edited
@@ -341,10 +498,10 @@ class SimplePluginLogger extends SimpleLogger
 
 				// $plugins = get_plugins();
 				// http://codex.wordpress.org/Function_Reference/wp_text_diff
-				
+
 				// Generate a diff of changes
 				if ( ! class_exists( 'WP_Text_Diff_Renderer_Table' ) ) {
-					require( ABSPATH . WPINC . '/wp-diff.php' );
+					require_once( ABSPATH . WPINC . '/wp-diff.php' );
 				}
 
 				$original_file_contents = file_get_contents( WP_PLUGIN_DIR . "/" . $file );
@@ -382,25 +539,37 @@ class SimplePluginLogger extends SimpleLogger
 
 	/**
 	 * Called when plugins is updated or installed
+	 * Called from class-wp-upgrader.php
+	 *
+	 * @param Plugin_Upgrader $this Plugin_Upgrader instance. In other contexts, $this, might
+	 *                              be a Theme_Upgrader or Core_Upgrade instance.
+	 * @param array           $data {
+	 *     Array of bulk item update data.
+	 *
 	 */
 	function on_upgrader_process_complete( $plugin_upgrader_instance, $arr_data ) {
 
 		// Can't use get_plugins() here to get version of plugins updated from
 		// Tested that, and it will get the new version (and that's the correct answer I guess. but too bad for us..)
-		// $plugs = get_plugins();
-		// $context["_debug_get_plugins"] = SimpleHistory::json_encode( $plugs );
+
 		/*
+		If an update fails then $plugin_upgrader_instance->skin->result->errors contains something like:
+		Array
+		(
+		    [remove_old_failed] => Array
+		        (
+		            [0] => Could not remove the old plugin.
+		        )
 
-		Try with these instead:
-		$current = get_site_transient( 'update_plugins' );
-		add_filter('upgrader_clear_destination', array($this, 'delete_old_plugin'), 10, 4);
-
+		)
 		*/
 
-		/*	
+		/*
 
-		# WordPress core update
-		
+		# Contents of $arr_data in different scenarios
+
+		## WordPress core update
+
 		$arr_data:
 		Array
 		(
@@ -408,9 +577,9 @@ class SimplePluginLogger extends SimpleLogger
 		    [type] => core
 		)
 
-		
+
 		# Plugin install
-		
+
 		$arr_data:
 		Array
 		(
@@ -419,8 +588,8 @@ class SimplePluginLogger extends SimpleLogger
 		)
 
 
-		# Plugin update
-		
+		## Plugin update
+
 		$arr_data:
 		Array
 		(
@@ -428,7 +597,7 @@ class SimplePluginLogger extends SimpleLogger
 		    [action] => install
 		)
 
-		# Bulk actions
+		## Bulk actions
 
 		array(
 			'action' => 'update',
@@ -448,22 +617,72 @@ class SimplePluginLogger extends SimpleLogger
 			// Single plugin install
 			if ( isset( $arr_data["action"] ) && "install" == $arr_data["action"] && ! $plugin_upgrader_instance->bulk ) {
 
+				$upgrader_skin_options = isset( $plugin_upgrader_instance->skin->options ) && is_array( $plugin_upgrader_instance->skin->options ) ? $plugin_upgrader_instance->skin->options : array();
+				$upgrader_skin_result = isset( $plugin_upgrader_instance->skin->result ) && is_array( $plugin_upgrader_instance->skin->result ) ? $plugin_upgrader_instance->skin->result : array();
+				$upgrader_skin_api = isset( $plugin_upgrader_instance->skin->api ) ? $plugin_upgrader_instance->skin->api : (object) array();
+
+				$plugin_slug = isset( $upgrader_skin_result["destination_name"] ) ? $upgrader_skin_result["destination_name"] : "";
+
 				// Upgrader contains current info
 				$context = array(
-					"plugin_name" => $plugin_upgrader_instance->skin->api->name,
-					"plugin_slug" => $plugin_upgrader_instance->skin->api->slug,
-					"plugin_version" => $plugin_upgrader_instance->skin->api->version,
-					"plugin_author" => $plugin_upgrader_instance->skin->api->author,
-					"plugin_last_updated" => $plugin_upgrader_instance->skin->api->last_updated,
-					"plugin_requires" => $plugin_upgrader_instance->skin->api->requires,
-					"plugin_tested" => $plugin_upgrader_instance->skin->api->tested,
-					"plugin_rating" => $plugin_upgrader_instance->skin->api->rating,
-					"plugin_num_ratings" => $plugin_upgrader_instance->skin->api->num_ratings,
-					"plugin_downloaded" => $plugin_upgrader_instance->skin->api->downloaded,
-					"plugin_added" => $plugin_upgrader_instance->skin->api->added,
+					"plugin_slug" => $plugin_slug,
+					"plugin_name" => isset( $upgrader_skin_api->name ) ? $upgrader_skin_api->name : "",
+					"plugin_version" => isset( $upgrader_skin_api->version ) ? $upgrader_skin_api->version : "",
+					"plugin_author" => isset( $upgrader_skin_api->author ) ? $upgrader_skin_api->author : "",
+					"plugin_last_updated" => isset( $upgrader_skin_api->last_updated ) ? $upgrader_skin_api->last_updated : "",
+					"plugin_requires" => isset( $upgrader_skin_api->requires ) ? $upgrader_skin_api->requires : "",
+					"plugin_tested" => isset( $upgrader_skin_api->tested ) ? $upgrader_skin_api->tested : "",
+					"plugin_rating" => isset( $upgrader_skin_api->rating ) ? $upgrader_skin_api->rating : "",
+					"plugin_num_ratings" => isset( $upgrader_skin_api->num_ratings ) ? $upgrader_skin_api->num_ratings : "",
+					"plugin_downloaded" => isset( $upgrader_skin_api->downloaded ) ? $upgrader_skin_api->downloaded : "",
+					"plugin_added" => isset( $upgrader_skin_api->added ) ? $upgrader_skin_api->added : "",
 					"plugin_source_files" => $this->simpleHistory->json_encode( $plugin_upgrader_instance->result["source_files"] ),
-					//"upgrader_skin_api" => $this->simpleHistory->json_encode( $plugin_upgrader_instance->skin->api )
+
+					// To debug comment out these:
+					// "debug_skin_options" => $this->simpleHistory->json_encode( $upgrader_skin_options ),
+					// "debug_skin_result" => $this->simpleHistory->json_encode( $upgrader_skin_result ),
+
 				);
+
+				/*
+				Detect install plugin from wordpress.org
+					- options[type] = "web"
+					- options[api] contains all we need
+
+				Detect install from upload ZIP
+					- options[type] = "upload"
+
+				Also: plugins hosted at GitHub have a de-facto standard field of "GitHub Plugin URI"
+				*/
+				$install_source = "unknown";
+				if ( isset( $upgrader_skin_options["type"] ) ) {
+					$install_source = (string) $upgrader_skin_options["type"];
+				}
+
+				$context["plugin_install_source"] = $install_source;
+
+				// If uploaded plugin store name of ZIP
+				if ( "upload" == $install_source ) {
+
+					/*_debug_files
+					{
+					    "pluginzip": {
+					        "name": "WPThumb-master.zip",
+					        "type": "application\/zip",
+					        "tmp_name": "\/Applications\/MAMP\/tmp\/php\/phpnThImc",
+					        "error": 0,
+					        "size": 2394625
+					    }
+					}
+					*/
+
+					if ( isset( $_FILES["pluginzip"]["name"] ) ) {
+						$plugin_upload_name = $_FILES["pluginzip"]["name"];
+						$context["plugin_upload_name"] = $plugin_upload_name;
+					}
+
+				}
+
 
 				if ( is_a( $plugin_upgrader_instance->skin->result, "WP_Error" ) ) {
 
@@ -478,19 +697,36 @@ class SimplePluginLogger extends SimpleLogger
 					);
 
 					$did_log = true;
-					
+
 				} else {
 
 					// Plugin was successfully installed
 					// Try to grab more info from the readme
 					// Would be nice to grab a screenshot, but that is difficult since they often are stored remotely
 					$plugin_destination = isset( $plugin_upgrader_instance->result["destination"] ) ? $plugin_upgrader_instance->result["destination"] : null;
-					if ($plugin_destination) {
+
+					if ( $plugin_destination ) {
 
 						$plugin_info = $plugin_upgrader_instance->plugin_info();
-						$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin_info );
-						$context["plugin_description"] = $plugin_data["Description"];
-						$context["plugin_url"] = $plugin_data["PluginURI"];
+
+						$plugin_data = array();
+						if ( file_exists( WP_PLUGIN_DIR . '/' . $plugin_info ) ) {
+							$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin_info, true, false );
+						}
+
+						$context["plugin_name"] = isset( $plugin_data["Name"] ) ? $plugin_data["Name"] : "";
+						$context["plugin_description"] = isset( $plugin_data["Description"] ) ? $plugin_data["Description"] : "";
+						$context["plugin_url"] = isset( $plugin_data["PluginURI"] ) ? $plugin_data["PluginURI"] : "";
+						$context["plugin_version"] = isset( $plugin_data["Version"] ) ? $plugin_data["Version"] : "";
+						$context["plugin_author"] = isset( $plugin_data["AuthorName"] ) ? $plugin_data["AuthorName"] : "";
+
+						// Comment out these to debug plugin installs
+						#$context["debug_plugin_data"] = $this->simpleHistory->json_encode( $plugin_data );
+						#$context["debug_plugin_info"] = $this->simpleHistory->json_encode( $plugin_info );
+
+						if ( ! empty( $plugin_data["GitHub Plugin URI"] ) ) {
+							$context["plugin_github_url"] = $plugin_data["GitHub Plugin URI"];
+						}
 
 					}
 
@@ -501,7 +737,7 @@ class SimplePluginLogger extends SimpleLogger
 
 					$did_log = true;
 
-				}
+				} // if error or not
 
 			} // install single
 
@@ -509,7 +745,10 @@ class SimplePluginLogger extends SimpleLogger
 			if ( isset( $arr_data["action"] ) && "update" == $arr_data["action"] && ! $plugin_upgrader_instance->bulk ) {
 
 				// No plugin info in instance, so get it ourself
-				$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $arr_data["plugin"] );
+				$plugin_data = array();
+				if ( file_exists( WP_PLUGIN_DIR . '/' . $arr_data["plugin"] ) ) {
+					$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $arr_data["plugin"], true, false );
+				}
 
 				// autoptimize/autoptimize.php
 				$plugin_slug = dirname( $arr_data["plugin"] );
@@ -531,7 +770,7 @@ class SimplePluginLogger extends SimpleLogger
 				// use transient to get url and package
 				$update_plugins = get_site_transient( 'update_plugins' );
 				if ( $update_plugins && isset( $update_plugins->response[ $arr_data["plugin"] ] ) ) {
-					
+
 					/*
 					$update_plugins[plugin_path/slug]:
 					{
@@ -581,7 +820,7 @@ class SimplePluginLogger extends SimpleLogger
 					);
 
 					$did_log = true;
-					
+
 				} else {
 
 					$this->infoMessage(
@@ -598,7 +837,7 @@ class SimplePluginLogger extends SimpleLogger
 				}
 
 			} // update single
-		
+
 
 			/**
 			 * For bulk updates $arr_data looks like:
@@ -620,10 +859,10 @@ class SimplePluginLogger extends SimpleLogger
 
 				foreach ($plugins_updated as $plugin_name) {
 
-					$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin_name );
+					$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin_name, true, false );
 
 					$plugin_slug = dirname( $plugin_name );
-			
+
 					$context = array(
 						"plugin_slug" => $plugin_slug,
 						"plugin_name" => $plugin_data["Name"],
@@ -637,7 +876,7 @@ class SimplePluginLogger extends SimpleLogger
 					// get url and package
 					$update_plugins = get_site_transient( 'update_plugins' );
 					if ( $update_plugins && isset( $update_plugins->response[ $plugin_name ] ) ) {
-						
+
 						/*
 						$update_plugins[plugin_path/slug]:
 						{
@@ -682,7 +921,7 @@ class SimplePluginLogger extends SimpleLogger
 
 			} // bulk update
 
-		
+
 		} // if plugin
 
 		if ( ! $did_log ) {
@@ -692,114 +931,10 @@ class SimplePluginLogger extends SimpleLogger
 			#exit;
 		}
 
-	}
+		$this->remove_saved_versions();
 
-	/*
-	 * Called from filter 'upgrader_post_install'. 
-	 *
-	 * Used to log bulk plugin installs and updates
-	 *
-	 * Filter docs:
-	 *
-	 * Filter the install response after the installation has finished.
-	 *
-	 * @param bool  $response   Install response.
-	 * @param array $hook_extra Extra arguments passed to hooked filters.
-	 * @param array $result     Installation result data.
-	 */
-	public function on_upgrader_post_install( $response, $hook_extra, $result ) {
-		
-		#echo "on_upgrader_post_install";
-		/*
-		
-		# Plugin update:
-		$hook_extra
-		Array
-		(
-		    [plugin] => plugin-folder/plugin-name.php
-		    [type] => plugin
-		    [action] => update
-		)
+	} // on upgrader_process_complete
 
-		# Plugin install, i.e. download/install, but not activation:
-		$hook_extra:
-		Array
-		(
-		    [type] => plugin
-		    [action] => install
-		)
-
-		*/
-
-		if ( isset( $hook_extra["action"] ) && $hook_extra["action"] == "install" && isset( $hook_extra["type"] ) && $hook_extra["type"] == "plugin" ) {
-
-			// It's a plugin install
-			#error_log("plugin install");
-			
-
-		} else if ( isset( $hook_extra["action"] ) && $hook_extra["action"] == "update" && isset( $hook_extra["type"] ) && $hook_extra["type"] == "plugin" ) {
-			
-			// It's a plugin upgrade
-			#echo "plugin update!";
-			//error_log("plugin update");
-
-		} else {
-
-			//error_log("other");
-
-		}
-
-		#sf_d($response, '$response');
-		#sf_d($hook_extra, '$hook_extra');
-		#sf_d($result, '$result');
-		#exit;
-
-		return $response;
-
-	}
-
-	/*
-
-		 * Filter the list of action links available following bulk plugin updates.
-		 *
-		 * @since 3.0.0
-		 *
-		 * @param array $update_actions Array of plugin action links.
-		 * @param array $plugin_info    Array of information for the last-updated plugin.
-
-		$update_actions = apply_filters( 'update_bulk_plugins_complete_actions', $update_actions, $this->plugin_info );
-
-	*/
-
-	/*
-
-
-		*
-		 * Fires when the bulk upgrader process is complete.
-		 *
-		 * @since 3.6.0
-		 *
-		 * @param Plugin_Upgrader $this Plugin_Upgrader instance. In other contexts, $this, might
-		 *                              be a Theme_Upgrader or Core_Upgrade instance.
-		 * @param array           $data {
-		 *     Array of bulk item update data.
-		 *
-		 *     @type string $action   Type of action. Default 'update'.
-		 *     @type string $type     Type of update process. Accepts 'plugin', 'theme', or 'core'.
-		 *     @type bool   $bulk     Whether the update process is a bulk update. Default true.
-		 *     @type array  $packages Array of plugin, theme, or core packages to update.
-		 * }
-		 *
-		do_action( 'upgrader_process_complete', $this, array(
-			'action' => 'update',
-			'type' => 'plugin',
-			'bulk' => true,
-			'plugins' => $plugins,
-		) );
-
-
-	do_action( 'upgrader_process_complete', $this, array( 'action' => 'update', 'type' => 'core' ) );
-	*/
 
 	/**
 	 * Plugin is activated
@@ -820,8 +955,8 @@ class SimplePluginLogger extends SimpleLogger
 		'DomainPath' - Plugin's relative directory path to .mo files.
 		'Network' - Boolean. Whether the plugin can only be activated network wide.
 		*/
-		$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin_name );
-		
+		$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin_name, true, false );
+
 		$plugin_slug = dirname( $plugin_name );
 
 		$context = array(
@@ -834,9 +969,13 @@ class SimplePluginLogger extends SimpleLogger
 			"plugin_url" => $plugin_data["PluginURI"],
 		);
 
+		if ( ! empty( $plugin_data["GitHub Plugin URI"] ) ) {
+			$context["plugin_github_url"] = $plugin_data["GitHub Plugin URI"];
+		}
+
 		$this->infoMessage( 'plugin_activated', $context );
-		
-	}
+
+	} // on_activated_plugin
 
 	/**
 	 * Plugin is deactivated
@@ -844,9 +983,9 @@ class SimplePluginLogger extends SimpleLogger
 	 */
 	function on_deactivated_plugin($plugin_name) {
 
-		$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin_name );
+		$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin_name, true, false );
 		$plugin_slug = dirname( $plugin_name );
-		
+
 		$context = array(
 			"plugin_name" => $plugin_data["Name"],
 			"plugin_slug" => $plugin_slug,
@@ -857,9 +996,13 @@ class SimplePluginLogger extends SimpleLogger
 			"plugin_url" => $plugin_data["PluginURI"],
 		);
 
+		if ( ! empty( $plugin_data["GitHub Plugin URI"] ) ) {
+			$context["plugin_github_url"] = $plugin_data["GitHub Plugin URI"];
+		}
+
 		$this->infoMessage( 'plugin_deactivated', $context );
 
-	}
+	} // on_deactivated_plugin
 
 
 	/**
@@ -873,28 +1016,30 @@ class SimplePluginLogger extends SimpleLogger
 
 		// When a plugin is installed we show a bit more information
 		// We do it only on install because we don't want to clutter to log,
-		// and when something is installed the description is most useul for other 
+		// and when something is installed the description is most useul for other
 		// admins on the site
 		if ( "plugin_installed" === $message_key ) {
-	
-			if ( isset($context["plugin_description"]) ) {
+
+			if ( isset( $context["plugin_description"] ) ) {
 
 				// Description includes a link to author, remove that, i.e. all text after and including <cite>
 				$plugin_description = $context["plugin_description"];
-				$cite_pos = mb_strpos($plugin_description, "<cite>");
+				$cite_pos = strpos( $plugin_description, "<cite>" );
 				if ($cite_pos) {
-					$plugin_description = mb_strcut( $plugin_description, 0, $cite_pos );
+					$plugin_description = substr( $plugin_description, 0, $cite_pos );
 				}
 
 				// Keys to show
 				$arr_plugin_keys = array(
+					"plugin_description" => _x("Description", "plugin logger - detailed output", "simple-history"),
+					"plugin_install_source" => _x("Source", "plugin logger - detailed output install source", "simple-history"),
+					"plugin_install_source_file" => _x("Source file name", "plugin logger - detailed output install source", "simple-history"),
 					"plugin_version" => _x("Version", "plugin logger - detailed output version", "simple-history"),
-					"plugin_description" => "Description",
 					"plugin_author" => _x("Author", "plugin logger - detailed output author", "simple-history"),
 					"plugin_url" => _x("URL", "plugin logger - detailed output url", "simple-history"),
-					"plugin_requires" => _x("Requires", "plugin logger - detailed output author", "simple-history"),
-					"plugin_tested" => _x("Compatible up to", "plugin logger - detailed output compatible", "simple-history"),
-					"plugin_downloaded" => _x("Downloads", "plugin logger - detailed output downloaded", "simple-history"),
+					#"plugin_downloaded" => _x("Downloads", "plugin logger - detailed output downloaded", "simple-history"),
+					#"plugin_requires" => _x("Requires", "plugin logger - detailed output author", "simple-history"),
+					#"plugin_tested" => _x("Compatible up to", "plugin logger - detailed output compatible", "simple-history"),
 					// also available: plugin_rating, plugin_num_ratings
 				);
 
@@ -904,11 +1049,13 @@ class SimplePluginLogger extends SimpleLogger
 				$output .= "<table class='SimpleHistoryLogitem__keyValueTable'>";
 
 				foreach ( $arr_plugin_keys as $key => $desc ) {
-					
-					switch ($key) {
+
+					$desc_output = "";
+
+					switch ( $key ) {
 
 						case "plugin_downloaded":
-							$desc_output = esc_attr( number_format_i18n( (int) $context[ $key ] ) );
+							$desc_output = esc_html( number_format_i18n( (int) $context[ $key ] ) );
 							break;
 
 						// author is already formatted
@@ -918,16 +1065,52 @@ class SimplePluginLogger extends SimpleLogger
 
 						// URL needs a link
 						case "plugin_url":
-							$desc_output = sprintf('<a href="%1$s">%1$s</a>', esc_attr( $context["plugin_url"] ));
-							break;			
+							$desc_output = sprintf('<a href="%1$s">%2$s</a>', esc_attr( $context["plugin_url"] ), esc_html( $context["plugin_url"] ));
+							break;
 
 						case "plugin_description":
 							$desc_output = $plugin_description;
 							break;
 
+						case "plugin_install_source":
+
+							if ( ! isset( $context[ $key ] ) ) {
+								continue;
+							}
+
+							if ( "web" == $context[ $key ] ) {
+								$desc_output = esc_html( __("WordPress Plugin Repository", "simple-history") );
+							} else if ( "upload" == $context[ $key ] ) {
+								#$plugin_upload_name = isset( $context["plugin_upload_name"] ) ? $context["plugin_upload_name"] : __("Unknown archive name", "simple-history");
+								$desc_output = esc_html( __('Uploaded ZIP archive', "simple-history") );
+								#$desc_output = esc_html( sprintf( __('Uploaded ZIP archive (%1$s)', "simple-history"), $plugin_upload_name ) );
+								#$desc_output = esc_html( sprintf( __('%1$s (uploaded ZIP archive)', "simple-history"), $plugin_upload_name ) );
+							} else {
+								$desc_output = esc_html( $context[ $key ] );
+							}
+
+							break;
+
+						case "plugin_install_source_file":
+
+							if ( ! isset( $context["plugin_upload_name"] ) || ! isset( $context["plugin_install_source"] ) ) {
+								continue;
+							}
+
+							if ( "upload" == $context["plugin_install_source"] ) {
+								$plugin_upload_name = $context["plugin_upload_name"];
+								$desc_output = esc_html( $plugin_upload_name );
+							}
+
+							break;
+
 						default;
 							$desc_output = esc_html( $context[ $key ] );
 							break;
+					}
+
+					if ( ! trim( $desc_output ) ) {
+						continue;
 					}
 
 					$output .= sprintf(
@@ -943,9 +1126,16 @@ class SimplePluginLogger extends SimpleLogger
 
 				}
 
-				$plugin_slug = ! empty($context["plugin_slug"]) ? $context["plugin_slug"] : "";
-				if ( $plugin_slug ) {
-				
+				// Add link with more info about the plugin
+				// If plugin_install_source	= web then it should be a wordpress.org-plugin
+				// If plugin_github_url is set then it's a zip from a github thingie
+				// so use link to that.
+
+				$plugin_slug = ! empty( $context["plugin_slug"] ) ? $context["plugin_slug"] : "";
+
+				// Slug + web as install source = show link to wordpress.org
+				if ( $plugin_slug && isset( $context["plugin_install_source"] ) && $context["plugin_install_source"] == "web" ) {
+
 					$output .= sprintf(
 						'
 						<tr>
@@ -958,6 +1148,25 @@ class SimplePluginLogger extends SimpleLogger
 					);
 
 				}
+				// GitHub plugin url set = show link to github repo
+				else if ( isset( $context["plugin_install_source"] ) && $context["plugin_install_source"] == "upload" && ! empty( $context["plugin_github_url"] ) ) {
+
+					// Can't embed iframe
+					// Must use API instead
+					// https://api.github.com/repos/<username>/<repo>/readme?callback=<callbackname>
+
+					$output .= sprintf(
+						'
+						<tr>
+							<td></td>
+							<td><a title="%2$s" class="thickbox" href="%1$s">%2$s</a></td>
+						</tr>
+						',
+						admin_url(sprintf('admin-ajax.php?action=SimplePluginLogger_GetGitHubPluginInfo&getrepo&amp;repo=%1$s&amp;TB_iframe=true&amp;width=640&amp;height=550', esc_url_raw( $context["plugin_github_url"] ) ) ),
+						esc_html_x("View plugin info", "plugin logger: plugin info thickbox title view all info", "simple-history")
+					);
+
+				}
 
 				$output .= "</table>";
 
@@ -965,31 +1174,51 @@ class SimplePluginLogger extends SimpleLogger
 
 		} elseif ( "plugin_bulk_updated" === $message_key || "plugin_updated" === $message_key || "plugin_activated" === $message_key || "plugin_deactivated" === $message_key ) {
 
-			$plugin_slug = !empty($context["plugin_slug"]) ? $context["plugin_slug"] : "";
+			$plugin_slug = ! empty( $context["plugin_slug"] ) ? $context["plugin_slug"] : "";
 
-			if ($plugin_slug) {
-	
+			if ( $plugin_slug && empty( $context["plugin_github_url"] ) ) {
+
 				$link_title = esc_html_x("View plugin info", "plugin logger: plugin info thickbox title", "simple-history");
 				$url = admin_url( "plugin-install.php?tab=plugin-information&amp;plugin={$plugin_slug}&amp;section=&amp;TB_iframe=true&amp;width=640&amp;height=550" );
-				
+
 				if ( "plugin_updated" == $message_key || "plugin_bulk_updated" == $message_key ) {
+
 					$link_title = esc_html_x("View changelog", "plugin logger: plugin info thickbox title", "simple-history");
-					$url = admin_url( "plugin-install.php?tab=plugin-information&amp;plugin={$plugin_slug}&amp;section=changelog&amp;TB_iframe=true&amp;width=772&amp;height=550" );
+					
+					if ( is_multisite() ) {
+						$url = network_admin_url( "plugin-install.php?tab=plugin-information&amp;plugin={$plugin_slug}&amp;section=changelog&amp;TB_iframe=true&amp;width=772&amp;height=550" );
+					} else {
+						$url = admin_url( "plugin-install.php?tab=plugin-information&amp;plugin={$plugin_slug}&amp;section=changelog&amp;TB_iframe=true&amp;width=772&amp;height=550" );
+					}
+
 				}
-				
+
 				$output .= sprintf(
 					'<p><a title="%2$s" class="thickbox" href="%1$s">%2$s</a></p>',
 					$url,
-					$link_title	
+					$link_title
+				);
+
+			} else if ( ! empty( $context["plugin_github_url"] ) ) {
+
+				$output .= sprintf(
+					'
+					<tr>
+						<td></td>
+						<td><a title="%2$s" class="thickbox" href="%1$s">%2$s</a></td>
+					</tr>
+					',
+					admin_url(sprintf('admin-ajax.php?action=SimplePluginLogger_GetGitHubPluginInfo&getrepo&amp;repo=%1$s&amp;TB_iframe=true&amp;width=640&amp;height=550', esc_url_raw( $context["plugin_github_url"] ) ) ),
+					esc_html_x("View plugin info", "plugin logger: plugin info thickbox title view all info", "simple-history")
 				);
 
 			}
+
 
 		} // if plugin_updated
 
 		return $output;
 
-	}
+	} // getLogRowDetailsOutput
 
-
-}
+} // class SimplePluginLogger

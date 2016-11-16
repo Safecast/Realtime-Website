@@ -128,3 +128,7 @@ body.map footer {
 #content #bodyContent a {
 	clear:both;
 }
+
+.author_info {
+    text-align: left;
+}

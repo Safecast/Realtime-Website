@@ -1,21 +1,21 @@
 === Easy Maintenance Mode ===
-Contributors: a.ankit, deepeshpaliwal
-Donate link: http://www.webriti.com/
+Contributors: a.ankit
+Donate link: http://easycomingsoon.com/
 Tags:  maintenance, maintenance mode, coming soon, coming soon page, construction, landing page, launch, launch page, newsletter, offline, unavailable, under construction, wordpress coming soon, wordpress maintenance mode, wordpress under construction
 Requires at least: 3.3+
-Tested up to: 3.9
-Stable tag: 0.7
+Tested up to: 4.6
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Easy maintenace mode plugin allow to display a Maintenance Mode page to your visitors Work on your website also provide social network connectivity.
+Easy maintenance mode plugin allow to display a Maintenance Mode page to your visitors Work on your website also provide social network connectivity.
 
 == Description ==
 
 The **Easy maintenance Mode** plugin allows to you quckly create a maintenance page or under construction page for your wordpress website.  Simply activate the plugin, Setup Page Title , Description and then your page is ready to go. 
 
-* [Upgrade to the Pro Version &raquo;](http://webriti.com/easy-coming-soon-pro-detail-page)
-* [View Coming Soon Pro Live Demo &raquo;](http://webriti.com/coming-soon-demo-select)
+* [Upgrade to the Pro Version &raquo;](http://easycomingsoon.com)
+* [View Coming Soon Pro Live Demo &raquo;](http://easycomingsoon.com/demos/)
 
 ### Features And Options:
 
@@ -66,8 +66,8 @@ The **Easy maintenance Mode** plugin allows to you quckly create a maintenance p
 * And lot's more... 
 
 
-* [Upgrade to the Pro Version &raquo;](http://webriti.com/easy-coming-soon-pro-detail-page)
-* [View Coming Soon Pro Live Demo &raquo;](http://webriti.com/coming-soon-demo-select)
+* [Upgrade to the Pro Version &raquo;](http://easycomingsoon.com/)
+* [View Coming Soon Pro Live Demo &raquo;](http://easycomingsoon.com/demos/)
  
 
 
@@ -96,6 +96,37 @@ The **Easy maintenance Mode** plugin allows to you quckly create a maintenance p
 
 
 == Changelog ==
+
+= 1.4.1 =
+1. Fixed localization issue.
+
+= 1.4 =
+1. Added support for localization.
+
+= 1.3.2 =
+1. Test WordPress version 4.6 compatibility.
+
+= 1.3.1 =
+1. Updated Upgrade to Pro link.
+= 1.3 =
+1. adding pricing tab file and update all links.
+
+= 1.2.3 =
+1. deprecated function get_currentuserinfo() in 4.5 version. and remove it.
+
+= 1.2.2 =
+1. Updated upload media code for fixing background image url issue.
+
+= 1.2.1 =
+Added nonce for applying security 
+= 1.2 =
+Changed video url.
+= 1.1 =
+1. Simplfied option panel
+2. Added video link.
+= 1.0 =
+1. Optin panel Revamp.
+2. Compatibility with latest wordpress version
 
 = 0.7 =
 1. Add Google Analytics Support.

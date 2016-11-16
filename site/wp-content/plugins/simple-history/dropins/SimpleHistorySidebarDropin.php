@@ -1,4 +1,7 @@
 <?php
+
+defined( 'ABSPATH' ) or die();
+
 /*
 Dropin Name: Sidebar
 Drop Description: Outputs HTML and filters for a sidebar
@@ -94,20 +97,40 @@ class SimpleHistorySidebarDropin {
 		*/
 
 		// Box about possible events missing
-		$boxMissingEvents = '
+		$boxMissingEvents = sprintf( '
 			<div class="postbox">
-				<h3 class="hndle">Missing events?</h3>
+				<h3 class="hndle">%1$s</h3>
 				<div class="inside">
-					<p>Do you think things are missing in the log? Let me know about it.</p>
+					<p>%2$s</p>
+					<p><a href="hello@simple-history.com">hello@simple-history.com</a></p>
 				</div>
 			</div>
-		';
-		//echo $boxMissingEvents;
+			', 
+			_x("Add more to the log", "Sidebar box", "simple-history"), // 1
+			_x("Are there things you miss in the history log?", "Sidebar box", "simple-history") // 2
+		);
+
+
+		// Box about support
+		$boxSupport = sprintf( '
+			<div class="postbox">
+				<h3 class="hndle">%1$s</h3>
+				<div class="inside">
+					<p>%2$s</p>
+				</div>
+			</div>
+			', 
+			_x("Support", "Sidebar box", "simple-history"), // 1
+			sprintf( _x('<a href="%1$s">Visit the support forum</a> if you need help or have questions.', "Sidebar box", "simple-history"), 'https://wordpress.org/support/plugin/simple-history' ) // 2
+		);
+
 
 		$arrBoxes = array(
 			"boxReview" => $boxReview, 
+			"boxSupport" => $boxSupport,
+			// "boxMissingEvents" => $boxMissingEvents,
 			"boxDonate" => $boxDonate,
-			"boxGithub" => $boxGithub,
+			// "boxGithub" => $boxGithub,
 		);
 
 		/**
@@ -124,10 +147,15 @@ class SimpleHistorySidebarDropin {
 
 		// Box to encourage people translate plugin
 		$current_locale = get_locale();
-		if ("en_US" != $current_locale) {
 
-			/** WordPress Translation Install API */
-			require_once ABSPATH . 'wp-admin/includes/translation-install.php';
+		/** WordPress Translation Install API. This file exists only since 4.0. */
+		$translation_install_file = ABSPATH . 'wp-admin/includes/translation-install.php';
+		
+		// Show only the translation box if current language is not an english language
+
+		if ( in_array( $current_locale, array("en_US", "en_GB", "en_CA", "en_NZ", "en_AU") ) != $current_locale && file_exists( $translation_install_file ) ) {
+
+			require_once $translation_install_file;
 			
 			$translations = wp_get_available_translations();
 
@@ -164,7 +192,8 @@ class SimpleHistorySidebarDropin {
 				}
 
 			}
-		}
+
+		} // if not en_US + translation install file exists
 
 	}
 
@@ -183,7 +212,7 @@ class SimpleHistorySidebarDropin {
 
 		$file_url = plugin_dir_url(__FILE__);
 
-		wp_enqueue_style("simple_history_SidebarDropin", $file_url . "SimpleHistorySidebarDropin.css", null, SimpleHistory::VERSION);
+		wp_enqueue_style("simple_history_SidebarDropin", $file_url . "SimpleHistorySidebarDropin.css", null, SIMPLE_HISTORY_VERSION);
 
 	}
 

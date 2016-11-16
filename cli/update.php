@@ -66,16 +66,24 @@ require_once(dirname(__FILE__).'/vendor/autoload.php');
 require_once(dirname(__FILE__).'/updateSensorsMeasurements.php');
 require_once(dirname(__FILE__).'/updateSensorsPlots.php');
 require_once(dirname(__FILE__).'/updateSensorsListFile.php');
+require_once(dirname(__FILE__).'/updateSensorsListCSV.php');
 
 try {
 	/* Update sensors measurements in Wordpress */
 	updateSensorsMeasurements();
 
 	/* Overwrite the Makefile.config file */
+
 	updateSensorsPlots();
 
 	/* Update the JSON sensor list file */
-	updateSensorsListFile();
+
+       updateSensorsListFile();
+
+	/* Update the  CSV file for  DRE2CPM   */
+
+	updateSensorsListCSV();
+
 } catch (Exception $e) {
 	printf("Error : %s\n", $e->getMessage());
 }

@@ -1,0 +1,1 @@
+/var/www/ngeigie-web/site/wp-content/plugins/query-monitor/wp-content/db.php

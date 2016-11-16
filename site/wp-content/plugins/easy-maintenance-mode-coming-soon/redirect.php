@@ -39,8 +39,8 @@
 	            if (is_user_logged_in() )
                 {
                     //get logined in user role
-		            global $current_user;
-		            get_currentuserinfo();
+		            global $current_user; /* Global variable already have the current user info so need to call get_currentuserinfo or wp_get_current_user */
+		            // get_currentuserinfo(); /* Function is deprecated in the version 4.5 and above new function wp_get_current_user added */
 		            $LoggedInUserID = $current_user->ID;
 		            $UserData = get_userdata( $LoggedInUserID );
 		            //if user role not 'administrator' redirect him to message page

@@ -2,7 +2,7 @@
 
 class UpdraftPlus_BackupModule_openstack_base {
 
-	protected $chunk_size = 5242880;
+	protected $chunk_size;
 
 	protected $client;
 	protected $method;
@@ -19,8 +19,12 @@ class UpdraftPlus_BackupModule_openstack_base {
 
 	public function backup($backup_array) {
 
-		global $updraftplus, $updraftplus_backup;
+		global $updraftplus;
 
+		$default_chunk_size = (defined('UPDRAFTPLUS_UPLOAD_CHUNKSIZE') && UPDRAFTPLUS_UPLOAD_CHUNKSIZE > 0) ? max(UPDRAFTPLUS_UPLOAD_CHUNKSIZE, 1048576) : 5242880;
+
+		$this->chunk_size = $updraftplus->jobdata_get('openstack_chunk_size', $default_chunk_size);
+		
 		$opts = $this->get_opts();
 
 		$this->container = $opts['path'];
@@ -46,7 +50,11 @@ class UpdraftPlus_BackupModule_openstack_base {
 		}
 
 		foreach ($backup_array as $key => $file) {
-
+		
+			$file_key = 'openstack_status_'.md5($file);
+			$file_status = $updraftplus->jobdata_get($file_key);
+			if (is_array($file_status) && !empty($file_status['chunks']) && !empty($file_status['chunks'][1]['size'])) $this->chunk_size = $file_status['chunks'][1]['size'];
+		
 			# First, see the object's existing size (if any)
 			$uploaded_size = $this->get_remote_size($file);
 
@@ -152,15 +160,59 @@ class UpdraftPlus_BackupModule_openstack_base {
 			return true;
 
 		} catch (Exception $e) {
+			global $updraftplus;
+			$updraftplus->log("Error when sending manifest (".get_class($e)."): ".$e->getMessage());
 			return false;
 		}
 	}
 
-	public function chunked_upload($file, $fp, $i, $upload_size, $upload_start, $upload_end) {
+	// N.B. Since we use varying-size chunks, we must be careful as to what we do with $chunk_index
+	public function chunked_upload($file, $fp, $chunk_index, $upload_size, $upload_start, $upload_end, $total_file_size) {
 
 		global $updraftplus;
 
-		$upload_remotepath = 'chunk-do-not-delete-'.$file.'_'.$i;
+		$file_key = 'openstack_status_'.md5($file);
+		$file_status = $updraftplus->jobdata_get($file_key);
+		
+		$next_chunk_size = $upload_size;
+		
+		$bytes_already_uploaded = 0;
+		
+		$last_uploaded_chunk_index = 0;
+		
+		// Once a chunk is uploaded, its status is set, allowing the sequence to be reconstructed
+		if (is_array($file_status) && isset($file_status['chunks']) && !empty($file_status['chunks'])) {
+			foreach ($file_status['chunks'] as $c_id => $c_status) {
+				if ($c_id > $last_uploaded_chunk_index) $last_uploaded_chunk_index = $c_id;
+				if ($chunk_index + 1 == $c_id) {
+					$next_chunk_size = $c_status['size'];
+				}
+				$bytes_already_uploaded += $c_status['size'];
+			}
+		} else {
+			$file_status = array('chunks' => array());
+		}
+		
+		$updraftplus->jobdata_set($file_key, $file_status);
+		
+		if ($upload_start < $bytes_already_uploaded) {
+			if ($next_chunk_size != $upload_size) {
+				$response = new stdClass;
+				$response->new_chunk_size = $upload_size;
+				$response->log = false;
+				return $response;
+			} else {
+				return 1;
+			}
+		}
+		
+		// Shouldn't be able to happen
+		if ($chunk_index <= $last_uploaded_chunk_index) {
+			$updraftplus->log($this->desc.": Chunk sequence error; chunk_index=$chunk_index, last_uploaded_chunk_index=$last_uploaded_chunk_index, upload_start=$upload_start, upload_end=$upload_end, file_status=".json_encode($file_status));
+		}
+		
+		// Used to use $chunk_index here, before switching to variable chunk sizes
+		$upload_remotepath = 'chunk-do-not-delete-'.$file.'_'.sprintf("%016d", $chunk_index);
 
 		$remote_size = $this->get_remote_size($upload_remotepath);
 
@@ -169,15 +221,37 @@ class UpdraftPlus_BackupModule_openstack_base {
 		// $chunk_object->headers = array('Expect' => '');
 
 		if ($remote_size >= $upload_size) {
-			$updraftplus->log($this->desc.": Chunk $i ($upload_start - $upload_end): already uploaded");
+			$updraftplus->log($this->desc.": Chunk ($upload_start - $upload_end, $chunk_index): already uploaded");
 		} else {
-			$updraftplus->log($this->desc.": Chunk $i ($upload_start - $upload_end): begin upload");
+			$updraftplus->log($this->desc.": Chunk ($upload_start - $upload_end, $chunk_index): begin upload");
 			// Upload the chunk
 			try {
 				$data = fread($fp, $upload_size);
+				$time_start = microtime(true);
 				$this->container_object->uploadObject($upload_remotepath, $data);
+				$time_now = microtime(true);
+				$time_taken = $time_now - $time_start;
+				if ($next_chunk_size < 52428800 && $total_file_size > 0 && $upload_end + 1 < $total_file_size) {
+					$job_run_time = $time_now - $updraftplus->job_time_ms;
+					if ($time_taken < 10) {
+						$upload_rate = $upload_size / max($time_taken, 0.0001);
+						$upload_secs = min(floor($job_run_time), 10);
+						if ($job_run_time < 15) $upload_secs = max(6, $job_run_time*0.6);
+						
+						// In megabytes
+						$memory_limit_mb = $updraftplus->memory_check_current();
+						$bytes_used = memory_get_usage();
+						$bytes_free = $memory_limit_mb * 1048576 - $bytes_used;
+						
+						$new_chunk = max(min($upload_secs * $upload_rate * 0.9, 52428800, $bytes_free), 5242880);
+						$new_chunk = $new_chunk - ($new_chunk % 5242880);
+						$next_chunk_size = (int)$new_chunk;
+						$updraftplus->jobdata_set('openstack_chunk_size', $next_chunk_size);
+					}
+				}
+				
 			} catch (Exception $e) {
-				$updraftplus->log($this->desc." chunk upload: error: ($file / $i) (".$e->getMessage().") (line: ".$e->getLine().', file: '.$e->getFile().')');
+				$updraftplus->log($this->desc." chunk upload: error: ($file / $chunk_index) (".$e->getMessage().") (line: ".$e->getLine().', file: '.$e->getFile().')');
 				// Experience shows that Curl sometimes returns a select/poll error (curl error 55) even when everything succeeded. Google seems to indicate that this is a known bug.
 				
 				$remote_size = $this->get_remote_size($upload_remotepath);
@@ -190,11 +264,23 @@ class UpdraftPlus_BackupModule_openstack_base {
 				}
 			}
 		}
+		
+		$file_status['chunks'][$chunk_index]['size'] = $upload_size;
+
+		$updraftplus->jobdata_set($file_key, $file_status);
+		
+		if ($next_chunk_size != $upload_size) {
+			$response = new stdClass;
+			$response->new_chunk_size = $next_chunk_size;
+			$response->log = true;
+			return $response;
+		}
+		
 		return true;
 	}
 
 
-	public function delete($files, $data = false) {
+	public function delete($files, $data = false, $sizeinfo = array()) {
 
 		global $updraftplus;
 		if (is_string($files)) $files = array($files);
@@ -264,32 +350,6 @@ class UpdraftPlus_BackupModule_openstack_base {
 			}
 		}
 		return $ret;
-	}
-
-	public function config_print_javascript_onready($keys = array()) {
-		?>
-		jQuery('#updraft-<?php echo $this->method;?>-test').click(function(){
-			jQuery(this).html('<?php echo esc_js(__('Testing - Please Wait...','updraftplus'));?>');
-			var data = {
-				action: 'updraft_ajax',
-				subaction: 'credentials_test',
-				method: '<?php echo $this->method;?>',
-				nonce: '<?php echo wp_create_nonce('updraftplus-credentialtest-nonce'); ?>',
-				path: jQuery('#updraft_<?php echo $this->method;?>_path').val(),
-				<?php
-					foreach ($keys as $key) {
-						echo "\t\t\t\t$key: jQuery('#updraft_".$this->method."_$key').val(),\n";
-					}
-				?>
-				useservercerts: jQuery('#updraft_ssl_useservercerts').val(),
-				disableverify: jQuery('#updraft_ssl_disableverify').val()
-			};
-			jQuery.post(ajaxurl, data, function(response) {
-				jQuery('#updraft-<?php echo $this->method;?>-test').html('<?php echo esc_js(sprintf(__('Test %s Settings','updraftplus'), $this->desc));?>');
-				alert('<?php echo esc_js(sprintf(__('%s settings test result:', 'updraftplus'), $this->desc));?> ' + response);
-			});
-		});
-		<?php
 	}
 
 	public function download($file) {
@@ -372,13 +432,13 @@ class UpdraftPlus_BackupModule_openstack_base {
 			} else {
 				echo __('Authorisation failed (check your credentials)', 'updraftplus')." ($code:$reason)";
 			}
-			die;
+			return;
 		} catch(AuthenticationError $e) {
 			echo sprintf(__('%s authentication failed', 'updraftplus'), $this->desc).' ('.$e->getMessage().')';
-			die;
+			return;
 		} catch (Exception $e) {
 			echo sprintf(__('%s authentication failed', 'updraftplus'), $this->desc).' ('.get_class($e).', '.$e->getMessage().')';
-			die;
+			return;
 		}
 
 		try {
@@ -391,16 +451,16 @@ class UpdraftPlus_BackupModule_openstack_base {
 				$container_object = $service->createContainer($container);
 			} else {
 				echo __('Authorisation failed (check your credentials)', 'updraftplus')." ($code:$reason)";
-				die;
+				return;
 			}
 		} catch (Exception $e) {
 			echo sprintf(__('%s authentication failed', 'updraftplus'), $this->desc).' ('.get_class($e).', '.$e->getMessage().')';
-			die;
+			return;
 		}
 
 		if (!is_a($container_object, 'OpenCloud\ObjectStore\Resource\Container') && !is_a($container_object, 'Container')) {
 			echo sprintf(__('%s authentication failed', 'updraftplus'), $this->desc).' ('.get_class($container_object).')';
-			die;
+			return;
 		}
 
 		$try_file = md5(rand()).'.txt';
@@ -461,7 +521,7 @@ class UpdraftPlus_BackupModule_openstack_base {
 
 		<tr class="updraftplusmethod <?php echo $this->method;?>">
 		<th></th>
-		<td><p><button id="updraft-<?php echo $this->method;?>-test" type="button" class="button-primary" style="font-size:18px !important"><?php echo sprintf(__('Test %s Settings','updraftplus'), $this->desc);?></button></p></td>
+		<td><p><button id="updraft-<?php echo $this->method;?>-test" type="button" data-method="<?php echo $this->method;?>" class="button-primary updraft-test-button" data-method_label="<?php esc_attr_e($this->desc);?>"><?php echo sprintf(__('Test %s Settings','updraftplus'), $this->desc);?></button></p></td>
 		</tr>
 	<?php
 	}

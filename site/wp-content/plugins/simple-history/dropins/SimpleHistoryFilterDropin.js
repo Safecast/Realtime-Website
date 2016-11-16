@@ -10,11 +10,19 @@ var SimpleHistoryFilterDropin = (function($) {
 
 	function init() {
 
+		addElements();
 		addFetchListener();
 
 	}
 
 	function onDomReadyInit() {
+
+		enhanceSelects();
+		addListeners();
+
+	}
+
+	function addElements() {
 
 		$elms.filter_container = $(".SimpleHistory__filters");
 		$elms.filter_user = $elms.filter_container.find(".SimpleHistory__filters__filter--user");
@@ -22,9 +30,6 @@ var SimpleHistoryFilterDropin = (function($) {
 		$elms.filter_form = $elms.filter_container.find(".js-SimpleHistory__filters__form");
 		$elms.show_more_filters_button = $elms.filter_container.find(".js-SimpleHistoryFilterDropin-showMoreFilters");
 		$elms.more_filters_container = $elms.filter_container.find(".js-SimpleHistory__filters__moreFilters");
-
-		enhanceSelects();
-		addListeners();
 
 	}
 
@@ -36,23 +41,29 @@ var SimpleHistoryFilterDropin = (function($) {
 	}
 
 	function onClickMoreFilters() {
-		
+
 		//$elms.more_filters_container.toggleClass("is-visible");
 		$elms.filter_container.toggleClass("is-showingMoreFilters");
 
 	}
 
-	function onSubmitForm(e) {
-
-		e.preventDefault();
+	function updateFilters() {
 
 		// form serialize
-		// search=apa&loglevels=critical&loglevels=alert&loggers=SimpleMediaLogger&loggers=SimpleMenuLogger&user=1&months=2014-09 SimpleHistoryFilterDropin.js?ver=2.0:40
+		// search=apa&loglevels=critical&loglevels=alert&loggers=SimpleMediaLogger&loggers=SimpleMenuLogger&user=1&dates=2014-09 SimpleHistoryFilterDropin.js?ver=2.0:40
 		var $search = $elms.filter_form.find("[name='search']");
 		var $loglevels = $elms.filter_form.find("[name='loglevels']");
 		var $messages = $elms.filter_form.find("[name='messages']");
-		var $user = $elms.filter_form.find("[name='user']");
-		var $months = $elms.filter_form.find("[name='months']");
+		var $users = $elms.filter_form.find("[name='users']");
+		var $dates = $elms.filter_form.find("[name='dates']");
+
+		// Custom date range
+		var $customDateRangeFromMM = $elms.filter_form.find("[name='from_mm']");
+		var $customDateRangeFromJJ = $elms.filter_form.find("[name='from_jj']");
+		var $customDateRangeFromAA = $elms.filter_form.find("[name='from_aa']");
+		var $customDateRangeToMM = $elms.filter_form.find("[name='to_mm']");
+		var $customDateRangeToJJ = $elms.filter_form.find("[name='to_jj']");
+		var $customDateRangeToAA = $elms.filter_form.find("[name='to_aa']");
 
 		// If any of our search boxes are filled in we consider ourself to be in search mode
 		isFilteringActive = false;
@@ -73,18 +84,32 @@ var SimpleHistoryFilterDropin = (function($) {
 			activeFilters.messages = $messages.val();
 		}
 
-		if ( $.trim( $user.val() )) {
+		if ( $.trim( $users.val() )) {
 			isFilteringActive = true;
-			activeFilters.user = $user.val();
+			activeFilters.users = $users.val();
 		}
 
-		if ( $months.val() && $months.val().length ) {
-			isFilteringActive = true;
-			activeFilters.months = $months.val();
-		}
+		// Something is selected in the Dates dropdown
+		if ( $dates.val() && $dates.val().length ) {
 
-		//console.log( "filtering is active:", isFilteringActive );
-		// console.log($search.val(), $loglevels.val(), $loggers.val(), $user.val(), $months.val());
+			isFilteringActive = true;
+
+			// if dates val is selected but is "customRange" then dates is not active, but dateRange is
+			if ("customRange" == $dates.val()) {
+				activeFilters.date_from = $customDateRangeFromAA.val() + "-" + $customDateRangeFromMM.val() + "-" + $customDateRangeFromJJ.val() + " 00:00:00";
+				activeFilters.date_to = $customDateRangeToAA.val() + "-" + $customDateRangeToMM.val() + "-" + $customDateRangeToJJ.val() + " 23:59:59";
+			} else {
+				activeFilters.dates = $dates.val();
+			}
+
+		}
+	}
+
+	function onSubmitForm(e) {
+
+		e.preventDefault();
+
+		// updateFilters();
 
 		// Reload the log rows collection
 		simple_history.logRowsCollection.reload();
@@ -116,7 +141,10 @@ var SimpleHistoryFilterDropin = (function($) {
 
 	}
 
+	// called each time the log is reloaded
 	function modifyFetchData(collection, url_data) {
+
+		updateFilters();
 
 		if (isFilteringActive) {
 
@@ -149,16 +177,32 @@ var SimpleHistoryFilterDropin = (function($) {
 				}
 			},
 			formatResult: formatUsers,
+			initSelection: function(elm, callback) {
+
+				// called on init if value attribute on input is set
+
+				var $elm = $(elm);
+				var value = $elm.val();
+				var default_user_data = $elms.filter_user.data("default-user-data");
+
+				callback(default_user_data);
+
+			},
 			formatSelection: formatUsers,
-			escapeMarkup: function(m) { return m; }
+			escapeMarkup: function(m) {
+				return m;
+			},
+			multiple: true
 		});
 
 		$(".SimpleHistory__filters__filter--logger").select2({
 		});
 
-		$(".SimpleHistory__filters__filter--date").select2({
+		var $filterDate = $(".SimpleHistory__filters__filter--date");
+		$filterDate.select2({
 			//width: "element"
 		});
+		$filterDate.on("select2-selecting change", onDatesFilterSelect);
 
 		$(".SimpleHistory__filters__filter--loglevel").select2({
 			formatResult: formatLoglevel,
@@ -168,9 +212,31 @@ var SimpleHistoryFilterDropin = (function($) {
 
 	}
 
+	/**
+	 * Fired when something is selected in the date filter
+	 * When "Custom range..." is selected then we show the "from" .. "to" date fields
+	 */
+	function onDatesFilterSelect(e, elm) {
+
+		var $filterDate = $("select.SimpleHistory__filters__filter--date");
+		var val = $filterDate.val();
+
+		if (val === "customRange") {
+			// show custom date fields
+			$elms.filter_container.addClass("is-customDateFilterActive");
+		} else {
+			// hide custom date fields
+			$elms.filter_container.removeClass("is-customDateFilterActive");
+		}
+
+
+
+	}
+
 	function formatUsers(userdata) {
 
 		var html = "";
+
 		html += "<div class='SimpleHistory__filters__userfilter__gravatar'>";
 		html += userdata.gravatar;
 		html += "</div>";
@@ -180,6 +246,7 @@ var SimpleHistoryFilterDropin = (function($) {
 		html += "<div class='SimpleHistory__filters__userfilter__secondary'>";
 		html += userdata.user_login;
 		html += "</div>";
+
 		return html;
 
 	}
@@ -197,7 +264,8 @@ var SimpleHistoryFilterDropin = (function($) {
 
 	return {
 		init: init,
-		onDomReadyInit: onDomReadyInit
+		onDomReadyInit: onDomReadyInit,
+		$elms: $elms
 	};
 
 })(jQuery);

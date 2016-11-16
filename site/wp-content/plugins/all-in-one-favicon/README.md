@@ -3,20 +3,20 @@ Contributors: techotronic
 Donate link: http://www.techotronic.de/donate/  
 Tags: theme, favicon, admin, blog, wordpress, image, images, graphic, graphics, icon, iphone, multisite  
 Requires at least: 2.8  
-Tested up to: 3.3  
-Stable tag: 4.3
+Tested up to: 4.6.1 
+Stable tag: 4.5
 
 Easily add a Favicon to your site and the WordPress admin pages. Complete with upload functionality. Supports all three Favicon types (ico,png,gif).  
 
 ## Description ##
 
+[**To get even more email subscribers, use this plugin too!**](http://bit.ly/1zqOXPs)
+
 All In One Favicon adds favicons to your site and your admin pages.  
 You can either use favicons you already uploaded or use the builtin upload mechanism to upload a favicon to your WordPress installation.  
 
 All three favicon types are supported - .ico, .png and .gif (may be animated)  
-Also, Apple Touch Icons are supported.  
-
-See [plugin page](http://www.techotronic.de/plugins/all-in-one-favicon/) for more information, a "first steps" guide and screenshots.  
+Also, Apple Touch Icons are supported.   
 
 **Localization**  
 
@@ -93,9 +93,17 @@ Go to the settings page and and upload your Favicon(s) or add the path/URL to al
 
 ## Screenshots ##
 
-[Please visit my site for screenshots](http://www.techotronic.de/plugins/all-in-one-favicon/).
 
 ## Changelog ##
+
+### 4.5 (2016-11-06) ###
+* Some style tweaks to the settings page.
+* Fix unexpected output on plugin activation.
+
+### 4.4 (2016-10-26) ###
+* BUGFIX: Fix undefined index notices.
+* BUGFIX: Use __construct() for PHP7 compatibility.
+
 ### 4.3 (2012-02-21) ###
 * BUGFIX: File upload will now work in certain browsers, e.g. Internet Explorer and Safari 5
 * NEW: Portuguese translation by Miguel Ângelo Patricio

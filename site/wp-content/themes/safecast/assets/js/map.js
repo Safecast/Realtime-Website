@@ -12,7 +12,7 @@
                     '<img class="img-responsive" src="'+graphPath+id+'_small.png" />'+
                     '</div>'+
                     '</div>',
-            maxWidth: 400
+            maxWidth: 480
         });
 
         var marker = new google.maps.Marker({

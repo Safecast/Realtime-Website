@@ -22,6 +22,7 @@
 
 	$status      = $langIsJap ? 'オンライン' : 'Online';
 	$statusClass = 'info';
+	$alarm	     =get_post_meta(get_the_ID(), 'alarm', true);
 
 	if ($lastTimeSince >= TIME_OFFLINE_LONG) {
 		$status      = $langIsJap ? 'オフライン（長）' : 'Offline long';
@@ -35,6 +36,7 @@
 	$download  = $langIsJap ? '詳細データ' : 'More sensor data';
 	$uploadDir = wp_upload_dir();
 	$fileURI   = sprintf("https://api.safecast.org/en-US/devices/%s/measurements?order=captured_at+desc", $id);
+        $sensorType = get_post_meta(get_the_ID(), 'sensor_type', TRUE);
 ?>
 
 <div class="sensor-page-header container-fluid">
@@ -69,6 +71,10 @@
 					<div class="download">
 						<a href="<?php echo $fileURI; ?>" target="_blank"><?php echo $download; ?></a>
 					</div>
+                                      <div class="author_info">
+                                        Tube:<?php echo $sensorType ?> <br>           
+ 					Alarm:<?php echo $alarm ?><br>
+                                    </div>
 				</div>
 			</div>
 		</div>

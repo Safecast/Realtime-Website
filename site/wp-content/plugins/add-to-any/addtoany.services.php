@@ -82,12 +82,6 @@ $A2A_SHARE_SAVE_services = array(
 		"name" => "BlogMarks",
 		"icon" => "blogmarks",
 	),
-	"browser" => array(
-		"name" => "Bookmark/Favorites",
-		"icon" => "bookmark",
-		"href" => "javascript:if(document.all){window.external.AddFavorite('A2A_LINKURL','A2A_LINKNAME')}else{var b=a2a_config.localize.BookmarkInstructions || 'Press Ctrl+D to bookmark this page';alert(a2a_config.localize.BookmarkInstructions)}",
-		"href_js_esc" => "TRUE",
-	),
 	"bookmarks_fr" => array(
 		"name" => "Bookmarks.fr",
 		"icon" => "bookmarks_fr",
@@ -111,6 +105,10 @@ $A2A_SHARE_SAVE_services = array(
 	"citeulike" => array(
 		"name" => "CiteULike",
 		"icon" => "citeulike",
+	),
+	"copy_link" => array(
+		"name" => "Copy Link",
+		"icon" => "link",
 	),
 	"delicious" => array(
 		"name" => "Delicious",
@@ -140,6 +138,14 @@ $A2A_SHARE_SAVE_services = array(
 		"name" => "Diigo",
 		"icon" => "diigo",
 	),
+	"douban" => array(
+		"name" => "Douban",
+		"icon" => "douban",
+	),
+	"draugiem" => array(
+		"name" => "Draugiem",
+		"icon" => "draugiem",
+	),
 	"dzone" => array(
 		"name" => "DZone",
 		"icon" => "dzone",
@@ -151,6 +157,10 @@ $A2A_SHARE_SAVE_services = array(
 	"evernote" => array(
 		"name" => "Evernote",
 		"icon" => "evernote",
+	),
+	"facebook_messenger" => array(
+		"name" => "Facebook Messenger",
+		"icon" => "facebook_messenger",
 	),
 	"fark" => array(
 		"name" => "Fark",
@@ -164,13 +174,13 @@ $A2A_SHARE_SAVE_services = array(
 		"name" => "Folkd",
 		"icon" => "folkd",
 	),
-	"friendfeed" => array(
-		"name" => "FriendFeed",
-		"icon" => "friendfeed",
-	),
 	"google_bookmarks" => array(
 		"name" => "Google Bookmarks",
 		"icon" => "google",
+	),
+	"google_classroom" => array(
+		"name" => "Google Classroom",
+		"icon" => "google_classroom",
 	),
 	"google_gmail" => array(
 		"name" => "Google Gmail",
@@ -196,9 +206,17 @@ $A2A_SHARE_SAVE_services = array(
 		"name" => "Kakao",
 		"icon" => "kakao",
 	),
+	"kik" => array(
+		"name" => "Kik",
+		"icon" => "kik",
+	),
 	"kindle_it" => array(
 		"name" => "Kindle It",
 		"icon" => "kindle",
+	),
+	"known" => array(
+		"name" => "Known",
+		"icon" => "known",
 	),
 	"line" => array(
 		"name" => "Line",
@@ -236,10 +254,6 @@ $A2A_SHARE_SAVE_services = array(
 		"name" => "Netvouz",
 		"icon" => "netvouz",
 	),
-	"newstrust" => array(
-		"name" => "NewsTrust",
-		"icon" => "newstrust",
-	),
 	"newsvine" => array(
 		"name" => "NewsVine",
 		"icon" => "newsvine",
@@ -275,11 +289,6 @@ $A2A_SHARE_SAVE_services = array(
 	"print" => array(
 		"name" => "Print",
 		"icon" => "print",
-		"href" => "javascript:print()",
-	),
-	"print" => array(
-		"name" => "Print",
-		"icon" => "print",
 	),
 	"printfriendly" => array(
 		"name" => "PrintFriendly",
@@ -292,10 +301,6 @@ $A2A_SHARE_SAVE_services = array(
 	"pusha" => array(
 		"name" => "Pusha",
 		"icon" => "pusha",
-	),
-	"qq" => array(
-		"name" => "QQ",
-		"icon" => "qzone",
 	),
 	"qzone" => array(
 		"name" => "Qzone",
@@ -321,13 +326,17 @@ $A2A_SHARE_SAVE_services = array(
 		"name" => "SiteJot",
 		"icon" => "sitejot",
 	),
+	"skype" => array(
+		"name" => "Skype",
+		"icon" => "skype",
+	),
 	"slashdot" => array(
 		"name" => "Slashdot",
 		"icon" => "slashdot",
 	),
-	"springpad" => array(
-		"name" => "Springpad",
-		"icon" => "springpad",
+	"sms" => array(
+		"name" => "SMS",
+		"icon" => "sms",
 	),
 	"stumpedia" => array(
 		"name" => "Stumpedia",
@@ -340,6 +349,14 @@ $A2A_SHARE_SAVE_services = array(
 	"symbaloo_feeds" => array(
 		"name" => "Symbaloo Feeds",
 		"icon" => "symbaloo",
+	),
+	"telegram" => array(
+		"name" => "Telegram",
+		"icon" => "telegram",
+	),
+	"trello" => array(
+		"name" => "Trello",
+		"icon" => "trello",
 	),
 	"tuenti" => array(
 		"name" => "Tuenti",
@@ -357,6 +374,10 @@ $A2A_SHARE_SAVE_services = array(
 		"name" => "Viadeo",
 		"icon" => "viadeo",
 	),
+	"viber" => array(
+		"name" => "Viber",
+		"icon" => "viber",
+	),
 	"vk" => array(
 		"name" => "VK",
 		"icon" => "vk",
@@ -368,6 +389,10 @@ $A2A_SHARE_SAVE_services = array(
 	"webnews" => array(
 		"name" => "Webnews",
 		"icon" => "webnews",
+	),
+	"wechat" => array(
+		"name" => "WeChat",
+		"icon" => "wechat",
 	),
 	"wordpress" => array(
 		"name" => "WordPress",
@@ -406,4 +431,94 @@ $A2A_SHARE_SAVE_services = array(
 		"icon" => "yummly",
 	),
 
+);
+
+$A2A_FOLLOW_services = array(
+	
+	'facebook' => array( 
+		'name' => 'Facebook', 
+		'href' => 'https://www.facebook.com/${id}',	
+		'icon' => 'facebook', 
+	),
+	'twitter' => array( 
+		'name' => 'Twitter', 
+		'href' => 'https://twitter.com/${id}',	
+		'icon' => 'twitter', 
+	),
+	'instagram' => array( 
+		'name' => 'Instagram', 
+		'href' => 'https://www.instagram.com/${id}',	
+		'icon' => 'instagram', 
+	),
+	'pinterest' => array( 
+		'name' => 'Pinterest', 
+		'href' => 'https://www.pinterest.com/${id}',	
+		'icon' => 'pinterest', 
+	),
+	'behance' => array( 
+		'name' => 'Behance', 
+		'href' => 'https://www.behance.net/${id}',	
+		'icon' => 'behance', 
+	),
+	'flickr' => array( 
+		'name' => 'Flickr', 
+		'href' => 'https://www.flickr.com/photos/${id}',	
+		'icon' => 'flickr', 
+	),
+	'foursquare' => array( 
+		'name' => 'Foursquare', 
+		'href' => 'https://foursquare.com/${id}',	
+		'icon' => 'foursquare', 
+	),
+	'github' => array( 
+		'name' => 'GitHub', 
+		'href' => 'https://github.com/${id}',	
+		'icon' => 'github', 
+	),
+	'google_plus' => array( 
+		'name' => 'Google+', 
+		'href' => 'https://plus.google.com/${id}',	
+		'icon' => 'google_plus', 
+	),
+	'linkedin' => array( 
+		'name' => 'LinkedIn', 
+		'href' => 'https://www.linkedin.com/in/${id}',	
+		'icon' => 'linkedin', 
+	),
+	'linkedin_company' => array( 
+		'name' => 'LinkedIn Company', 
+		'href' => 'https://www.linkedin.com/company/${id}',	
+		'icon' => 'linkedin', 
+	),
+	'snapchat' => array( 
+		'name' => 'Snapchat', 
+		'href' => 'https://www.snapchat.com/add/${id}',	
+		'icon' => 'snapchat', 
+	),
+	'tumblr' => array( 
+		'name' => 'Tumblr', 
+		'href' => 'http://${id}.tumblr.com',	
+		'icon' => 'tumblr', 
+	),
+	'vimeo' => array( 
+		'name' => 'Vimeo', 
+		'href' => 'https://vimeo.com/${id}',	
+		'icon' => 'vimeo', 
+	),
+	'youtube' => array( 
+		'name' => 'YouTube', 
+		'href' => 'https://www.youtube.com/user/${id}',	
+		'icon' => 'youtube', 
+	),
+	'youtube_channel' => array( 
+		'name' => 'YouTube Channel', 
+		'href' => 'https://www.youtube.com/channel/${id}',	
+		'icon' => 'youtube', 
+	),
+	'feed' => array( 
+		'name' => 'RSS Feed', 
+		'href' => 'http://www.example.com/feed/',
+		'icon' => 'feed', 
+	),
+	
 );

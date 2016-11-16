@@ -1,5 +1,7 @@
 <?php
 
+defined( 'ABSPATH' ) or die();
+
 /**
  * Logs media uploads
  */
@@ -27,6 +29,7 @@ class SimpleMediaLogger extends SimpleLogger
 			"labels" => array(
 				"search" => array(
 					"label" => _x("Media", "Media logger: search", "simple-history"),
+					"label_all" => _x("All media activity", "Media logger: search", "simple-history"),
 					"options" => array(
 						_x("Added media", "Media logger: search", "simple-history") => array(
 							"attachment_created"
@@ -50,7 +53,9 @@ class SimpleMediaLogger extends SimpleLogger
 
 		add_action("admin_init", array($this, "on_admin_init"));
 
-		add_action( 'xmlrpc_call_success_mw_newMediaObject', array($this, "on_mw_newMediaObject"), 10, 2 );
+		add_action("xmlrpc_call_success_mw_newMediaObject", array($this, "on_mw_newMediaObject"), 10, 2);
+
+		add_filter("simple_history/rss_item_link", array($this, "filter_rss_item_link"), 10, 2);
 
 	}
 
@@ -126,7 +131,7 @@ class SimpleMediaLogger extends SimpleLogger
 			$context["attachment_filename"] = esc_html( $context["attachment_filename"] );
 			$context["edit_link"] = get_edit_post_link( $attachment_id );
 
-			$message = $this->interpolate($message, $context);
+			$message = $this->interpolate($message, $context, $row);
 
 		} else {
 
@@ -168,6 +173,7 @@ class SimpleMediaLogger extends SimpleLogger
 			$filetype = wp_check_filetype( $context["attachment_filename"] );
 			$file_url = wp_get_attachment_url( $attachment_id );
 			$edit_link = get_edit_post_link( $attachment_id );
+			$attached_file = get_attached_file( $attachment_id );
 			$message = "";
 			$full_src = false;
 
@@ -177,13 +183,10 @@ class SimpleMediaLogger extends SimpleLogger
 
 			$full_image_width = null;
 			$full_image_height = null;
-
 			if ( $is_image ) {
 
 				$thumb_src = wp_get_attachment_image_src($attachment_id, array(350,500));
 				$full_src = wp_get_attachment_image_src($attachment_id, "full");
-				#sf_d($thumb_src, '$thumb_src');
-				#sf_d($full_src, '$full_src');
 
 				$full_image_width = $full_src[1];
 				$full_image_height = $full_src[2];
@@ -194,16 +197,21 @@ class SimpleMediaLogger extends SimpleLogger
 
 					$context["full_image_width"] = $full_image_width;
 					$context["full_image_height"] = $full_image_height;
-					$context["attachment_thumb"] = sprintf('<div class="SimpleHistoryLogitemThumbnail"><img src="%1$s"></div>', $thumb_src[0] );
+
+					// Only output thumb if file exists
+					// For example images deleted on file system but not in WP cause broken images (rare case, but has happened to me.)
+					if ( file_exists( $attached_file ) && $thumb_src ) {
+						$context["attachment_thumb"] = sprintf('<div class="SimpleHistoryLogitemThumbnail"><img src="%1$s" alt=""></div>', $thumb_src[0] );
+					}
 
 				}
 
-			} else if ($is_audio) {
+			} else if ( $is_audio ) {
 
 				$content = sprintf('[audio src="%1$s"]', $file_url);
 				$context["attachment_thumb"] = do_shortcode( $content );
 
-			} else if ($is_video) {
+			} else if ( $is_video ) {
 
 				$content = sprintf('[video src="%1$s"]', $file_url);
 				$context["attachment_thumb"] = do_shortcode( $content );
@@ -241,13 +249,17 @@ class SimpleMediaLogger extends SimpleLogger
 			$message .= "<p class='SimpleHistoryLogitem--logger-SimpleMediaLogger--attachment-meta'>";
 			$message .= "<span class='SimpleHistoryLogitem__inlineDivided'>" . __('{attachment_size_format}', "simple-history") . "</span> ";
 			$message .= "<span class='SimpleHistoryLogitem__inlineDivided'>" . __('{attachment_filetype_extension}', "simple-history") . "</span>";
-			if ($full_image_width && $full_image_height) {
+			
+			if ( $full_image_width && $full_image_height ) {
+
 				$message .= " <span class='SimpleHistoryLogitem__inlineDivided'>" . __('{full_image_width} × {full_image_height}', "simple-history") . "</span>";
+
 			}
+
 			//$message .= " <span class='SimpleHistoryLogitem__inlineDivided'>" . sprintf( __('<a href="%1$s">Edit attachment</a>'), $edit_link ) . "</span>";
 			$message .= "</p>";
 
-			$output .= $this->interpolate($message, $context);
+			$output .= $this->interpolate( $message, $context, $row );
 
 		}
 
@@ -330,6 +342,33 @@ class SimpleMediaLogger extends SimpleLogger
 				"attachment_mime" => $mime
 			)
 		);
+
+	}
+
+	/**
+	 * Modify RSS links so they go directly to the correct media in wp admin
+	 *
+	 * @since 2.0.23
+	 * @param string $link
+	 * @param array $row
+	 */
+	public function filter_rss_item_link($link, $row) {
+
+		if ( $row->logger != $this->slug ) {
+			return $link;
+		}
+
+		if ( isset( $row->context["attachment_id"] ) ) {
+
+			$permalink = add_query_arg(array("action" => "edit", "post" => $row->context["attachment_id"]), admin_url( "post.php" ) );
+
+			if ( $permalink ) {
+				$link = $permalink;
+			}
+
+		}
+
+		return $link;
 
 	}
 

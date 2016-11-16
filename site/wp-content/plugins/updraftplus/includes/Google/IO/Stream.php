@@ -21,13 +21,17 @@
  * @author Stuart Langley <slangley@google.com>
  */
 
-require_once 'Google/IO/Abstract.php';
+if (!class_exists('Google_Client')) {
+  require_once dirname(__FILE__) . '/../autoload.php';
+}
 
 class Google_IO_Stream extends Google_IO_Abstract
 {
   const TIMEOUT = "timeout";
   const ZLIB = "compress.zlib://";
   private $options = array();
+  private $trappedErrorNumber;
+  private $trappedErrorString;
 
   private static $DEFAULT_HTTP_CONTEXT = array(
     "follow_location" => 0,
@@ -38,12 +42,23 @@ class Google_IO_Stream extends Google_IO_Abstract
     "verify_peer" => true,
   );
 
+  public function __construct(Google_Client $client)
+  {
+    if (!ini_get('allow_url_fopen')) {
+      $error = 'The stream IO handler requires the allow_url_fopen runtime ' .
+               'configuration to be enabled';
+      $client->getLogger()->critical($error);
+      throw new Google_IO_Exception($error);
+    }
+
+    parent::__construct($client);
+  }
+
   /**
    * Execute an HTTP Request
    *
-   * @param Google_HttpRequest $request the http request to be executed
-   * @return Google_HttpRequest http request with the response http code,
-   * response headers and response body filled in
+   * @param Google_Http_Request $request the http request to be executed
+   * @return array containing response headers, body, and http code
    * @throws Google_IO_Exception on curl or IO error
    */
   public function executeRequest(Google_Http_Request $request)
@@ -72,19 +87,27 @@ class Google_IO_Stream extends Google_IO_Abstract
     $requestSslContext = array_key_exists('ssl', $default_options) ?
         $default_options['ssl'] : array();
 
+# UpdraftPlus patch
 //     if (!array_key_exists("cafile", $requestSslContext)) {
 //       $requestSslContext["cafile"] = dirname(__FILE__) . '/cacerts.pem';
 //     }
-
 
     $url = $request->getUrl();
 
     if (preg_match('#^https?://([^/]+)/#', $url, $umatches)) { $cname = $umatches[1]; } else { $cname = false; }
 
+# UpdraftPlus patch
 // Added
 if (empty($this->options['disable_verify_peer'])) {
 	$requestSslContext['verify_peer'] = true;
-	if (!empty($cname)) $requestSslContext['CN_match'] = $cname;
+	if (version_compare(PHP_VERSION, '5.6.0', '>=')) {
+		if (!empty($cname)) $requestSslContext['peer_name'] = $cname;
+	} else {
+		if (!empty($cname)) {
+			$requestSslContext['CN_match'] = $cname;
+			$retry_on_fail = true;
+		}
+	}
 } else {
 	$requestSslContext['allow_self_signed'] = true;
 }
@@ -95,23 +118,66 @@ if (!empty($this->options['cafile'])) $requestSslContext['cafile'] = $this->opti
             self::$DEFAULT_HTTP_CONTEXT,
             $requestHttpContext
         ),
-#            self::$DEFAULT_SSL_CONTEXT,
         "ssl" => array_merge(
+# UpdraftPlus patch
+//             self::$DEFAULT_SSL_CONTEXT,
             $requestSslContext
         )
     );
 
     $context = stream_context_create($options);
 
+# UpdraftPlus patch
+//     $url = $request->getUrl();
+
     if ($request->canGzip()) {
       $url = self::ZLIB . $url;
     }
 
-    // Not entirely happy about this, but supressing the warning from the
-    // fopen seems like the best situation here - we can't do anything
-    // useful with it, and failure to connect is a legitimate run
-    // time situation.
-    @$fh = fopen($url, 'r', false, $context);
+    $this->client->getLogger()->debug(
+        'Stream request',
+        array(
+            'url' => $url,
+            'method' => $request->getRequestMethod(),
+            'headers' => $requestHeaders,
+            'body' => $request->getPostBody()
+        )
+    );
+
+    // We are trapping any thrown errors in this method only and
+    // throwing an exception.
+    $this->trappedErrorNumber = null;
+    $this->trappedErrorString = null;
+
+    // START - error trap.
+    set_error_handler(array($this, 'trapError'));
+    $fh = fopen($url, 'r', false, $context);
+
+# UpdraftPLus patch
+    if (!$fh && isset($retry_on_fail) && !empty($cname) && 'www.googleapis.com' == $cname) {
+// Reset
+	$this->trappedErrorNumber = null;
+	$this->trappedErrorString = null;
+       global $updraftplus;
+       $updraftplus->log("Using Stream, and fopen failed; retrying different CN match to try to overcome");
+       // www.googleapis.com does not match the cert now being presented - *.storage.googleapis.com; presumably, PHP's stream handler isn't handling alternative names properly. Rather than turn off all verification, let's retry with a new name to match.
+       $options['ssl']['CN_match'] = 'www.storage.googleapis.com';
+       $context = stream_context_create($options);
+       $fh = fopen($url, 'r', false, $context);
+    }
+
+    restore_error_handler();
+    // END - error trap.
+
+    if ($this->trappedErrorNumber) {
+      $error = sprintf(
+          "HTTP Error: Unable to connect: '%s'",
+          $this->trappedErrorString
+      );
+
+      $this->client->getLogger()->error('Stream ' . $error);
+      throw new Google_IO_Exception($error, $this->trappedErrorNumber);
+    }
 
     $response_data = false;
     $respHttpCode = self::UNKNOWN_CODE;
@@ -127,16 +193,25 @@ if (!empty($this->options['cafile'])) $requestSslContext['cafile'] = $this->opti
     }
 
     if (false === $response_data) {
-      throw new Google_IO_Exception(
-          sprintf(
-              "HTTP Error: Unable to connect: '%s'",
-              $respHttpCode
-          ),
+      $error = sprintf(
+          "HTTP Error: Unable to connect: '%s'",
           $respHttpCode
       );
+
+      $this->client->getLogger()->error('Stream ' . $error);
+      throw new Google_IO_Exception($error, $respHttpCode);
     }
 
     $responseHeaders = $this->getHttpResponseHeaders($http_response_header);
+
+    $this->client->getLogger()->debug(
+        'Stream response',
+        array(
+            'code' => $respHttpCode,
+            'headers' => $responseHeaders,
+            'body' => $response_data,
+        )
+    );
 
     return array($response_data, $responseHeaders, $respHttpCode);
   }
@@ -148,6 +223,16 @@ if (!empty($this->options['cafile'])) $requestSslContext['cafile'] = $this->opti
   public function setOptions($options)
   {
     $this->options = $options + $this->options;
+  }
+
+  /**
+   * Method to handle errors, used for error handling around
+   * stream connection methods.
+   */
+  public function trapError($errno, $errstr)
+  {
+    $this->trappedErrorNumber = $errno;
+    $this->trappedErrorString = $errstr;
   }
 
   /**
@@ -172,11 +257,12 @@ if (!empty($this->options['cafile'])) $requestSslContext['cafile'] = $this->opti
    * Test for the presence of a cURL header processing bug
    *
    * {@inheritDoc}
-   *   * @return boolean
+   *
+   * @return boolean
    */
   protected function needsQuirk()
   {
-      return false;
+    return false;
   }
 
   protected function getHttpResponseCode($response_headers)

@@ -8,7 +8,7 @@ Read the existing methods for help. There is no hard-and-fast need to put all yo
 
 Some handy tips:
 - Search-and-replace "template" for the name of your access method
-- You can also add the methods config_print_javascript_onready and credentials_test if you like; see s3.php as an example of how these are used (to provide a "Test Settings" button via AJAX in the settings page)
+- You can also add the methods config_print_javascript_onready and credentials_test if you like
 - Name your file accordingly (it is now template.php)
 - Add the method to the array $backup_methods in updraftplus.php when ready
 - Use the constant UPDRAFTPLUS_DIR to reach Updraft's plugin directory
@@ -44,7 +44,7 @@ class UpdraftPlus_BackupModule_template {
 	}
 
 	// delete method: takes an array of file names (base name) or a single string, and removes them from the cloud storage
-	public function delete($files, $data = false) {
+	public function delete($files, $data = false, $sizeinfo = array()) {
 
 		global $updraftplus;
 

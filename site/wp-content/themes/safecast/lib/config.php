@@ -56,7 +56,8 @@ function roots_display_sidebar() {
     array(
       'is_404',
       'is_front_page',
-	  array('is_page', 'map')
+       array('is_page', 'retired-sensors'),
+	array('is_page', 'map')
     ),
     /**
      * Page template checks (via is_page_template())

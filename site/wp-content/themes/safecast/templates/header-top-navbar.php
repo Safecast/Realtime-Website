@@ -16,11 +16,7 @@
           wp_nav_menu(array('theme_location' => 'primary_navigation', 'menu_class' => 'nav navbar-nav'));
         endif;
       ?>
-      <?php
-      	if (function_exists('qtrans_generateLanguageSelectCode')):
-      	  qtrans_generateLanguageSelectCode('text');
-    	endif;
-      ?>
+
     </nav>
   </div>
 </header>

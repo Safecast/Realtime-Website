@@ -1,10 +1,9 @@
 === Comment Images ===
-Contributors: tommcfarlin
-Donate link: http://tommcfarlin.com/donate/
+Contributors: talspotim
 Tags: comments, image
 Requires at least: 3.4.1
-Tested up to: 4.1
-Stable tag: 1.20.0
+Tested up to: 4.5.2
+Stable tag: 1.24.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,8 +22,6 @@ Comment Images...
 * Provides dashboard functionality for seeing the images that are attached to each comment
 * Makes the images available in the Media Uploader
 * Is fully localized and ready for translation
-
-For more information or to follow the project, check out the [project page](http://tommcfarlin.com/projects/comment-images/).
 
 == Installation ==
 
@@ -67,6 +64,14 @@ Same as above :)
 8. The updated 'All Posts' view showing when a post's comments contain comment images
 
 == Changelog ==
+= 1.24.3 =
+* Fixed styles.
+
+= 1.24.2 =
+* Fixed style bugs, tested and working up to 4.5.2.
+
+= 1.24.2 =
+* Fixed some bugs, tested and working up to 4.5.2.
 
 = 1.20.0 =
 * Verifying WordPress 4.1 compatibility

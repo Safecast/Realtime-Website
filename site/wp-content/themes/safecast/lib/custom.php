@@ -5,7 +5,7 @@
 
 
 
-define('ACF_LITE', true);
+define('ACF_LITE', false);
 
 require_once(WP_CONTENT_DIR.'/plugins/advanced-custom-fields/acf.php');
 
@@ -13,6 +13,105 @@ if( function_exists('acf_add_options_page') ) {
 	
 	acf_add_options_page();
 	
+}
+
+if (!function_exists('mass_update_posts')) {
+    function mass_update_posts() {
+            
+        $args = array(    'post_type'=>'sensors', //whatever post type you need to update 
+                        'posts_per_page'   => -1);
+            
+        $my_posts = get_posts($args);
+        
+        foreach($my_posts as $key => $my_post){
+            $meta_values = get_post_meta( $my_post->ID);
+            foreach($meta_values as $meta_key => $meta_value ){
+                update_field($meta_key, $meta_value[0], $my_post->ID);
+            }
+        }
+    }
+}
+
+if(function_exists("register_field_group"))
+{
+	register_field_group(array (
+		'id' => 'acf_alarm',
+		'title' => 'Alarm',
+		'fields' => array (
+			array (
+				'key' => 'field_57f50ca516276',
+				'label' => '',
+				'name' => 'alarm',
+				'type' => 'number',
+				'instructions' => 'Alarm is three times the average CPM',
+				'default_value' => 150,
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'min' => '',
+				'max' => '',
+				'step' => '',
+			),
+		),
+		'location' => array (
+			array (
+				array (
+					'param' => 'post_type',
+					'operator' => '==',
+					'value' => 'sensors',
+					'order_no' => 0,
+					'group_no' => 0,
+				),
+			),
+		),
+		'options' => array (
+			'position' => 'normal',
+			'layout' => 'no_box',
+			'hide_on_screen' => array (
+			),
+		),
+		'menu_order' => 0,
+	));
+}
+
+
+if(function_exists("register_field_group"))
+{
+	register_field_group(array (
+		'id' => 'acf_inactive',
+		'title' => 'Inactive',
+		'fields' => array (
+			array (
+				'key' => 'field_57306ca144aa3',
+				'label' => 'Inactive',
+				'name' => 'retired_sensor',
+				'type' => 'checkbox',
+				'choices' => array (
+					'true' => 'Inactive',
+				),
+				'default_value' => 'false',
+				'layout' => 'vertical',
+			),
+		),
+		'location' => array (
+			array (
+				array (
+					'param' => 'post_type',
+					'operator' => '==',
+					'value' => 'sensors',
+					'order_no' => 0,
+					'group_no' => 0,
+				),
+			),
+		),
+		'options' => array (
+			'position' => 'acf_after_title',
+			'layout' => 'no_box',
+			'hide_on_screen' => array (
+			),
+		),
+		'menu_order' => 2,
+	));
 }
 
 if(function_exists("register_field_group"))
@@ -483,6 +582,7 @@ if (!function_exists('update_sensors_post_title')) {
 			
 			global $wpdb;
 			$wpdb->update($wpdb->posts, array('post_title' => $location), array('ID' => $post_id));
+      
 		}
 	}
 }
@@ -497,14 +597,14 @@ add_action('save_post', 'update_sensors_post_title');
  *	Sensors table generation
 */
 
-define("TIME_OFFLINE_SHORT", 	1320);
+define("TIME_OFFLINE_SHORT",	1560);
 define("TIME_OFFLINE_LONG", 	3120);
 define("SENSOR_TABLE_PAGE", 	17);
 
 if (!function_exists('generateSensorsTable')) {
 	function generateSensorsTable($sensors, $lang = 'en') {
 		$html 		= sprintf('<input id="filter" class="form-control" type="text" placeholder="%s">
-<table id="sensors" class="table table-striped footable toggle-arrow-tiny" data-page-size="10" data-filter="#filter" data-filter-text-only="true">
+<table id="sensors" class="table table-striped footable toggle-arrow-tiny" data-page-size="50" data-filter="#filter" data-filter-text-only="true">
 	<thead>
 		<tr>
 			<th data-sort-initial="ascending">%s</th>
@@ -537,7 +637,7 @@ if (!function_exists('generateSensorsTable')) {
 			$timestamp   = strtotime($sensor['measurement']['gmt']);
 			$timeAgo     = $timestamp ? human_time_diff($timestamp).($lang == 'jp' ? '前' : ' ago') : '';
 			$timeSince   = time() - $timestamp;
-			$usievert    = addslashes($sensor['measurement']['msv']);
+			$usievert    = addslashes($sensor['measurement']['usvh']);
 			$cpm         = addslashes($sensor['measurement']['cpm']);
 			$latitude    = addslashes($sensor['measurement']['latitude']);
 			$longitude   = addslashes($sensor['measurement']['longitude']);
@@ -553,13 +653,13 @@ if (!function_exists('generateSensorsTable')) {
 				$status      = ($lang == 'jp' ? 'オフライン（短）' : 'Offline short');
 				$statusClass = 'warning';
 				$statusValue = 1;
-				$to      = 'robouden@docomo.ne.jp';
-				$subject = 'Offline';
-				$message = "$id";
-				$headers = 'From: root@realtime.safecast.org' . "\r\n" .
-					'Reply-To: root@realtime.safecast.org' . "\r\n" .
-					'X-Mailer: PHP/' . phpversion();
-					mail($to, $subject, $message, $headers);
+				$to      = 'rob@yr-design.biz';
+                		$subject = 'Offline';
+                		$message = "$id";
+                		$headers = 'From: root@realtime.safecast.org' . "\r\n" .
+                   				 'Reply-To: root@realtime.safecast.org' . "\r\n" .
+                   				 'X-Mailer: PHP/' . phpversion();
+                    				mail($to, $subject, $message, $headers);
 			}
 
 			$html 		.= sprintf('
@@ -613,7 +713,21 @@ if (!function_exists('getAllSensors')) {
 		$args                = array(
 		  'post_type'        => $type,
 		  'post_status'      => 'publish',
-		  'posts_per_page'   => -1);
+      		  'meta_query' => array(
+              			'relation' => 'OR',
+              			array( 
+                 			 'key'=>'retired_sensor',
+                  			 'compare' => 'NOT EXISTS'           
+              				),
+              			array( 
+                      			'key'     => 'retired_sensor',
+                      			'value'   => 'true',
+                      			'compare' => 'NOT LIKE'           
+              				)
+          		), // End of meta_query
+      
+      
+		    'posts_per_page'   => -1);
 		$query               = null;
 		$query               = new WP_Query($args);
 		$sensors             = array();
@@ -628,13 +742,14 @@ if (!function_exists('getAllSensors')) {
 				$city      = get_post_meta(get_the_ID(), 'sensor_city', 	true);
 				$province  = get_post_meta(get_the_ID(), 'sensor_province', true);
 				$country   = get_post_meta(get_the_ID(), 'sensor_country', 	true);
+        			$retired   = get_post_meta(get_the_ID(), 'retired_sensor', 	false);
 				$location  = $country
 					.($province ? ', '.$province : '')
 					.($city ? ', '.$city : '')
 					.($location ? ', '.$location : '');
 				
 				$lastMeasurement = array(
-					'msv'     => get_post_meta(get_the_ID(), 'sensor_measurement_last_usvh', true),
+					'usvh'     => get_post_meta(get_the_ID(), 'sensor_measurement_last_usvh', true),
 					'cpm'           => get_post_meta(get_the_ID(), 'sensor_measurement_last_cpm', 		true),
 					'gmt'     		=> get_post_meta(get_the_ID(), 'sensor_measurement_last_gmt', 		true),
 					'latitude'      => get_post_meta(get_the_ID(), 'sensor_measurement_last_latitude', 	true),
@@ -653,6 +768,66 @@ if (!function_exists('getAllSensors')) {
 	}
 }
 
+
+if (!function_exists('getRetiredSensors')) {
+    function getRetiredSensors() {
+        $type                = 'sensors';
+        $args                = array(
+          'post_type'        => $type,
+          'post_status'      => 'publish',
+          'meta_query' => array(
+              array(
+                'key'     => 'retired_sensor',
+                'value'   => 'true',
+                'compare' => 'LIKE'
+              )
+    
+          ), // End of meta_query
+          'posts_per_page'   => -1);
+        $query               = null;
+        $query               = new WP_Query($args);
+      
+        $sensors             = array();
+        
+
+        if ($query->have_posts()) {
+            while ($query->have_posts()) {
+                $query->the_post();
+                $permalink = get_permalink(get_the_ID());
+                $id        = get_post_meta(get_the_ID(), 'sensor_id',       true);
+                $location  = get_post_meta(get_the_ID(), 'sensor_location', true);
+                $city      = get_post_meta(get_the_ID(), 'sensor_city',     true);
+                $province  = get_post_meta(get_the_ID(), 'sensor_province', true);
+                $country   = get_post_meta(get_the_ID(), 'sensor_country',  true);
+                $retired   = get_post_meta(get_the_ID(), 'retired_sensor', 	true);
+              
+                $location  = $country
+                    .($province ? ', '.$province : '')
+                    .($city ? ', '.$city : '')
+                    .($location ? ', '.$location : '');
+                
+                $lastMeasurement = array(
+                    'usvh'     => get_post_meta(get_the_ID(), 'sensor_measurement_last_usvh', true),
+                    'cpm'           => get_post_meta(get_the_ID(), 'sensor_measurement_last_cpm',         true),
+                    'gmt'             => get_post_meta(get_the_ID(), 'sensor_measurement_last_gmt',         true),
+                    'latitude'      => get_post_meta(get_the_ID(), 'sensor_measurement_last_latitude',     true),
+                    'longitude'     => get_post_meta(get_the_ID(), 'sensor_measurement_last_longitude', true));
+                
+                $sensors[$id]  = array(
+                    'permalink'   => $permalink,
+                    'id'          => $id,
+                    'location'    => $location,
+                    'measurement' => $lastMeasurement);
+            }
+        }
+        wp_reset_query();
+    
+        return $sensors;
+    }
+}
+
+
+
 if (!function_exists('sensorsTable')) {
 	function sensorsTable($atts) {
 		extract(shortcode_atts(array(
@@ -663,7 +838,18 @@ if (!function_exists('sensorsTable')) {
 	}
 }
 
+if (!function_exists('sensorsRetiredTable')) {
+    function sensorsRetiredTable($atts) {
+        extract(shortcode_atts(array(
+            'lang' => 'en',
+        ), $atts, 'bartag'));
+
+        return generateSensorsTable(getRetiredSensors(), $lang);
+    }
+}
+
 add_shortcode('sensors_table', 'sensorsTable');
+add_shortcode('sensors_retired_table', 'sensorsRetiredTable');
 
 if (!function_exists('addFooTable')) {
 	function addFooTable() {
@@ -695,12 +881,12 @@ if (!function_exists('generateMap')) {
 			$timestamp   = strtotime($sensor['measurement']['gmt']);
 			$timeAgo     = $timestamp ? human_time_diff($timestamp).($lang == 'jp' ? '前' : ' ago') : '';
 			$timeSince   = time() - $timestamp;
-			$usvt        = addslashes($sensor['measurement']['msv']);
+			$usvh        = addslashes($sensor['measurement']['usvh']);
 			$cpm         = addslashes($sensor['measurement']['cpm']);
 			$latitude    = addslashes($sensor['measurement']['latitude']);
 			$longitude   = addslashes($sensor['measurement']['longitude']);
-			$graphPath   = get_template_directory_uri()."/../../../../../../plots/";
-			$status		 = '#269abc';
+			$graphPath   = get_template_directory_uri()."/../../../../plots/";
+			$status	     = '#269abc';
 
 			if ($timeSince >= TIME_OFFLINE_LONG) {
 				$status = '#ac2925';
@@ -709,7 +895,7 @@ if (!function_exists('generateMap')) {
 			}
 				
 			$markers	.= sprintf("addMarker('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');
-			", $id, $permalink, $timeAgo, $location, $latitude, $longitude, $cpm, $usvt, $graphPath, $status);
+			", $id, $permalink, $timeAgo, $location, $latitude, $longitude, $cpm, $usvh, $graphPath, $status);
 		}
 		
 		//var_dump($markers);die;
@@ -746,4 +932,3 @@ if (!function_exists('addMap')) {
 }
 
 add_action('wp_enqueue_scripts', 'addMap');
-
