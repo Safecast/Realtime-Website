@@ -100,11 +100,6 @@ class MLAImageProcessor {
 		/*
 		 * Look for exec() - from http://stackoverflow.com/a/12980534/866618
 		 */
-		if ( ini_get('safe_mode') ) {
-			self::_mla_debug_add( 'MLAImageProcessor::_ghostscript_convert safe_mode failure' );
-			return false;
-		}
-
 		$blacklist = preg_split( '/,\s*/', ini_get('disable_functions') . ',' . ini_get('suhosin.executor.func.blacklist') );
 		if ( in_array('exec', $blacklist) ) {
 			self::_mla_debug_add( 'MLAImageProcessor::_ghostscript_convert blacklist failure' );
@@ -228,6 +223,14 @@ class MLAImageProcessor {
 	 * @return void
 	 */
 	private static function _prepare_image( $width, $height, $best_fit, $type, $quality ) {
+//error_log( __LINE__ . " MLAImageProcessor::_prepare_image( {$width}, {$height}, {$best_fit}, {$type}, {$quality} )", 0 );
+		if ( 'WordPress' == $type ) {
+			$default_width = 0;
+			$type = 'image/jpeg';
+		} else {
+			$default_width = 150;
+		}
+		
 		if ( is_callable( array( self::$image, 'scaleImage' ) ) ) {
 			if ( 0 < $width && 0 < $height ) {
 				// Both are set; use them as-is
@@ -242,8 +245,10 @@ class MLAImageProcessor {
 					self::$image->scaleImage( 0, $height );
 				}
 			} else {
-				// Neither is specified, apply defaults
-				self::$image->scaleImage( 150, 0 );
+				// Neither is specified, apply defaults; ( 0, 0 ) is invalid.
+				if ( $default_width ) {
+					self::$image->scaleImage( $default_width, 0 );
+				}
 			}
 		}
 
@@ -355,6 +360,14 @@ class MLAImageProcessor {
 		$best_fit = isset( $args['best_fit'] ) ? (boolean) $args['best_fit'] : false;
 		$ghostscript_path = isset( $args['ghostscript_path'] ) ? $args['ghostscript_path'] : '';
 
+		// Retain WordPress type for _prepare_image and adjust defaults
+		if ( 'WordPress' === $type ) {
+			$mime_type = 'image/jpeg';
+			$resolution = isset( $args['resolution'] ) ? abs( intval( $args['resolution'] ) ) : 128;
+		} else {
+			$mime_type = $type;
+		}
+
 		/*
 		 * Convert the file to an image format and load it
 		 */
@@ -365,11 +378,11 @@ class MLAImageProcessor {
 			 * this must be called before reading the image, otherwise has no effect - 
 			 * "-density {$x_resolution}x{$y_resolution}"
 			 * this is important to give good quality output, otherwise text might be unclear
-			 * default resolution is 72,72
+			 * default resolution is 72,72 or 128,128 for WordPress thumbnails
 			 */
 			self::$image->setResolution( $resolution, $resolution );
 
-			$result = self::_ghostscript_convert( $input_file, $frame, $resolution, $type, $ghostscript_path );
+			$result = self::_ghostscript_convert( $input_file, $frame, $resolution, $mime_type, $ghostscript_path );
 
 			if ( false === $result ) {
 				try {
@@ -379,7 +392,7 @@ class MLAImageProcessor {
 					self::$image->readImage( $input_file . '[0]' );
 				}
 
-				if ( 'image/jpeg' == $type ) {
+				if ( 'image/jpeg' == $mime_type ) {
 					$extension = 'JPG';
 				} else {
 					$extension = 'PNG';
@@ -397,7 +410,8 @@ class MLAImageProcessor {
 		}
 
 		/*
-		 * Prepare the output image; resize and flatten, if necessary
+		 * Prepare the output image; resize and flatten, if necessary.
+		 * $type retains "WordPress" selection
 		 */
 		try {
 			self::_prepare_image( $width, $height, $best_fit, $type, $quality );
@@ -412,6 +426,7 @@ class MLAImageProcessor {
 		try {
 			$output_file = wp_tempnam( $input_file );
 			self::$image->writeImage( $output_file );
+			$dimensions = self::$image->getImageGeometry();
 		}
 		catch ( Exception $e ) {
 			@unlink( $output_file );
@@ -421,10 +436,12 @@ class MLAImageProcessor {
 		// array based on $_FILE as seen in PHP file uploads
 		$results = array(
 			'name' => basename( $input_file ),
-			'type' => $type,
+			'type' => $mime_type,
 			'tmp_name' => $output_file,
 			'error' => 0,
 			'size' => filesize( $output_file ),
+			'width' => $dimensions['width'],
+			'height' => $dimensions['height'],
 		);		
 
 		return	$results;

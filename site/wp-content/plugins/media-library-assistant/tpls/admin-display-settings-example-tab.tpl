@@ -28,3 +28,21 @@
 		</p>
 	</form><!-- /id=mla-search-example-filter --> 
 </div><!-- /col-container -->
+
+<!-- template="view-plugin" -->
+<h2>[+View Plugin+]</h2>
+<form action="[+form_url+]" method="post" class="mla-display-settings-page" id="mla-display-settings-view-plugin">
+&nbsp;<br />
+    <table>
+        <tr>
+            <td>
+                <textarea name="" id="mla-view-plugin" rows="30" cols="100" readonly="readonly">[+plugin_text+]</textarea>
+            </td>
+        </tr>
+	</table>
+    <p class="submit mla-settings-submit">
+        <input name="mla-view-plugin-close" class="button-primary" id="mla-view-plugin-close" type="submit" value="[+Close+]" />
+    </p>
+[+_wpnonce+]
+[+_wp_http_referer+]
+</form>

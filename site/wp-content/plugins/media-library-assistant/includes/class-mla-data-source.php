@@ -477,7 +477,7 @@ class MLAData_Source {
 				 * Now expand the template using the above Data Source values
 				 */
 				$template = '[+template:' . $data_value['meta_name'] . '+]';
-				$item_values = MLAData::mla_expand_field_level_parameters( $template, NULL, $item_values, $post_id, $data_value['keep_existing'], $default_option );
+				$item_values = MLAData::mla_expand_field_level_parameters( $template, NULL, $item_values, $post_id, $data_value['keep_existing'], $default_option, $attachment_metadata );
 
 				if ( 'array' ==  $default_option ) {
 					$result = MLAData::mla_parse_array_template( $template, $item_values );
@@ -785,6 +785,16 @@ class MLAData_Source {
 					$result = MLAData_Source::_evaluate_array_result( $result, $data_value['option'], $data_value['keep_existing'] );
 				} else {
 					$result = '';
+				}
+				break;
+			case 'index':
+				if ( class_exists( 'MLA' ) && !empty( MLA::$bulk_edit_data_source['cb_index'] ) ) {
+					$result = MLA::$bulk_edit_data_source['cb_index'];
+				}
+				break;
+			case 'found_rows':
+				if ( class_exists( 'MLA' ) && !empty( MLA::$bulk_edit_data_source['cb_count'] ) ) {
+					$result = MLA::$bulk_edit_data_source['cb_count'];
 				}
 				break;
  			default:

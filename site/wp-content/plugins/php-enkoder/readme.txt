@@ -3,8 +3,8 @@ Contributors: michael_greenberg
 Donate link: http://www.weaselhat.com/phpenkoder/
 Tags: spam, bot, robot, crawler, harvest, mailto, email, e-mail, encrypt, javascript, js, enkoder, hide, crawl, link, encode, encoder, encoding, enkode, mail, spambot, human, address, addresses, safe, plaintext, hidden, obfuscate, obfuscator, hider, anti-spam, hivelogic, shortcode, anti-spam
 Requires at least: 2.3
-Tested up to: 4.6
-Stable tag: 1.14
+Tested up to: 4.8
+Stable tag: 1.14.1
 License: Modified BSD (BSDv3)
 License URI: http://opensource.org/licenses/BSD-3-Clause
 
@@ -56,6 +56,13 @@ customizable message appears; by default, it will be rendered as /*
 email hidden; JavaScript is required */. Any ideas for workarounds
 would be appreciated; please send them along.
 
+= I opened up the inspector and I saw my supposedly encoded text. What gives? =
+
+The inspector shows the current live state of the DOM---how the page
+looks right now. Once PHPEnkoder's generated JavaScript runs, then the
+DOM will include all of the secrets. If you check the source, you'll
+see that your secrets are safe from (naively) prying eyes.
+
 = Other questions? =
 
 See [the webpage](http://www.weaselhat.com/phpenkoder/) for more information.
@@ -76,6 +83,6 @@ information on changes.
 See [the webpage](http://www.weaselhat.com/phpenkoder/) for
 information on updates.
 
-= 1.13 =
+= 1.14.1 =
 
-Fixed notices appearing when WP_DEBUG is set to true.
+Improved API for `enkode_mailto`, allowing overriding of some defaults. Thanks to Martina Beil for the patch!

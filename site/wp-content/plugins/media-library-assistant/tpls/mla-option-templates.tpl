@@ -63,7 +63,7 @@
         <tr valign="top">
 		<td colspan="5" style="text-align:right;">
             <input type="radio" name="tax_metakey_sort" id="tax_metakey_asc" [+asc_checked+] value="ASC" /> ASC&nbsp;&nbsp;
-            <input type="radio" name="tax_metakey_sort" id="tax_metakey_asc" [+desc_checked+] value="DESC" /> DESC&nbsp;&nbsp;
+            <input type="radio" name="tax_metakey_sort" id="tax_metakey_desc" [+desc_checked+] value="DESC" /> DESC&nbsp;&nbsp;
             <select name="tax_metakey" id="tax_metakey">
 [+tax_metakey_options+]
             </select>
@@ -99,6 +99,7 @@
                     <input name="search_fields[]" id="search-alt-text" type="checkbox" [+alt_text_checked+] value="alt-text" />[+ALT Text+]&nbsp;&nbsp;&nbsp;&nbsp;
                     <input name="search_fields[]" id="search-excerpt" type="checkbox" [+excerpt_checked+] value="excerpt" />[+Caption+]&nbsp;&nbsp;&nbsp;&nbsp;
                     <input name="search_fields[]" id="search-content" type="checkbox" [+content_checked+] value="content" />[+Description+]&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input name="search_fields[]" id="search-file" type="checkbox" [+file_checked+] value="file" />[+File+]&nbsp;&nbsp;&nbsp;&nbsp;
                     <input name="search_fields[]" id="search-terms" type="checkbox" [+terms_checked+] value="terms" />[+Terms+]
                 </tr>
               </tbody>

@@ -5,8 +5,10 @@
  * In this example:
  *     - a "parent_terms:" prefix accesses taxonomy terms assigned to an item's parent post/page
  *     - a "page_terms:" prefix accesses taxonomy terms assigned to the current post/page
+ *     - a "parent:" prefix accesses all of the WP_Post properties, custom fields and the permalink for an item's parent
  *     - an "author:" prefix accesses all of the WP_User properties for an item's author
  *     - an "conditional:" prefix returns a value when a condition is true, e.g., during the upload process
+ *     - a "wp_query_vars:" prefix accesses all of the "global $wp_query->query_vars" properties
  *
  * Created for support topic "Parent category tag"
  * opened on 5/20/2016 by "Levy":
@@ -24,19 +26,31 @@
  * opened on 7/19/2016 by "Levy":
  * https://wordpress.org/support/topic/how-to-add-a-number-to-the-title-of-images-inserted-in-same-post
  *
+ * Enhanced for support topic "What are the default values for the markup template?"
+ * opened on 9/21/2016 by "cconstantine":
+ * https://wordpress.org/support/topic/what-are-the-default-values-for-the-markup-template/
+ *
+ * Enhanced for support topic "Maping Image ALT Tags to Product Meta Title"
+ * opened on 12/6/2016 by "webpresencech":
+ * https://wordpress.org/support/topic/maping-image-alt-tags-to-product-meta-title/
+ *
+ * Enhanced for support topic "$wp_query->query_vars in query"
+ * opened on 3/1/2017 by "mbruxelle":
+ * https://wordpress.org/support/topic/wp_query-query_vars-in-query/
+ *
  * @package MLA Substitution Parameter Hooks Example
- * @version 1.03
+ * @version 1.08
  */
 
 /*
 Plugin Name: MLA Substitution Parameter Hooks Example
 Plugin URI: http://fairtradejudaica.org/media-library-assistant-a-wordpress-plugin/
-Description: Adds "parent_terms:", "page_terms:", "author:" and "conditional:" Field-level Substitution Parameters
+Description: Adds "parent_terms:", "page_terms:", "parent:", "author:" and "conditional:" Field-level Substitution Parameters
 Author: David Lingren
-Version: 1.03
+Version: 1.08
 Author URI: http://fairtradejudaica.org/our-story/staff/
 
-Copyright 2016 David Lingren
+Copyright 2016-2017 David Lingren
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -246,15 +260,11 @@ class MLASubstitutionParameterExample {
 	 * @param	string	default option value
 	 */
 	public static function mla_expand_custom_prefix( $custom_value, $key, $value, $query, $markup_values, $post_id, $keep_existing, $default_option ) {
-		static $author_cache = array();
+		static $parent_cache = array(), $author_cache = array();
 		
 		//error_log( __LINE__ . " MLASubstitutionParameterExample::mla_expand_custom_prefix( {$key}, {$post_id}, {$keep_existing}, {$default_option} ) value = " . var_export( $value, true ), 0 );
 		//error_log( __LINE__ . " MLASubstitutionParameterExample::mla_expand_custom_prefix( {$key}, {$post_id} ) query = " . var_export( $query, true ), 0 );
 		//error_log( __LINE__ . " MLASubstitutionParameterExample::mla_expand_custom_prefix( {$key}, {$post_id} ) markup_values = " . var_export( $markup_values, true ), 0 );
-
-		if ( 0 == absint( $post_id ) ) {
-			return $custom_value;
-		}
 
 		// Look for field/value qualifier
 		$match_count = preg_match( '/^(.+)\((.+)\)/', $value['value'], $matches );
@@ -266,16 +276,7 @@ class MLASubstitutionParameterExample {
 			$qualifier = '';
 		}
 
-		if ( 'parent_terms' == $value['prefix'] ) {
-			if ( isset( $markup_values['parent'] ) ) {
-				$post_parent = absint( $markup_values['parent'] );
-			} else {
-				$item = get_post( $post_id );
-				$post_parent = absint( $item->post_parent );
-			}
-			
-			$custom_value = self::_evaluate_terms( $custom_value, $post_parent, $field, $qualifier, $value['option'] );
-		} elseif ( 'page_terms' == $value['prefix'] ) {
+		if ( 'page_terms' == $value['prefix'] ) {
 			if ( isset( $markup_values['page_ID'] ) ) {
 				$post_id = absint( $markup_values['page_ID'] );
 			} else {
@@ -289,29 +290,114 @@ class MLASubstitutionParameterExample {
 			}
 			
 			$custom_value = self::_evaluate_terms( $custom_value, $post_id, $field, $qualifier, $value['option'] );
-		} elseif ( 'author' == $value['prefix'] ) {
-			if ( isset( $markup_values['page_author'] ) ) {
-				$page_author = absint( $markup_values['page_author'] );
+		} elseif ( 'page' == $value['prefix'] ) {
+			if ( 'featured' == $value['value'] ) {
+				$featured = absint( get_post_thumbnail_id( absint( $markup_values['page_ID'] ) ) ); 
+				if ( 0 < $featured ) {
+					$custom_value = (string) $featured;
+				}
+			}
+		}
+		
+		if ( 0 == absint( $post_id ) ) {
+			return $custom_value;
+		}
+
+		if ( 'parent_terms' == $value['prefix'] ) {
+			if ( isset( $markup_values['parent'] ) ) {
+				$post_parent = absint( $markup_values['parent'] );
 			} else {
 				$item = get_post( $post_id );
-				$page_author = absint( $item->post_author );
+				$post_parent = absint( $item->post_parent );
 			}
 			
-//			$page_author = $markup_values['page_author'];
-			if ( isset( $author_cache[ $page_author ] ) ) {
-				$author = $author_cache[ $page_author ];
+			$custom_value = self::_evaluate_terms( $custom_value, $post_parent, $field, $qualifier, $value['option'] );
+		} elseif ( 'parent' == $value['prefix'] ) {
+			if ( isset( $markup_values['parent'] ) ) {
+				$parent_id = absint( $markup_values['parent'] );
 			} else {
-				$author = new WP_User( $page_author );
+				$item = get_post( $post_id );
+				$parent_id = absint( $item->post_parent );
+			}
+			
+			if ( 0 == $parent_id ) {
+				return $custom_value;
+			}
+
+			if ( isset( $parent_cache[ $parent_id ] ) ) {
+				$parent = $parent_cache[ $parent_id ];
+			} else {
+				$parent = get_post( $parent_id );
+
+				if ( $parent instanceof WP_Post && $parent->ID == $parent_id ) {
+					$parent_cache[ $parent_id ] = $parent;
+				} else {
+					return $custom_value;
+				}
+			}
+			
+			if ( property_exists( $parent, $value['value'] ) ) {
+				$custom_value = $parent->{$value['value']};
+			} elseif ( 'permalink' == $value['value'] ) {
+				$custom_value = get_permalink( $parent );
+			} else {
+				// Look for a custom field match
+				$meta_value = get_metadata( 'post', $parent_id, $value['value'], false );
+//error_log( __LINE__ . " MLASubstitutionParameterExample::mla_expand_custom_prefix( {$key}, {$post_id}, {$parent_id} ) meta_value = " . var_export( $meta_value, true ), 0 );
+				if ( !empty( $meta_value ) ) {
+					$custom_value = $meta_value;
+				}
+			}
+			
+//error_log( __LINE__ . " MLASubstitutionParameterExample::mla_expand_custom_prefix( {$key}, {$post_id}, {$parent_id} ) custom_value = " . var_export( $custom_value, true ), 0 );
+
+			if ( is_array( $custom_value ) ) {
+				if ( 'single' == $value['option'] || 1 == count( $custom_value ) ) {
+					$custom_value = sanitize_text_field( reset( $custom_value ) );
+				} elseif ( ( 'export' == $value['option'] ) || ( 'unpack' == $value['option'] ) ) {
+					$custom_value = sanitize_text_field( var_export( $custom_value, true ) );
+				} else {
+					if ( 'array' == $value['option'] ) {
+						$new_value = array();
+					} else {
+						$new_value = '';
+					}
+
+					foreach ( $custom_value as $element ) {
+						$field_value = sanitize_text_field( $element );
+	
+						if ( 'array' == $value['option'] ) {
+							$new_value[] = $field_value;
+						} else {
+							$new_value .= strlen( $custom_value ) ? ', ' . $field_value : $field_value;
+						}
+					}
+					
+					$custom_value = $new_value;
+				}
+			}
+		} elseif ( 'author' == $value['prefix'] ) {
+			if ( isset( $markup_values['author_id'] ) ) {
+				$item_author = absint( $markup_values['author_id'] );
+			} else {
+				$item = get_post( $post_id );
+				$item_author = absint( $item->post_author );
+			}
+			
+			if ( isset( $author_cache[ $item_author ] ) ) {
+				$author = $author_cache[ $item_author ];
+			} else {
+				$author = new WP_User( $item_author );
 //error_log( __LINE__ . " MLASubstitutionParameterExample::mla_expand_custom_prefix( {$key}, {$post_id} ) author = " . var_export( $author, true ), 0 );
-				if ( $author instanceof WP_User && $author->ID == $page_author ) {
-					$author_cache[ $page_author ] = $author;
+				if ( $author instanceof WP_User && $author->ID == $item_author ) {
+					$author_cache[ $item_author ] = $author;
 				} else {
 					return $custom_value;
 				}
 			}
 			
 			if ( property_exists( $author, $value['value'] ) ) {
-				$custom_value = $author->$value['value'];
+				$custom_value = $author->{$value['value']};
 			} else {
 				$custom_value = $author->get( $value['value'] );
 			}
@@ -327,18 +413,20 @@ class MLASubstitutionParameterExample {
 					if ( 'array' == $value['option'] ) {
 						$new_value = array();
 					} else {
-						$custom_value = '';
+						$new_value = '';
 					}
 
 					foreach ( $custom_value as $element ) {
 						$field_value = sanitize_text_field( $element );
 	
 						if ( 'array' == $value['option'] ) {
-							$custom_value[] = $field_value;
+							$new_value[] = $field_value;
 						} else {
-							$custom_value .= strlen( $custom_value ) ? ', ' . $field_value : $field_value;
+							$new_value .= strlen( $custom_value ) ? ', ' . $field_value : $field_value;
 						}
 					}
+					
+					$custom_value = $new_value;
 				}
 			}
 		} elseif ( 'conditional' == $value['prefix'] ) {
@@ -380,6 +468,13 @@ class MLASubstitutionParameterExample {
 					break;
 				default:
 					// ignore anything else
+			}
+		} elseif ( 'wp_query_vars' == $value['prefix'] ) {
+			global $wp_query;
+			//error_log( __LINE__ . " MLASubstitutionParameterExample::mla_expand_custom_prefix( {$key}, {$post_id} ) wp_query->query_vars = " . var_export( $wp_query->query_vars , true ), 0 );
+
+			if ( !empty( $wp_query->query_vars ) ) {
+				$custom_value = MLAData::mla_find_array_element( $value['value'], $wp_query->query_vars, $value['option'], $keep_existing );
 			}
 		}
 

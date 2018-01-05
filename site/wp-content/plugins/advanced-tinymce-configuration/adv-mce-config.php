@@ -1,18 +1,30 @@
 <?php
 /*
-Plugin Name: Advanced TinyMCE Config
+Plugin Name: Advanced TinyMCE Configuration
 Plugin URI: http://www.laptoptips.ca/projects/advanced-tinymce-configuration/
 Description: Set advanced options for TinyMCE, the visual editor in WordPress.
-Version: 1.2
+Version: 1.3
 Author: Andrew Ozz
 Author URI: http://www.laptoptips.ca/
+License: GPL2
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: adv-mce-config
+Domain Path: /languages
 
-Released under the GPL v.2, http://www.gnu.org/copyleft/gpl.html
+	Advanced TinyMCE Configuration is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 2 of the License, or
+	any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	Advanced TinyMCE Configuration is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License along
+	with Advanced TinyMCE Configuration. If not, see https://www.gnu.org/licenses/gpl-2.0.html.
+
+	Copyright 2011-2016 Andrew Ozz. All rights reserved.
 */
 
 function advmceconf_is_mce_version_4() {
@@ -25,7 +37,7 @@ function advmceconf_warn_plugins_screen( $plugins ) {
 		?>
 		<div class="error"><p>
 			<?php
-			_e('The Advanced TinyMCE Config plugin requires attention: you are running TinyMCE 4.0 (WordPress 3.9 or newer) but the settings for the editor have not been updated. This can result in errors while editing, or the editor may fail completely.', 'advmceconf');
+			_e('The Advanced TinyMCE Configuration plugin requires attention: you are running TinyMCE 4.0 (WordPress 3.9 or newer) but the settings for the editor have not been updated. This can result in errors while editing, or the editor may fail completely.', 'adv-mce-config');
 			?>
 		</p></div>
 		<?php
@@ -61,6 +73,10 @@ function advmceconf_style() {
 		background-color: #f8f8f8;
 		padding: 0 12px;
 		margin: 16px 0;
+	}
+
+	.advmceconf-wrap img {
+		border: 1px solid #bbb;
 	}
 
 	.advmceconf-table {
@@ -130,11 +146,26 @@ function advmceconf_style() {
 		vertical-align: middle;
 	}
 
-	.advmceconf-hilite td {
+	.advmceconf-highlight td {
 		background: #fee;
 	}
 	</style>
 	<?php
+}
+
+add_filter( 'plugin_action_links', 'advmceconf_add_settings_link', 10, 2 );
+function advmceconf_add_settings_link( $links, $file ) {
+	if ( $file === 'advanced-tinymce-configuration/adv-mce-config.php' && current_user_can( 'manage_options' ) ) {
+		$settings_link = sprintf(
+			'<a href="%s">%s</a>',
+			admin_url( 'options-general.php?page=advanced-tinymce-configuration/adv-mce-config.php' ),
+			__( 'Settings', 'adv-mce-config' )
+		);
+
+		array_unshift( $links, $settings_link );
+	}
+
+	return $links;
 }
 
 add_action( 'admin_menu', 'advmceconf_menu' );
@@ -186,7 +217,7 @@ function advmceconf_admin() {
 
 		if ( $options != $old_options ) {
 			update_option('advmceconf_options', $options);
-			$message = '<div class="updated fade"><p>' . __('Options saved.', 'advmceconf') . '</p></div>';
+			$message = '<div class="updated fade"><p>' . __('Options saved.', 'adv-mce-config') . '</p></div>';
 		}
 
 		if ( $version < 12 && advmceconf_is_mce_version_4() ) {
@@ -201,15 +232,15 @@ function advmceconf_admin() {
 	?>
 	<div class="wrap">
 	<?php screen_icon(); ?>
-	<h2><?php _e('Advanced TinyMCE Settings', 'advmceconf'); ?></h2>
+	<h2><?php _e('Advanced TinyMCE Settings', 'adv-mce-config'); ?></h2>
 	<?php
 
 	if ( $version < 12 && advmceconf_is_mce_version_4() ) {
 		?>
 		<div class="error"><p>
 		<?php
-			_e('You are running TinyMCE 4.0 (WordPress 3.9 or newer) but the settings for the editor have not been updated. This can result in errors while editing, or the editor may fail completely. ', 'advmceconf');
-			_e('(This notice will dissapear after the settings are updated.)', 'advmceconf');
+			_e('You are running TinyMCE 4.0 (WordPress 3.9 or newer) but the settings for the editor have not been updated. This can result in errors while editing, or the editor may fail completely. ', 'adv-mce-config');
+			_e('(This notice will dissapear after the settings are updated.)', 'adv-mce-config');
 		?>
 		</p></div>
 		<?php
@@ -220,39 +251,47 @@ function advmceconf_admin() {
 
 	?>
 	<div class="advmceconf-wrap">
-	<p><?php _e('To add a setting to TinyMCE type the name on the left and the value on the right. Do not add quotes around the setting name or value. To remove a setting, delete both the name and value. To add boolean values type <code>true</code> or <code>false</code>, these strings are converted to boolean.', 'advmceconf'); ?></p>
-	<p><?php _e('Description of all settings is available in the', 'advmceconf'); ?> <a href="http://www.tinymce.com/wiki.php" target="_blank"><?php _e('TinyMCE documentation', 'advmceconf'); ?></a>.</p>
-	<p><?php _e('Several of the more commonly used settings are:', 'advmceconf'); ?></p>
-	<ul class="ul-disc">
+	<h3><?php _e('How-to:', 'adv-mce-config'); ?></h3>
+	<ol>
+		<li><?php _e('To add a setting to TinyMCE, type the name on the left and the value on the right.', 'adv-mce-config'); ?></li>
+		<li><?php _e('Do not add quotes around the name or value.', 'adv-mce-config'); ?></li>
+		<li><?php _e('To remove a setting, delete both name and value.', 'adv-mce-config'); ?></li>
+		<li><?php _e('To add boolean values type <code>true</code> or <code>false</code>. These strings are converted to boolean when saving.', 'adv-mce-config'); ?></li>
+		<li><?php _e('You can add JavaScript arrays, objects and functions in the value field.', 'adv-mce-config'); ?></li>
+		<li><?php _e('When copying settings from the examples in the TinyMCE documentation, make sure you copy only the setting name and value, not the whole example.', 'adv-mce-config'); ?></li>		
+		<li><?php _e('When pasting, make sure both the name and value do not start or end with empty spaces.', 'adv-mce-config'); ?></li>
+		<li><?php _e('Both the name and value must follow the JavaScript syntax. Line breaks are only allowed when using arrays or objects.', 'adv-mce-config'); ?></li>
+	</ol>
+
+	<h4><?php _e('Example:', 'adv-mce-config'); ?></h4>
+	<p><?php _e('To add the <code>block_formats</code> setting from the example in the TinyMCE documentation:', 'adv-mce-config'); ?></p>
+	<p><img width="784" height="144" src="<?php echo plugins_url( 'images/block-formats-example.png', __FILE__ ); ?>" title="<?php esc_attr_e('Screenshot of the example.', 'adv-mce-config'); ?>"></p>
+	<p><?php _e('you need to enter <code>block_formats</code> in the Option name field and <code>Paragraph=p;Header 1=h1;Header 2=h2;Header 3=h3</code> in the Value field:', 'adv-mce-config'); ?></p>
+	<p><img width="784" height="137" src="<?php echo plugins_url( 'images/block-formats-setting.png', __FILE__ ); ?>" title="<?php esc_attr_e('Screenshot of the added setting.', 'adv-mce-config'); ?>"></p>
+
+	<p><?php _e('Description of all settings is available in the', 'adv-mce-config'); ?> <a href="https://www.tinymce.com/docs/" target="_blank"><?php _e('TinyMCE documentation', 'adv-mce-config'); ?></a>.</p>
 	<?php
 
 	if ( advmceconf_is_mce_version_4() ) {
 		?>
-		<li><a href="http://www.tinymce.com/wiki.php/Configuration:block_formats" target="_blank">block_formats</a></li>
-		<li><a href="http://www.tinymce.com/wiki.php/Configuration:style_formats" target="_blank">style_formats</a></li>
-		<li><a href="http://www.tinymce.com/wiki.php/Configuration:invalid_elements" target="_blank">invalid_elements</a></li>
-		<li><a href="http://www.tinymce.com/wiki.php/Configuration:extended_valid_elements" target="_blank">extended_valid_elements</a></li>
-		<?php
-	} else {
-		?>
-		<li><a href="http://www.tinymce.com/wiki.php/Configuration3x:theme_advanced_blockformats" target="_blank">theme_advanced_blockformats</a></li>
-		<li><a href="http://www.tinymce.com/wiki.php/Configuration3x:theme_advanced_styles" target="_blank">theme_advanced_styles</a></li>
-		<li><a href="http://www.tinymce.com/wiki.php/Configuration3x:theme_advanced_text_colors" target="_blank">theme_advanced_text_colors</a></li>
-		<li><a href="http://www.tinymce.com/wiki.php/Configuration3x:theme_advanced_background_colors" target="_blank">theme_advanced_background_colors</a></li>
-		<li><a href="http://www.tinymce.com/wiki.php/Configuration3x:invalid_elements" target="_blank">invalid_elements</a></li>
-		<li><a href="http://www.tinymce.com/wiki.php/Configuration3x:extended_valid_elements" target="_blank">extended_valid_elements</a></li>
+		<p><?php _e('Several of the more commonly used settings are:', 'adv-mce-config'); ?></p>
+		<ul class="ul-disc">
+		<li><a href="https://www.tinymce.com/docs/configure/content-formatting/#block_formats" target="_blank">block_formats</a></li>
+		<li><a href="https://www.tinymce.com/docs/configure/content-formatting/#style_formats" target="_blank">style_formats</a></li>
+		<li><a href="https://www.tinymce.com/docs/configure/content-filtering/#invalid_elements" target="_blank">invalid_elements</a></li>
+		<li><a href="https://www.tinymce.com/docs/configure/content-filtering/#extended_valid_elements" target="_blank">extended_valid_elements</a></li>
+		</ul>
 		<?php
 	}
 
 	?>
-	</ul>
 	</div>
 
 	<table id="advmceconf-defaults" class="advmceconf-table showhide" style="display: none;">
 	<thead><tr>
-	<th class="names"><?php _e('Name', 'advmceconf'); ?></th>
+	<th class="names"><?php _e('Name', 'adv-mce-config'); ?></th>
 	<th class="sep">&nbsp;</th>
-	<th><?php _e('Value', 'advmceconf'); ?></th>
+	<th><?php _e('Value', 'adv-mce-config'); ?></th>
 	<th class="actions">&nbsp;</th>
 	</tr></thead>
 	<tbody>
@@ -264,7 +303,7 @@ function advmceconf_admin() {
 
 	if ( !empty($advmceconf_show_defaults) && is_array($advmceconf_show_defaults) ) {
 		$n = 1;
-		$change = esc_attr( __('Change', 'advmceconf') );
+		$change = esc_attr( __('Change', 'adv-mce-config') );
 
 		foreach ( $advmceconf_show_defaults as $def_field => $def_value ) {
 			if ( is_bool( $def_value ) )
@@ -288,21 +327,21 @@ function advmceconf_admin() {
 </table>
 
 <p>
-	<button type="button" class="button showhide"><?php _e('Show the default TinyMCE settings', 'advmceconf'); ?></button>
-	<button type="button" class="button showhide" style="display: none;"><?php _e('Hide the default TinyMCE settings', 'advmceconf'); ?></button>
+	<button type="button" class="button showhide"><?php _e('Show the default TinyMCE settings', 'adv-mce-config'); ?></button>
+	<button type="button" class="button showhide" style="display: none;"><?php _e('Hide the default TinyMCE settings', 'adv-mce-config'); ?></button>
 </p>
 
 <form method="post" action="" style="padding:10px 0">
 	<table class="advmceconf-table" id="advmceconf-set">
 	<thead><tr>
-	<th class="names"><?php _e('Option name', 'advmceconf'); ?></th>
-	<th><?php _e('Value', 'advmceconf'); ?></th>
+	<th class="names"><?php _e('Option name', 'adv-mce-config'); ?></th>
+	<th><?php _e('Value', 'adv-mce-config'); ?></th>
 	<th class="actions">&nbsp;</th>
 	</tr></thead>
 	<tbody>
 	<?php
 
-	$remove = esc_attr( __('Remove', 'advmceconf') );
+	$remove = esc_attr( __('Remove', 'adv-mce-config') );
 	foreach ( $options as $field => $value ) {
 		$field = esc_attr( $field );
 		$id = "advmceconf_option-{$field}";
@@ -331,7 +370,7 @@ function advmceconf_admin() {
 
 	<p class="submit">
 		<?php wp_nonce_field('advmceconf-save-options'); ?>
-		<input type="submit" value="<?php esc_attr_e('Save Changes', 'advmceconf'); ?>" class="button-primary" name="advmceconf_save" />
+		<input type="submit" value="<?php esc_attr_e('Save Changes', 'adv-mce-config'); ?>" class="button-primary" name="advmceconf_save" />
 	</p>
 </form>
 </div>
@@ -348,8 +387,8 @@ jQuery(document).ready( function($) {
 		var text = $('input', el).val();
 
 		if ( text && $.inArray(text, defaults) > -1 ) {
-			$(el).parent().addClass('advmceconf-hilite');
-			$('td.names:contains("' + text + '")', '#showhide').parent().addClass('advmceconf-hilite');
+			$(el).parent().addClass('advmceconf-highlight');
+			$('td.names:contains("' + text + '")', '#showhide').parent().addClass('advmceconf-highlight');
 		}
 	});
 	

@@ -175,6 +175,16 @@ var jQuery,
 			});
 
 			$('html, body').animate( { scrollTop: 0 }, 'fast' );
+
+			if ( ( typeof quicktags !== 'undefined' ) && ( typeof  mla.settings.quickTagsInit !== 'undefined' ) ) {
+				for ( id in mla.settings.quickTagsInit ) {
+					quicktags( mla.settings.quickTagsInit[id] );
+
+					if ( mla.settings.quickTagsInit[id]['active'] ) {
+						window.wpActiveEditor = id;
+					}
+				}
+			}
 		},
 
 		bulkSave : function(e) {
@@ -260,7 +270,6 @@ var jQuery,
 
 			// Find the items to process
 			chunk = mla.bulkEdit.ids.slice( mla.bulkEdit.offset, mla.bulkEdit.offset + mla.bulkEdit.chunkSize );
-			mla.bulkEdit.offset += mla.bulkEdit.chunkSize;
 
 			// Move them from waiting to running
 			for ( cIndex = 0; cIndex < chunk.length; cIndex++ ) {
@@ -275,8 +284,12 @@ var jQuery,
 				action: mla.settings.ajax_action,
 				mla_admin_nonce: mla.settings.ajax_nonce,
 				bulk_action: mla.bulkEdit.targetName,
+				cb_offset: mla.bulkEdit.offset,
+				cb_count: mla.bulkEdit.idsCount,
 				cb_attachment: chunk
 			};
+
+			mla.bulkEdit.offset += mla.bulkEdit.chunkSize;
 
 			params = $.param( params ) + '&' + mla.bulkEdit.fields;
 			//console.log( params );
@@ -669,6 +682,16 @@ var jQuery,
 					$('.inline-edit-categories', bulkRow ).html( blankCategories ),
 					$('.inline-edit-tags', bulkRow ).html( blankTags ),
 					$('.inline-edit-fields', bulkRow ).html( blankFields );
+
+					if ( ( typeof quicktags !== 'undefined' ) && ( typeof  mla.settings.quickTagsInit !== 'undefined' ) ) {
+						for ( id in mla.settings.quickTagsInit ) {
+							quicktags( mla.settings.quickTagsInit[id] );
+		
+							if ( mla.settings.quickTagsInit[id]['active'] ) {
+								window.wpActiveEditor = id;
+							}
+						}
+					}
 
 					$('#bulk-edit-set-parent', bulkRow).on( 'click', function(){
 						return mla.inlineEditAttachment.bulkParentOpen();

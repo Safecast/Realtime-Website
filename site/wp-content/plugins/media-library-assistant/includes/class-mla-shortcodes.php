@@ -22,6 +22,20 @@ class MLAShortcodes {
 	 * @return	void
 	 */
 	public static function initialize() {
+		global $sitepress, $polylang;
+
+		/*
+		 * Check for WPML/Polylang presence before loading language support class,
+		 * then immediately initialize it since we're already in the "init" action.
+		 */
+		if ( is_object( $sitepress ) ) {
+			require_once( MLA_PLUGIN_PATH . 'includes/class-mla-wpml-shortcode-support.php' );
+			MLA_WPML_Shortcodes::initialize();
+		} elseif ( is_object( $polylang ) ) {
+			require_once( MLA_PLUGIN_PATH . 'includes/class-mla-polylang-shortcode-support.php' );
+			MLA_Polylang_Shortcodes::initialize();
+		}
+
 		add_shortcode( 'mla_gallery', 'MLAShortcodes::mla_gallery_shortcode' );
 		add_shortcode( 'mla_tag_cloud', 'MLAShortcodes::mla_tag_cloud_shortcode' );
 		add_shortcode( 'mla_term_list', 'MLAShortcodes::mla_term_list_shortcode' );

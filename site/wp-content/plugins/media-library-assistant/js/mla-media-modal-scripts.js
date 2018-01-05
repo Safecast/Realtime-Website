@@ -719,6 +719,13 @@ wp.media.view.MlaSearch.on( 'all', MlaSearchOn );
 						else
 							mlaModal.settings.query[ state ].searchFields.splice( index, 1 );
 						break;
+					case 's[mla_search_file]':
+						index = mlaModal.settings.query[ state ].searchFields.indexOf( 'file' );
+						if ( -1 == index )
+							mlaModal.settings.query[ state ].searchFields.push( 'file' );
+						else
+							mlaModal.settings.query[ state ].searchFields.splice( index, 1 );
+						break;
 					case 's[mla_search_terms]':
 						index = mlaModal.settings.query[ state ].searchFields.indexOf( 'terms' );
 						if ( -1 == index )

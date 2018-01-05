@@ -22,9 +22,16 @@ class MLAMime {
 	 * @return	void
 	 */
 	public static function initialize() {
+		self::_localize_default_upload_columns();
+		self::_localize_default_upload_optional_columns();
+		self::_localize_default_view_columns();
+
 //		add_filter( 'sanitize_mime_type', 'MLAMime::mla_sanitize_mime_type_filter', 0x7FFFFFFF, 2 );
 		add_filter( 'ext2type', 'MLAMime::mla_ext2type_filter', 0x7FFFFFFF, 1 );
 //		add_filter( 'wp_check_filetype_and_ext', 'MLAMime::mla_wp_check_filetype_and_ext_filter', 0x7FFFFFFF, 4 );
+
+		// Handle WP 4.6.2, 4.7.x SVG bug
+		add_filter( 'getimagesize_mimes_to_exts', 'MLAMime::mla_getimagesize_mimes_to_exts_filter', 0x7FFFFFFF, 1 );
 
 		if ( 'checked' == MLACore::mla_get_option( MLACoreOptions::MLA_ENABLE_UPLOAD_MIMES ) ) {
 			if ( function_exists('wp_get_mime_types') ) {
@@ -53,6 +60,33 @@ class MLAMime {
 	 */
 	private static $disable_mla_filtering = false;
 
+	/**
+	 * Filters the list mapping image mime types to their respective extensions.
+	 *
+	 * Mitigates a bug in WP 4.6.x and 4.7.x that prevents uploading SVG files.
+	 *
+	 * @since 2.50
+	 *
+	 * @param  array $mime_to_ext Array of image mime types and their matching extensions.
+	 */
+	public static function mla_getimagesize_mimes_to_exts_filter( $mime_to_ext ) {
+		$wp_version = get_bloginfo('version');
+		if ( version_compare( $wp_version, '4.6.2', '<' ) || version_compare( $wp_version, '4.7.2', '>' ) ) {
+			return $mime_to_ext;
+		}
+		
+		if ( ! ( isset( $_REQUEST['name'] ) && isset( $_REQUEST['mlaAddNewBulkEditFormString'] ) ) ) {
+			return $mime_to_ext;
+		}
+		
+		$file_name = strtolower( $_REQUEST['name'] );
+		if ( false === strpos( $file_name, '.svg' ) ) {
+			return $mime_to_ext;
+		}
+		
+		return array_merge( $mime_to_ext, array( 'application/octet-stream' => 'svg' ) );
+	}
+	
 	/**
 	 * Sanitize a MIME type
 	 *
@@ -249,7 +283,7 @@ class MLAMime {
 	 * provided by Multisite Super Admins at wp-admin/network/settings.php." Multisite installs must
 	 * respect this restriction, so any list we produce will be passed thru that function if it exists.
 	 *
-	 * This function is defined as public because it's a filter.
+	 * Defined as public because it's a filter.
 	 *
 	 * @since 1.40
 	 *
@@ -457,6 +491,244 @@ class MLAMime {
 	} // mla_wp_mime_type_icon_filter
 
 	/**
+	 * Table column definitions, Settings/Uploads tab table
+	 *
+	 * This array defines table columns and titles where the key is the column slug (and class)
+	 * and the value is the column's title text.
+	 * 
+	 * All of the columns are added to this array by 
+	 * MLAMime::_localize_default_upload_columns.
+	 *
+	 * @since 1.40
+	 *
+	 * @var	array
+	 */
+	public static $default_upload_columns = array();
+
+	/**
+	 * Sortable column definitions, Settings/Uploads tab table
+	 *
+	 * This array defines the table columns that can be sorted. The array key
+	 * is the column slug that needs to be sortable, and the value is database column
+	 * to sort by. Often, the key and value will be the same, but this is not always
+	 * the case (as the value is a column name from the database, not the list table).
+	 *
+	 * The array value also contains a boolean which is 'true' if the initial sort order
+	 * for the column is DESC/Descending.
+	 *
+	 * @since 1.40
+	 *
+	 * @var	array
+	 */
+	public static $default_sortable_upload_columns = array(
+		'name' => array('slug',false),
+		'mime_type' => array('mime_type',false),
+		'icon_type' => array('icon_type',false),
+		'source' => array('source',false),
+		'status'  => array('disabled',false),
+		'core_type'  => array('core_type',false),
+		'mla_type' => array('mla_type',false),
+		'standard_source' => array('standard_source',false),
+		'core_icon_type' => array('core_icon_type',false),
+		'description' => array('description',false)
+        );
+
+	/**
+	 * Builds the $default_upload_columns array with translated source texts.
+	 *
+	 * @since 1.71
+	 *
+	 * @return	void
+	 */
+	public static function _localize_default_upload_columns( ) {
+		/*
+		 * Build the default columns array at runtime to accomodate calls to the localization functions
+		 */
+		self::$default_upload_columns = array(
+			'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
+			'icon'   => '',		
+			'name' => _x( 'Extension', 'list_table_column', 'media-library-assistant' ),
+			'mime_type' => _x( 'MIME Type', 'list_table_column', 'media-library-assistant' ),
+			'icon_type' => _x( 'Icon Type', 'list_table_column', 'media-library-assistant' ),
+			'source' => _x( 'Source', 'list_table_column', 'media-library-assistant' ),
+			'status'  => _x( 'Status', 'list_table_column', 'media-library-assistant' ),
+			'core_type'  => _x( 'WordPress Type', 'list_table_column', 'media-library-assistant' ),
+			'mla_type' => _x( 'MLA Type', 'list_table_column', 'media-library-assistant' ),
+			'standard_source' => _x( 'Std. Source', 'list_table_column', 'media-library-assistant' ),
+			'core_icon_type' => _x( 'Std. Icon Type', 'list_table_column', 'media-library-assistant' ),
+			'description' => _x( 'Description', 'list_table_column', 'media-library-assistant' )
+		);
+	}
+
+	/**
+	 * Return the orderby values of the sortable columns
+	 *
+	 * @since 1.40
+	 *
+	 * @return	array	orderby_valuecolumn_slug => array( , initial_descending_sort ) for sortable columns
+	 */
+	private static function _get_sortable_upload_columns( ) {
+		$results = array();
+		foreach ( self::$default_sortable_upload_columns as $key => $value ) {
+			$results[ $value[0] ] = $value[0];
+		}
+		
+		return $results;
+	}
+
+	/**
+	 * Table column definitions
+	 *
+	 * This array defines table columns and titles where the key is the column slug (and class)
+	 * and the value is the column's title text.
+	 * 
+	 * All of the columns are added to this array by 
+	 * MLAMime::_localize_default_upload_optional_columns.
+	 *
+	 * @since 1.40
+	 *
+	 * @var	array
+	 */
+	public static $default_upload_optional_columns = array();
+
+	/**
+	 * Sortable column definitions
+	 *
+	 * This array defines the table columns that can be sorted. The array key
+	 * is the column slug that needs to be sortable, and the value is database column
+	 * to sort by. Often, the key and value will be the same, but this is not always
+	 * the case (as the value is a column name from the database, not the list table).
+	 *
+	 * The array value also contains a boolean which is 'true' if the initial sort order
+	 * for the column is DESC/Descending.
+	 *
+	 * @since 1.40
+	 *
+	 * @var	array
+	 */
+	public static $default_upload_optional_sortable_columns = array(
+		'name' => array('slug',false),
+		'mime_type' => array('mime_type',false),
+		'core_type' => array('core_type',false),
+		'mla_type' => array('mla_type',false),
+		'description' => array('description',false)
+        );
+
+	/**
+	 * Builds the $default_upload_optional_columns array with translated source texts.
+	 *
+	 * @since 1.71
+	 *
+	 * @return	void
+	 */
+	private static function _localize_default_upload_optional_columns( ) {
+		// Build the default columns array at runtime to accomodate calls to the localization functions
+		self::$default_upload_optional_columns = array(
+			'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
+			'name' => _x( 'Extension', 'list_table_column', 'media-library-assistant' ),
+			'mime_type' => _x( 'MIME Type', 'list_table_column', 'media-library-assistant' ),
+			'core_type'  => _x( 'WordPress Type', 'list_table_column', 'media-library-assistant' ),
+			'mla_type' => _x( 'MLA Type', 'list_table_column', 'media-library-assistant' ),
+			'description' => _x( 'Description', 'list_table_column', 'media-library-assistant' )
+		);
+	}
+
+	/**
+	 * Return the names and orderby values of the sortable columns
+	 *
+	 * @since 1.40
+	 *
+	 * @return	array	column_slug => array( orderby value, initial_descending_sort ) for sortable columns
+	 */
+	private static function _get_sortable_upload_optional_columns( ) {
+		$results = array();
+		foreach ( self::$default_upload_optional_sortable_columns as $key => $value ) {
+			$results[ $value[0] ] = $value[0];
+		}
+		
+		return $results;
+	}
+
+	/**
+	 * Table column definitions, Settings/Views tab table
+	 *
+	 * This array defines table columns and titles where the key is the column slug
+	 * (and class) and the value is the column's title text.
+	 * 
+	 * All of the columns are added to this array by 
+	 * MLAMime::_localize_default_view_columns.
+	 *
+	 * @since 1.40
+	 *
+	 * @var	array
+	 */
+	public static $default_view_columns = array();
+
+	/**
+	 * Sortable column definitions, Settings/Views tab table
+	 *
+	 * This array defines the table columns that can be sorted. The array key
+	 * is the column slug that needs to be sortable, and the value is database column
+	 * to sort by. Often, the key and value will be the same, but this is not always
+	 * the case (as the value is a column name from the database, not the list table).
+	 *
+	 * The array value also contains a boolean which is 'true' if the initial sort order
+	 * for the column is DESC/Descending.
+	 *
+	 * @since 1.40
+	 *
+	 * @var	array
+	 */
+	public static $default_sortable_view_columns = array(
+		'name' => array('slug',false),
+		'specification' => array('specification',false),
+		'post_mime_type' => array('post_mime_type',false),
+		'table_view' => array('table_view',false),
+		'singular' => array('singular',false),
+		'plural' => array('plural',false),
+		'menu_order' => array('menu_order',false),
+		'description' => array('description',false)
+        );
+
+	/**
+	 * Builds the $default_view_columns array with translated source texts.
+	 *
+	 * @since 1.71
+	 *
+	 * @return	void
+	 */
+	private static function _localize_default_view_columns( ) {
+		// Build the default columns array at runtime to accomodate calls to the localization functions
+		self::$default_view_columns = array(
+			'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
+			'name' => _x( 'Slug', 'list_table_column', 'media-library-assistant' ),
+			'specification'  => _x( 'Specification', 'list_table_column', 'media-library-assistant' ),
+			'post_mime_type' => _x( 'Post Mime', 'list_table_column', 'media-library-assistant' ),
+			'table_view' => _x( 'Table View', 'list_table_column', 'media-library-assistant' ),
+			'singular'  => _x( 'Singular Name', 'list_table_column', 'media-library-assistant' ),
+			'plural'  => _x( 'Plural Name', 'list_table_column', 'media-library-assistant' ),
+			'menu_order' => _x( 'Order', 'list_table_column', 'media-library-assistant' ),
+			'description' => _x( 'Description', 'list_table_column', 'media-library-assistant' )
+		);
+	}
+
+	/**
+	 * Return the names and orderby values of the sortable columns
+	 *
+	 * @since 1.40
+	 *
+	 * @return	array	column_slug => array( orderby value, initial_descending_sort ) for sortable columns
+	 */
+	private static function _get_sortable_view_columns( ) {
+		$results = array();
+		foreach ( self::$default_sortable_view_columns as $key => $value ) {
+			$results[ $value[0] ] = $value[0];
+		}
+		
+		return $results;
+	}
+
+	/**
 	 * Sanitize and expand query arguments from request variables
 	 *
 	 * @since 1.40
@@ -474,7 +746,7 @@ class MLAMime {
 		 */
 		if ( ! is_array( $raw_request ) ) {
 			/* translators: 1: ERROR tag 2: function name 3: non-array value */
-			error_log( sprintf( _x( '%1$s: %2$s non-array "%3$s"', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), 'MLAMime::_prepare_view_items_query', var_export( $raw_request, true ) ), 0 );
+			MLACore::mla_debug_add( sprintf( _x( '%1$s: %2$s non-array "%3$s"', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), 'MLAMime::_prepare_view_items_query', var_export( $raw_request, true ) ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 			return NULL;
 		}
 
@@ -490,13 +762,9 @@ class MLAMime {
 					if ( 'none' == $value ) {
 						$clean_request[ $key ] = $value;
 					} else {
-						$sortable_columns = MLA_View_List_Table::mla_get_sortable_columns();
-						foreach ($sortable_columns as $sort_key => $sort_value ) {
-							if ( $value == $sort_value[0] ) {
-								$clean_request[ $key ] = $value;
-								break;
-							}
-						} // foreach
+						if ( array_key_exists( $value, self::_get_sortable_view_columns() ) ) {
+							$clean_request[ $key ] = $value;
+						}
 					}
 					break;
 				case 'order':
@@ -978,7 +1246,7 @@ class MLAMime {
 		}
 
 		if ( !empty( $specification ) ) {
-			$result = MLACore::mla_parse_view_specification( $request['specification'] );
+			$result = MLACore::mla_parse_view_specification( $specification );
 			if ( isset( $result['error'] ) ) {
 				$errors .= $result['error'];
 			}
@@ -1127,7 +1395,7 @@ class MLAMime {
 		 */
 		if ( ! is_array( $raw_request ) ) {
 			/* translators: 1: ERROR tag 2: function name 3: non-array value */
-			error_log( sprintf( _x( '%1$s: %2$s non-array "%3$s"', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), 'MLAMime::_prepare_upload_items_query', var_export( $raw_request, true ) ), 0 );
+			MLACore::mla_debug_add( sprintf( _x( '%1$s: %2$s non-array "%3$s"', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), 'MLAMime::_prepare_upload_items_query', var_export( $raw_request, true ) ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 			return NULL;
 		}
 
@@ -1147,13 +1415,9 @@ class MLAMime {
 					if ( 'none' == $value ) {
 						$clean_request[ $key ] = $value;
 					} else {
-						$sortable_columns = MLA_Upload_List_Table::mla_get_sortable_columns();
-						foreach ($sortable_columns as $sort_key => $sort_value ) {
-							if ( $value == $sort_value[0] ) {
-								$clean_request[ $key ] = $value;
-								break;
-							}
-						} // foreach
+						if ( array_key_exists( $value, self::_get_sortable_upload_columns() ) ) {
+							$clean_request[ $key ] = $value;
+						}
 					}
 					break;
 				case 'order':
@@ -1213,13 +1477,13 @@ class MLAMime {
 		foreach ( self::$mla_upload_mime_templates as $slug => $value ) {
 			if ( ! empty( $keyword ) ) {
 				if ( false === $extension ) {
-				$found  = false !== stripos( $slug, $keyword );
-				$found |= false !== stripos( $value['mime_type'], $keyword );
-				$found |= false !== stripos( $value['icon_type'], $keyword );
-				$found |= false !== stripos( $value['core_type'], $keyword );
-				$found |= false !== stripos( $value['mla_type'], $keyword );
-				$found |= false !== stripos( $value['core_icon_type'], $keyword );
-				$found |= false !== stripos( $value['description'], $keyword );
+					$found  = false !== stripos( $slug, $keyword );
+					$found |= false !== stripos( $value['mime_type'], $keyword );
+					$found |= false !== stripos( $value['icon_type'], $keyword );
+					$found |= false !== stripos( $value['core_type'], $keyword );
+					$found |= false !== stripos( $value['mla_type'], $keyword );
+					$found |= false !== stripos( $value['core_icon_type'], $keyword );
+					$found |= false !== stripos( $value['description'], $keyword );
 				} else {
 					$found  = false !== stripos( $slug, $extension );
 				}
@@ -1683,9 +1947,7 @@ class MLAMime {
 			return true;
 		}
 
-		/*
-		 * Find the WordPress-standard (unfiltered) extensions
-		 */
+		// Find the WordPress-standard (unfiltered) extensions
 		global $wp_filter;
 		if ( isset( $wp_filter['mime_types'] ) ) {
 			$save_filters = $wp_filter['mime_types'];
@@ -1718,9 +1980,7 @@ class MLAMime {
 			self::$disable_mla_filtering = false;
 		}
 
-		/*
-		 * Explode any entries with multiple extensions
-		 */
+		// Explode any entries with multiple extensions
 		foreach ( $core_types as $key => $value )
 			if ( false !== strpos( $key, '|' ) ) {
 				unset( $core_types[ $key ] );
@@ -1787,9 +2047,7 @@ class MLAMime {
 			}
 		}
 
-		/*
-		 * Add the WordPress-standard (unfiltered) extensions, initialized to an active state
-		 */
+		// Add the WordPress-standard (unfiltered) extensions, initialized to an active state
 		foreach ( $core_types as $key => $value ) {
 			$key = strtolower( $key );
 			if ( isset( self::$mla_upload_mime_templates[ $key ] ) ) {
@@ -1832,16 +2090,13 @@ class MLAMime {
 			}
 		}
 
-		/*
-		 * Add the user-defined custom types
-		 */
+		// Add the user-defined custom types
 		foreach ( $custom_types as $key => $value ) {
 			$key = strtolower( $key );
 			if ( isset( self::$mla_upload_mime_templates[ $key ] ) ) {
 				extract( self::$mla_upload_mime_templates[ $key ] );
-				/*
-				 * Make sure it's really custom
-				 */
+
+				// Make sure it's really custom
 				if ( ( 'core' == $source && $value == $core_type ) || ( 'mla' == $source && $value == $mla_type ) ) {
 					continue;
 					 }
@@ -1854,6 +2109,9 @@ class MLAMime {
 			if ( NULL == $icon_type = wp_ext2type( $key ) ) {
 				$icon_type = 'default';
 			}
+			
+			// Don't cache the results of mla_ext2type_filter() until current settings are applied below
+			self::$mla_icon_type_associations = NULL;
 
 			self::$mla_upload_mime_templates[ $key ] = array(
 				'post_ID' => ++self::$mla_upload_mime_highest_ID,
@@ -1876,9 +2134,7 @@ class MLAMime {
 			return true;
 		}
 
-		/*
-		 * Apply the current settings, if any
-		 */
+		// Apply the current settings, if any
 		foreach ( self::$mla_upload_mime_templates as $key => $value ) {
 			$default_description = isset( self::$mla_upload_mime_descriptions[ $key ] ) ? self::$mla_upload_mime_descriptions[ $key ] : '';
 			self::$mla_upload_mime_templates[ $key ]['disabled'] = isset( $mla_upload_mimes['disabled'][ $key ] );
@@ -2327,7 +2583,7 @@ class MLAMime {
 		 */
 		if ( ! is_array( $raw_request ) ) {
 			/* translators: 1: ERROR tag 2: function name 3: non-array value */
-			error_log( sprintf( _x( '%1$s: %2$s non-array "%3$s"', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), 'MLAMime::_prepare_optional_upload_items_query', var_export( $raw_request, true ) ), 0 );
+			MLACore::mla_debug_add( sprintf( _x( '%1$s: %2$s non-array "%3$s"', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), 'MLAMime::_prepare_optional_upload_items_query', var_export( $raw_request, true ) ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 			return NULL;
 		}
 
@@ -2343,13 +2599,9 @@ class MLAMime {
 					if ( 'none' == $value ) {
 						$clean_request[ $key ] = $value;
 					} else {
-						$sortable_columns = MLA_Upload_Optional_List_Table::mla_get_sortable_columns();
-						foreach ($sortable_columns as $sort_key => $sort_value ) {
-							if ( $value == $sort_value[0] ) {
-								$clean_request[ $key ] = $value;
-								break;
-							}
-						} // foreach
+						if ( array_key_exists( $value, self::_get_sortable_upload_optional_columns() ) ) {
+							$clean_request[ $key ] = $value;
+						}
 					}
 					break;
 				case 'order':

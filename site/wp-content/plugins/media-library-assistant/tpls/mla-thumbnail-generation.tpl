@@ -40,7 +40,9 @@
 			  </tr><tr>
               <td><label>
             <span class="title">[+Type+]</span>
-            <input type="radio" name="mla_thumbnail_options[type]" id="mla-thumbnail-options-jpg" checked="checked" value="image/jpeg" />
+            <span [+WP Style+]> <input type="radio" name="mla_thumbnail_options[type]" id="mla-thumbnail-options-jpg" [+WP Checked+] value="WordPress" />
+            WP&nbsp;&nbsp;</span>
+            <input type="radio" name="mla_thumbnail_options[type]" id="mla-thumbnail-options-jpg" [+JPG Checked+] value="image/jpeg" />
             JPG&nbsp;&nbsp;
             <input type="radio" name="mla_thumbnail_options[type]" id="mla-thumbnail-options-png" value="image/png" />
             PNG
@@ -57,11 +59,8 @@
                 <input name="mla_thumbnail_options[suffix]" id="mla-thumbnail-options-quality" type="text" size="15" value="[+default_suffix+]" />
               </label></td>
 			  </tr></table>
+			  <p>&nbsp;&nbsp;[+WP Help+]</p>
             </div> <!-- inline-edit-group -->
-<!--		<label class="alignleft clear">
-			<span class="title" style="display: inline-block">[+Options+]</span>
-            <input name="mla_thumbnail_options[clear_filters]" id="mla-thumbnail-options-clear-filters" type="checkbox" value="checked" checked="checked" />[+Clear Filter-by+]
-			</label> -->
             </div> <!-- inline-edit-col -->
           </fieldset>
           <p class="submit inline-edit-save"> <a accesskey="c" href="#mla-generate-thumbnail" title="[+Cancel+]" class="button-secondary cancel alignleft">[+Cancel+]</a>

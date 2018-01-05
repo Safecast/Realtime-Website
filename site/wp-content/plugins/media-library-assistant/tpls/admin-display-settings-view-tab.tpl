@@ -111,7 +111,11 @@
 <!-- template="after-table" -->
 			</form><!-- /id=mla-search-views-filter --> 
 		</div><!-- /col-wrap --> 
-		<div class="mla-settings-after-table">
+	</div><!-- /col-right -->
+
+	<div id="col-left">
+		<div class="col-wrap">
+		<div class="mla-settings-enable-form">
 		<form action="[+form_url+]" method="post" class="mla-display-settings-page" id="mla-display-settings-view-tab">
 			<table class="optiontable">
 		[+options_list+]
@@ -122,10 +126,6 @@
 		[+_wpnonce+]
 		</form>
 		</div>
-	</div><!-- /col-right -->
-
-	<div id="col-left">
-		<div class="col-wrap">
 			<div class="form-wrap">
 				<h2>[+Add New View+]</h2>
 				<form action="[+form_url+]" method="post" class="validate" id="mla-add-view">

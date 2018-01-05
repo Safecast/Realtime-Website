@@ -2,9 +2,9 @@
 Contributors: funkjedi
 Tags: acf, advanced custom fields, qtranslate, add-on, admin
 Requires at least: 3.5.0
-Tested up to: 4.2.1
-Version: 1.7.14
-Stable tag: 1.7.14
+Tested up to: 4.7.2
+Version: 1.7.23
+Stable tag: 1.7.23
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Provides qTranslate compatible ACF field types for Text, Text Area, WYSIWYG, Ima
 
 == Description ==
 
-This plugin provides qTranslate (qTranslate-X, qTranslate Plus and mqTranslate) compatible ACF4 and ACF5PRO field types for Text, Text Area, WYSIWYG, Image and File. When adding a field to a field group these new field types will be listed under the qTranslate category in the Field Type dropdown.
+This plugin provides qTranslate-X compatible ACF4 and ACF5PRO field types for Text, Text Area, WYSIWYG, Image and File. When adding a field to a field group these new field types will be listed under the qTranslate category in the Field Type dropdown.
 
 = Field Types =
 * qTranslate Text (type text, api returns text)
@@ -22,8 +22,7 @@ This plugin provides qTranslate (qTranslate-X, qTranslate Plus and mqTranslate) 
 * qTranslate Image (upload an image, api returns the url)
 * qTranslate File (upload a file, api returns the url)
 
-= qTranslate-X =
-If using qTranslate-X the standard Text, Text Area and WYSIWYG field types can be enabled for translation.
+The standard Text, Text Area and WYSIWYG field types can also be enabled for translation.
 
 = Bug Submission =
 https://github.com/funkjedi/acf-qtranslate/issues/
@@ -38,12 +37,8 @@ https://github.com/funkjedi/acf-qtranslate/issues/
 * [ACF](https://wordpress.org/plugins/advanced-custom-fields/)
 * [ACF5PRO](http://www.advancedcustomfields.com/pro/)
 
-= Requires qTranslate (or qTranslate-based) Plugin =
-* [qTranslate](https://wordpress.org/extend/plugins/qtranslate/)
+= Requires qTranslate-X Plugin =
 * [qTranslate-X](https://wordpress.org/plugins/qtranslate-x/)
-* [qTranslate Plus](https://wordpress.org/plugins/qtranslate-xp/)
-* [mqTranslate](https://wordpress.org/plugins/mqtranslate/)
-* [zTranslate](https://wordpress.org/extend/plugins/ztranslate/)
 
 
 == Frequently Asked Questions ==
@@ -58,6 +53,37 @@ The plugin is based on code samples posted to the ACF support forums by taeo bac
 
 
 == Changelog ==
+
+= 1.7.23 =
+* Bug Fix: Added ACF 5.6 compatibility
+
+= 1.7.22 =
+* Bug Fix: Prevent LSBs from loading on all pages by default
+
+= 1.7.21 =
+* Bug Fix: Make compatible with older versions of ACF5 by checking for `acf_connect_attachment_to_post`
+
+= 1.7.20 =
+* Core: Added ability to display LSBs on specific pages
+
+= 1.7.19 =
+* Bug Fix: Fixed issue with saving File and Image fields after ACF 5.5.5 upgrade
+
+= 1.7.18 =
+* Core: Prevent error on older versions of ACF5
+* Bug Fix: Updated ACF5 qTranslate File field to match recent ACF update
+
+= 1.7.17 =
+* Core: Initialize on either `plugins_loaded` or `after_setup_theme`
+* Core: Drop support for qTranslate Plus, mqTranslate, and zTranslate
+
+= 1.7.16 =
+* Bug Fix: Fixed ACF4 support for standard WYSIWYG field
+* Bug Fix: Updated ACF4 qTranslate WYSIWYG field
+* Bug Fix: Prevent translation of key `acf-field-group` fields
+
+= 1.7.15 =
+* Core: Display LSB on ACF Option pages
 
 = 1.7.14 =
 * Bug Fix: Bumped `after_setup_theme` priority to fix ACF4 field inclusion
@@ -156,8 +182,4 @@ The plugin is based on code samples posted to the ACF support forums by taeo bac
 
 == Upgrade Notice ==
 
-= 1.7.7 =
-If using qTranslate-X translation of the standard Text, Text Area and WYSIWYG field types is now disabled by default.
-
-= 1.7.3 =
-Removed namespaces to make code compatible with PHP 5.2
+Bug Fix: Fixed issue with saving File and Image fields after ACF 5.5.5 upgrade

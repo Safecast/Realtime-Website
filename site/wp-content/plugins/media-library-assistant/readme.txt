@@ -1,14 +1,15 @@
 === Media Library Assistant ===
 Contributors: dglingren
 Donate link: http://fairtradejudaica.org/make-a-difference/donate/
-Tags: attachments, gallery, images, media, media library, tag cloud, media-tags, media tags, tags, media categories, categories, IPTC, EXIF, XMP, GPS, PDF, metadata, photos, photographs, photoblog, photo albums, lightroom, photoshop, MIME, mime-type, icon, upload, file extensions, WPML, Polylang, multilanguage, multilingual, localization
+Tags: attachments, gallery, images, media, media library, tag cloud, media-tags, media tags, tags, media categories, categories, IPTC, EXIF, XMP, GPS, PDF, metadata, photos, photographs, photoblog, photo albums, lightroom, MIME, mime-type, icon, upload, file extensions, WPML, Polylang
 Requires at least: 3.5.0
-Tested up to: 4.6
-Stable tag: 2.33
+Tested up to: 4.9.1
+Requires PHP: 5.3
+Stable tag: 2.65
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Enhances the Media Library; powerful [mla_gallery], taxonomy support, IPTC/EXIF/PDF processing, bulk/quick edit actions and where-used reporting.
+Enhances the Media Library; powerful [mla_gallery] [mla_tag_cloud] [mla_term_list], taxonomy support, IPTC/EXIF/XMP/PDF processing, bulk/quick edit.
 
 == Description ==
 
@@ -74,7 +75,7 @@ This plugin was inspired by my work on the WordPress web site for our nonprofit,
 
 1. Use the `[mla_gallery]` shortcode to add galleries of images, documents and more to your posts and pages
 
-1. Use the `[mla_tagcloud]` shortcode to add clickable lists of taxonomy terms to your posts and pages
+1. Use the `[mla_tagcloud]` and `[mla_term_list]` shortcodes to add clickable lists of taxonomy terms to your posts and pages
 
 == Frequently Asked Questions ==
 
@@ -150,13 +151,23 @@ Hover over the item you want to modify and click the "Edit" or "Quick Edit" acti
 
 Some of the MLA features such as where-used reporting and ALT Text sorting/searching require a lot of database processing. If this is an issue for you, go to the Settings page and adjust the **"Where-used database access tuning"** settings. For any where-used category you can enable or disable processing. For the "Gallery in" and "MLA Gallery in" you can also choose to update the results on every page load or to cache the results for fifteen minutes between updates. The cache is also flushed automatically when posts, pages or attachments are inserted or updated.
 
+= Do custom templates and option settings survive version upgrades? =
+
+Rest assured, custom templates and all of your option settings persist unchanged whenever you update to a new MLA version.
+
+You can also back a backup of your templates and settings from the Settings/Media Library Assistant General tab. Scroll to the bottom of the page and click “Export ALL Settings” to create a backup file. You can create as many files as you like; they are date and time stamped so you can restore the one you want later.
+
+In addition, you can deactivate and even delete the plugin without losing the settings. They will be there when you reinstall and activate in the future.
+
+You can permanently delete the settings and (optionally) the backup files if you are removing MLA for good. The “Uninstall (Delete)” Plugin Settings section of the General tab enables these options.
+
 = Are other language versions available? =
 
-Not yet, but all of the internationalization work in the plugin source code has been completed and there is a Portable Object Template (.POT) available in the "/languages" directory. I don't have working knowledge of anything but English, but if you'd like to volunteer to produce a translation, I would be delighted to work with you to make it happen. Have a look at the "MLA Internationalization Guide.pdf" file in the languages directory and get in touch.
+Not many, but all of the internationalization work in the plugin source code has been completed and there is a Portable Object Template (.POT) available in the "/languages" directory. I don't have working knowledge of anything but English, but if you'd like to volunteer to produce a translation, I would be delighted to work with you to make it happen. Have a look at the "MLA Internationalization Guide.pdf" file in the languages directory and get in touch.
 
 = What's in the "phpDocs" directory and do I need it? =
 
-All of the MLA source code has been annotated with "DocBlocks", a special type of comment used by phpDocumentor to generate API documentation. If you'd like a deeper understanding of the code, click on "index.html" in the phpDocs directory and have a look. Note that these pages require JavaScript for much of their functionality.
+All of the MLA source code has been annotated with "DocBlocks", a special type of comment used by phpDocumentor to generate API documentation. If you'd like a deeper understanding of the code, navigate to the [MLA phpDocs web page](http://fairtradejudaica.org/wp-content/uploads/phpDocs/index.html "Read the API documentation") and have a look. Note that these pages require JavaScript for much of their functionality.
 
 == Screenshots ==
 
@@ -172,62 +183,35 @@ All of the MLA source code has been annotated with "DocBlocks", a special type o
 
 == Changelog ==
 
-= 2.33 =
-* New: The `terms:` data substitution parameter prefix has been enhanced to allow a specific term slug as an alternative to the terms assigned to an item.
-* New: The `mla-insert-fixit.php` example plugin has been enhanced with a "Copy Item terms to Parent Post/Page" tool.
-* Fix: On new MLA installs, WordPress **"The plugin does not have a valid header"** errors have been corrected. The error occured when "Activate Plugin" was clicked following a successful installation. To fix the problem, the `/examples/` directory has been divided into `plugins` and `themes` subdirectories. All of the example plugins have been moved to the `/plugins/` subdirectory.
-* Fix: For `[mla_gallery]`, restore `mla_nolink_text` operation.
+= 2.65 =
+* New: The "MLA Tax Query Example" plugin has been enhanced to handle multi-column orderby parameters.
+* Fix: **Corrected an "ajax.fail error"** in the Media/Assistant "Set Parent" function and the Media/Edit Media screen.
+* Fix: For the Media/Assistant admin submenu, some taxonomy term queries have been eliminated to improve performance.
+* Fix: In the "Smart Medis Categories" example plugin, WordPress "deprecated" messages have been removed when loading the Settings screen.
 
-= 2.32 =
-* New: The **Documentation/Example Plugins submenu** lets you browse the list of MLA example plugins, install or update them in the Plugins/Installed Plugins area and see which examples you have already installed. See the [Other Notes section](http://wordpress.org/extend/plugins/media-library-assistant/other_notes/ "Click here, then scroll down") section or the Settings/Media Library Assistant Documentation tab for more information.
-* New: For the Media/Assistant submenu table, you can now ceate **a filter dropdown for custom field values** as an alternative to taxonomy terms. The Taxonomy Support section of the Settings/Media Library Assistant General tab lets you select a custom field and set the Filter option to use it.
-* New: For the `[mla_gallery]` shortcode, **`link=download` is now available** to force a download of the gallery item.
-* New: A new substitution parameter Field-level option/format value, **",kbmb(t,k,m)"**, formats values such as file size with kilobyte and megabyte abbreviations.
-* New: Mapping support can be extended to **"front end" file upload plugins** by adding an **"MLA_AJAX_EXCEPTIONS" entry to the `wp-config.php` file.
-* New: A new example plugin, `mla-ui-elements-example.php`, provides shortcodes to improve the user experience for `[mla-term-list]`, `[mla_tag_cloud]` and `[mla_gallery]` shortcodes.
-* New: The `mla-insert-fixit.php` example plugin has been enhanced with "Post/Page insert Modification" tools. The new tools let you add/replace/delete attributes of the `<img >` tags for items inserted in posts/pages. New "Post to Library" and "Parent to Library" tools compose an item Title from the post/page in which it appears.
-* New: The `mla-simple-mapping-hooks-example.php` example plugin has been enhanced with a "update_menu_order" filter that updates the WordPress `menu_order` standard field.
-* New: The `mla-substitution-parameter-hooks-example.php` example plugin has been enhanced with "parent_terms:" and "page_terms:" prefixes that provide access to taxonomy terms assigned to an item's parent post/page and terms of the post/page on which the `[mla_gallery]` shortcode appears.
-* New: The `mla-substitution-parameter-hooks-example.php` example plugin has been enhanced with a "conditional:" prefix that returns different values during the initial upload process Vs other contexts.
-* New: A new example plugin, `mla-multi-wp-query-example.php`, provides an [mla_gallery] parameter to combine items from each of multiple "taxonomy=term" queries.
-* New: The `mla-custom-taxonomy-example.php` example plugin has been limited to defining three new custom taxonomies. All other functions have been moved to the `mla-ui-elements-example.php` example plugin.
-* New: Separate `mla_phrase_delimiter` and `mla_term_delimiter` parameters have been added to the `[mla_gallery]` terms search parameters.
-* New: The "request:" prefix now handles multi-level array values by supporting compound names, e.g., `tax_input.attachment_category`.
-* New: For the `[mla_gallery]` shortcode, `page_parent` and `page_mime_type` are now available as Gallery-specific Substitution Parameters.
-* New: For the `[mla_gallery]` shortcode, `found_rows`, `current_rows` and `max_num_pages` are now available as substitution parameters for style and markup templates.
-* Fix: Corrected handling of Media Manager Modal (popup) Window "Search Media" text box for WP 4.6
-* Fix: For the `[mla_gallery]` shortcode, the "index" attachment-specific substitution parameter is now set to the item's place in the entire gallery for the `mla_output=` "previous_link", "current_link" and "next_link" values.
-* Fix: A JavaScript conflict with the ToolSet Views Editor "Add Media" feature has been resolved.
-* Fix: For the `[mla_gallery]` shortcode, a substitution parameter expansion defect (introduced in MLA v2.31) that affected parameters such as `mla_caption` has been corrected.
-* Fix: Access to "attachment metadata" and `image_meta` during the initial upload process has been restored.
-* Fix: For the `[mla_tag_cloud]` shortcode, defects in the handling of the "orderby" parameter, e.g. random sorting, have been corrected..
-* Fix: Parsing of the `mla_terms_search_phrases` string has been improved to handle quoted phrases that include the phrase or term delimiters.
-* Fix: For the `[mla_gallery]` shortcode, invalid `mla_output` values are now replaced with the default, "gallery".
-* Fix: For the `[mla_term_list]` shortcode, default style templates are loaded for the "checklist" and "dropdown" formats.
+= 2.60 - 2.64 =
+* 2.64 - For `[mla_gallery]`, corrects v2.63 problem that applied `mla_named_transfer` to all `link=file` and `link=download` galleries.
+* 2.63 - Download by name and pretty links, str_replace format option, disable mapping rules, debug tab. Eight enhancements in all, nine fixes.
+* 2.62 - Corrects a PHP Fatal Error when loading MLA Media Manager enhancements for "front-end" use.
+* 2.61 - Several new example plugins and hooks, new shortcode parameters. Thirteen enhancements in all, thirteen fixes.
+* 2.60 - Completely new Settings/IPTC/EXIF tab and example plugin enhancements. Five enhancements in all, five 
 
-= 2.31 =
-* Fix: Remove call to `xdebug_get_function_stack()` causing fatal PHP error.
+= 2.50 - 2.54 =
+* 2.54 - Admin Columns/PHP 7.1.x Fix, thumbnail generation enhancements, [mla_term_list] fix and Settings/Shortcodes tab updates. Six fixes in all.
+* 2.53 - Correct PHP Fatal Error defect for users of Admin Columns (free version).
+* 2.52 - Improved Admin Columns Pro integration, better PHP 7 support. Example plugin improvements. Six enhancements in all, eight fixes.
+* 2.51 - Change "primary column" handling for WP 4.3+ to be more like Media/Library submenu table. Some MLA UI Elements Example plugin fixes.
+* 2.50 - Completely new Settings/Custom Fields tab, [mla_term_list] and example plugin enhancements. Fourteen enhancements in all, sixteen fixes.
 
-= 2.30 =
-* New: A **new shortcode, [mla_term_list],** composes lists, dropdown controls and checkbox lists for flat and hierarchical taxonomies. See the [Other Notes section](http://wordpress.org/extend/plugins/media-library-assistant/other_notes/ "Click here, then scroll down") section or the Settings/Media Library Assistant Documentation tab for more information.
-* New: A new example plugin, `/media-library-assistant/examples/plugins/mla-term-list-hooks-example.php` has been added. It documents the filters (hooks) provided by the `[mla_term_list]` shortcode.
-* New: A new example plugin, `/media-library-assistant/examples/plugins/mla-custom-taxonomy-example.php` has been added. It defines three custom taxonomies and shows how to combine `[mla_term_list]` and `[mla_gallery]` terms search parameters.
-* New: The Settings/Media Library Assistant "MLA Gallery" tab has been renamed "Shortcodes" to more accurately reflect its content. An expanded jump table makes it easier to access the style and markup sections for each shortcode.
-* New: A data element specification has been added to the taxonomy terms data substitution prefix. For example, you can get the term slug value(s) by coding `[+terms:attachment_category(slug)+]`.
-* New: **Field-level substitution parameter filters (hooks)** have been added to allow you to create and access custom substitution parameters and format options.
-* New: A new example plugin, `/media-library-assistant/examples/plugins/mla-substitution-parameter-hooks-example.php` has been added. It documents all the new hooks and adds a custom "parent_terms:" prefix to illustrate their use.
-* New: A new "Taxonomy term keyword(s) search" parameter has been added to change the delimiter used to separate terms in the input list. 
-* New: A new example plugin, `/media-library-assistant/examples/plugins/mla-bulk-edit-remap-example.php` has been added. It performs IPTC/EXIF and Custom Field mapping at the conclusion of a Bulk Edit action, so data sources like "terms:" are properly applied.
-* New: A new example plugin, `/media-library-assistant/examples/plugins/mla-current-user-example.php` has been added. It changes the `[mla_gallery]` parameter `author=current` to the ID value of the current logged in user.
-* New: The `/media-library-assistant/examples/plugins/mla-project-slug-example.php` example plugin has been enhanced to allow one or more `attachment_tags` terms to be excluded from the filtered results.
-* New: The `/media-library-assistant/examples/plugins/mla-insert-fixit.php` example plugin has been enhanced to link unattached items that are inserted in or are the Featured Image for a post or page.
-* New: Additional debug log messages have been added for IPTC/EXIF and Custom Field mapping AJAX actions.
-* Fix: The `mla-media-modal-scripts.js` script has been changed to **avoid "Uncaught RangeError" problems**.
-* Fix: The `posts_per_page` parameter is no longer ignored when the data selection parameter is `ids=` (or `include=`).
-* Fix: Corrupted `exif:DateTimeOriginal` values are replaced by `xmp:CreateDate` when possible. The original bad EXIF value is retained as `exif:BadDateTimeOriginal`.
-* Fix: MLA Media Manager enhancements are now loaded when plugins such as Beaver Builder invoke the Media Manager on the "front end".
-* Fix: Polylang version 1.8+ API changes have been incorporated, eliminating "deprecated" warning messages.
-* Fix: Files with valid, but empty XMP metadata that contain no namespaces are now handled without generating PHP Warning messages.
+= 2.40 - 2.41 =
+* 2.41 - Updated example plugins, EXIF improvements, PHP 5.3 compatibility, Polylang fix. Five enhancements in all, ten fixes.
+* 2.40 - Generate WP 4.7 PDF thumbnails, new Shortcodes tab, requires less admin-mode memory, Examples tab "View" action and "Installed" view. Seventeen other enhancements, fourteen fixes.
+
+= 2.30 - 2.33 =
+* 2.33 - Fix WordPress "The plugin does not have a valid header" errors on initial MLA installs. Two enhancements, one other fix.
+* 2.32 - New Documentation/Example Plugins submenu and installer, WordPress 4.6 fixes and several new example plugins. Sixteen enhancements in all, nine fixes.
+* 2.31 - Remove call to `xdebug_get_function_stack()` causing fatal PHP error.
+* 2.30 - New [mla_term-list] shortcode for hierarchical taxonomy display, Uncaught RangeError fix, custom data sources. Thirteen enhancements in all, six fixes.
 
 = 2.00 - 2.25 =
 * 2.25 - Default shortcode parameters in templates, list/grid view switcher, delete option settings, better XML parsing. Eight enhancements in all, eleven fixes.
@@ -295,8 +279,8 @@ All of the MLA source code has been annotated with "DocBlocks", a special type o
 
 == Upgrade Notice ==
 
-= 2.33 =
-Fix WordPress "The plugin does not have a valid header" errors on initial MLA installs. Two enhancements, one other fix.
+= 2.65 =
+Corrects an "ajax.fail error" in the Media/Assistant "Set Parent" function and the Media/Edit Media screen. One other enhancement, two other fixes.
 
 == Other Notes ==
 
@@ -310,7 +294,7 @@ Media Library Assistant includes many images drawn (with permission) from the [C
 
 <strong>Many thanks</strong> to Aurovrata Venet, Il'ya Karastel and Kristian Adolfsson for testing and advising on the multilingual support features!
 
-<h4>**New** The Example Plugins</h4>
+<h4>The Example Plugins</h4>
 
 The MLA example plugins have been developed to illustrate practical applications that use the hooks MLA provides to enhance the admin-mode screens and front-end content produced by the MLA shortcodes. Most of the examples are drawn from topics in the MLA Support Forum.
 
@@ -330,7 +314,7 @@ You can use the "Download" rollover action to download a plugin to your local sy
 
 If you do make changes to the example plugin code the best practice is to save the modified file(s) under a different name, so your changes won't be lost in a future update. If you want to retain the file name, consider changing the version number, e.g. adding 100 to the MLA value, so you can more easily identify the plugins you have modified. 
 
-<h4>**New** MLA Term List Shortcode</h4>
+<h4>MLA Term List Shortcode</h4>
 
 The `[mla_term_list]` shortcode function displays hierarchical taxonomy terms in a variety of formats; link lists, dropdown controls and checkbox lists. The list works with both flat (e.g., Att. Tags) and hierarchical taxonomies (e.g., Att. Categories) MLA Term List enhancements for lists and controls include: 
 
@@ -421,7 +405,6 @@ Taxonomy terms can also have one or more translations, which are also linked. Th
 When an item is uploaded to the Media Library it is assigned to the current language (note: <strong>avoid uploading items when you are in "All Languages"/"Show all languages" mode</strong>; bad things happen). WPML provides an option to duplicate the new item in all active languages; Polylang does not. MLA makes it easy to add translations to additional languages with the Translations column on the Media/Assistant submenu table. For Polylang, MLA provides Quick Translate and Bulk Translate actions as well.
 
 Assigning language-specific terms to items with multiple translations can be complex. MLA's <strong>Term Assignment</strong> logic assures that every term you assign on any of the editing screens (Media/Add New Bulk Edit, Media/Edit, Media/Assistant Quick Edit and Bulk Edit, Media Manager ATTACHMENT DETAILS pane) will be matched to the language of each item and translation. MLA's <strong>Term Synchronization</strong> logic ensures that changes made in one translation are replicated to all other translations that have an equivalent language-specific term.
-
 <strong>Shortcode Support</strong>
 
 The <code>[mla_gallery]</code> shortcode selects items using the WordPress <code>WP_Query</code> class. Both WPML and Polylang use the hooks provided by <code>WP_Query</code> to return items in the current language. If you use taxonomy parameters in your shortcode you must make sure that the term name, slug or other value is in the same language as the post/page in which it is embedded. This is easily done when the post/page content is translated from one language to another.

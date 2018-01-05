@@ -18,5 +18,5 @@ if ( isset( $_REQUEST['mla_download_file'] ) && isset( $_REQUEST['mla_download_t
 	MLAFileDownloader::mla_process_download_file();
 }
 
-MLAFileDownloader::_mla_die( 'MLA File Download parameters not set', __LINE__, 500 );
+MLAFileDownloader::mla_die( 'MLA File Download parameters not set', __LINE__, 500 );
 ?>

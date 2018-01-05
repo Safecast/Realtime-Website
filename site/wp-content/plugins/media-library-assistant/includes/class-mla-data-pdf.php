@@ -213,7 +213,7 @@ class MLAPDF {
 				$is_stream = true;
 			} else {
 				/* translators: 1: ERROR tag 2: index */
-				error_log( sprintf( _x( '%1$s: _build_pdf_indirect_objects bad value at $index = "%2$d".', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), $index ), 0 );
+				MLACore::mla_debug_add( sprintf( _x( '%1$s: _build_pdf_indirect_objects bad value at $index = "%2$d".', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), $index ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 			}
 		} // for each match
 	}
@@ -514,9 +514,9 @@ class MLAPDF {
 			$dictionary_end = strpos( $source_string, '>>', $nest );
 			if ( false === $dictionary_end ) {
 					/* translators: 1: ERROR tag 2: source offset 3: nest level */
-				error_log( sprintf( _x( '%1$s: _parse_pdf_dictionary offset = %2$d, nest = %3$d.', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), $offset, $nest ), 0 );
+				MLACore::mla_debug_add( sprintf( _x( '%1$s: _parse_pdf_dictionary offset = %2$d, nest = %3$d.', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), $offset, $nest ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 					/* translators: 1: ERROR tag 2: dictionary excerpt */
-				error_log( sprintf( _x( '%1$s: _parse_pdf_dictionary no end delimiter dump = %2$s.', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), MLAData::mla_hex_dump( substr( $source_string, $offset, 128 ), 128, 16 ) ), 0 );
+				MLACore::mla_debug_add( sprintf( _x( '%1$s: _parse_pdf_dictionary no end delimiter dump = %2$s.', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), MLAData::mla_hex_dump( substr( $source_string, $offset, 128 ), 128, 16 ) ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 				return array( '/length' => 0 );
 			}
 
@@ -562,7 +562,7 @@ class MLAPDF {
 				$dictionary[ $name ]['value'] = $value;
 				if ( ! isset( $value[0] ) ) {
 					/* translators: 1: ERROR tag 2: entry name 3: value excerpt */
-					error_log( sprintf( _x( '%1$s: _parse_pdf_dictionary bad value [ %2$s ] dump = %3$s', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), $name, MLAData::mla_hex_dump( $value, 32, 16 ) ), 0 );
+					MLACore::mla_debug_add( sprintf( _x( '%1$s: _parse_pdf_dictionary bad value [ %2$s ] dump = %3$s', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), $name, MLAData::mla_hex_dump( $value, 32, 16 ) ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 					continue;
 				}
 
@@ -746,7 +746,7 @@ class MLAPDF {
 		$match_count = preg_match_all( '/startxref[\x00-\x20]+(\d+)[\x00-\x20]+\%\%EOF/', $tail, $matches, PREG_OFFSET_CAPTURE );
 		if ( 0 == $match_count ) {
 			/* translators: 1: ERROR tag 2: path and file */
-			error_log( sprintf( _x( '%1$s: File "%2$s", startxref not found.', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), $path ), 0 );
+			MLACore::mla_debug_add( sprintf( _x( '%1$s: File "%2$s", startxref not found.', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), $path ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 			return array( 'xmp' => $xmp, 'pdf' => $metadata );
 		}
 
@@ -755,10 +755,11 @@ class MLAPDF {
 //error_log( __LINE__ . " MLAPDF::mla_extract_pdf_metadata trailer_dictionaries = " . var_export( $trailer_dictionaries, true ), 0 );
 		if ( is_array( $trailer_dictionaries ) ) {
 			$info_reference = NULL;
-			foreach ( $trailer_dictionaries as $trailer_dictionary ) 
-			if ( isset( $trailer_dictionary['Info'] ) ) {
-				$info_reference = $trailer_dictionary['Info'];
-				break;
+			foreach ( $trailer_dictionaries as $trailer_dictionary ) {
+				if ( isset( $trailer_dictionary['Info'] ) ) {
+					$info_reference = $trailer_dictionary['Info'];
+					break;
+				}
 			}
 //error_log( __LINE__ . " MLAPDF::mla_extract_pdf_metadata info_reference = " . var_export( $info_reference, true ), 0 );
 

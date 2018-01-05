@@ -43,44 +43,14 @@ class MLATest {
 		MLATest::$wp_3dot5 = ( version_compare( get_bloginfo( 'version' ), '3.5.0', '>=' ) && version_compare( get_bloginfo( 'version' ), '3.5.99', '<=' ) );
 		MLATest::$wp_4dot3_plus = version_compare( get_bloginfo( 'version' ), '4.2.99', '>=' );
 
-		/*
-		 * This is the earliest effective place to change error_reporting
-		 */
-		MLACore::$original_php_log = ini_get( 'error_log' );
-		MLACore::$original_php_reporting = sprintf( '0x%1$04X', error_reporting() );
+		// This is the earliest effective place to change error_reporting
 		$php_reporting = trim( MLACore::mla_get_option( MLACoreOptions::MLA_DEBUG_REPLACE_PHP_REPORTING ) );
 		if ( ! empty( $php_reporting ) ) {
 			@error_reporting( 0 + $php_reporting );
 		}
 
-		/*
-		 * This is the earliest effective place to localize values in other plugin components
-		 */
+		// This is the earliest effective place to localize values in other plugin components
 		MLACoreOptions::mla_localize_option_definitions_array();
-		
-		if ( class_exists( 'MLASettings' ) ) {
-			MLASettings::mla_localize_tablist();
-		}
-		
-		if ( class_exists( 'MLAQuery' ) ) {
-			MLAQuery::mla_localize_default_columns_array();
-		}
-		
-		if ( class_exists( 'MLA_View_List_Table' ) ) {
-			MLA_View_List_Table::mla_localize_default_columns_array();
-		}
-		
-		if ( class_exists( 'MLA_Upload_List_Table' ) ) {
-			MLA_Upload_List_Table::mla_localize_default_columns_array();
-		}
-		
-		if ( class_exists( 'MLA_Upload_Optional_List_Table' ) ) {
-			MLA_Upload_Optional_List_Table::mla_localize_default_columns_array();
-		}
-		
-		if ( class_exists( 'MLA_Example_List_Table' ) ) {
-			MLA_Example_List_Table::mla_localize_default_columns_array();
-		}
 	}
 
 	/**

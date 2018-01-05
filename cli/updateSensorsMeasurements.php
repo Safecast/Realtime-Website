@@ -11,7 +11,7 @@
 
 /* Safecast API URL format */
 define('API_URI_INFO_FORMAT', 'https://api.safecast.org/devices/%s.json');
-define('API_URI_MAXIMUM_FORMAT', 'https://api.safecast.org/en-US/measurements.json?device_id=%s&unit=cpm&per_page=1&order=value+desc');
+define('API_URI_MAXIMUM_FORMAT', 'https://api.safecast.org/en-US/measurements.json?captured_after=&captured_before=&device_id=%s&unit=cpm&per_page=1&order=value+desc');
 define('API_URI_LAST_FORMAT', 'https://api.safecast.org/en-US/measurements.json?device_id=%s&unit=cpm&per_page=1&order=captured_at+desc');
 
 function updateSensorInformation($postId, $information) {
@@ -48,7 +48,7 @@ function updateSensorMeasurement($postId, $uri, $measurementType) {
 	$sensorType			= get_post_meta(get_the_ID(), 'sensor_type', TRUE);
 
 	/* Based on tube type the conversion from cpm differs */
-	if (strpos($sensorType, "LND712") !== false || strpos($sensorType, "LND 712") !== false) {
+    if (strpos($sensorType, "LND712") !== false || strpos($sensorType, "LND 712") !== false || strpos($sensorType, "LND_7128") !== false || strpos($sensorType, "LND_7128ec") !== false || strpos($sensorType, "lnd_7128") !== false || strpos($sensorType, "lnd_7128ec") !== false) {
 		$usvh = number_format(($cpm / 120.5), 3);
 	}elseif (strpos($sensorType, "LND78017") !== false || strpos($sensorType, "LND 78017") !== false) {
 		$usvh = number_format(($cpm / 960), 3);

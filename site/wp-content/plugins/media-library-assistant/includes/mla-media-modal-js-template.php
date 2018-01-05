@@ -56,6 +56,10 @@ if ( empty( $supported_taxonomies ) ) {
             <input type="checkbox" name="s[mla_search_content]" id="search-content" value="content" <# if ( -1 != data.searchFields.indexOf( 'content' ) ) { #>checked<# } #> />
             <?php _e( 'Description', 'media-library-assistant' ); ?>
         </li>
+        <li>
+            <input type="checkbox" name="s[mla_search_file]" id="search-file" value="file" <# if ( -1 != data.searchFields.indexOf( 'file' ) ) { #>checked<# } #> />
+            <?php _e( 'File', 'media-library-assistant' ); ?>
+        </li>
 		<span <?php echo $terms_style ?>>
         <li>
             <input type="checkbox" name="s[mla_search_terms]" id="search-terms" value="terms" <# if ( -1 != data.searchFields.indexOf( 'terms' ) ) { #>checked<# } #> />

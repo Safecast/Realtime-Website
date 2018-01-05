@@ -59,6 +59,11 @@ class MLACoreOptions {
 	const MLA_COUNT_TERM_ATTACHMENTS = 'count_term_attachments';
 
 	/**
+	 * Provides a unique name for the taxonomy show Count column option
+	 */
+	const MLA_SHOW_COUNT_COLUMN = 'show_count_column';
+
+	/**
 	 * Provides a unique name for the taxonomy support option
 	 */
 	const MLA_TAXONOMY_SUPPORT = 'taxonomy_support';
@@ -122,6 +127,16 @@ class MLACoreOptions {
 	 * Provides a unique name for the Media/Assistant submenu table thumbnail/icon size option
 	 */
 	const MLA_TABLE_ICON_SIZE = 'table_icon_size';
+
+	/**
+	 * Provides a unique name for the Media/Assistant submenu table file name in the primary column
+	 */
+	const MLA_SHOW_FILE_NAME = 'show_file_name';
+
+	/**
+	 * Provides a unique name for the Media/Assistant submenu table bulk description wp_editor
+	 */
+	const MLA_BULK_EDITOR = 'bulk_wp_editor';
 
 	/**
 	 * Provides a unique name for the Bulk Update and Map All chunk size option
@@ -298,6 +313,16 @@ class MLACoreOptions {
 	const MLA_ENABLE_MLA_ICONS = 'enable_mla_icons';
 
 	/**
+	 * Provides a unique name for the Enable Custom Field Mapping option
+	 */
+	const MLA_ALLOW_CUSTOM_FIELD_MAPPING = 'allow_custom_field_mapping';
+
+	/**
+	 * Provides a unique name for the Enable IPTC/EXIF Mapping option
+	 */
+	const MLA_ALLOW_IPTC_EXIF_MAPPING = 'allow_iptc_exif_mapping';
+
+	/**
 	 * Provides a unique name for the Debug display limit option
 	 */
 	const MLA_DEBUG_DISPLAY_LIMIT = 'debug_display_limit';
@@ -465,6 +490,14 @@ class MLACoreOptions {
 					'std' => 'checked',
 					'help' => __( 'Check this option to calculate attachments per term in the Attachments Column.', 'media-library-assistant' )),
 
+			self::MLA_SHOW_COUNT_COLUMN =>
+				array('tab' => 'general',
+					'name' => __( 'Show Count Column', 'media-library-assistant' ),
+					'type' => 'checkbox',
+					'autoload' => true,
+					'std' => '',
+					'help' => __( 'Check this option to display the Count column on Categories and Tags taxonomy edit screens.', 'media-library-assistant' )),
+
 			self::MLA_TAXONOMY_SUPPORT =>
 				array('tab' => 'general',
 					'help' => __( 'Check the "<strong>Support</strong>" box to add the taxonomy to the Assistant and the Edit Media screen.', 'media-library-assistant' ) . '<br>' .
@@ -476,7 +509,7 @@ class MLACoreOptions {
 						__( 'You must also check the <strong>"Enable enhanced checklist taxonomies"</strong> box below to enable this feature.', 'media-library-assistant' ) . '<br>' .
 						__( 'Check the "<strong>Checked On Top</strong>" box to moved checked terms to the top of the checklist-style meta box.', 'media-library-assistant' ) . '<br>' .
 						__( 'Use the "<strong>List Filter</strong>" option to select the taxonomy (or custom field) on which to filter the Assistant table listing.', 'media-library-assistant' ) . '<br>' .
-						__( 'To <strong>filter on a custom field</strong>, enter the field name and select ASC (Ascending) ot DESC (Descending) order.', 'media-library-assistant' ),
+						__( 'To <strong>filter on a custom field</strong>, enter the field name and select ASC (Ascending) or DESC (Descending) order.', 'media-library-assistant' ),
  					'std' =>  array (
 						'tax_support' => array (
 							'attachment_category' => 'checked',
@@ -598,6 +631,22 @@ class MLACoreOptions {
 					'size' => 5,
 					'help' => __( 'Enter the size of the thumbnail/icon images, in pixels', 'media-library-assistant' )),
 
+			self::MLA_SHOW_FILE_NAME =>
+				array('tab' => 'general',
+					'name' => __( 'Show Primary Column File Name', 'media-library-assistant' ),
+					'type' => 'checkbox',
+					'autoload' => true,
+					'std' => '',
+					'help' => __( 'Check/uncheck this option to show/omit the file name from the primary column.', 'media-library-assistant' )),
+
+			self::MLA_BULK_EDITOR =>
+				array('tab' => 'general',
+					'name' => __( 'QuickTags editor for bulk description', 'media-library-assistant' ),
+					'type' => 'checkbox',
+					'autoload' => true,
+					'std' => '',
+					'help' => __( 'Check this option to use the QuickTags editor for the Description field in the Bulk Edit area.', 'media-library-assistant' )),
+
 			self::MLA_BULK_CHUNK_SIZE =>
 				array('tab' => 'general',
 					'name' => __( 'Bulk Chunk Size', 'media-library-assistant' ),
@@ -648,7 +697,7 @@ class MLACoreOptions {
 					'autoload' => true,
 					'std' =>  array (
 						'search_connector' => 'AND',
-						'search_fields' => array ( 'title', 'content' ),
+						'search_fields' => array ( 'title', 'excerpt', 'content', 'file' ),
 						), 
 					'type' => 'custom',
 					'render' => 'mla_search_option_handler',
@@ -861,10 +910,10 @@ class MLACoreOptions {
 					'delete' => 'mla_attachment_display_settings_option_handler',
 					'reset' => 'mla_attachment_display_settings_option_handler'),
 
-			'uninstall_plugin_subheader' =>
+			'uninstall_plugin_header' =>
 				array('tab' => 'general',
 					'name' => __( 'Uninstall (Delete) Plugin Settings', 'media-library-assistant' ),
-					'type' => 'subheader'),
+					'type' => 'header'),
 
 			self::MLA_DELETE_OPTION_SETTINGS =>
 				array('tab' => 'general',
@@ -883,7 +932,7 @@ class MLACoreOptions {
 			'template_header' =>
 				array('tab' => 'mla_gallery',
 					'name' => __( 'Default [mla_gallery] Templates and Settings', 'media-library-assistant' ),
-					'type' => 'header'),
+					'type' => 'subheader'),
 
 			'default_tag_cloud_style' =>
 				array('tab' => '',
@@ -1030,19 +1079,26 @@ class MLACoreOptions {
 					'type' => 'hidden',
 					'std' => array()),
 
+			self::MLA_ALLOW_CUSTOM_FIELD_MAPPING =>
+				array('tab' => 'custom_field',
+					'name' => __( 'Enable custom field mapping', 'media-library-assistant' ),
+					'type' => 'checkbox',
+					'std' => 'checked',
+					'help' => __( 'See Help menu.', 'media-library-assistant' )),
+
 			'enable_custom_field_mapping' =>
 				array('tab' => 'custom_field',
 					'name' => __( 'Enable custom field mapping when adding new media', 'media-library-assistant' ),
 					'type' => 'checkbox',
 					'std' => '',
-					'help' => __( 'Check this option to enable mapping when uploading new media (attachments).<br>&nbsp;&nbsp;Click Save Changes at the bottom of the screen if you change this option.<br>&nbsp;&nbsp;Does NOT affect the operation of the "Map" buttons on the bulk edit, single edit and settings screens.', 'media-library-assistant' )),
+					'help' => __( 'See Help menu.', 'media-library-assistant' )),
 
 			'enable_custom_field_update' =>
 				array('tab' => 'custom_field',
 					'name' => __( 'Enable custom field mapping when updating media metadata', 'media-library-assistant' ),
 					'type' => 'checkbox',
 					'std' => '',
-					'help' => __( 'Check this option to enable mapping when media (attachments) metadata is regenerated,<br>&nbsp;&nbsp;e.g., when the Media/Edit Media "Edit Image" functions are used.', 'media-library-assistant' )),
+					'help' => __( 'See Help menu.', 'media-library-assistant' )),
 
 			'custom_field_mapping' =>
 				array('tab' => '',
@@ -1053,6 +1109,13 @@ class MLACoreOptions {
 					'update' => 'mla_custom_field_option_handler',
 					'delete' => 'mla_custom_field_option_handler',
 					'reset' => 'mla_custom_field_option_handler'),
+
+			self::MLA_ALLOW_IPTC_EXIF_MAPPING =>
+				array('tab' => 'iptc_exif',
+					'name' => __( 'Enable IPTC/EXIF Mapping', 'media-library-assistant' ),
+					'type' => 'checkbox',
+					'std' => 'checked',
+					'help' => __( 'See Help menu.', 'media-library-assistant' )),
 
 			'enable_iptc_exif_mapping' =>
 				array('tab' => 'iptc_exif',

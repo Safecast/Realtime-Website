@@ -6,7 +6,7 @@
  * Plugin Name: All in one Favicon
  * Plugin URI: http://www.techotronic.de/plugins/all-in-one-favicon/
  * Description: All in one Favicon management. Easily add a Favicon to your site and the WordPress admin pages. Complete with upload functionality. Supports all three Favicon types (ico,png,gif)
- * Version: 4.5
+ * Version: 4.6
  * Author: Arne Franken
  * Author URI: http://www.techotronic.de/
  * License: GPL

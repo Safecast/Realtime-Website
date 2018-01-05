@@ -1,6 +1,6 @@
 <?php
 /**
- * Provides an example of hooking the filters provided by the [mla_gallery] shortcode.
+ * Creates a term-specific gallery of images assigned to child terms.
  *
  * In this example, a term slug within a hiearchical taxonomy (default "galleries" in
  * "attachment_category") is given. Each immediate child term is used to select one image
@@ -11,8 +11,12 @@
  * This example plugin uses three of the many filters available in the [mla_gallery] shortcode
  * and illustrates some of the techniques you can use to customize the gallery display.
  *
+ * Created for support topic "Automatic hierarchical display for hierarchical taxonomies"
+ * opened on 8/14/2014 by "mark-cockfield".
+ * https://wordpress.org/support/topic/automatic-hierarchical-display-for-hierarchical-taxonomies
+ *
  * @package MLA Child Term Hooks Example
- * @version 1.00
+ * @version 1.01
  */
 
 /*
@@ -20,7 +24,7 @@ Plugin Name: MLA Child Term Hooks Example
 Plugin URI: http://fairtradejudaica.org/media-library-assistant-a-wordpress-plugin/
 Description: Creates a term-specific gallery of images assigned to child terms.
 Author: David Lingren
-Version: 1.00
+Version: 1.01
 Author URI: http://fairtradejudaica.org/our-story/staff/
 
 Copyright 2014 David Lingren
@@ -70,9 +74,9 @@ class MLAChildTermHooksExample {
 		 * $priority - default 10; lower runs earlier, higher runs later
 		 * $accepted_args - number of arguments your function accepts
 		 */
-		add_filter( 'mla_gallery_attributes', 'MLAChildTermHooksExample::mla_gallery_attributes_filter', 10, 1 );
-		add_filter( 'mla_gallery_query_arguments', 'MLAChildTermHooksExample::mla_gallery_query_arguments_filter', 10, 1 );
-		add_filter( 'mla_gallery_item_values', 'MLAChildTermHooksExample::mla_gallery_item_values_filter', 10, 1 );
+		add_filter( 'mla_gallery_attributes', 'MLAChildTermHooksExample::mla_gallery_attributes', 10, 1 );
+		add_filter( 'mla_gallery_query_arguments', 'MLAChildTermHooksExample::mla_gallery_query_arguments', 10, 1 );
+		add_filter( 'mla_gallery_item_values', 'MLAChildTermHooksExample::mla_gallery_item_values', 10, 1 );
 	}
 
 	/**
@@ -99,13 +103,13 @@ class MLAChildTermHooksExample {
 	 *
 	 * @return	array	updated shortcode attributes
 	 */
-	public static function mla_gallery_attributes_filter( $shortcode_attributes ) {
+	public static function mla_gallery_attributes( $shortcode_attributes ) {
 		/*
 		 * Save the attributes for use in the later filters
 		 */
 		self::$shortcode_attributes = $shortcode_attributes;
 		return $shortcode_attributes;
-	} // mla_gallery_attributes_filter
+	} // mla_gallery_attributes
 
 	/**
 	 * Save the item => term_slug pairs
@@ -128,7 +132,7 @@ class MLAChildTermHooksExample {
 	 *
 	 * @return	array	updated attachment query arguments
 	 */
-	public static function mla_gallery_query_arguments_filter( $all_query_parameters ) {
+	public static function mla_gallery_query_arguments( $all_query_parameters ) {
 		/*
 		 * This example executes a custom SQL query that cannot be done with the usual
 		 * WordPress WP_Query arguments. The query results are fed back to the [mla_gallery]
@@ -160,7 +164,7 @@ class MLAChildTermHooksExample {
 			$ttids = array();
 
 			// Find taxonomy argument(s), if present, and collect terms
-			$taxonomies = get_taxonomies( array( 'object_type' => array( 'attachment' ) ), 'names' );
+			$taxonomies = get_object_taxonomies( 'attachment', 'names' );
 			foreach( $taxonomies as $taxonomy ) {
 				if ( empty( $my_query_vars[ $taxonomy ] ) ) {
 					continue;
@@ -253,18 +257,19 @@ class MLAChildTermHooksExample {
 		} // parameter "my_parent_terms" is present
 
 		return $all_query_parameters;
-	} // mla_gallery_query_arguments_filter
+	} // mla_gallery_query_arguments
 
 	/**
-	 * MLA Gallery Item Values
-	 *
+	 * Generate a link for each gallery item to a separate page that displays a gallery
+	 * of all images assigned to the term.
+ 	 *
 	 * @since 1.00
 	 *
 	 * @param	array	parameter_name => parameter_value pairs
 	 *
 	 * @return	array	updated substitution parameter name => value pairs
 	 */
-	public static function mla_gallery_item_values_filter( $item_values ) {
+	public static function mla_gallery_item_values( $item_values ) {
 		/*
 		 * We use a shortcode parameter of our own to apply our filters on a gallery-by-gallery basis,
 		 * leaving other [mla_gallery] instances untouched. If the "my_parent_terms" parameter is not present,
@@ -299,7 +304,7 @@ class MLAChildTermHooksExample {
 		$href = $my_page['permalink'] . '?' . $my_page['queryarg'] . '=' . self::$term_slugs[ $item_values['attachment_ID'] ];
 		$item_values['link'] = '<a href="' . $href . '">' . $item_values['thumbnail_content'] . '</a>';
 		return $item_values;
-	} // mla_gallery_item_values_filter
+	} // mla_gallery_item_values
 } // Class MLAChildTermHooksExample
 
 /*

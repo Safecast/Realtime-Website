@@ -1,6 +1,14 @@
 <?php
 /**
- * Updates the Title/post_title value entered in the bulk edit area
+ * Updates the Title/post_title value entered in the bulk edit area, adding a
+ * sequence number to make the Titles unique
+ *
+ * This example plugin uses one of the "Media/Assistant Submenu Actions and Filters (Hooks)"
+ * and illustrates a technique you can use to customize the bulk edit process.
+ *
+ * Created for support topic "Counter in title for multiple upload images"
+ * opened on 8/5/2015 by "Superbobo75".
+ * https://wordpress.org/support/topic/counter-in-title-for-multiple-upload-images/
  *
  * @package MLA Upload Bulk Edit Example
  * @version 1.00

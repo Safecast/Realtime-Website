@@ -24,29 +24,49 @@ class acf_qtranslate_acf_5_file extends acf_field_file {
 	function __construct($plugin) {
 		$this->plugin = $plugin;
 
+		if (version_compare($plugin->acf_version(), '5.6.0') < 0) {
+			$this->initialize();
+		}
+
+		acf_field::__construct();
+	}
+
+	/*
+	 *  __construct
+	 *
+	 *  This function will setup the field type data
+	 *
+	 *  @type	function
+	 *  @date	5/03/2014
+	 *  @since	5.0.0
+	 *
+	 *  @param	n/a
+	 *  @return	n/a
+	 */
+	function initialize() {
+
+		// vars
 		$this->name = 'qtranslate_file';
-		$this->label = __("File", 'acf');
+		$this->label = __("File",'acf');
 		$this->category = __("qTranslate", 'acf');
 		$this->defaults = array(
-			'return_format' => 'array',
-			'library'       => 'all',
-			'min_size'      => 0,
-			'max_size'      => 0,
-			'mime_types'    => ''
+			'return_format'	=> 'array',
+			'library' 		=> 'all',
+			'min_size'		=> 0,
+			'max_size'		=> 0,
+			'mime_types'	=> ''
 		);
-		$this->l10n  = array(
-			'select'     => __("Select File",'acf'),
-			'edit'       => __("Edit File",'acf'),
-			'update'     => __("Update File",'acf'),
-			'uploadedTo' => __("uploaded to this post",'acf'),
+		$this->l10n = array(
+			'select'		=> __("Select File",'acf'),
+			'edit'			=> __("Edit File",'acf'),
+			'update'		=> __("Update File",'acf'),
+			'uploadedTo'	=> __("Uploaded to this post",'acf'),
 		);
 
 
 		// filters
 		add_filter('get_media_item_args',			array($this, 'get_media_item_args'));
-		add_filter('wp_prepare_attachment_for_js',	array($this, 'wp_prepare_attachment_for_js'), 10, 3);
 
-		acf_field::__construct();
 	}
 
 	/*
@@ -201,9 +221,24 @@ class acf_qtranslate_acf_5_file extends acf_field_file {
 	 *
 	 *  @return	$value - the modified value
 	 */
-	function update_value($value, $post_id, $field) {
-		$value = parent::update_value($value, $post_id, $field);
-		return qtrans_join($value);
+	function update_value($values, $post_id, $field) {
+
+		// validate
+		if ( !is_array($values) ) return false;
+
+		if (function_exists('acf_connect_attachment_to_post')) {
+			foreach ($values as $value) {
+
+				// bail early if not attachment ID
+				if( !$value || !is_numeric($value) ) continue;
+
+				// maybe connect attacments to post
+				acf_connect_attachment_to_post( (int) $value, $post_id );
+
+			}
+		}
+
+		return qtrans_join($values);
 	}
 
 }

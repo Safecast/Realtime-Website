@@ -1,4 +1,27 @@
 <?php
+/**
+ * Provides an [mla_gallery] parameter to select random items from a collection of Att. Category terms
+ *
+ * In this example, a custom "random_category" parameter names an Att. Category term.
+ * The value is matched to a list of terms in the $gallery_terms array in the plugin source code.
+ * If the term is in the list items assigned to the term are returned in random order.
+ * The 'numberposts' parameter can be added to limit the number of items returned. For example:
+ *
+ * [mla_gallery random_category=admin numberposts=1]
+ *
+ * NOTE: You must enter the name or slug values for your application's terms in the $gallery_terms array below.
+ *
+ * This example plugin uses one of the many filters available in the [mla_gallery] shortcode
+ * and illustrates a technique you can use to customize the gallery display.
+ *
+ * Created for support topic "multiple calls to a smaller amount"
+ * opened on 1/16/2016 by "luigsm".
+ * https://wordpress.org/support/topic/multiple-calls-to-a-smaller-amount
+ *
+ * @package MLA Random Galleries Example
+ * @version 1.00
+ */
+
 /*
 Plugin Name: MLA Random Galleries Example
 Plugin URI: http://fairtradejudaica.org/media-library-assistant-a-wordpress-plugin/

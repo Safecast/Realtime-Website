@@ -3,6 +3,13 @@
  * Performs IPTC/EXIF and Custom Field mapping at the conclusion of a Bulk Edit action,
  * so data sources like "terms:" are properly applied.
  *
+ * This example plugin uses two of the "Media/Assistant Submenu Actions and Filters (Hooks)"
+ * and illustrates some of the techniques you can use to customize the bulk edit process.
+ *
+ * Created for support topic "Sorting based on taxonomy terms"
+ * opened on 4/30/2016 by "arabesco".
+ * https://wordpress.org/support/topic/sorting-based-on-taxonomy-terms/
+ *
  * @package MLA Bulk Edit Remap Example
  * @version 1.00
  */

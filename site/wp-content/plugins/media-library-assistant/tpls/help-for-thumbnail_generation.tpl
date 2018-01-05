@@ -2,12 +2,14 @@
 <!-- invoked as /wp-admin/upload.php?page=mla-menu -->
 <!-- template="mla-thumbnail-generation" -->
 <!-- title="Thumbnail Generation" order="95" -->
-<p>Media Library Assistant lets you assign a "Featured Image" to yourMedia Library items. For non-image items such as PDF documents this image can be used as the <code>mla_viewer</code> thumbnail image, avoiding the overhead of generating the image each time the gallery is composed. The "Thumbnail" Bulk Action makes it easy to generate thumbnail images and assign them to their corresponding non-image Media Library items.</p>
+<p>Media Library Assistant lets you assign a "Featured Image" to your Media Library items. For non-image items such as PDF documents this image can be used as the <code>mla_viewer</code> thumbnail image, avoiding the overhead of generating the image each time the gallery is composed. The "Thumbnail" Bulk Action makes it easy to generate thumbnail images and assign them to their corresponding non-image Media Library items.</p>
+<p>WordPress 4.7 and later generates thumbnail images for PDF documents as they are uploaded to the Media Library. You can use MLA's thumbnail generation feature to create WordPress style thumbnails for documents you added to the Media Library before updating to version 4.7. Just select the "WP" Type radio button.
+</p>
 <p>You can use the following fields to control the thumbnail generation process:</p>
 <table>
 <tr>
 <td class="mla-doc-table-label">Width</td>
-<td>the maximum width in pixels (default "150") of the thumbnail image. The height (unless also specified) will be adjusted to maintain the page proportions.</td>
+<td>the maximum width in pixels (default "0" for WP 4.7+, "150" for earlier versions) of the thumbnail image. The height (unless also specified) will be adjusted to maintain the page proportions.</td>
 </tr>
 <tr>
 <td class="mla-doc-table-label">Height</td>
@@ -23,7 +25,7 @@
 </tr>
 <tr>
 <td class="mla-doc-table-label">Resolution</td>
-<td>the pixels/inch resolution (default 72) of the page before reduction. If you set this to a higher number, such as 300, you will improve thumbnail quality at the expense of additional processing time.</td>
+<td>the pixels/inch resolution (default "128" for WP 4.7+, "72" for earlier versions) of the page before reduction. If you set this to a higher number, such as 300, you will improve thumbnail quality at the expense of additional processing time.</td>
 </tr>
 <tr>
 <td class="mla-doc-table-label">Quality</td>
@@ -31,16 +33,20 @@
 </tr>
 <tr>
 <td class="mla-doc-table-label">Type</td>
-<td>the MIME type, "JPG" (image/jpeg, default) or "PNG" (image/png), of the final thumbnail. You can, for example, set this to "PNG" to retain a transparent background instead of the white jpeg background.</td>
+<td>the MIME type, "JPG" (image/jpeg, default) or "PNG" (image/png), of the final thumbnail. You can, for example, set this to "PNG" to retain a transparent background instead of the white jpeg background.
+<div style="font-size:8px; line-height:8px">&nbsp;</div>
+You can select "WP" to generate WordPress-style thumbnails (for PDF documents) like those for new uploads as of WP 4.7. These are part of the PDF item itself, not a separate item.</td>
 </tr>
 <tr>
 <td class="mla-doc-table-label">Existing Items</td>
 <td>the action to take if an item already has a thumbnail. Select "<strong>Keep</strong>" to retain the thumbnail and not generate anything. Select "<strong>Ignore</strong>" to generate and assign a new thumbnail, leaving the old item unchanged. Select "<strong>Trash</strong>" to generate and assign a new thumbnail, moving the old item to the Media Trash (if defined) or deleting it. Select "<strong>Delete</strong>" to generate and assign a new thumbnail, permanently deleting the old item.
+<div style="font-size:8px; line-height:8px">&nbsp;</div>
+You can select "Delete" to replace WordPress-style thumbnails (Type "WP") like those for new uploads as of WP 4.7. The existing thumbnails will be deleted and new thumbnails generated.
 </td>
 </tr>
 <tr>
 <td class="mla-doc-table-label">Suffix</td>
-<td>the suffix added to the source item's Title to create the thumbnail's Title.</td>
+<td>the suffix added to the source item's Title to create the thumbnail's Title. Suffix is ignored when generating WordPress-style thumbnails.</td>
 </tr>
 <tr>
 <td class="mla-doc-table-label">Clear Filter-by</td>

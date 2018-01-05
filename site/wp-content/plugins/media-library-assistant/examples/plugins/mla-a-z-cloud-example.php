@@ -1,10 +1,35 @@
 <?php
+/**
+ * Implements a solution for the alphabetical division and expandable gallery display application features.
+ *
+ * The example plugin contains two custom shortcodes:
+ *
+ * 1.[az-cloud] – provides an "A-Z cloud" that tabulates the items starting with each letter of the
+ * alphabet and generates links that include a query argument with the selected letter.
+ * 2.[az_gallery] – formats a "gallery" list of the items starting with the selected letter. It uses a
+ * file naming convention to collect all the "parts" of a particular "item set" and display them as
+ * a second-level list. Uses Collapse-o-matic (optionally) to control the display of items.
+ *
+ * Both shortcodes have parameters to filter by MIME type and/or taxonomy term and to change the
+ * HTML tags surrounding the items.
+ *
+ * This example plugin uses three of the many filters available in the [mla_gallery] shortcode
+ * and illustrates some of the techniques you can use to customize the gallery display.
+ *
+ * Created for support topic "Alphabetical pagination"
+ * opened on 5/16/2015 by "kevincowart111".
+ * https://wordpress.org/support/topic/alphabetical-pagination-2
+ *
+ * @package MLA Child Term Hooks Example
+ * @version 1.01
+ */
+
 /*
 Plugin Name: MLA A-Z Cloud and Collapse-o-Matic Example
 Plugin URI: http://fairtradejudaica.org/media-library-assistant-a-wordpress-plugin/
 Description: Provides an "A-Z cloud/pagination" and expandable gallery example
 Author: David Lingren
-Version: 1.00
+Version: 1.01
 Author URI: http://fairtradejudaica.org/our-story/staff/
 
 Copyright 2015 David Lingren
@@ -380,7 +405,7 @@ class MLAAtoZCloudExample {
 		$ttids = array();
 
 		// Find taxonomy argument, if present, and collect terms
-		$taxonomies = get_taxonomies( array( 'object_type' => array( 'attachment' ) ), 'names' );
+		$taxonomies = get_object_taxonomies( 'attachment', 'names' );
 		foreach( $taxonomies as $taxonomy ) {
 			if ( empty( $attr[ $taxonomy ] ) ) {
 				continue;

@@ -127,7 +127,10 @@
 <!-- template="after-table" -->
 			</form><!-- /id=mla-search-uploads-filter --> 
 		</div><!-- /col-wrap --> 
-		<div class="mla-settings-after-table">
+	</div><!-- /col-right -->
+	<div id="col-left">
+		<div class="col-wrap">
+		<div class="mla-settings-enable-form">
 		<form action="[+form_url+]" method="post" class="mla-display-settings-page" id="mla-display-settings-upload-tab">
 			<table class="optiontable">
 		[+options_list+]
@@ -138,9 +141,6 @@
 		[+_wpnonce+]
 		</form>
 		</div>
-	</div><!-- /col-right -->
-	<div id="col-left">
-		<div class="col-wrap">
 			<div class="form-wrap">
 				<h2>[+Add New Upload+]</h2>
 						<p class="description">[+To search database+]</p>

@@ -313,7 +313,7 @@ class MLAEdit {
 		$page_template_array = MLACore::mla_load_template( 'mla-add-new-bulk-edit.tpl' );
 		if ( ! is_array( $page_template_array ) ) {
 			/* translators: 1: ERROR tag 2: function name 3: non-array value */
-			error_log( sprintf( _x( '%1$s: %2$s non-array "%3$s"', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), 'MLAEdit::mla_post_upload_ui', var_export( $page_template_array, true ) ), 0 );
+			MLACore::mla_debug_add( sprintf( _x( '%1$s: %2$s non-array "%3$s"', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), 'MLAEdit::mla_post_upload_ui', var_export( $page_template_array, true ) ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 			return;
 		}
 
@@ -329,7 +329,7 @@ class MLAEdit {
 			foreach ( $hierarchical_taxonomies as $tax_name => $tax_object ) {
 				if ( current_user_can( $tax_object->cap->assign_terms ) ) {
 				  ob_start();
-				  wp_terms_checklist( NULL, array( 'taxonomy' => $tax_name ) );
+				  wp_terms_checklist( NULL, array( 'taxonomy' => $tax_name, 'popular_cats' => array(), ) );
 				  $tax_checklist = ob_get_contents();
 				  ob_end_clean();
   
@@ -458,9 +458,15 @@ class MLAEdit {
 	public static function mla_update_attachment_metadata_postfilter( $data, $post_id, $options = array( 'is_upload' => true ) ) {
 		if ( ( true == $options['is_upload'] ) && ! empty( $_REQUEST['mlaAddNewBulkEditFormString'] ) ) {
 			/*
-			 * Clean up the inputs, which have everything from the enclosing <form>
+			 * Clean up the inputs, which have everything from the enclosing <form>.
+			 * wp_parse_args converts plus signs to spaces, which we must avoid.
 			 */
-			$args = wp_parse_args( stripslashes( urldecode( $_REQUEST['mlaAddNewBulkEditFormString'] ) ) );
+			$args = wp_parse_args( stripslashes( str_replace( '%2B', 'urlencodedmlaplussign', $_REQUEST['mlaAddNewBulkEditFormString'] ) ) );
+			foreach ( $args as $key => $arg ) {
+				if ( is_string( $arg ) && 0 === strpos( $arg, 'template:' ) ) {
+					$args[ $key ] = str_replace( 'urlencodedmlaplussign', '+', $arg );
+				}
+			}
 
 			unset( $args['parent'] );
 			unset( $args['children'] );
@@ -511,6 +517,8 @@ class MLAEdit {
 	if ( isset( $messages['attachment'] ) ) {
 		$messages['attachment'][101] = __( 'Custom field mapping updated.', 'media-library-assistant' );
 		$messages['attachment'][102] = __('IPTC/EXIF mapping updated.', 'media-library-assistant' );
+		$messages['attachment'][103] = __( 'Custom field mapping is disabled.', 'media-library-assistant' );
+		$messages['attachment'][104] = __('IPTC/EXIF mapping is disabled.', 'media-library-assistant' );
 	}
 
 	return $messages;
@@ -551,9 +559,13 @@ class MLAEdit {
 			echo '<input name="mla_source" type="hidden" id="mla_source" value="' . $_REQUEST['mla_source'] . '" />';
 		}
 
-		echo '<a href="' . add_query_arg( $view_args, wp_nonce_url( 'upload.php?mla_admin_action=' . MLA::MLA_ADMIN_SINGLE_CUSTOM_FIELD_MAP, MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME ) ) . '" title="' . __( 'Map Custom Field metadata for this item', 'media-library-assistant' ) . '">' . __( 'Map Custom Field metadata', 'media-library-assistant' ) . '</a><br>';
+		if ( 'checked' == MLACore::mla_get_option( MLACoreOptions::MLA_ALLOW_CUSTOM_FIELD_MAPPING ) ) {
+			echo '<a href="' . add_query_arg( $view_args, wp_nonce_url( 'upload.php?mla_admin_action=' . MLACore::MLA_ADMIN_SINGLE_CUSTOM_FIELD_MAP, MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME ) ) . '" title="' . __( 'Map Custom Field metadata for this item', 'media-library-assistant' ) . '">' . __( 'Map Custom Field metadata', 'media-library-assistant' ) . '</a><br>';
+		}
 
-		echo '<a href="' . add_query_arg( $view_args, wp_nonce_url( 'upload.php?mla_admin_action=' . MLA::MLA_ADMIN_SINGLE_MAP, MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME ) ) . '" title="' . __( 'Map IPTC/EXIF metadata for this item', 'media-library-assistant' ) . '">' . __( 'Map IPTC/EXIF metadata', 'media-library-assistant' ) . '</a>';
+		if ( 'checked' == MLACore::mla_get_option( MLACoreOptions::MLA_ALLOW_IPTC_EXIF_MAPPING ) ) {
+			echo '<a href="' . add_query_arg( $view_args, wp_nonce_url( 'upload.php?mla_admin_action=' . MLACore::MLA_ADMIN_SINGLE_MAP, MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME ) ) . '" title="' . __( 'Map IPTC/EXIF metadata for this item', 'media-library-assistant' ) . '">' . __( 'Map IPTC/EXIF metadata', 'media-library-assistant' ) . '</a>';
+		}
 
 		echo "</span>\n";
 		echo "</div><!-- .misc-pub-section -->\n";
@@ -728,7 +740,7 @@ class MLAEdit {
 					);
 				} else {
 					/* translators: 1: ERROR tag 2: function name 3: template key */
-					error_log( sprintf( _x( '%1$s: %2$s discarding "%3$s"; no title/order', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), 'mla_edit_add_help_tab', $id ), 0 );
+					MLACore::mla_debug_add( sprintf( _x( '%1$s: %2$s discarding "%3$s"; no title/order', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), 'mla_edit_add_help_tab', $id ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 				}
 			}
 
@@ -768,7 +780,7 @@ class MLAEdit {
 				);
 			} else {
 				/* translators: 1: ERROR tag 2: function name 3: template key */
-				error_log( sprintf( _x( '%1$s: %2$s discarding "%3$s"; no title/order', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), 'mla_edit_add_help_tab', $id ), 0 );
+				MLACore::mla_debug_add( sprintf( _x( '%1$s: %2$s discarding "%3$s"; no title/order', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), 'mla_edit_add_help_tab', $id ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 			}
 		}
 

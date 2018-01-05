@@ -18,6 +18,7 @@
 <p>Clicking "Install" will copy the plugin to the WordPress Plugins/Installed Plugins area. Install is not available if the plugin is already in the Plugins area.</p>
 <p>Clicking "Update" will replace the plugin already in the WordPress Plugins/Installed Plugins area. <strong>Any changes you have made to the installed version will be lost.</strong> Update is not available if the plugin is not already in the Plugins area.</p>
 <p>Clicking "Download" will copy the plugin to your local system so you can inspect and modify it to meet your appication needs.</p>
+<p>Clicking "View" will display the plugin file content. Many of the plugins have notes and user information at the top of the file.</p>
 <!-- template="sidebar" -->
 <p><strong>For more information:</strong></p>
 <p><a href="[+settingsURL+]?page=mla-settings-menu-documentation&mla_tab=documentation#mla_example_plugins" target="_blank">MLA Documentation on Example Plugins</a></p>

@@ -21,7 +21,7 @@ class MLACore {
 	 *
 	 * @var	string
 	 */
-	const CURRENT_MLA_VERSION = '2.33';
+	const CURRENT_MLA_VERSION = '2.65';
 
 	/**
 	 * Slug for registering and enqueueing plugin style sheets (moved from class-mla-main.php)
@@ -57,7 +57,7 @@ class MLACore {
 	 *
 	 * @var	integer
 	 */
-	CONST MLA_DEBUG_CATEGORY_ANY = 0x00000001;
+	const MLA_DEBUG_CATEGORY_ANY = 0x00000001;
 
 	/**
 	 * Constant to log Ajax debug activity
@@ -66,7 +66,7 @@ class MLACore {
 	 *
 	 * @var	integer
 	 */
-	CONST MLA_DEBUG_CATEGORY_AJAX = 0x00000002;
+	const MLA_DEBUG_CATEGORY_AJAX = 0x00000002;
 
 	/**
 	 * Constant to log WPML/Polylang action/filter activity
@@ -75,7 +75,7 @@ class MLACore {
 	 *
 	 * @var	integer
 	 */
-	CONST MLA_DEBUG_CATEGORY_LANGUAGE = 0x00000004;
+	const MLA_DEBUG_CATEGORY_LANGUAGE = 0x00000004;
 
 	/**
 	 * Constant to log Ghostscript/Imagick activity
@@ -84,7 +84,25 @@ class MLACore {
 	 *
 	 * @var	integer
 	 */
-	CONST MLA_DEBUG_CATEGORY_THUMBNAIL = 0x00000008;
+	const MLA_DEBUG_CATEGORY_THUMBNAIL = 0x00000008;
+
+	/**
+	 * Constant to log IPTC/EXIF/XMP/PDF metadata activity
+	 *
+	 * @since 2.41
+	 *
+	 * @var	integer
+	 */
+	const MLA_DEBUG_CATEGORY_METADATA = 0x00000010;
+
+	/**
+	 * Constant to log WP REST activity
+	 *
+	 * @since 2.41
+	 *
+	 * @var	integer
+	 */
+	const MLA_DEBUG_CATEGORY_REST = 0x00000020;
 
 	/**
 	 * Slug for adding plugin submenu
@@ -94,6 +112,87 @@ class MLACore {
 	 * @var	string
 	 */
 	const ADMIN_PAGE_SLUG = 'mla-menu';
+
+	/**
+	 * mla_admin_action value to display a single item for editing/viewing
+	 *
+	 * @since 0.1
+	 *
+	 * @var	string
+	 */
+	const MLA_ADMIN_SINGLE_EDIT_DISPLAY = 'single_item_edit_display';
+
+	/**
+	 * mla_admin_action value to install an example plugin
+	 *
+	 * @since 2.40
+	 *
+	 * @var	string
+	 */
+	const MLA_ADMIN_SINGLE_EDIT_INSTALL = 'single_item_edit_install';
+
+	/**
+	 * mla_admin_action value for updating a single item
+	 *
+	 * @since 0.1
+	 *
+	 * @var	string
+	 */
+	const MLA_ADMIN_SINGLE_EDIT_UPDATE = 'single_item_edit_update';
+
+	/**
+	 * mla_admin_action value for mapping Custom Field metadata
+	 *
+	 * @since 1.10
+	 *
+	 * @var	string
+	 */
+	const MLA_ADMIN_SINGLE_CUSTOM_FIELD_MAP = 'single_item_custom_field_map';
+
+	/**
+	 * mla_admin_action value for purging Custom Field values
+	 *
+	 * @since 2.50
+	 *
+	 * @var	string
+	 */
+	const MLA_ADMIN_SINGLE_CUSTOM_FIELD_PURGE = 'single_item_custom_field_purge';
+
+	/**
+	 * mla_admin_action value for mapping IPTC/EXIF metadata
+	 *
+	 * @since 1.00
+	 *
+	 * @var	string
+	 */
+	const MLA_ADMIN_SINGLE_MAP = 'single_item_map';
+
+	/**
+	 * mla_admin_action value for purging IPTC/EXIF metadata
+	 *
+	 * @since 2.60
+	 *
+	 * @var	string
+	 */
+	const MLA_ADMIN_SINGLE_PURGE = 'single_item_purge';
+
+	/**
+	 * mla_admin_action value for setting an item's parent object
+	 *
+	 * @since 1.82
+	 *
+	 * @var	string
+	 */
+	const MLA_ADMIN_SET_PARENT = 'set_parent';
+
+	/**
+	 * mla_admin_action value for searching taxonomy terms
+	 *
+	 * @since 1.90
+	 *
+	 * @var	string
+	 */
+	const MLA_ADMIN_TERMS_SEARCH = 'terms_search';
 
 	/**
 	 * mla_admin_action value for permanently deleting a single item
@@ -121,6 +220,24 @@ class MLACore {
 	 * @var	string
 	 */
 	const MLA_ADMIN_SINGLE_RESTORE = 'single_item_restore';
+
+	/**
+	 * mla_admin_action value for copying a single item
+	 *
+	 * @since 2.40
+	 *
+	 * @var	string
+	 */
+	const MLA_ADMIN_SINGLE_COPY = 'single_item_copy';
+
+	/**
+	 * mla_admin_action value for copying a single item
+	 *
+	 * @since 2.40
+	 *
+	 * @var	string
+	 */
+	const MLA_ADMIN_SINGLE_ADD = 'single_item_add';
 
 	/**
 	 * Action name; gives a context for the nonce
@@ -228,6 +345,7 @@ class MLACore {
 	 * @return	void
 	 */
 	public static function initialize( ) {
+		//error_log( __LINE__ . ' DEBUG: MLACore::initialize $_REQUEST = ' . var_export( $_REQUEST, true ), 0 );
 		if ( 'disabled' == MLACore::mla_get_option( MLACoreOptions::MLA_FEATURED_IN_TUNING ) ) {
 			MLACore::$process_featured_in = false;
 		}
@@ -243,7 +361,7 @@ class MLACore {
 		if ( 'disabled' == MLACore::mla_get_option( MLACoreOptions::MLA_MLA_GALLERY_IN_TUNING ) ) {
 			MLACore::$process_mla_gallery_in = false;
 		}
-		
+
 		/*
 		 * Look for redirects from the Media/Edit Media screen when it was picked from the
 		 * "Edit" rollover action on the Media/Assistant submenu
@@ -260,11 +378,11 @@ class MLACore {
 			$image_default_align = get_option( 'image_default_align' );
 			$image_default_link_type = get_option( 'image_default_link_type' );
 			$image_default_size = get_option( 'image_default_size' );
-			
+
 			if ( ! ( empty( $image_default_align ) && empty( $image_default_link_type ) && empty( $image_default_size ) ) ) {
 				$user_id = get_current_user_id();
 				$not_super_admin = ! (is_super_admin() && ! is_user_member_of_blog() );
-	
+
 				if ( $user_id && $not_super_admin ) {
 					if ( isset( $_COOKIE['wp-settings-' . $user_id] ) ) {
 						$cookie = preg_replace( '/[^A-Za-z0-9=&_]/', '', $_COOKIE['wp-settings-' . $user_id] );
@@ -305,10 +423,8 @@ class MLACore {
 				}
 			}
 		} // MLA_MEDIA_MODAL_APPLY_DISPLAY_SETTINGS
-		
-		/*
-		 * Hook wp_enqueue_media() so we can add MLA enhancements, if requested
-		 */
+
+		// Hook wp_enqueue_media() so we can add MLA enhancements, if requested
 		if ( 'checked' == MLACore::mla_get_option( MLACoreOptions::MLA_MEDIA_MODAL_TOOLBAR ) ) {
 			add_filter( 'media_view_settings', 'MLACore::mla_media_view_settings_filter', 10, 2 );
 		}
@@ -328,14 +444,24 @@ class MLACore {
 			return $settings;
 		}
 
-		/*
-		 * Media Manager (Modal window) additions
-		 */
+		// Visual Composer template preview doesn't need MLA enhancements
+		if ( defined( 'VC_IS_TEMPLATE_PREVIEW' ) ) {
+			return $settings;
+		}
+
+		// Media Manager (Modal window) additions
+		if ( !class_exists( 'MLAQuery' ) ) {
+			require_once( MLA_PLUGIN_PATH . 'includes/class-mla-data-query.php' );
+			MLAQuery::initialize();
+		}
+
+		if ( !class_exists( 'MLAData' ) ) {
+			require_once( MLA_PLUGIN_PATH . 'includes/class-mla-data.php' );
+			MLAData::initialize();
+		}
+
 		require_once( MLA_PLUGIN_PATH . 'includes/class-mla-list-table.php' );
 
-		require_once( MLA_PLUGIN_PATH . 'includes/class-mla-view-list-table.php' );
-		MLA_View_List_Table::mla_localize_default_columns_array();
-		
 		require_once( MLA_PLUGIN_PATH . 'includes/class-mla-media-modal.php' );
 		MLAModal::initialize();
 
@@ -390,11 +516,11 @@ class MLACore {
 	 */
 	public static function wpml_unset_lang_admin_bar( $suppress_all_languages ) {
 		global $pagenow, $mode;
-		
+
 //error_log( __LINE__ . " wpml_unset_lang_admin_bar( {$pagenow}, {$mode}, {$suppress_all_languages}  ) returning " . var_export( $pagenow === 'upload.php' && $mode === 'grid', true ), 0 );
 		return $pagenow === 'upload.php' && $mode === 'grid';
 	}
-	
+
 	/**
 	 * Load a plugin text domain and alternate debug file
 	 * 
@@ -418,25 +544,20 @@ class MLACore {
 		load_textdomain( $text_domain, trailingslashit( WP_LANG_DIR ) . $text_domain . '/' . $text_domain . '-' . $locale . '.mo' );
 		load_plugin_textdomain( $text_domain, false, MLA_PLUGIN_BASENAME . '/languages/' );
 
-		/*
-		 * This must/will be repeated in class-mla-tests.php to reflect translations
-		 */
+		// This must/will be repeated in class-mla-tests.php to reflect translations
 		MLACoreOptions::mla_localize_option_definitions_array();
 
-		/*
-		 * Do not process debug options unless MLA_DEBUG_LEVEL is set in wp-config.php
-		 */
+		MLACore::$original_php_log = ini_get( 'error_log' );
+		MLACore::$original_php_reporting = sprintf( '0x%1$04X', error_reporting() );
+
+		// Do not process debug options unless MLA_DEBUG_LEVEL is set in wp-config.php
 		if ( MLA_DEBUG_LEVEL & 1 ) {
-			/*
-			 * Set up alternate MLA debug log file
-			 */
+			// Set up alternate MLA debug log file
 			$error_log_name = MLACore::mla_get_option( MLACoreOptions::MLA_DEBUG_FILE ); 
 			if ( ! empty( $error_log_name ) ) {
 				MLACore::mla_debug_file( $error_log_name );
 
-				/*
-				 * Override PHP error_log file
-				 */
+				// Override PHP error_log file
 				if ( 'checked' === MLACore::mla_get_option( MLACoreOptions::MLA_DEBUG_REPLACE_PHP_LOG ) ) {
 					$result = ini_set('error_log', WP_CONTENT_DIR . self::$mla_debug_file );
 				}
@@ -446,16 +567,45 @@ class MLACore {
 			 * PHP error_reporting must be done later in class-mla-tests.php
 			 * Override MLA debug levels
 			 */
-			MLACore::$mla_debug_level = MLA_DEBUG_LEVEL;
+			MLACore::$mla_debug_level = 0; // MLA_DEBUG_LEVEL;
 			$mla_reporting = trim( MLACore::mla_get_option( MLACoreOptions::MLA_DEBUG_REPLACE_LEVEL ) );
 			if ( strlen( $mla_reporting ) ) {
-				$mla_reporting = 0 + $mla_reporting; 
+				if ( ctype_digit( $mla_reporting ) ) {
+					$mla_reporting = intval( $mla_reporting ); 
+				} else{
+					$mla_reporting = hexdec( $mla_reporting ); 
+				}
+
 				if ( $mla_reporting )  {
 					MLACore::$mla_debug_level = $mla_reporting | 1;
+					if ( class_exists( 'MLA' ) ) {
+						MLACore::mla_debug_add( __LINE__ . sprintf( ' MLACore::mla_plugins_loaded_action() MLA %s (%s) mla_debug_level 0x%X', MLACore::CURRENT_MLA_VERSION, MLA::MLA_DEVELOPMENT_VERSION, MLACore::$mla_debug_level, true ), MLACore::MLA_DEBUG_CATEGORY_ANY );
+					}
 				} else {
 					MLACore::$mla_debug_level = 0;
 				}
 			}
+
+			// Check for XMLPRC, WP REST API and front end requests
+			if( !( defined('WP_ADMIN') && WP_ADMIN ) ) {
+				// XMLRPC requests need everything loaded to process uploads
+				if ( defined('XMLRPC_REQUEST') && XMLRPC_REQUEST ) {
+					MLACore::mla_debug_add( __LINE__ . " MLACore::mla_plugins_loaded_action() XMLRPC_REQUEST \$_REQUEST = " . var_export( $_REQUEST, true ), MLACore::MLA_DEBUG_CATEGORY_ANY );
+				}
+
+				// WP REST API calls need everything loaded to process uploads
+				if ( isset( $_SERVER['REQUEST_URI'] ) && 0 === strpos( $_SERVER['REQUEST_URI'], '/wp-json/' ) ) {
+					MLACore::mla_debug_add( __LINE__ . " MLACore::mla_plugins_loaded_action() wp-json REQUEST_URI = " . var_export( $_SERVER['REQUEST_URI'], true ), MLACore::MLA_DEBUG_CATEGORY_REST );
+					//MLACore::mla_debug_add( __LINE__ . " MLACore::mla_plugins_loaded_action() wp-json _GET = " . var_export( $_GET, true ), MLACore::MLA_DEBUG_CATEGORY_REST );
+					//MLACore::mla_debug_add( __LINE__ . " MLACore::mla_plugins_loaded_action() wp-json _POST = " . var_export( $_POST, true ), MLACore::MLA_DEBUG_CATEGORY_REST );
+					MLACore::mla_debug_add( __LINE__ . " MLACore::mla_plugins_loaded_action() wp-json _REQUEST = " . var_export( $_REQUEST, true ), MLACore::MLA_DEBUG_CATEGORY_REST );
+					MLACore::mla_debug_add( __LINE__ . " MLACore::mla_plugins_loaded_action() wp-json _COOKIE = " . var_export( $_COOKIE, true ), MLACore::MLA_DEBUG_CATEGORY_REST );
+					if ( function_exists( 'apache_request_headers' ) ) {
+						MLACore::mla_debug_add( __LINE__ . " MLACore::mla_plugins_loaded_action() wp-json MLAOptions apache_request_headers = " . var_export( apache_request_headers(), true ), MLACore::MLA_DEBUG_CATEGORY_REST );
+					}
+					MLACore::mla_debug_add( __LINE__ . " MLACore::mla_plugins_loaded_action() wp-json MLAOptions exists = " . var_export( class_exists( 'MLAOptions' ), true ), MLACore::MLA_DEBUG_CATEGORY_REST );
+				}
+			} // not admin
 		} // MLA_DEBUG_LEVEL & 1
 	}
 
@@ -521,7 +671,7 @@ class MLACore {
 			if ( empty( MLACoreOptions::$mla_option_definitions ) ) {
 				MLACoreOptions::mla_localize_option_definitions_array();
 			}
-		
+
 			$option_table =& MLACoreOptions::$mla_option_definitions;
 		}
 
@@ -560,7 +710,7 @@ class MLACore {
 			if ( empty( MLACoreOptions::$mla_option_definitions ) ) {
 				MLACoreOptions::mla_localize_option_definitions_array();
 			}
-		
+
 			$option_table =& MLACoreOptions::$mla_option_definitions;
 		}
 
@@ -570,7 +720,7 @@ class MLACore {
 			} else {
 				$autoload = true;
 			}
-			
+
 			return update_option( MLA_OPTION_PREFIX . $option, $newvalue, $autoload );
 		}
 
@@ -592,7 +742,7 @@ class MLACore {
 			if ( empty( MLACoreOptions::$mla_option_definitions ) ) {
 				MLACoreOptions::mla_localize_option_definitions_array();
 			}
-		
+
 			$option_table =& MLACoreOptions::$mla_option_definitions;
 		}
 
@@ -652,7 +802,7 @@ class MLACore {
 				$template = file_get_contents( $source, true );
 				if ( $template == false ) {
 					/* translators: 1: ERROR tag 2: path and file name */
-					error_log( sprintf( _x( '%1$s: mla_load_template file "%2$s" not found.', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), var_export( $source, true ) ), 0 );
+					MLACore::mla_debug_add( sprintf( _x( '%1$s: mla_load_template file "%2$s" not found.', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), var_export( $source, true ) ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 					return NULL;
 				}
 				break;
@@ -670,7 +820,7 @@ class MLACore {
 				break;
 			default:
 				/* translators: 1: ERROR tag 2: path and file name 3: source type, e.g., file, option, string */
-				error_log( sprintf( _x( '%1$s: mla_load_template file "%2$s" bad source type "%3$s".', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), $source, $type ), 0 );
+				MLACore::mla_debug_add( sprintf( _x( '%1$s: mla_load_template file "%2$s" bad source type "%3$s".', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), $source, $type ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 				return NULL;
 		}
 
@@ -921,6 +1071,7 @@ class MLACore {
 
 		foreach ( $option_values as $key => $value ) {
 			$slug = 'c_' . $index++; // sanitize_title( $key ); Didn't handle HTML in name, e.g., "R><B"
+//error_log( __LINE__ . " mla_custom_field_support( {$key}, {$slug} ) value = " . var_export( $value, true ), 0 );
 
 			switch( $support_type ) {
 				case 'custom_columns':
@@ -977,7 +1128,13 @@ class MLACore {
 	 * @return	array	post_mime_type specification or custom field query
 	 */
 	public static function mla_prepare_view_query( $slug, $specification ) {
-		$query = array ( );
+		// For this query we don't need to cache anything, since we won't access the items themselves
+		$query = array (
+			'cache_results' => 'false',
+			'update_post_meta_cache' => 'false',
+			'update_post_term_cache' => 'false',
+		);
+		
 		$specification = self::mla_parse_view_specification( $specification );
 		if ( 'mime' == $specification['prefix'] ) {
 			$query['post_mime_type'] = $specification['value'];
@@ -989,9 +1146,7 @@ class MLACore {
 					foreach ( (array) $patterns as $pattern ) {
 						$pattern = preg_replace( '/\*+/', '%', $pattern );
 						if ( false !== strpos( $pattern, '%' ) ) {
-							/*
-							 * Preserve the pattern - it will be used in the "where" filter
-							 */
+							// Preserve the pattern - it will be used in the "where" filter
 							$meta_query['patterns'][] = $pattern;
 							$meta_query[] = array( 'key' => $specification['name'], 'value' => $pattern, 'compare' => 'LIKE' );
 						} else {
@@ -1459,7 +1614,7 @@ class MLACore {
 				break;
 		}
 	}
-	
+
 	/**
 	 * Admin Columns support storage model object for the Media/Assistant submenu
 	 *
@@ -1470,16 +1625,17 @@ class MLACore {
 	public static $admin_columns_storage_model = NULL;
 
 	/**
-	 * Define the Media/Assistant submenu screen to the Admin Columns plugin
+	 * Define the Media/Assistant submenu screen to the (old) Admin Columns plugin
 	 *
 	 * @since 2.22
 	 *
 	 * @param	array	$storage_models List of storage model class instances ( [key] => [CPAC_Storage_Model object] )
 	 * @param	object	$cpac CPAC, the root CodePress Admin Columns object
 	 */
-	public static function admin_columns_support( $storage_models, $cpac ) {
-		require_once( MLA_PLUGIN_PATH . 'includes/class-mla-admin-columns-support.php' );
-		MLACore::$admin_columns_storage_model = new CPAC_Storage_Model_MLA();
+	public static function admin_columns_support_deprecated( $storage_models, $cpac ) {
+		require_once( MLA_PLUGIN_PATH . 'includes/class-mla-admin-columns-support-deprecated.php' );
+		MLACore::$admin_columns_storage_model = new CPAC_Deprecated_Storage_Model_MLA();
+
 		/*
 		 * Put MLA before/after WP Media Library so is_columns_screen() will work
 		 */
@@ -1497,7 +1653,7 @@ class MLACore {
 				$new_models[ $key ] = $model;
 			}
 		}
-		
+
 		/*
 		 * If we didn't find wp-media, add our entry to the end
 		 */
@@ -1506,6 +1662,34 @@ class MLACore {
 		}
 
 		return $new_models;
+	}
+
+	/**
+	 * Set MLA-specific inline editing strategy
+	 *
+	 * @since 2.50
+	 *
+	 * @param ACP_Editing_Model $model
+	 */
+	public static function add_editing_strategy( $model ) {
+//error_log( __LINE__ . " MLACore::add_editing_strategy key = " . var_export( $model->get_column()->get_list_screen()->get_key(), true ), 0 );
+		if ( 'mla-media-assistant' === $model->get_column()->get_list_screen()->get_key() ) {
+			require_once( MLA_PLUGIN_PATH . 'includes/class-mla-admin-columns-support.php' );
+			$model->set_strategy( new ACP_Addon_MLA_Editing_Strategy( $model ) );
+		}
+
+		return $model;
+	}
+
+	/**
+	 * Create and register MLA-specific list screen handler for Admin Columns
+	 *
+	 * @since 2.50
+	 */
+	public static function register_list_screen() {
+//error_log( __LINE__ . " MLACore::register_list_screen", 0 );
+		require_once( MLA_PLUGIN_PATH . 'includes/class-mla-admin-columns-support.php' );
+		AC()->register_list_screen( new AC_Addon_MLA_ListScreen );
 	}
 } // Class MLACore
 
@@ -1580,6 +1764,7 @@ class MLA_Checklist_Walker extends Walker_Category {
  * Custom Taxonomies and WordPress objects.
  */
 require_once( MLA_PLUGIN_PATH . 'includes/class-mla-objects.php' );
+add_action( 'init', 'MLAObjects::mla_build_taxonomies', 5 );
 add_action( 'init', 'MLAObjects::initialize', 0x7FFFFFFF );
 
 /*
@@ -1591,5 +1776,8 @@ add_action( 'init', 'MLAMime::initialize', 0x7FFFFFFF );
 /*
  * Admin Columns plugin support
  */
-add_filter( 'cac/storage_models', 'MLACore::admin_columns_support', 10, 2 );
+add_filter( 'cac/storage_models', 'MLACore::admin_columns_support_deprecated', 10, 2 );
+
+add_filter( 'acp/editing/model', 'MLACore::add_editing_strategy', 10, 1 );
+add_action( 'ac/list_screens', 'MLACore::register_list_screen', 10, 0 );
 ?>

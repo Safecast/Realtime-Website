@@ -427,12 +427,14 @@ class MLAModal {
 		if ( function_exists( 'get_current_screen' ) ) {
 			$screen = get_current_screen();
 
-			if ( 'upload' == $screen->base ) {
-				if ( 'checked' != MLACore::mla_get_option( MLACoreOptions::MLA_MEDIA_GRID_TOOLBAR ) ) {
+			if ( is_object( $screen ) ) {
+				if ( 'upload' == $screen->base ) {
+					if ( 'checked' != MLACore::mla_get_option( MLACoreOptions::MLA_MEDIA_GRID_TOOLBAR ) ) {
+						return;
+					}
+				} elseif ( 'checked' != MLACore::mla_get_option( MLACoreOptions::MLA_MEDIA_MODAL_TOOLBAR ) ) {
 					return;
 				}
-			} elseif ( 'checked' != MLACore::mla_get_option( MLACoreOptions::MLA_MEDIA_MODAL_TOOLBAR ) ) {
-				return;
 			}
 		} else {
 			$screen = NULL;
@@ -572,7 +574,7 @@ class MLAModal {
 		$page_template_array = MLACore::mla_load_template( 'admin-terms-search-form.tpl' );
 		if ( ! is_array( $page_template_array ) ) {
 			/* translators: 1: ERROR tag 2: function name 3: non-array value */
-			error_log( sprintf( _x( '%1$s: %2$s non-array "%3$s"', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), 'MLA::_build_terms_search_form', var_export( $page_template_array, true ) ), 0 );
+			MLACore::mla_debug_add( sprintf( _x( '%1$s: %2$s non-array "%3$s"', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), 'MLA::_build_terms_search_form', var_export( $page_template_array, true ) ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 			return '';
 		}
 
@@ -620,7 +622,7 @@ class MLAModal {
 
 		$page_values = array(
 			'mla_terms_search_url' =>  esc_url( add_query_arg( array_merge( MLA_List_Table::mla_submenu_arguments( false ), array( 'page' => MLACore::ADMIN_PAGE_SLUG ) ), admin_url( 'upload.php' ) ) ),
-			'mla_terms_search_action' => MLA::MLA_ADMIN_TERMS_SEARCH,
+			'mla_terms_search_action' => MLACore::MLA_ADMIN_TERMS_SEARCH,
 			'wpnonce' => wp_nonce_field( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME, true, false ),
 			'mla_terms_search_div' => $terms_search_tpl,
 		);

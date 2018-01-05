@@ -22,7 +22,7 @@ if ( ! defined('MLA_DEBUG_LEVEL') ) {
 	/**
 	 * Activates debug options; can be set in wp-config.php
 	 */
-	define('MLA_DEBUG_LEVEL', 0);
+	define('MLA_DEBUG_LEVEL', 1);
 }
 
 if ( ! defined('MLA_AJAX_EXCEPTIONS') ) {
@@ -57,32 +57,40 @@ function mla_plugin_loader_reporting_action () {
  */
 require_once( MLA_PLUGIN_PATH . 'tests/class-mla-tests.php' );
 
-$mla_plugin_loader_error_messages .= MLATest::min_php_version( '5.2' );
+$mla_plugin_loader_error_messages .= MLATest::min_php_version( '5.3' );
 $mla_plugin_loader_error_messages .= MLATest::min_WordPress_version( '3.5.0' );
 
 if ( ! empty( $mla_plugin_loader_error_messages ) ) {
 	add_action( 'admin_notices', 'mla_plugin_loader_reporting_action' );
 } else {
-	/*
-	 * MLATest is loaded above
-	 */
+	// MLATest is loaded above
 	add_action( 'init', 'MLATest::initialize', 0x7FFFFFFF );
 
-	/*
-	 * Minimum support functions required by all other components
-	 */
+	// Minimum support functions required by all other components
 	require_once( MLA_PLUGIN_PATH . 'includes/class-mla-core.php' );
-	//add_action( 'plugins_loaded', 'MLACore::mla_plugins_loaded_action_wpml', 1 );
 	add_action( 'plugins_loaded', 'MLACore::mla_plugins_loaded_action', 0x7FFFFFFF );
 	add_action( 'init', 'MLACore::initialize', 0x7FFFFFFF );
 
-	/*
-	 * Front end posts/pages only need shortcode support; load the interface shims.
-	 */
-	if( ! ( ( defined('WP_ADMIN') && WP_ADMIN ) || ( defined('XMLRPC_REQUEST') && XMLRPC_REQUEST ) ) ) {
-		require_once( MLA_PLUGIN_PATH . 'includes/class-mla-shortcodes.php' );
-		add_action( 'init', 'MLAShortcodes::initialize', 0x7FFFFFFF );
-		return;
+	// Check for XMLPRC, WP REST API and front end requests
+	if( !( defined('WP_ADMIN') && WP_ADMIN ) ) {
+		$front_end_only = true;
+
+		// XMLRPC requests need everything loaded to process uploads
+		if ( defined('XMLRPC_REQUEST') && XMLRPC_REQUEST ) {
+			$front_end_only = false;
+		}
+
+		// WP REST API calls need everything loaded to process uploads
+		if ( isset( $_SERVER['REQUEST_URI'] ) && 0 === strpos( $_SERVER['REQUEST_URI'], '/wp-json/' ) ) {
+			$front_end_only = false; // TODO be more selective
+		}
+
+		// Front end posts/pages only need shortcode support; load the interface shims.
+		if ( $front_end_only ) {
+			require_once( MLA_PLUGIN_PATH . 'includes/class-mla-shortcodes.php' );
+			add_action( 'init', 'MLAShortcodes::initialize', 0x7FFFFFFF );
+			return;
+		}
 	}
 
 	if( defined('DOING_AJAX') && DOING_AJAX ) {
@@ -95,29 +103,40 @@ if ( ! empty( $mla_plugin_loader_error_messages ) ) {
 		/*
 		 * Quick and Bulk Edit requires full support for content templates, etc.
 		 * IPTC/EXIF and Custom Field mapping require full support, too.
+		 * NOTE: AJAX upload_attachment is no longer used - see /wp-admin/asynch-upload.php
 		 */
-		$ajax_exceptions = array( MLACore::JAVASCRIPT_INLINE_EDIT_SLUG, 'mla-inline-mapping-iptc-exif-scripts', 'mla-inline-mapping-custom-scripts', 'mla-polylang-quick-translate', 'mla-inline-edit-upload-scripts', 'mla-inline-edit-view-scripts', 'upload-attachment' );
+		$ajax_exceptions = array( MLACore::JAVASCRIPT_INLINE_EDIT_SLUG, 'mla-inline-mapping-iptc-exif-scripts', 'mla-inline-mapping-custom-scripts', 'mla-polylang-quick-translate', 'mla-inline-edit-upload-scripts', 'mla-inline-edit-view-scripts', 'mla-inline-edit-custom-scripts', 'mla-inline-edit-iptc-exif-scripts', 'upload-attachment' );
 
+ 		$ajax_only = true;
 		if ( MLA_AJAX_EXCEPTIONS ) {
-			$ajax_exceptions = array_merge( $ajax_exceptions, explode( ',', MLA_AJAX_EXCEPTIONS ) );
+			if ( 'always' === trim( strtolower( MLA_AJAX_EXCEPTIONS ) ) ) {
+				$ajax_only = false;
+			} else {
+				$ajax_exceptions = array_merge( $ajax_exceptions, explode( ',', MLA_AJAX_EXCEPTIONS ) );
+			}
 		}
 
-		$ajax_only = true;
-		if ( isset( $_REQUEST['action'] ) ) {
+		if ( $ajax_only && isset( $_REQUEST['action'] ) ) {
 			if ( in_array( $_REQUEST['action'], $ajax_exceptions ) ) {
 				$ajax_only = false;
+			} elseif ( 'mla-update-compat-fields' == $_REQUEST['action'] ) {
+				global $sitepress;
+
+				//Look for multi-lingual terms updates
+				if ( is_object( $sitepress ) || class_exists( 'Polylang' ) ) {
+					$ajax_only = false;
+				}
+			} elseif ( 'ajax-tag-search' == $_REQUEST['action'] ) {
+				global $sitepress;
+
+				//Look for WPML flat taxonomy autocomplete
+				if ( is_object( $sitepress ) ) {
+					$ajax_only = false;
+				}
 			}
 		}
 
-		//Look for WPML flat taxonomy autocomplete
-		if ( isset( $_GET['action'] ) && ( 'ajax-tag-search' == $_GET['action'] ) ) {
-			global $sitepress;
-
-			if ( is_object( $sitepress ) ) {
-				$ajax_only = false;
-			}
-		}
-
+		MLA_Ajax::$ajax_only = $ajax_only; // for debug logging
 		if ( $ajax_only ) {
 			require_once( MLA_PLUGIN_PATH . 'includes/class-mla-data-query.php' );
 			add_action( 'init', 'MLAQuery::initialize', 0x7FFFFFFF );
@@ -184,29 +203,5 @@ if ( ! empty( $mla_plugin_loader_error_messages ) ) {
 	 * Doesn't need an initialize function; has a constructor.
 	 */
 	require_once( MLA_PLUGIN_PATH . 'includes/class-mla-list-table.php' );
-
-	/*
-	 * Custom list table package for the Post MIME Type Views.
-	 * Doesn't need an initialize function; has a constructor.
-	 */
-	require_once( MLA_PLUGIN_PATH . 'includes/class-mla-view-list-table.php' );
-
-	/*
-	 * Custom list table package for the Optional Upload MIME Type Views.
-	 * Doesn't need an initialize function; has a constructor.
-	 */
-	require_once( MLA_PLUGIN_PATH . 'includes/class-mla-upload-optional-list-table.php' );
-
-	/*
-	 * Custom list table package for the Upload MIME Type Views.
-	 * Doesn't need an initialize function; has a constructor.
-	 */
-	require_once( MLA_PLUGIN_PATH . 'includes/class-mla-upload-list-table.php' );
-
-	/*
-	 * Custom list table package for the Example Plugin Views.
-	 * Doesn't need an initialize function; has a constructor.
-	 */
-	require_once( MLA_PLUGIN_PATH . 'includes/class-mla-example-list-table.php' );
 }
 ?>

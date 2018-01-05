@@ -16,7 +16,7 @@
  * and illustrates some of the techniques you can use to customize the gallery display.
  *
  * @package MLA Gallery Hooks Example
- * @version 1.08
+ * @version 1.13
  */
 
 /*
@@ -24,10 +24,10 @@ Plugin Name: MLA Gallery Hooks Example
 Plugin URI: http://fairtradejudaica.org/media-library-assistant-a-wordpress-plugin/
 Description: Provides examples of hooking the filters provided by the [mla_gallery] shortcode
 Author: David Lingren
-Version: 1.08
+Version: 1.13
 Author URI: http://fairtradejudaica.org/our-story/staff/
 
-Copyright 2013 - 2016 David Lingren
+Copyright 2013 - 2017 David Lingren
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -76,42 +76,49 @@ class MLAGalleryHooksExample {
 		 *
 		 * Comment out the filters you don't need; save them for future use
 		 */
-		add_filter( 'mla_gallery_raw_attributes', 'MLAGalleryHooksExample::mla_gallery_raw_attributes_filter', 10, 1 );
-		add_filter( 'mla_gallery_attributes', 'MLAGalleryHooksExample::mla_gallery_attributes_filter', 10, 1 );
-		add_filter( 'mla_gallery_initial_content', 'MLAGalleryHooksExample::mla_gallery_initial_content_filter', 10, 2 );
-		add_filter( 'mla_gallery_arguments', 'MLAGalleryHooksExample::mla_gallery_arguments_filter', 10, 1 );
-		add_filter( 'mla_gallery_query_attributes', 'MLAGalleryHooksExample::mla_gallery_query_attributes_filter', 10, 1 );
-		add_filter( 'mla_gallery_query_arguments', 'MLAGalleryHooksExample::mla_gallery_query_arguments_filter', 10, 1 );
-		add_action( 'mla_gallery_wp_query_object', 'MLAGalleryHooksExample::mla_gallery_wp_query_object_action', 10, 1 );
-		add_filter( 'mla_gallery_final_content', 'MLAGalleryHooksExample::mla_gallery_final_content_filter', 10, 1 );
+		add_filter( 'mla_gallery_raw_attributes', 'MLAGalleryHooksExample::mla_gallery_raw_attributes', 10, 1 );
+		add_filter( 'mla_gallery_attributes', 'MLAGalleryHooksExample::mla_gallery_attributes', 10, 1 );
+		add_filter( 'mla_gallery_initial_content', 'MLAGalleryHooksExample::mla_gallery_initial_content', 10, 2 );
+		add_filter( 'mla_gallery_arguments', 'MLAGalleryHooksExample::mla_gallery_arguments', 10, 1 );
+		add_filter( 'mla_gallery_query_attributes', 'MLAGalleryHooksExample::mla_gallery_query_attributes', 10, 1 );
+		add_filter( 'mla_gallery_query_arguments', 'MLAGalleryHooksExample::mla_gallery_query_arguments', 10, 1 );
+		add_action( 'mla_gallery_wp_query_object', 'MLAGalleryHooksExample::mla_gallery_wp_query_object', 10, 1 );
+		add_filter( 'mla_gallery_final_content', 'MLAGalleryHooksExample::mla_gallery_final_content', 10, 1 );
+		add_filter( 'mla_gallery_the_attachments', 'MLAGalleryHooksExample::mla_gallery_the_attachments', 10, 2 );
+		add_filter( 'mla_gallery_alt_shortcode_blacklist', 'MLAGalleryHooksExample::mla_gallery_alt_shortcode_blacklist', 10, 1 );
+		add_filter( 'mla_gallery_alt_shortcode_attributes', 'MLAGalleryHooksExample::mla_gallery_alt_shortcode_attributes', 10, 1 );
+		add_filter( 'mla_gallery_alt_shortcode_ids', 'MLAGalleryHooksExample::mla_gallery_alt_shortcode_ids', 10, 3 );
+		add_action( 'mla_gallery_end_alt_shortcode', 'MLAGalleryHooksExample::mla_gallery_end_alt_shortcode', 10, 0 );
 
-		add_filter( 'use_mla_gallery_style', 'MLAGalleryHooksExample::use_mla_gallery_style_filter', 10, 2 );
+		add_filter( 'use_mla_gallery_style', 'MLAGalleryHooksExample::use_mla_gallery_style', 10, 2 );
 
-		add_filter( 'mla_gallery_style_values', 'MLAGalleryHooksExample::mla_gallery_style_values_filter', 10, 1 );
-		add_filter( 'mla_gallery_style_template', 'MLAGalleryHooksExample::mla_gallery_style_template_filter', 10, 1 );
-		add_filter( 'mla_gallery_style_parse', 'MLAGalleryHooksExample::mla_gallery_style_parse_filter', 10, 3 );
+		add_filter( 'mla_gallery_style_values', 'MLAGalleryHooksExample::mla_gallery_style_values', 10, 1 );
+		add_filter( 'mla_gallery_style_template', 'MLAGalleryHooksExample::mla_gallery_style_template', 10, 1 );
+		add_filter( 'mla_gallery_style_parse', 'MLAGalleryHooksExample::mla_gallery_style_parse', 10, 3 );
 
-		add_filter( 'mla_gallery_open_values', 'MLAGalleryHooksExample::mla_gallery_open_values_filter', 10, 1 );
-		add_filter( 'mla_gallery_open_template', 'MLAGalleryHooksExample::mla_gallery_open_template_filter', 10, 1 );
-		add_filter( 'mla_gallery_open_parse', 'MLAGalleryHooksExample::mla_gallery_open_parse_filter', 10, 3 );
+		add_filter( 'mla_gallery_pagination_values', 'MLAGalleryHooksExample::mla_gallery_pagination_values', 10, 1 );
+		add_filter( 'mla_gallery_open_values', 'MLAGalleryHooksExample::mla_gallery_open_values', 10, 1 );
+		add_filter( 'mla_gallery_open_template', 'MLAGalleryHooksExample::mla_gallery_open_template', 10, 1 );
+		add_filter( 'mla_gallery_open_parse', 'MLAGalleryHooksExample::mla_gallery_open_parse', 10, 3 );
 
-		add_filter( 'mla_gallery_style', 'MLAGalleryHooksExample::mla_gallery_style_filter', 10, 5 );
+		add_filter( 'mla_gallery_style', 'MLAGalleryHooksExample::mla_gallery_style', 10, 5 );
 
-		add_filter( 'mla_gallery_row_open_values', 'MLAGalleryHooksExample::mla_gallery_row_open_values_filter', 10, 1 );
-		add_filter( 'mla_gallery_row_open_template', 'MLAGalleryHooksExample::mla_gallery_row_open_template_filter', 10, 1 );
-		add_filter( 'mla_gallery_row_open_parse', 'MLAGalleryHooksExample::mla_gallery_row_open_parse_filter', 10, 3 );
+		add_filter( 'mla_gallery_row_open_values', 'MLAGalleryHooksExample::mla_gallery_row_open_values', 10, 1 );
+		add_filter( 'mla_gallery_row_open_template', 'MLAGalleryHooksExample::mla_gallery_row_open_template', 10, 1 );
+		add_filter( 'mla_gallery_row_open_parse', 'MLAGalleryHooksExample::mla_gallery_row_open_parse', 10, 3 );
 
-		add_filter( 'mla_gallery_item_values', 'MLAGalleryHooksExample::mla_gallery_item_values_filter', 10, 1 );
-		add_filter( 'mla_gallery_item_template', 'MLAGalleryHooksExample::mla_gallery_item_template_filter', 10, 1 );
-		add_filter( 'mla_gallery_item_parse', 'MLAGalleryHooksExample::mla_gallery_item_parse_filter', 10, 3 );
+		add_filter( 'mla_gallery_item_initial_values', 'MLAGalleryHooksExample::mla_gallery_item_initial_values', 10, 2 );
+		add_filter( 'mla_gallery_item_values', 'MLAGalleryHooksExample::mla_gallery_item_values', 10, 1 );
+		add_filter( 'mla_gallery_item_template', 'MLAGalleryHooksExample::mla_gallery_item_template', 10, 1 );
+		add_filter( 'mla_gallery_item_parse', 'MLAGalleryHooksExample::mla_gallery_item_parse', 10, 3 );
 
-		add_filter( 'mla_gallery_row_close_values', 'MLAGalleryHooksExample::mla_gallery_row_close_values_filter', 10, 1 );
-		add_filter( 'mla_gallery_row_close_template', 'MLAGalleryHooksExample::mla_gallery_row_close_template_filter', 10, 1 );
-		add_filter( 'mla_gallery_row_close_parse', 'MLAGalleryHooksExample::mla_gallery_row_close_parse_filter', 10, 3 );
+		add_filter( 'mla_gallery_row_close_values', 'MLAGalleryHooksExample::mla_gallery_row_close_values', 10, 1 );
+		add_filter( 'mla_gallery_row_close_template', 'MLAGalleryHooksExample::mla_gallery_row_close_template', 10, 1 );
+		add_filter( 'mla_gallery_row_close_parse', 'MLAGalleryHooksExample::mla_gallery_row_close_parse', 10, 3 );
 
-		add_filter( 'mla_gallery_close_values', 'MLAGalleryHooksExample::mla_gallery_close_values_filter', 10, 1 );
-		add_filter( 'mla_gallery_close_template', 'MLAGalleryHooksExample::mla_gallery_close_template_filter', 10, 1 );
-		add_filter( 'mla_gallery_close_parse', 'MLAGalleryHooksExample::mla_gallery_close_parse_filter', 10, 3 );
+		add_filter( 'mla_gallery_close_values', 'MLAGalleryHooksExample::mla_gallery_close_values', 10, 1 );
+		add_filter( 'mla_gallery_close_template', 'MLAGalleryHooksExample::mla_gallery_close_template', 10, 1 );
+		add_filter( 'mla_gallery_close_parse', 'MLAGalleryHooksExample::mla_gallery_close_parse', 10, 3 );
 	}
 
 	/**
@@ -138,11 +145,11 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	array	updated shortcode attributes
 	 */
-	public static function mla_gallery_raw_attributes_filter( $shortcode_attributes ) {
+	public static function mla_gallery_raw_attributes( $shortcode_attributes ) {
 		/*
 		 * Uncomment the error_log statements in any of the filters to see what's passed in
 		 */
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_raw_attributes_filter $shortcode_attributes = ' . var_export( $shortcode_attributes, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_raw_attributes $shortcode_attributes = ' . var_export( $shortcode_attributes, true ), 0 );
 
 		/*
 		 * Note that the global $post; object is available here and in all later filters.
@@ -151,7 +158,7 @@ class MLAGalleryHooksExample {
 		 * have a substitute $post object with $post->ID == 0.
 		 */
 		global $post;
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_raw_attributes_filter $post->ID = ' . var_export( $post->ID, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_raw_attributes $post->ID = ' . var_export( $post->ID, true ), 0 );
 
 		/*
 		 * For this example, we delete the selected file.
@@ -177,7 +184,7 @@ class MLAGalleryHooksExample {
 		}
 
 		return $shortcode_attributes;
-	} // mla_gallery_raw_attributes_filter
+	} // mla_gallery_raw_attributes
 
 	/**
 	 * MLA Gallery (Display) Attributes
@@ -194,19 +201,22 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	array	updated shortcode attributes
 	 */
-	public static function mla_gallery_attributes_filter( $shortcode_attributes ) {
+	public static function mla_gallery_attributes( $shortcode_attributes ) {
 		/*
 		 * Uncomment the error_log statements in any of the filters to see what's passed in
 		 */
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_attributes_filter $shortcode_attributes = ' . var_export( $shortcode_attributes, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_attributes $shortcode_attributes = ' . var_export( $shortcode_attributes, true ), 0 );
 
 		/*
 		 * Save the attributes for use in the later filters
 		 */
 		self::$shortcode_attributes = $shortcode_attributes;
 
+		unset( $shortcode_attributes['my_custom_sql'] );
+		unset( $shortcode_attributes['recent_random_uploads'] );
+
 		return $shortcode_attributes;
-	} // mla_gallery_attributes_filter
+	} // mla_gallery_attributes
 
 	/**
 	 * Save the enclosed content
@@ -231,9 +241,9 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	array	updated shortcode content
 	 */
-	public static function mla_gallery_initial_content_filter( $shortcode_content, $shortcode_attributes ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_initial_content_filter $shortcode_content = ' . var_export( $shortcode_content, true ), 0 );
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_initial_content_filter $shortcode_attributes = ' . var_export( $shortcode_attributes, true ), 0 );
+	public static function mla_gallery_initial_content( $shortcode_content, $shortcode_attributes ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_initial_content $shortcode_content = ' . var_export( $shortcode_content, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_initial_content $shortcode_attributes = ' . var_export( $shortcode_attributes, true ), 0 );
 
 		/*
 		 * Save the attributes for use in the later filters
@@ -241,7 +251,7 @@ class MLAGalleryHooksExample {
 		self::$shortcode_content = $shortcode_content;
 
 		return $shortcode_content;
-	} // mla_gallery_initial_content_filter
+	} // mla_gallery_initial_content
 
 	/**
 	 * Save the shortcode arguments
@@ -268,12 +278,12 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	array	updated gallery display arguments
 	 */
-	public static function mla_gallery_arguments_filter( $all_display_parameters ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_arguments_filter $all_display_parameters = ' . var_export( $all_display_parameters, true ), 0 );
+	public static function mla_gallery_arguments( $all_display_parameters ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_arguments $all_display_parameters = ' . var_export( $all_display_parameters, true ), 0 );
 
 		self::$all_display_parameters = $all_display_parameters;
 		return $all_display_parameters;
-	} // mla_gallery_arguments_filter
+	} // mla_gallery_arguments
 
 	/**
 	 * Save the query attributes
@@ -300,12 +310,12 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	array	updated shortcode attributes
 	 */
-	public static function mla_gallery_query_attributes_filter( $query_attributes ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_query_attributes_filter $query_attributes = ' . var_export( $query_attributes, true ), 0 );
+	public static function mla_gallery_query_attributes( $query_attributes ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_query_attributes $query_attributes = ' . var_export( $query_attributes, true ), 0 );
 
 		self::$query_attributes = $query_attributes;
 		return $query_attributes;
-	} // mla_gallery_query_attributes_filter
+	} // mla_gallery_query_attributes
 
 	/**
 	 * Save the query arguments
@@ -328,9 +338,9 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	array	updated attachment query arguments
 	 */
-	public static function mla_gallery_query_arguments_filter( $all_query_parameters ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_query_arguments_filter $all_query_parameters = ' . var_export( $all_query_parameters, true ), 0 );
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_query_arguments_filter self::$shortcode_attributes = ' . var_export( self::$shortcode_attributes, true ), 0 );
+	public static function mla_gallery_query_arguments( $all_query_parameters ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_query_arguments $all_query_parameters = ' . var_export( $all_query_parameters, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_query_arguments self::$shortcode_attributes = ' . var_export( self::$shortcode_attributes, true ), 0 );
 
 		self::$all_query_parameters = $all_query_parameters;
 
@@ -361,7 +371,7 @@ class MLAGalleryHooksExample {
 			if ( 0 == $recent_limit ) {
 				return $all_query_parameters;
 			}
-			
+
 			$display_limit = isset( $limits[1] ) ? absint( $limits[1] ) : 1;
 			if ( 0 == $display_limit ) {
 				$display_limit = 1;
@@ -414,12 +424,17 @@ class MLAGalleryHooksExample {
 		 *
 		 * The queries supported in this example's "my_custom_sql" parameter include:
 		 *
-		 * - one or more taxonomy term lists, with include_children
+		 * - one or more taxonomy term lists, with tax_relation and include_children
 		 * - one or more post_parent values
 		 * - one or more post_type values
 		 *
+		 * Multiple taxonomy term lists are allowed, joined with tax_relation (AND, OR).
+		 *
 		 * The three query parameters are joined with "OR", so items matching any of the three
 		 * parameters will be included. Any combination of the three parameters is accepted.
+		 *
+		 * The "orderby", "order", "posts_per_page", "numberposts" and "paged" parameters may be
+		 * added to the parameter value.
 		 *
 		 * We use a shortcode parameter of our own to apply this filter on a gallery-by-gallery
 		 * basis, leaving other [mla_gallery] instances untouched. If the "my_custom_sql" parameter
@@ -443,15 +458,34 @@ class MLAGalleryHooksExample {
 			$post_parents = array();
 			$parent_types = array();
 
-			// Find taxonomy argument, if present, and collect terms
-			$taxonomies = get_taxonomies( array( 'object_type' => array( 'attachment' ) ), 'names' );
+			// Set the taxonomy-related parameters
+			$tax_include_children =  isset( $my_query_vars['include_children'] ) && 'true' == strtolower( trim( $my_query_vars['include_children'] ) );
+			
+			$tax_relation = 'AND';
+			if ( isset( $my_query_vars['tax_relation'] ) ) {
+				if ( 'OR' == strtoupper( $my_query_vars['tax_relation'] ) ) {
+					$tax_relation = 'OR';
+				}
+			}
+
+			// Allow WP_Query synonyms for built-in WordPress taxonomies
+			if ( isset( $my_query_vars['tag'] ) ) {
+				$my_query_vars['post_tag'] = $my_query_vars['tag'];
+				unset( $my_query_vars['tag'] );
+			}
+			
+			if ( isset( $my_query_vars['category_name'] ) ) {
+				$my_query_vars['category'] = $my_query_vars['category_name'];
+				unset( $my_query_vars['category_name'] );
+			}
+			
+			// Find taxonomy argument(s), if present, and collect terms
+			$tax_queries = array();
+			$taxonomies = get_object_taxonomies( 'attachment', 'names' );
 			foreach( $taxonomies as $taxonomy ) {
 				if ( empty( $my_query_vars[ $taxonomy ] ) ) {
 					continue;
 				}
-
-				// Found the taxonomy; collect the terms
-				$include_children =  isset( $my_query_vars['include_children'] ) && 'true' == strtolower( trim( $my_query_vars['include_children'] ) );
 
 				// Allow for multiple term slug values
 				$terms = array();
@@ -461,20 +495,24 @@ class MLAGalleryHooksExample {
 					$terms = array_merge( $terms, get_terms( $taxonomy, $args ) );
 				}
 
+				$ttids = array();
 				foreach( $terms as $term ) {
 					// Index by ttid to remove duplicates
 					$ttids[ $term->term_taxonomy_id ] = $term->term_taxonomy_id;
 
-					if ( $include_children ) {
+					if ( $tax_include_children ) {
 						$args = array( 'child_of' => $term->term_id, 'hide_empty' => false );
-						$children = get_terms( 'attachment_category', $args );
+						$children = get_terms( $taxonomy, $args );
 						foreach( $children as $child ) {
-							$ttids[] = $child->term_taxonomy_id;
+							$ttids[ $child->term_taxonomy_id ] = $child->term_taxonomy_id;
 						}
-					} // include_children
+					} // tax_include_children
 				} // $term
 
-				break;
+				// Allow for multiple taxonomy queries
+				if ( !empty( $ttids ) ) {
+					$tax_queries[ $taxonomy ] = $ttids;
+				}
 			}
 
 			if ( isset( $my_query_vars['post_parent'] ) ) {
@@ -498,11 +536,15 @@ class MLAGalleryHooksExample {
 				$query[] = "ON (p.post_parent = p2.ID)";
 			}
 
-			if ( ! empty( $ttids ) ) {
-				$query[] = "LEFT JOIN {$wpdb->term_relationships} as tr";
-				$query[] = "ON (p.ID = tr.object_id)";
+			// Add a separate JOIN for each taxonomy
+			if ( count( $tax_queries ) ) {
+				foreach ( $tax_queries as $taxonomy => $terms ) {
+					$tr = 'tr_' . $taxonomy;
+					$query[] = "LEFT JOIN {$wpdb->term_relationships} as $tr";
+					$query[] = "ON (p.ID = $tr.object_id)";
+				}
 			}
-
+			
 			// Start with a WHERE clause that doesn't match anything, since OR is the connector				
 			$query[] = 'WHERE ( ( 1=0 )';
 
@@ -526,16 +568,40 @@ class MLAGalleryHooksExample {
 				$query[] = 'OR ( p2.post_type IN (' . join( ',', $placeholders ) . ') )';
 			}
 
-			if ( ! empty( $ttids ) ) {
-				$placeholders = array();
-				foreach ( $ttids as $ttid ) {
-					$placeholders[] = '%s';
-					$query_parameters[] = $ttid;
+			// Add taxonomy queries
+			if ( 1 < count( $tax_queries ) ) {
+				if ( 'AND' === $tax_relation ) {
+					$query[] = "OR ( (1=1)";
+				} else {
+					$query[] = "OR ( (1=0)";
+				}
+				
+				foreach ( $tax_queries as $taxonomy => $terms ) {
+					$tr = 'tr_' . $taxonomy;
+					$placeholders = array();
+					foreach ( $terms as $ttid ) {
+						$placeholders[] = '%s';
+						$query_parameters[] = $ttid;
+					}
+					
+					$query[] = "{$tax_relation} ( {$tr}.term_taxonomy_id IN (" . join( ',', $placeholders ) . ') )';
 				}
 
-				$query[] = 'OR ( tr.term_taxonomy_id IN (' . join( ',', $placeholders ) . ') )';
-			}
+				$query[] = ')';
+			} elseif ( count( $tax_queries ) ) {
+				// There's only one, but we need both name and terms
+				foreach ( $tax_queries as $taxonomy => $terms ) {
+					$tr = 'tr_' . $taxonomy;
+					$placeholders = array();
+					foreach ( $terms as $ttid ) {
+						$placeholders[] = '%s';
+						$query_parameters[] = $ttid;
+					}
 
+					$query[] = "OR ( {$tr}.term_taxonomy_id IN (" . join( ',', $placeholders ) . ') )';
+				}
+			}
+			
 			// Close the WHERE clause
 			$query[] = ')';
 
@@ -543,13 +609,78 @@ class MLAGalleryHooksExample {
 			$query[] = "AND p.post_type = 'attachment'";
 			$query[] = "AND p.post_status = 'inherit'";
 			$query[] = "GROUP BY p.ID";
-			// ORDER BY clause would go here, if needed
 
 			/*
-			 * Add pagination to our query, then remove it from the query
-			 * that WordPress will process after we're done.
+			 * ORDER BY clause
 			 */
-			$paged = $all_query_parameters['paged'];
+			if ( ! empty( $my_query_vars['orderby'] ) ) {
+				$orderby = strtolower( $my_query_vars['orderby'] );
+			} else {
+				$orderby = 'none';
+			}
+			$all_query_parameters['orderby'] = 'post__in';
+	
+			if ( ! empty( $my_query_vars['order'] ) ) {
+				$order = strtoupper( $my_query_vars['order'] );
+				if ( 'DESC' != $order ) {
+					$order = 'ASC';
+				}
+			} else {
+				$order = 'ASC';
+			}
+			$all_query_parameters['order'] = 'ASC';
+	
+			switch ( $orderby ) {
+				case 'id':
+					$query[] = 'ORDER BY p.ID ' . $order;
+					break;
+				case 'author':
+					$query[] = 'ORDER BY p.post_author ' . $order;
+					break;
+				case 'date':
+					$query[] = 'ORDER BY p.post_date ' . $order;
+					break;
+				case 'description':
+				case 'content':
+					$query[] = 'ORDER BY p.post_content ' . $order;
+					break;
+				case 'title':
+					$query[] = 'ORDER BY p.post_title ' . $order;
+					break;
+				case 'caption':
+				case 'excerpt':
+					$query[] = 'ORDER BY p.post_excerpt ' . $order;
+					break;
+				case 'slug':
+				case 'name':
+					$query[] = 'ORDER BY p.post_name ' . $order;
+					break;
+				case 'modified':
+					$query[] = 'ORDER BY p.post_modified ' . $order;
+					break;
+				case 'parent':
+					$query[] = 'ORDER BY p.post_parent ' . $order;
+					break;
+				case 'menu_order':
+					$query[] = 'ORDER BY p.menu_order ' . $order;
+					break;
+				case 'post_mime_type':
+					$query[] = 'ORDER BY p.post_mime_type ' . $order;
+					break;
+				case 'comment_count':
+					$query[] = 'ORDER BY p.comment_count ' . $order;
+					break;
+				case 'rand':
+				case 'random':
+					$query[] = 'ORDER BY RAND() ' . $order;
+					break;
+				case 'none':
+				default:
+					break;
+			}
+
+			// Add pagination to our query
+			$paged = isset( $my_query_vars['paged'] ) ? $my_query_vars['paged'] : NULL;
 			if ( empty( $paged ) ) {
 				$paged = 1;
 			} elseif ( 'current' == strtolower( $paged ) ) {
@@ -568,7 +699,14 @@ class MLAGalleryHooksExample {
 				$paged = 1;
 			}
 
-			$limit = absint( ! empty( $all_query_parameters['posts_per_page'] ) ? $all_query_parameters['posts_per_page'] : $all_query_parameters['numberposts'] );
+			if ( ! empty( $my_query_vars['posts_per_page'] ) ) {
+				$limit = absint( $my_query_vars['posts_per_page'] );
+			} elseif ( ! empty( $my_query_vars['numberposts'] ) ) {
+				$limit = absint( $my_query_vars['numberposts'] );
+			} else {
+				$limit = 0;
+			}
+
 			$offset = $limit * ( $paged - 1);
 			if ( 0 < $offset && 0 < $limit ) {
 				$query[] = 'LIMIT %d, %d';
@@ -583,10 +721,6 @@ class MLAGalleryHooksExample {
 				$query_parameters[] = 0x7FFFFFFF; // big number!
 			}
 
-			$all_query_parameters['paged'] = NULL;
-			$all_query_parameters['posts_per_page'] = 0;
-			$all_query_parameters['numberposts'] = 0;
-
 			$query =  join(' ', $query);
 			$ids = $wpdb->get_results( $wpdb->prepare( $query, $query_parameters ) );
 			if ( is_array( $ids ) ) {
@@ -598,12 +732,10 @@ class MLAGalleryHooksExample {
 			} else {
 				$all_query_parameters['include'] = '1'; // return no images
 			}
-
-			return $all_query_parameters;
 		} // parameter "my_custom_sql" is present
 
 		return $all_query_parameters;
-	} // mla_gallery_query_arguments_filter
+	} // mla_gallery_query_arguments
 
 	/**
 	 * Save some of the WP_Query object properties
@@ -627,29 +759,98 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	void	actions never return anything
 	 */
-	public static function mla_gallery_wp_query_object_action( $query_arguments ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_wp_query_object_action $query_arguments = ' . var_export( $query_arguments, true ), 0 );
+	public static function mla_gallery_wp_query_object( $query_arguments ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_wp_query_object $query_arguments = ' . var_export( $query_arguments, true ), 0 );
 
 		self::$wp_query_properties = array();
 		self::$wp_query_properties ['request'] = MLAShortcodes::$mla_gallery_wp_query_object->request;
 		self::$wp_query_properties ['query_vars'] = MLAShortcodes::$mla_gallery_wp_query_object->query_vars;
 		self::$wp_query_properties ['post_count'] = MLAShortcodes::$mla_gallery_wp_query_object->post_count;
 
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_wp_query_object_action self::$wp_query_properties = ' . var_export( self::$wp_query_properties, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_wp_query_object self::$wp_query_properties = ' . var_export( self::$wp_query_properties, true ), 0 );
 
 		/*
 		 * Unlike Filters, Actions never return anything
 		 */
 		return;
-	} // mla_gallery_wp_query_object_action
+	} // mla_gallery_wp_query_object
+
+	/**
+	 * MLA Gallery The Attachments
+	 *
+	 * This filter gives you an opportunity to record or modify the array of items
+	 * returned by the query.
+	 *
+	 * @since 1.09
+	 *
+	 * @param NULL $filtered_attachments initially NULL, indicating no substitution.
+	 * @param array $attachments WP_Post objects returned by WP_Query->query, passed by reference
+	 */
+	public static function mla_gallery_the_attachments( $filtered_attachments, $attachments ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_the_attachments $attachments = ' . var_export( $attachments, true ), 0 );
+
+		return $filtered_attachments;
+	}
+
+	/**
+	 * MLA Gallery Alternate Shortcode Blacklist
+	 *
+	 * This filter gives you an opportunity to record or modify the list of parameters to be
+	 * removed from those passed to the alternative gallery shortcode.
+	 *
+	 * @since 1.09
+	 *
+	 * @param array $blacklist parameter_name => parameter_value pairs
+	 */
+	public static function mla_gallery_alt_shortcode_blacklist( $blacklist ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_alt_shortcode_blacklist blacklist = ' . var_export( $blacklist, true ), 0 );
+		
+		return $blacklist;
+	} // mla_gallery_alt_shortcode_blacklist
+
+	/**
+	 * MLA Gallery Alternate Shortcode Attributes
+	 *
+	 * This filter gives you an opportunity to record or modify the parameters passed to
+	 * the alternative gallery shortcode.
+	 *
+	 * @since 1.09
+	 *
+	 * @param array $attr parameter_name => parameter_value pairs
+	 */
+	public static function mla_gallery_alt_shortcode_attributes( $attr ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_alt_shortcode_attributes attr = ' . var_export( $attr, true ), 0 );
+		
+		return $attr;
+	} // mla_gallery_alt_shortcode_attributes
+
+	/**
+	 * MLA Gallery Alternate Shortcode IDs
+	 *
+	 * This filter gives you an opportunity to record or modify the ID values or the entire
+	 * mla_alt_shortcode_ids parameter passed to the alternative gallery shortcode.
+	 *
+	 * @since 1.09
+	 *
+	 * @param array $ids empty array, indicating no substitution
+	 * @param string $ids_name parameter name
+	 * @param array $attachments WP_Post objects returned by WP_Query->query, passed by reference
+	 *
+	 * @return array Substitute array of ID (or other) values to populate the parameter 
+	 * @return string Complete 'ids_name="value,value"' parameter or an empty string to omit parameter
+	 */
+	public static function mla_gallery_alt_shortcode_ids( $ids, $ids_name, $attachments ) {
+		//error_log( "MLAGalleryHooksExample::mla_gallery_alt_shortcode_ids( $ids_name ) attachments = " . var_export( $attachments, true ), 0 );
+		
+		return $ids;
+	} // mla_gallery_alt_shortcode_ids
 
 	/**
 	 * MLA Gallery Enclosed Content, final filter
 	 *
 	 * This filter gives you an opportunity to record or modify the content enclosed by the shortcode
-	 * when the [mla_gallery]content[/mla_gallery] form is used.
-	 * This final filter is called just after the WP_query and before control is passed
-	 * to the alternate gallery shortcode.
+	 * when the [mla_gallery]content[/mla_gallery] form is used. This final filter is called just after
+	 * the WP_query and before control is passed to the alternate gallery shortcode.
 	 *
 	 * @since 1.02
 	 *
@@ -657,18 +858,30 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	array	updated shortcode content
 	 */
-	public static function mla_gallery_final_content_filter( $shortcode_content ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_final_content_filter $shortcode_content = ' . var_export( $shortcode_content, true ), 0 );
+	public static function mla_gallery_final_content( $shortcode_content ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_final_content $shortcode_content = ' . var_export( $shortcode_content, true ), 0 );
 
 		return $shortcode_content;
-	} // mla_gallery_final_content_filter
+	} // mla_gallery_final_content
+
+	/**
+	 * MLA Gallery End Alternate Shortcode
+	 *
+	 * This action is called after the alternative gallery shortcode has been processed,
+	 * so you can perform cleanup or other final actions.
+	 *
+	 * @since 1.09
+	 */
+	public static function mla_gallery_end_alt_shortcode() {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_end_alt_shortcode()', 0 );
+	} // mla_gallery_end_alt_shortcode
 
 	/**
 	 * Use MLA Gallery Style
 	 *
 	 * You can use this filter to allow or suppress the inclusion of CSS styles in the
 	 * gallery output. Return 'true' to allow the styles, false to suppress them. You can also
-	 * suppress styles by returning an empty string from the mla_gallery_style_parse_filter below.
+	 * suppress styles by returning an empty string from the mla_gallery_style_parse below.
 	 *
 	 * @since 1.00
 	 *
@@ -677,15 +890,15 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	boolean	true to fetch and parse the style template, false to leave it empty
 	 */
-	public static function use_mla_gallery_style_filter( $use_style_template, $style_template_name ) {
-		//error_log( 'MLAGalleryHooksExample::use_mla_gallery_style_filter $use_style_template = ' . var_export( $use_style_template, true ), 0 );
-		//error_log( 'MLAGalleryHooksExample::use_mla_gallery_style_filter $style_template_name = ' . var_export( $style_template_name, true ), 0 );
+	public static function use_mla_gallery_style( $use_style_template, $style_template_name ) {
+		//error_log( 'MLAGalleryHooksExample::use_mla_gallery_style $use_style_template = ' . var_export( $use_style_template, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::use_mla_gallery_style $style_template_name = ' . var_export( $style_template_name, true ), 0 );
 
 		/*
 		 * Filters must return the first argument passed in, unchanged or updated
 		 */
 		return $use_style_template;
-	} // use_mla_gallery_style_filter
+	} // use_mla_gallery_style
 
 	/**
 	 * MLA Gallery Style Values
@@ -701,24 +914,24 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	array	updated substitution parameter name => value pairs
 	 */
-	public static function mla_gallery_style_values_filter( $style_values ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_style_values_filter $style_values = ' . var_export( $style_values, true ), 0 );
+	public static function mla_gallery_style_values( $style_values ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_style_values $style_values = ' . var_export( $style_values, true ), 0 );
 
 		/*
 		 * You also have access to the PHP Super Globals, e.g., $_REQUEST, $_SERVER
 		 */
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_style_values_filter $_REQUEST = ' . var_export( $_REQUEST, true ), 0 );
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_style_values_filter $_SERVER[ REQUEST_URI ] = ' . var_export( $_SERVER['REQUEST_URI'], true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_style_values $_REQUEST = ' . var_export( $_REQUEST, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_style_values $_SERVER[ REQUEST_URI ] = ' . var_export( $_SERVER['REQUEST_URI'], true ), 0 );
 
 		/*
 		 * You can use the WordPress globals like $wp_query, $wpdb and $table_prefix as well.
 		 * Note that $wp_query contains values for the post/page query, NOT the [mla_gallery] query.
 		 */
 		global $wp_query;
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_style_values_filter $wp_query->query = ' . var_export( $wp_query->query, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_style_values $wp_query->query = ' . var_export( $wp_query->query, true ), 0 );
 
 		return $style_values;
-	} // mla_gallery_style_values_filter
+	} // mla_gallery_style_values
 
 	/**
 	 * MLA Gallery Style Template
@@ -734,11 +947,11 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	string	updated template
 	 */
-	public static function mla_gallery_style_template_filter( $style_template ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_style_template_filter $style_template = ' . var_export( $style_template, true ), 0 );
+	public static function mla_gallery_style_template( $style_template ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_style_template $style_template = ' . var_export( $style_template, true ), 0 );
 
 		return $style_template;
-	} // mla_gallery_style_template_filter
+	} // mla_gallery_style_template
 
 	/**
 	 * MLA Gallery Style Parse
@@ -757,13 +970,28 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	array	updated HTML markup for gallery output
 	 */
-	public static function mla_gallery_style_parse_filter( $html_markup, $style_template, $style_values ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_style_parse_filter $html_markup = ' . var_export( $html_markup, true ), 0 );
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_style_parse_filter $style_template = ' . var_export( $style_template, true ), 0 );
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_style_parse_filter $style_values = ' . var_export( $style_values, true ), 0 );
+	public static function mla_gallery_style_parse( $html_markup, $style_template, $style_values ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_style_parse $html_markup = ' . var_export( $html_markup, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_style_parse $style_template = ' . var_export( $style_template, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_style_parse $style_values = ' . var_export( $style_values, true ), 0 );
 
 		return $html_markup;
-	} // mla_gallery_style_parse_filter
+	} // mla_gallery_style_parse
+
+	/**
+	 * MLA Gallery Pagination Values
+	 *
+	 * This filter gives you an opportunity to customize the markup values used in pagination controls.
+	 *
+	 * @since 1.13
+	 *
+	 * @param array	$markup_values gallery-level parameter_name => parameter_value pairs
+	 */
+	public static function mla_gallery_pagination_values( $markup_values ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_pagination_values $markup_values = ' . var_export( $markup_values, true ), 0 );
+
+		return $markup_values;
+	} // mla_gallery_pagination_values
 
 	/**
 	 * MLA Gallery Open Values
@@ -777,11 +1005,11 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	array	updated substitution parameter name => value pairs
 	 */
-	public static function mla_gallery_open_values_filter( $markup_values ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_open_values_filter $markup_values = ' . var_export( $markup_values, true ), 0 );
+	public static function mla_gallery_open_values( $markup_values ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_open_values $markup_values = ' . var_export( $markup_values, true ), 0 );
 
 		return $markup_values;
-	} // mla_gallery_open_values_filter
+	} // mla_gallery_open_values
 
 	/**
 	 * MLA Gallery Open Template
@@ -792,8 +1020,8 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	string	updated template
 	 */
-	public static function mla_gallery_open_template_filter( $open_template ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_open_template_filter $open_template = ' . var_export( $open_template, true ), 0 );
+	public static function mla_gallery_open_template( $open_template ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_open_template $open_template = ' . var_export( $open_template, true ), 0 );
 
 		/*
 		 * Check for a display message
@@ -803,7 +1031,7 @@ class MLAGalleryHooksExample {
 		}
 
 		return $open_template;
-	} // mla_gallery_open_template_filter
+	} // mla_gallery_open_template
 
 	/**
 	 * MLA Gallery Open Parse
@@ -816,13 +1044,13 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	array	updated HTML markup for gallery output
 	 */
-	public static function mla_gallery_open_parse_filter( $html_markup, $open_template, $markup_values ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_open_parse_filter $html_markup = ' . var_export( $html_markup, true ), 0 );
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_open_parse_filter $open_template = ' . var_export( $open_template, true ), 0 );
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_open_parse_filter $markup_values = ' . var_export( $markup_values, true ), 0 );
+	public static function mla_gallery_open_parse( $html_markup, $open_template, $markup_values ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_open_parse $html_markup = ' . var_export( $html_markup, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_open_parse $open_template = ' . var_export( $open_template, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_open_parse $markup_values = ' . var_export( $markup_values, true ), 0 );
 
 		return $html_markup;
-	} // mla_gallery_open_parse_filter
+	} // mla_gallery_open_parse
 
 	/**
 	 * MLA Gallery Style
@@ -840,15 +1068,15 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	array	updated HTML markup for "gallery style" and "gallery open" output
 	 */
-	public static function mla_gallery_style_filter( $html_markup, $style_values, $open_values, $style_template, $open_template ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_style_filter $html_markup = ' . var_export( $html_markup, true ), 0 );
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_style_filter $style_values = ' . var_export( $style_values, true ), 0 );
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_style_filter $open_values = ' . var_export( $open_values, true ), 0 );
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_style_filter $style_template = ' . var_export( $style_template, true ), 0 );
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_style_filter $open_template = ' . var_export( $open_template, true ), 0 );
+	public static function mla_gallery_style( $html_markup, $style_values, $open_values, $style_template, $open_template ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_style $html_markup = ' . var_export( $html_markup, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_style $style_values = ' . var_export( $style_values, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_style $open_values = ' . var_export( $open_values, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_style $style_template = ' . var_export( $style_template, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_style $open_template = ' . var_export( $open_template, true ), 0 );
 
 		return $html_markup;
-	} // mla_gallery_style_filter
+	} // mla_gallery_style
 
 	/**
 	 * MLA Gallery Row Open Values
@@ -859,11 +1087,11 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	array	updated substitution parameter name => value pairs
 	 */
-	public static function mla_gallery_row_open_values_filter( $markup_values ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_row_open_values_filter $markup_values = ' . var_export( $markup_values, true ), 0 );
+	public static function mla_gallery_row_open_values( $markup_values ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_row_open_values $markup_values = ' . var_export( $markup_values, true ), 0 );
 
 		return $markup_values;
-	} // mla_gallery_row_open_values_filter
+	} // mla_gallery_row_open_values
 
 	/**
 	 * MLA Gallery Row Open Template
@@ -874,11 +1102,11 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	string	updated template
 	 */
-	public static function mla_gallery_row_open_template_filter( $row_open_template ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_row_open_template_filter $row_open_template = ' . var_export( $row_open_template, true ), 0 );
+	public static function mla_gallery_row_open_template( $row_open_template ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_row_open_template $row_open_template = ' . var_export( $row_open_template, true ), 0 );
 
 		return $row_open_template;
-	} // mla_gallery_row_open_template_filter
+	} // mla_gallery_row_open_template
 
 	/**
 	 * MLA Gallery Row Open Parse
@@ -891,13 +1119,13 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	array	updated HTML markup for gallery output
 	 */
-	public static function mla_gallery_row_open_parse_filter( $html_markup, $row_open_template, $markup_values ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_row_open_parse_filter $html_markup = ' . var_export( $html_markup, true ), 0 );
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_row_open_parse_filter $row_open_template = ' . var_export( $row_open_template, true ), 0 );
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_row_open_parse_filter $markup_values = ' . var_export( $markup_values, true ), 0 );
+	public static function mla_gallery_row_open_parse( $html_markup, $row_open_template, $markup_values ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_row_open_parse $html_markup = ' . var_export( $html_markup, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_row_open_parse $row_open_template = ' . var_export( $row_open_template, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_row_open_parse $markup_values = ' . var_export( $markup_values, true ), 0 );
 
 		return $html_markup;
-	} // mla_gallery_row_open_parse_filter
+	} // mla_gallery_row_open_parse
 
 	/**
 	 * Replace the caption value and update captiontag_content as well
@@ -927,6 +1155,24 @@ class MLAGalleryHooksExample {
 	} // _update_caption
 
 	/**
+	 * MLA Gallery Item Initial Values
+	 *
+	 * This filter gives you an opportunity to add custom elements to each item
+	 * returned by the query item-level processing occurs.
+	 *
+	 * @since 1.13
+	 *
+	 * @param array	$markup_values gallery-level parameter_name => parameter_value pairs
+	 * @param array $attachment WP_Post object of the current item
+	 */
+	public static function mla_gallery_item_initial_values( $markup_values, $attachment ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_item_initial_values $markup_values = ' . var_export( $markup_values, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_item_initial_values $attachment = ' . var_export( $attachment, true ), 0 );
+
+		return $markup_values;
+	} // mla_gallery_item_initial_values
+
+	/**
 	 * MLA Gallery Item Values
 	 *
 	 * @since 1.00
@@ -935,8 +1181,8 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	array	updated substitution parameter name => value pairs
 	 */
-	public static function mla_gallery_item_values_filter( $item_values ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_item_values_filter $item_values = ' . var_export( $item_values, true ), 0 );
+	public static function mla_gallery_item_values( $item_values ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_item_values $item_values = ' . var_export( $item_values, true ), 0 );
 
 		/*
 		 * We use a shortcode parameter of our own to apply our filters on a gallery-by-gallery basis,
@@ -952,7 +1198,7 @@ class MLAGalleryHooksExample {
 			$item_values['terms:attachment_category'] = implode( ' ', $object_terms );
 			$item_values = self::_update_caption( $item_values, implode( ' ', $object_terms ) );
 
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_item_values_filter terms = ' . var_export( $item_values['terms:attachment_category'], true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_item_values terms = ' . var_export( $item_values['terms:attachment_category'], true ), 0 );
 		}
 
 		/*
@@ -1133,7 +1379,7 @@ class MLAGalleryHooksExample {
 		 */
 		$custom_fields = array();
 		$post_meta = get_metadata( 'post', $item_values['attachment_ID'] );
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_item_values_filter $post_meta = ' . var_export( $post_meta, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_item_values $post_meta = ' . var_export( $post_meta, true ), 0 );
 
 		if ( is_array( $post_meta ) ) {
 			foreach ( $post_meta as $post_meta_key => $post_meta_value ) {
@@ -1165,7 +1411,7 @@ class MLAGalleryHooksExample {
 				$custom_fields[ $post_meta_key ] = $post_meta_value;
 			} // foreach $post_meta
 		}
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_item_values_filter $custom_fields = ' . var_export( $custom_fields, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_item_values $custom_fields = ' . var_export( $custom_fields, true ), 0 );
 
 		/*
 		 * Don't alter the caption if there are no custom fields to display
@@ -1188,7 +1434,7 @@ class MLAGalleryHooksExample {
 		 */
 		$item_values = self::_update_caption( $item_values, $my_caption );
 		return $item_values;
-	} // mla_gallery_item_values_filter
+	} // mla_gallery_item_values
 
 	/**
 	 * MLA Gallery Item Template
@@ -1199,11 +1445,11 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	string	updated template
 	 */
-	public static function mla_gallery_item_template_filter( $item_template ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_item_template_filter $item_template = ' . var_export( $item_template, true ), 0 );
+	public static function mla_gallery_item_template( $item_template ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_item_template $item_template = ' . var_export( $item_template, true ), 0 );
 
 		return $item_template;
-	} // mla_gallery_item_template_filter
+	} // mla_gallery_item_template
 
 	/**
 	 * MLA Gallery Item Parse
@@ -1216,13 +1462,13 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	array	updated HTML markup for gallery output
 	 */
-	public static function mla_gallery_item_parse_filter( $html_markup, $item_template, $item_values ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_item_parse_filter $html_markup = ' . var_export( $html_markup, true ), 0 );
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_item_parse_filter $item_template = ' . var_export( $item_template, true ), 0 );
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_item_parse_filter $item_values = ' . var_export( $item_values, true ), 0 );
+	public static function mla_gallery_item_parse( $html_markup, $item_template, $item_values ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_item_parse $html_markup = ' . var_export( $html_markup, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_item_parse $item_template = ' . var_export( $item_template, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_item_parse $item_values = ' . var_export( $item_values, true ), 0 );
 
 		return $html_markup;
-	} // mla_gallery_item_parse_filter
+	} // mla_gallery_item_parse
 
 	/**
 	 * MLA Gallery Row Close Values
@@ -1233,11 +1479,11 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	array	updated substitution parameter name => value pairs
 	 */
-	public static function mla_gallery_row_close_values_filter( $markup_values ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_row_close_values_filter $markup_values = ' . var_export( $markup_values, true ), 0 );
+	public static function mla_gallery_row_close_values( $markup_values ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_row_close_values $markup_values = ' . var_export( $markup_values, true ), 0 );
 
 		return $markup_values;
-	} // mla_gallery_row_close_values_filter
+	} // mla_gallery_row_close_values
 
 	/**
 	 * MLA Gallery Row Close Template
@@ -1248,11 +1494,11 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	string	updated template
 	 */
-	public static function mla_gallery_row_close_template_filter( $row_close_template ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_row_close_template_filter $row_close_template = ' . var_export( $row_close_template, true ), 0 );
+	public static function mla_gallery_row_close_template( $row_close_template ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_row_close_template $row_close_template = ' . var_export( $row_close_template, true ), 0 );
 
 		return $row_close_template;
-	} // mla_gallery_row_close_template_filter
+	} // mla_gallery_row_close_template
 
 	/**
 	 * MLA Gallery Row Close Parse
@@ -1265,13 +1511,13 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	array	updated HTML markup for gallery output
 	 */
-	public static function mla_gallery_row_close_parse_filter( $html_markup, $row_close_template, $markup_values ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_row_close_parse_filter $html_markup = ' . var_export( $html_markup, true ), 0 );
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_row_close_parse_filter $row_close_template = ' . var_export( $row_close_template, true ), 0 );
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_row_close_parse_filter $markup_values = ' . var_export( $markup_values, true ), 0 );
+	public static function mla_gallery_row_close_parse( $html_markup, $row_close_template, $markup_values ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_row_close_parse $html_markup = ' . var_export( $html_markup, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_row_close_parse $row_close_template = ' . var_export( $row_close_template, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_row_close_parse $markup_values = ' . var_export( $markup_values, true ), 0 );
 
 		return $html_markup;
-	} // mla_gallery_row_close_parse_filter
+	} // mla_gallery_row_close_parse
 
 	/**
 	 * MLA Gallery Close Values
@@ -1282,11 +1528,11 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	array	updated substitution parameter name => value pairs
 	 */
-	public static function mla_gallery_close_values_filter( $markup_values ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_close_values_filter $markup_values = ' . var_export( $markup_values, true ), 0 );
+	public static function mla_gallery_close_values( $markup_values ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_close_values $markup_values = ' . var_export( $markup_values, true ), 0 );
 
 		return $markup_values;
-	} // mla_gallery_close_values_filter
+	} // mla_gallery_close_values
 
 	/**
 	 * MLA Gallery Close Template
@@ -1297,11 +1543,11 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	string	updated template
 	 */
-	public static function mla_gallery_close_template_filter( $close_template ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_close_template_filter $close_template = ' . var_export( $close_template, true ), 0 );
+	public static function mla_gallery_close_template( $close_template ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_close_template $close_template = ' . var_export( $close_template, true ), 0 );
 
 		return $close_template;
-	} // mla_gallery_close_template_filter
+	} // mla_gallery_close_template
 
 	/**
 	 * MLA Gallery Close Parse
@@ -1314,13 +1560,13 @@ class MLAGalleryHooksExample {
 	 *
 	 * @return	array	updated HTML markup for gallery output
 	 */
-	public static function mla_gallery_close_parse_filter( $html_markup, $close_template, $markup_values ) {
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_close_parse_filter $html_markup = ' . var_export( $html_markup, true ), 0 );
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_close_parse_filter $close_template = ' . var_export( $close_template, true ), 0 );
-		//error_log( 'MLAGalleryHooksExample::mla_gallery_close_parse_filter $markup_values = ' . var_export( $markup_values, true ), 0 );
+	public static function mla_gallery_close_parse( $html_markup, $close_template, $markup_values ) {
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_close_parse $html_markup = ' . var_export( $html_markup, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_close_parse $close_template = ' . var_export( $close_template, true ), 0 );
+		//error_log( 'MLAGalleryHooksExample::mla_gallery_close_parse $markup_values = ' . var_export( $markup_values, true ), 0 );
 
 		return $html_markup;
-	} // mla_gallery_close_parse_filter
+	} // mla_gallery_close_parse
 
 } // Class MLAGalleryHooksExample
 

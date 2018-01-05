@@ -10,7 +10,7 @@
 
 /**
  * Class MLA (Media Library Assistant) Thumbnails provides support for
- * Featured IMage generation
+ * Featured Image generation
  *
  * @package Media Library Assistant
  * @since 2.13
@@ -141,11 +141,20 @@ class MLA_Thumbnail {
 			return $template_array;
 		}
 
-		$template_array = MLACore::mla_load_template( $file_name );
+		// Retain other filters' additions
+		if ( empty( $template_array ) ) {
+			$template_array = MLACore::mla_load_template( $file_name );
+		}
+		
 		$help_array = MLACore::mla_load_template( 'help-for-thumbnail_generation.tpl' );
 
-		if ( isset( $template_array['sidebar'] ) ) {
-			$template_array['sidebar'] .= $help_array['sidebar'];
+		if ( isset( $help_array['sidebar'] ) ) {
+			if ( isset( $template_array['sidebar'] ) ) {
+				$template_array['sidebar'] .= $help_array['sidebar'];
+			} else {
+				$template_array['sidebar'] = $help_array['sidebar'];
+			}
+			
 			unset( $help_array['sidebar'] );
 		}
 
@@ -196,9 +205,153 @@ class MLA_Thumbnail {
 	} // mla_list_table_begin_bulk_action
 
 	/**
+	 * Add a subdirectory to the wp_upload_dir results
+	 *
+	 * @since 2.54
+	 *
+	 * @param array $uploads Array of upload directory data with keys of 'path',
+	 *                       'url', 'subdir, 'basedir', and 'error'.
+	 */
+	public static function upload_dir( $uploads ) {
+		$subdir = self::$bulk_action_options['item_subdir'];
+		if ( !empty( $subdir ) ) {
+			$uploads['path'] .= $subdir;
+			$uploads['url'] .= $subdir;
+			$uploads['subdir'] .= $subdir;
+		}
+		
+		return $uploads;
+	} // upload_dir
+
+	/**
+	 * Intercept thumbnail file deletion errors
+	 * 
+	 * @since 2.54
+	 *
+	 * @param	int		the level of the error raised
+	 * @param	string	the error message
+	 * @param	string	the filename that the error was raised in
+	 * @param	int		the line number the error was raised at
+	 *
+	 * @return	boolean	true, to bypass PHP error handler
+	 */
+	public static function unlink_error_handler( $type, $string, $file, $line ) {
+		// Don't execute PHP internal error handler
+		return true;
+	}
+
+	/**
+	 * Generate WordPress-style (4.7+) thumbnail image
+	 *
+	 * Adapted from /wp-admin/includes/image.php function wp_generate_attachment_metadata()
+	 *
+	 * @since 2.40
+	 *
+	 * @param string $post_id ID of the source item
+	 * @param string $file Source file path and name
+	 * @param array $args Image file information, based on $_FILE in PHP uploads 
+	 * @param array $old_sizes Existing WordPress-style thumbnail images to be deleted
+	 *
+	 * @return array Sizes specifications for attachment metadata
+	 */
+	private static function _generate_wordpress_thumbnail( $post_id, $file, $args, $old_sizes = NULL ) {
+		// Get the metadata for the original (PDF) attachment.
+		$item_data = wp_get_attachment_metadata( $post_id );
+
+		// Make the file path relative to the upload dir.
+		$item_relative_path = _wp_relative_upload_path( $file );
+		if ( $item_relative_path !== $args['name'] ) {
+			self::$bulk_action_options['item_subdir'] = '/' . substr( $item_relative_path, 0, ( strpos( $item_relative_path, $args['name'] ) -1 ) );
+		} else {
+			self::$bulk_action_options['item_subdir'] = NULL;
+		}
+		
+		// Try to remove intermediate images if there are any
+		if ( is_array( $old_sizes ) ) {
+			foreach ( $old_sizes as $size => $sizeinfo ) {
+				$intermediate_file = str_replace( basename( $file ), $sizeinfo['file'], $file );
+
+				set_error_handler( 'MLA_Thumbnail::unlink_error_handler' );
+				try {
+					unlink( $intermediate_file );
+				} catch ( Throwable $e ) { // PHP 7
+				} catch ( Exception $e ) { // PHP 5
+				}
+				restore_error_handler();
+			}
+		}
+
+		$fallback_sizes = array(
+			'thumbnail',
+			'medium',
+			'large',
+		);
+
+		// Filters the image sizes generated for non-image mime types.
+		$fallback_sizes = apply_filters( 'fallback_intermediate_image_sizes', $fallback_sizes, $item_data );
+
+		$sizes = array();
+		$_wp_additional_image_sizes = wp_get_additional_image_sizes();
+
+		foreach ( $fallback_sizes as $s ) {
+			if ( isset( $_wp_additional_image_sizes[ $s ]['width'] ) ) {
+				$sizes[ $s ]['width'] = intval( $_wp_additional_image_sizes[ $s ]['width'] );
+			} else {
+				$sizes[ $s ]['width'] = get_option( "{$s}_size_w" );
+			}
+
+			if ( isset( $_wp_additional_image_sizes[ $s ]['height'] ) ) {
+				$sizes[ $s ]['height'] = intval( $_wp_additional_image_sizes[ $s ]['height'] );
+			} else {
+				$sizes[ $s ]['height'] = get_option( "{$s}_size_h" );
+			}
+
+			if ( isset( $_wp_additional_image_sizes[ $s ]['crop'] ) ) {
+				$sizes[ $s ]['crop'] = $_wp_additional_image_sizes[ $s ]['crop'];
+			} else {
+				// Force thumbnails to be soft crops.
+				if ( ! 'thumbnail' === $s ) {
+					$sizes[ $s ]['crop'] = get_option( "{$s}_crop" );
+				}
+			}
+		}
+
+		// Adjust the file name for the new item
+		$args['name'] = pathinfo( $args['name'], PATHINFO_FILENAME ) . '-pdf.jpg';
+		$overrides = array( 'test_form' => false, 'test_size' => true, 'test_upload' => true, );
+
+		// move the temporary file into the uploads directory
+		add_filter( 'upload_dir', 'MLA_Thumbnail::upload_dir', 10, 1 );
+		$results = wp_handle_sideload( $args, $overrides );
+		remove_filter( 'upload_dir', 'MLA_Thumbnail::upload_dir', 10 );
+		if ( ! empty( $results['error'] ) ) {
+			return $results['error'];
+		}
+
+		$editor = wp_get_image_editor( $results['file'] );
+		if ( is_wp_error( $editor ) ) {
+			return implode( ',', $editor->get_error_messages() );
+		}
+
+		$results = $editor->multi_resize( $sizes );
+		$results['full'] = array( 
+			'file' => $args['name'],
+			'width' => $args['width'],
+			'height' => $args['height'],
+			'mime-type' => $args['type'],
+		);		
+
+		// Update the metadata for the original (PDF) attachment.
+		$item_data['sizes'] = $results;
+		wp_update_attachment_metadata( $post_id, $item_data );
+
+		return true;
+	} // _generate_wordpress_thumbnail
+
+	/**
 	 * Process an MLA_List_Table custom bulk action
 	 *
-	 * Creates new items from the "Bulk Translate" list.
+	 * Creates new items from the "Bulk Thumbnail" list.
 	 *
 	 * @since 2.13
 	 *
@@ -217,17 +370,26 @@ class MLA_Thumbnail {
 		/* translators: 1: post ID */
 		$item_prefix = sprintf( __( 'Item %1$d', 'media-library-assistant' ), $post_id ) . ', ';
 
-		/*
-		 * If there is a real thumbnail image, no generation is required or allowed
-		 */
-		$thumbnail = wp_get_attachment_image( $post_id );
+		// If there is a real thumbnail image, no generation is required or allowed except for PDFs
+		$old_sizes = NULL;
+		$thumbnail = image_downsize( $post_id );
 		if ( ! empty( $thumbnail ) ) {
-			return array( 'message' => $item_prefix . __( 'has native thumbnail.', 'media-library-assistant' ) );
+			// Special case - allow replacement of WordPress-style thumbnails for PDFs, etc.
+			if ( 'delete' === self::$bulk_action_options['existing_thumbnails'] && 'WordPress' === self::$bulk_action_options['type'] ) {
+				if ( ! wp_attachment_is_image( $post_id ) ) {
+					$meta = wp_get_attachment_metadata( $post_id );
+					if ( ! empty( $meta['sizes'] ) ) {
+						$old_sizes = $meta['sizes'];
+					}
+				}
+			}
+			
+			if ( empty( $old_sizes ) ) {
+				return array( 'message' => $item_prefix . __( 'has native thumbnail.', 'media-library-assistant' ) );
+			}
 		}
 
-		/*
-		 * Look for the "Featured Image" as an alternate thumbnail for PDFs, etc.
-		 */
+		// Look for the "Featured Image" as an alternate thumbnail for PDFs, etc.
 		$thumbnail = get_post_thumbnail_id( $post_id );
 		if ( ! empty( $thumbnail ) ) {
 			switch ( self::$bulk_action_options['existing_thumbnails'] ) {
@@ -247,9 +409,7 @@ class MLA_Thumbnail {
 			}
 		}
 
-		/*
-		 * Validate the file existance and type
-		 */
+		// Validate the file existance and type
 		$file = get_attached_file( $post_id );
 		if ( empty( $file ) ) {
 			/* translators: 1: ERROR tag 2: Item post ID */
@@ -260,9 +420,7 @@ class MLA_Thumbnail {
 			return array( 'message' => $item_prefix . __( 'unsupported file type.', 'media-library-assistant' ) );
 		}
 
-		/*
-		 * Generate a thumbnail
-		 */
+		// Generate a thumbnail
 		require_once( MLA_PLUGIN_PATH . 'includes/class-mla-image-processor.php' );
 		$results = MLAImageProcessor::mla_handle_thumbnail_sideload( $file, self::$bulk_action_options );
 		if ( ! empty( $results['error'] ) ) {
@@ -270,9 +428,19 @@ class MLA_Thumbnail {
 			return array( 'message' => sprintf( __( '%1$s: %2$sthumbnail generation failed', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), $item_prefix ) . ' - ' . $results['error'] );
 		}
 
-		/*
-		 * Adjust the file name for the new item
-		 */
+		if ( 'WordPress' === self::$bulk_action_options['type'] ) {
+			$results = self::_generate_wordpress_thumbnail( $post_id, $file, $results, $old_sizes );
+
+			if ( true === $results ) {
+				/* translators: 1: Item post ID */
+				return array( 'message' => sprintf( __( '%1$sWordPress-style thumbnail generated.', 'media-library-assistant' ), $item_prefix ) );
+			}
+
+			/* translators: 1: ERROR tag 2: Item post ID */
+			return array( 'message' => sprintf( __( '%1$s: %2$sthumbnail generation failed', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), $item_prefix ) . ' - ' . $results );
+		}
+
+		// Adjust the file name for the new item
 		$pathinfo = pathinfo( $results['name'] );
 
 		if ( isset( self::$bulk_action_options['suffix'] ) ) {
@@ -319,7 +487,7 @@ class MLA_Thumbnail {
 		// Make sure that this file is included, as wp_generate_attachment_metadata() depends on it.
 		require_once( ABSPATH . 'wp-admin/includes/image.php' );
 
-		// Generate the metadata for the attachment, and update the database record.
+		// Update the metadata for the original (PDF) attachment.
 		$item_data = wp_generate_attachment_metadata( $item_id, $results['file']);
 		wp_update_attachment_metadata( $item_id, $item_data );
 
@@ -373,6 +541,11 @@ class MLA_Thumbnail {
 			unset( $_POST['s'] );
 			unset( $_GET['s'] );
 
+			// Clear the pagination control
+			unset( $_REQUEST['paged'] );
+			unset( $_POST['paged'] );
+			unset( $_GET['paged'] );
+
 			$_REQUEST['ids'] = MLA_Thumbnail::$bulk_action_includes;
 			$_REQUEST['heading_suffix'] = __( 'Generated Thumbnails', 'media-library-assistant' );
 		}
@@ -393,7 +566,10 @@ class MLA_Thumbnail {
 	 * @return	array	updated array of actions.
 	 */
 	public static function mla_list_table_get_bulk_actions( $actions ) {
-		$actions[self::MLA_GFI_ACTION] = __( 'Thumbnail', 'media-library-assistant' );
+		if ( !( isset( $_REQUEST['status'] ) && $_REQUEST['status'] == 'trash' ) ) {
+			$actions[self::MLA_GFI_ACTION] = __( 'Thumbnail', 'media-library-assistant' );
+		}
+		
 		return $actions;
 	} // mla_list_table_get_bulk_actions
 
@@ -418,9 +594,22 @@ class MLA_Thumbnail {
 		 */
 		$page_template_array = MLACore::mla_load_template( 'mla-thumbnail-generation.tpl' );
 		if ( ! is_array( $page_template_array ) ) {
-			error_log( 'ERROR: mla-thumbnail-generation.tpl path = ' . var_export( plugin_dir_path( __FILE__ ) . 'mla-thumbnail-generation.tpl', true ), 0 );
-			error_log( 'ERROR: mla-thumbnail-generation.tpl non-array result = ' . var_export( $page_template_array, true ), 0 );
+			MLACore::mla_debug_add( 'ERROR: mla-thumbnail-generation.tpl path = ' . var_export( plugin_dir_path( __FILE__ ) . 'mla-thumbnail-generation.tpl', true ), MLACore::MLA_DEBUG_CATEGORY_ANY );
+			MLACore::mla_debug_add( 'ERROR: mla-thumbnail-generation.tpl non-array result = ' . var_export( $page_template_array, true ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 			return $html_markup;
+		}
+
+		// WordPress thumbnail generation began in version 4.7
+		if ( version_compare( get_bloginfo('version'), '4.6.9', '>' ) ) {
+			$wp_style = '';
+			$wp_checked = 'checked="checked"';
+			$jpg_checked = '';
+			$wp_help = __( 'Type &ldquo;WP&rdquo; generates native WordPress thumbnails without creating a separate image item.', 'media-library-assistant' );
+		} else {
+			$wp_style = 'style="display: none"';
+			$wp_checked = '';
+			$jpg_checked = 'checked="checked"';
+			$wp_help = '';
 		}
 
 		$page_values = array(
@@ -434,6 +623,10 @@ class MLA_Thumbnail {
 			'Resolution' => __( 'Resolution', 'media-library-assistant' ),
 			'Quality' => __( 'Quality', 'media-library-assistant' ),
 			'Type' => __( 'Type', 'media-library-assistant' ),
+			'WP Style' => $wp_style,
+			'WP Checked' => $wp_checked,
+			'JPG Checked' => $jpg_checked,
+			'WP Help' => $wp_help,
 			'Existing Items' => __( 'Existing Items', 'media-library-assistant' ),
 			'Keep' => __( 'Keep', 'media-library-assistant' ),
 			'Ignore' => __( 'Ignore', 'media-library-assistant' ),
@@ -444,7 +637,6 @@ class MLA_Thumbnail {
 			'Options' => __( 'Options', 'media-library-assistant' ),
 			'Clear Filter-by' => __( 'Clear Filter-by', 'media-library-assistant' ),
 			'Cancel' => __( 'Cancel', 'media-library-assistant' ),
-//			'Generate Thumbnails' => __( 'Generate Thumbnails', 'media-library-assistant' ),
 		);
 		$parse_value = MLAData::mla_parse_template( $page_template_array['page'], $page_values );
 
@@ -454,7 +646,7 @@ class MLA_Thumbnail {
 	/**
 	 * Filter the "sticky" submenu URL parameters
 	 *
-	 * Maintains the pll_view and list of Bulk Translate items in the URLs for paging through the results.
+	 * Maintains the list of "Generated Thumbnails" items in the URLs for filtering the table display.
 	 *
 	 * @since 2.13
 	 *
@@ -464,13 +656,9 @@ class MLA_Thumbnail {
 	 * @return	array	updated submenu_arguments.
 	 */
 	public static function mla_list_table_submenu_arguments( $submenu_arguments, $include_filters ) {
-		if ( isset( $_REQUEST['pll_view'] ) ) {
-			$submenu_arguments['pll_view'] = $_REQUEST['pll_view'];
-		}
-
 		if ( $include_filters && ( ! empty( MLA_Thumbnail::$bulk_action_includes ) ) ) {
 			$submenu_arguments['ids'] = implode( ',', MLA_Thumbnail::$bulk_action_includes );
-			$submenu_arguments['heading_suffix'] = __( 'Bulk Translations', 'media-library-assistant' );
+			$submenu_arguments['heading_suffix'] = __( 'Generated Thumbnails', 'media-library-assistant' );
 		}
 
 		return $submenu_arguments;

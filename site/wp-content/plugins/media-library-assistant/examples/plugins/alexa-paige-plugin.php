@@ -776,7 +776,7 @@ class AlexaPaigePlugin {
 		$ttids = array();
 
 		// Find taxonomy argument, if present, and collect terms
-		$taxonomies = get_taxonomies( array( 'object_type' => array( 'attachment' ) ), 'names' );
+		$taxonomies = get_object_taxonomies( 'attachment', 'names' );
 		foreach( $taxonomies as $taxonomy ) {
 			if ( empty( $my_query_vars[ $taxonomy ] ) ) {
 				continue;
@@ -964,7 +964,7 @@ class AlexaPaigePlugin {
 		$ttids = array();
 
 		// Find taxonomy argument, if present, and collect terms
-		$taxonomies = get_taxonomies( array( 'object_type' => array( 'attachment' ) ), 'names' );
+		$taxonomies = get_object_taxonomies( 'attachment', 'names' );
 		foreach( $taxonomies as $taxonomy ) {
 			if ( empty( $my_query_vars[ $taxonomy ] ) ) {
 				continue;

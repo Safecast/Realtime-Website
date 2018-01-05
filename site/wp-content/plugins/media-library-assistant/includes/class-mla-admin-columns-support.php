@@ -3,68 +3,156 @@
  * Media Library Assistant Admin Columns (plugin) Support
  *
  * @package Media Library Assistant
- * @since 2.22
+ * @since 2.50
  */
 defined( 'ABSPATH' ) or die();
 
+if ( class_exists( 'ACP_Editing_Strategy' ) ) {
+	/**
+	 * Class Admin Columns Addon MLA (Media Library Assistant) Editing Strategy supports the Admin Columns plugin
+	 *
+	 * @package Media Library Assistant
+	 * @since 2.50
+	 */
+	class ACP_Addon_MLA_Editing_Strategy extends ACP_Editing_Strategy_Post {
+	
+		/**
+		 * Get the available items on the current page for passing them to JS
+		 *
+		 * @since 2.50
+		 *
+		 * @return array Items on the current page ([entry_id] => (array) [entry_data])
+		 */
+		public function get_rows() {
+			$table = $this->column->get_list_screen()->get_list_table();
+			$table->prepare_items();
+	
+			return $this->get_editable_rows( $table->items );
+		}
+	} // class ACP_Addon_MLA_Editing_Strategy
+}
+
 /**
- * Class CPAC Storage Model MLA (Media Library Assistant) supports the Admin Columns plugin
+ * Class Admin Columns Addon MLA (Media Library Assistant) List Screen supports the Admin Columns plugin
  *
  * @package Media Library Assistant
- * @since 2.22
+ * @since 2.50
  */
-class CPAC_Storage_Model_MLA extends CPAC_Storage_Model {
-	/**
-	 * Identifies submenu entry in the Admin sidebar, e.g., Media/Assistant in Media
-	 *
-	 * @since 2.25
-	 * @var string
-	 */
-	public $subpage;
+class AC_Addon_MLA_ListScreen extends AC_ListScreen_Media {
 
 	/**
 	 * Initializes some properties, installs filters and then
 	 * calls the parent constructor to set some default configs.
 	 *
-	 * @since 2.22
+	 * @since 2.50
 	 */
 	public function __construct() {
-		$this->key            = 'mla-media-assistant';
-		$this->label          = __( 'Media Library Assistant' );
-		$this->singular_label = __( 'Assistant' );
-		$this->type           = 'media';
-		$this->meta_type      = 'post';
-		$this->page           = 'upload';
-		$this->subpage        = MLACore::ADMIN_PAGE_SLUG;
-		$this->post_type      = 'attachment';
-		$this->menu_type      = 'other';
-
-		// Increased the priority to overrule 3th party plugins such as Media Tags
-		add_filter( 'manage_media_page_' . MLACore::ADMIN_PAGE_SLUG . '_columns', array( $this, 'add_headings' ), 100 );
-		add_filter( 'mla_list_table_column_default', array( $this, 'manage_value' ), 100, 3 );
-
 		parent::__construct();
+
+		$this->set_screen_id( 'media_page_' . MLACore::ADMIN_PAGE_SLUG );
+		$this->set_key( 'mla-media-assistant' );
+		$this->set_group( 'media' );
+		$this->set_label( __( 'Media Library Assistant' ) );
+		$this->set_singular_label( __( 'Assistant' ) );
+		$this->set_page( MLACore::ADMIN_PAGE_SLUG );
+
+		/** @see MLA_List_Table */
+		$this->set_list_table_class( 'MLA_List_Table' );
+		
+		add_action( 'acp/column_types', 'AC_Addon_MLA_ListScreen::inline_column_types', 10, 1 );
+		add_action( 'acp/column_types', 'AC_Addon_MLA_ListScreen::remove_column_types', 10, 1 );
+		add_action( 'ac/column_types', 'AC_Addon_MLA_ListScreen::remove_column_types', 10, 1 );
+		add_filter( 'ac/column/custom_field/meta_keys', 'AC_Addon_MLA_ListScreen::remove_custom_columns', 10, 2 );
 	}
 
 	/**
-	 * Added in Admin Columns update to v2.4.9
+	 * Contains the hook that contains the manage_value callback
 	 *
-	 * @since 2.23
+	 * @since 2.50
 	 */
-	public function init_manage_columns() {
-
-		//add_filter( "manage_{$this->page}_columns", array( $this, 'add_headings' ), 100 );
-		//add_action( 'manage_comments_custom_column', array( $this, 'manage_value' ), 100, 2 );
+	public function set_manage_value_callback() {
+		add_filter( 'mla_list_table_column_default', array( $this, 'column_default_value' ), 100, 3 );
 	}
 
 	/**
-	 * Returns the Media/Assistant submenu table column definitions
+	 * Remove duplicate columns from the Admin Columns "Custom" section
 	 *
-	 * @since 2.22
+	 * @since 2.50
 	 *
-	 * @return	array	( 'column_slug' => 'column_heading' )
+	 * @param AC_ListScreen $listscreen
 	 */
-	public function get_default_columns() {
+	public static function remove_column_types( $listscreen ) {
+		if ( $listscreen instanceof AC_Addon_MLA_ListScreen ) {
+			$exclude = array(
+				'comments',
+				'title',
+				'column-actions',
+				'column-alternate_text',
+				'column-attached_to',
+				'column-author_name',
+				'column-caption',
+				'column-description',
+				'column-file_name',
+				'column-full_path',
+				'column-mediaid',
+				'column-mime_type',
+				'column-taxonomy',
+
+				/*
+				'column-meta',
+				'column-available_sizes',
+				'column-dimensions',
+				'column-exif_data',
+				'column-file_size',
+				'column-height',
+				'column-image',
+				'column-used_by_menu',
+				'column-width',
+				 */
+			);
+
+			foreach ( $exclude as $column_type ) {
+				$listscreen->deregister_column_type( $column_type );
+			}
+		}
+	}
+
+	/**
+	 * Remove duplicate columns from the Admin Columns "Custom" section
+	 *
+	 * @since 2.52
+	 *
+	 * @param array                          $keys Distinct meta keys from DB
+	 * @param AC_Settings_Column_CustomField $this_customfield
+	 */
+	public static function remove_custom_columns( $keys, $this_customfield ) {
+		// Find the fields already present in the submenu table
+		$mla_columns = apply_filters( 'mla_list_table_get_columns', MLAQuery::$default_columns );
+		$mla_custom = array();
+		foreach ( $mla_columns as $slug => $heading ) {
+			if ( 'c_' === substr( $slug, 0, 2 ) ) {
+				$mla_custom[] = $heading;
+			}
+		}
+
+		// Remove the fields already present in the submenu table
+		foreach ( $keys as $index => $value ) {
+			if ( in_array( esc_html( $value ), $mla_custom ) ) {
+				unset( $keys[ $index ] );
+			}
+		}
+
+		return $keys;
+	}
+
+	/**
+	 * Default column headers
+	 *
+	 * @since 2.50
+	 *
+	 * @return array
+	 */
+	public function get_column_headers() {
 		if ( ! class_exists( 'MLAQuery' ) ) {
 			require_once( MLA_PLUGIN_PATH . 'includes/class-mla-data-query.php' );
 			MLAQuery::initialize();
@@ -74,85 +162,39 @@ class CPAC_Storage_Model_MLA extends CPAC_Storage_Model {
 	}
 
 	/**
-	 * Returns the Media/Assistant submenu table column slugs/keys
+	 * Return the column value
 	 *
-	 * @since 2.22
+	 * @param string|null $content
+	 * @param WP_Post $post
+	 * @param string $column_name
 	 *
-	 * @return	array	( index => 'column_slug' )
+	 * @return string|false
 	 */
-	public function get_default_column_names() {
-		if ( ! class_exists( 'MLAQuery' ) ) {
-			require_once( MLA_PLUGIN_PATH . 'includes/class-mla-data-query.php' );
-			MLAQuery::initialize();
+	public function column_default_value( $content, $post, $column_name ) {
+		if ( is_null( $content ) ) {
+			$content = $this->get_display_value_by_column_name( $column_name, $post->ID );
 		}
 
-		return array_keys( apply_filters( 'mla_list_table_get_columns', MLAQuery::$default_columns ) );
+		return $content;
 	}
 
-	/**
-	 * Returns the custom fields assigned to Media Library items, removing those already present
-	 * in the Media/Assistant submenu table
-	 *
-	 * @since 2.22
-	 *
-	 * @return	array	( index => array( 0 => 'custom field name' ) )
-	 */
-	public function get_meta() {
-		global $wpdb;
-
-		/*
-		 * Find all of the custom field names assigned to Media Library items
-		 */
-		$meta = $wpdb->get_results( "SELECT DISTINCT meta_key FROM {$wpdb->postmeta} pm JOIN {$wpdb->posts} p ON pm.post_id = p.ID WHERE p.post_type = 'attachment' ORDER BY 1", ARRAY_N );
-
-		/*
-		 * Find the fields already present in the submenu table
-		 */
-		$mla_columns = apply_filters( 'mla_list_table_get_columns', MLAQuery::$default_columns );
-		$mla_custom = array();
-		foreach ( $mla_columns as $slug => $heading ) {
-			if ( 'c_' === substr( $slug, 0, 2 ) ) {
-				$mla_custom[] = $heading;
-			}
-		}
-		
-		/*
-		 * Remove the fields already present in the submenu table
-		 */
-		foreach ( $meta as $index => $value ) {
-			if ( in_array( esc_html( current( $value ) ), $mla_custom ) ) {
-				unset( $meta[ $index ] );
-			}
-		}
-		
-		return $meta;
-	}
 
 	/**
-	 * Return the content of an Admin Columns custom column
+	 * Create and return a new MLA List Table object
 	 *
-	 * @since 2.22
+	 * @param array $args
 	 *
-	 * @param	string	$content Current column content (empty string)
-	 * @param	object	$item Current Media Library item
-	 * @param	string	$column_name Current column slug
-	 *
-	 * @return string Column value or NULL if not an Admin Columns custom column
+	 * @return WP_List_Table|false
 	 */
-	public function manage_value( $content, $item, $column_name ) {
-		$media_id = $item->ID;
+	public function get_list_table( $args = array() ) {
+		$class = $this->get_list_table_class();
 
-		if ( ! ( $column = $this->get_column_by_name( $column_name ) ) ) {
-			return NULL;
+		if ( ! class_exists( $class ) ) {
+			require_once( MLA_PLUGIN_PATH . 'includes/class-mla-list-table.php' );
+			MLA_List_Table::mla_admin_init_action();
 		}
 
-		$value = $column->get_value( $media_id );
-
-		// hooks
-		$value = apply_filters( "cac/column/value", $value, $media_id, $column, $this->key );
-		$value = apply_filters( "cac/column/value/{$this->type}", $value, $media_id, $column, $this->key );
-
-		return $value;
+		return new $class;
 	}
 
 	/**
@@ -161,58 +203,301 @@ class CPAC_Storage_Model_MLA extends CPAC_Storage_Model {
 	 *
 	 * @since 2.23
 	 *
-	 * @return boolean true if the Media/Assistant submenu is the current screen
-	 */
-	public function is_current_screen() {
-		$is_current_screen = parent::is_current_screen();
-		if ( ! $is_current_screen ) {
-			if ( ! empty( $_REQUEST['page'] ) && MLACore::ADMIN_PAGE_SLUG == $_REQUEST['page'] ) {
-				$is_current_screen = true;
-			}
-		}
-
-		return $is_current_screen;
-	}
-
-	/**
-	 * Test for current screen = the Media/Assistant submenu screen
-	 *
-	 * @since 2.22
+	 * @param object $wp_screen
 	 *
 	 * @return boolean true if the Media/Assistant submenu is the current screen
 	 */
-	public function is_columns_screen() {
-		$is_columns_screen = parent::is_columns_screen();
-		if ( ! $is_columns_screen ) {
-			if ( ! empty( $_REQUEST['page'] ) && MLACore::ADMIN_PAGE_SLUG == $_REQUEST['page'] ) {
-				$is_columns_screen = true;
-			}
+	public function is_current_screen( $wp_screen ) {
+		return $wp_screen && $wp_screen->id === $this->get_screen_id();
+	}
+
+	/**
+	 * Return 
+	 *
+	 * @since 2.52
+	 *
+	 * @param integer $post_id
+	 *
+	 * @return object attachment object
+	 */
+	protected function get_object_by_id( $post_id ) {
+		// Author column depends on this global to be set.
+		global $authordata;
+
+		$authordata = get_userdata( get_post_field( 'post_author', $post_id ) );
+
+		if ( ! class_exists( 'MLAData' ) ) {
+			require_once( MLA_PLUGIN_PATH . 'includes/class-mla-data.php' );
+			MLAData::initialize();
 		}
 
-		return $is_columns_screen;
+		return (object) MLAData::mla_get_attachment_by_id( $post_id );
 	}
 
 	/**
-	 * Return a link to the Media/Assistant submenu screen
+	 * Add inline editing columns to Media/Assistant submenu table
 	 *
-	 * @since 2.22
+	 * @since 2.52
 	 *
-	 * @return string Link to the Media/Assistant submenu screen
+	 * @param AC_ListScreen $listscreen
 	 */
-	protected function get_screen_link() {
-		return is_network_admin() ? network_admin_url( $this->page . '.php?page=' . MLACore::ADMIN_PAGE_SLUG ) : admin_url( $this->page . '.php?page=' . MLACore::ADMIN_PAGE_SLUG );
+	public static function inline_column_types( $listscreen ) {
+		if ( $listscreen instanceof AC_Addon_MLA_ListScreen ) {
+			if ( class_exists( 'ACP_Editing_Model_Media_Title' ) ) {
+				$listscreen->register_column_type( new ACP_Addon_MLA_Column_Title() );
+				$listscreen->register_column_type( new ACP_Addon_MLA_Column_Parent() );
+				$listscreen->register_column_type( new ACP_Addon_MLA_Column_MenuOrder() );
+				$listscreen->register_column_type( new ACP_Addon_MLA_Column_AltText() );
+				$listscreen->register_column_type( new ACP_Addon_MLA_Column_Caption() );
+				$listscreen->register_column_type( new ACP_Addon_MLA_Column_Description() );
+				$listscreen->register_column_type( new ACP_Addon_MLA_Column_MimeType() );
+				$listscreen->register_column_type( new ACP_Addon_MLA_Column_Date() );
+				$listscreen->register_column_type( new ACP_Addon_MLA_Column_Author() );
+			}
+		}
 	}
+} // class AC_Addon_MLA_ListScreen
 
+if ( class_exists( 'ACP_Editing_Model_Media_Title' ) ) {
 	/**
-	 * Return a link to the Media/Assistant submenu Edit columns screen
+	 * Provides view_settings for MLA's post_title
 	 *
-	 * @since 2.22
-	 *
-	 * @return string Link to the Media/Assistant submenu Edit columns screen
+	 * @package Media Library Assistant
+	 * @since 2.52
 	 */
-	public function get_edit_link() {
-		return add_query_arg( array( 'page'     => 'codepress-admin-columns',
-		                             'cpac_key' => $this->key
-		), admin_url( 'options-general.php' ) );
+	class ACP_Addon_MLA_Editing_Model_Media_Title extends ACP_Editing_Model_Media_Title {
+	
+		/**
+		 * Remove JavaScript selector settings
+		 */
+		public function get_view_settings() {
+			return array(
+				'type'         => 'text',
+				'display_ajax' => false,
+			);
+		}
 	}
-} // class CPAC_Storage_Model_MLA
+	
+	/**
+	 * Provides inline-editing for post_title
+	 *
+	 * @package Media Library Assistant
+	 * @since 2.52
+	 */
+	class ACP_Addon_MLA_Column_Title extends AC_Column_Media_Title
+		implements ACP_Column_EditingInterface {
+	
+		/**
+		 * Define column properties
+		 */
+		public function __construct() {
+	
+			// Mark as an existing column
+			$this->set_original( true );
+	
+			// Type of column
+			$this->set_type( 'post_title' );
+		}
+	
+		/**
+		 * Add inline editing support
+		 *
+		 * @return ACP_Editing_Model_Media_Title
+		 */
+		public function editing() {
+			return new ACP_Addon_MLA_Editing_Model_Media_Title( $this );
+		}
+	
+	}
+	
+	/**
+	 * Removes ACP defaults for parent
+	 *
+	 * @package Media Library Assistant
+	 * @since 2.52
+	 */
+	class ACP_Addon_MLA_Column_Parent extends AC_Column_Media_Parent {
+		/**
+		 * Remove default column width
+		 */
+		public function register_settings() {
+		}
+	}
+	
+	/**
+	 * Provides inline-editing for menu_order
+	 *
+	 * @package Media Library Assistant
+	 * @since 2.52
+	 */
+	class ACP_Addon_MLA_Column_MenuOrder extends AC_Column
+		implements ACP_Column_EditingInterface {
+	
+		/**
+		 * Define column properties
+		 */
+		public function __construct() {
+	
+			// Mark as an existing column
+			$this->set_original( true );
+	
+			// Type of column
+			$this->set_type( 'menu_order' );
+		}
+	
+		/**
+		 * Add inline editing support
+		 *
+		 * @return ACP_Editing_Model_Post_Order
+		 */
+		public function editing() {
+			return new ACP_Editing_Model_Post_Order( $this );
+		}
+	
+	}
+	
+	/**
+	 * Provides inline-editing for alt_text
+	 *
+	 * @package Media Library Assistant
+	 * @since 2.52
+	 */
+	class ACP_Addon_MLA_Column_AltText extends ACP_Column_Media_AlternateText
+		implements ACP_Column_EditingInterface {
+	
+		/**
+		 * Define column properties
+		 */
+		public function __construct() {
+	
+			// Mark as an existing column
+			$this->set_original( true );
+	
+			// Type of column
+			$this->set_type( 'alt_text' );
+		}
+	}
+	
+	/**
+	 * Provides inline-editing for caption
+	 *
+	 * @package Media Library Assistant
+	 * @since 2.52
+	 */
+	class ACP_Addon_MLA_Column_Caption extends ACP_Column_Media_Caption
+		implements ACP_Column_EditingInterface {
+	
+		/**
+		 * Define column properties
+		 */
+		public function __construct() {
+	
+			// Mark as an existing column
+			$this->set_original( true );
+	
+			// Type of column
+			$this->set_type( 'caption' );
+		}
+	}
+	
+	/**
+	 * Provides inline-editing for caption
+	 *
+	 * @package Media Library Assistant
+	 * @since 2.52
+	 */
+	class ACP_Addon_MLA_Column_Description extends AC_Column_Media_Description
+		implements ACP_Column_EditingInterface {
+	
+		/**
+		 * Define column properties
+		 */
+		public function __construct() {
+	
+			// Mark as an existing column
+			$this->set_original( true );
+	
+			// Type of column
+			$this->set_type( 'description' );
+		}
+	
+		/**
+		 * Add inline editing support
+		 *
+		 * @return ACP_Editing_Model_Post_Content
+		 */
+		public function editing() {
+			return new ACP_Editing_Model_Post_Content( $this );
+		}
+	}
+	
+	/**
+	 * Provides inline-editing for caption
+	 *
+	 * @package Media Library Assistant
+	 * @since 2.52
+	 */
+	class ACP_Addon_MLA_Column_MimeType extends AC_Column_Media_MimeType
+		implements ACP_Column_EditingInterface {
+	
+		/**
+		 * Define column properties
+		 */
+		public function __construct() {
+	
+			// Mark as an existing column
+			$this->set_original( true );
+	
+			// Type of column
+			$this->set_type( 'post_mime_type' );
+		}
+	
+		/**
+		 * Add inline editing support
+		 *
+		 * @return ACP_Editing_Model_Post_Content
+		 */
+		public function editing() {
+			return new ACP_Editing_Model_Media_MimeType( $this );
+		}
+	}
+	
+	/**
+	 * Removes ACP defaults for date
+	 *
+	 * @package Media Library Assistant
+	 * @since 2.52
+	 */
+	class ACP_Addon_MLA_Column_Date extends ACP_Column_Media_Date {
+		/**
+		 * Remove default column width
+		 */
+		public function register_settings() {
+		}
+	}
+	
+	/**
+	 * Removes ACP defaults & provides inline-editing for caption
+	 *
+	 * @package Media Library Assistant
+	 * @since 2.52
+	 */
+	class ACP_Addon_MLA_Column_Author extends AC_Column_Media_Author
+		implements ACP_Column_EditingInterface {
+	
+		/**
+		 * Remove default column width
+		 */
+		public function register_settings() {
+		}
+	
+		/**
+		 * Add inline editing support
+		 *
+		 * @return ACP_Editing_Model_Post_Content
+		 */
+		public function editing() {
+			return new ACP_Editing_Model_Post_Author( $this );
+		}
+	}
+}

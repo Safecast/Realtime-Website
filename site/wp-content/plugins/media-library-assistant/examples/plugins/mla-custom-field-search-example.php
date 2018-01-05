@@ -2,6 +2,27 @@
 /**
  * Extends the Media/Assistant "Search Media" box to custom field values
  *
+ * In this example, a "custom:" prefix is detected in the Media/Assistant "search media" text
+ * box and the search is modified to query a custom field for a specific value, e.g.,
+ * "custom:photo reference=123456". You can also search for partial values:
+ *
+ *  - To return all items that have a non-NULL value in the field, simply enter the prefix
+ *    "custom:" followed by the custom field name, for example, custom:File Size. You can also
+ *    enter the custom field name and then "=*", e.g., custom:File Size=*.
+ *  - To return all items that have a NULL value in the field, enter the custom field name and
+ *    then "=", e.g., custom:File Size=.
+ *  - To return all items that match one or more values, enter the prefix "custom:" followed by
+ *    the custom field name and then "=" followed by a list of values. For example, custom:Color=red
+ *    or custom:Color=red,green,blue. Wildcard specifications are also supported; for example, "*post"
+ *    to match anything ending in "post" or "th*da*" to match values like "the date" and "this day".
+ *
+ * This example plugin uses four of the many filters available in the Media/Assistant Submenu
+ * and illustrates some of the techniques you can use to customize the submenu table display.
+ *
+ * Created for support topic "Searching on custom fields"
+ * opened on 5/11/2015 by "BFI-WP".
+ * https://wordpress.org/support/topic/searching-on-custom-fields/
+ *
  * @package MLA Custom Field Search Example
  * @version 1.04
  */
@@ -31,10 +52,8 @@ Copyright 2014 - 2015 David Lingren
 */
 
 /**
- * Class MLA Custom Field Search Example hooks one of the filters provided by the MLA_List_Table class
- *
- * Call it anything you want, but give it an unlikely and hopefully unique name. Hiding everything
- * else inside a class means this is the only name you have to worry about.
+ * Class MLA Custom Field Search Example extends the Media/Assistant "Search Media" box
+ * to custom field values
  *
  * @package MLA Custom Field Search Example
  * @since 1.00

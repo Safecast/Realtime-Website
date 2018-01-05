@@ -1,11 +1,11 @@
 === Custom Permalinks ===
 
-Contributors: michaeltyson, sasiddiqui
-Donate link: http://atastypixel.com/blog/wordpress/plugins/custom-permalinks/
+Contributors: sasiddiqui, michaeltyson
+Donate link: https://www.paypal.me/yasglobal
 Tags: permalink, url, link, address, custom, redirect, custom post type
 Requires at least: 2.6
-Tested up to: 4.6
-Stable tag: 0.8
+Tested up to: 4.8
+Stable tag: 1.2.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,6 +24,41 @@ This plugin is only useful for assigning custom permalinks for *individual* post
 It will not apply whole permalink structures, or automatically apply a category's custom permalink to the posts 
 within that category.
 
+> If anyone wants the different Structure Tags for their Post types or use symbols in the URLs So, use the [Permalinks Customizer](https://wordpress.org/plugins/permalinks-customizer/) which is a fork of this plugin and contains the enhancement of this plugin. 
+
+== Filters ==
+
+If you want to exclude some Permalink to processed with the plugin so, just add the filter looks like this:
+`
+function check_xml_sitemap_url( $permalink ) {
+  if ( false !== strpos( $permalink, 'sitemap.xml' )) {
+    return '__true';
+  }
+  return;
+}
+add_filter( 'custom_permalinks_request_ignore', 'check_xml_sitemap_url' );
+`
+
+If you want to exclude permalink from any post type so, use `custom_permalinks_exclude_post_type` filter.
+
+custom_permalinks_exclude_post_type filter looks like this:
+`
+function yasglobal_exclude_post_types( $post_type ) {
+  if ( $post_type == 'custompost' ) {
+    return '__true';
+  }
+  return '__false';
+}
+add_filter( 'custom_permalinks_exclude_post_type', 'yasglobal_exclude_post_types');
+`
+Note: custom_permalinks_exclude_post_type doesn't work on the posts permalink which has been created previously.
+
+== Thanks for the Support! ==
+
+The support from the users that love Custom Permalinks is huge. You can support Custom Permalinks's future development and help to make it even better by donating or even giving a 5 star rating with a nice message to me :)
+
+[Donate to Custom Permalinks](https://www.paypal.me/yasglobal)
+
 == Installation ==
 
 1. Unzip the package, and upload `custom-permalinks` to the `/wp-content/plugins/` directory
@@ -31,6 +66,96 @@ within that category.
 3. Edit any post, page, tag or category to set a custom permalink.
 
 == Changelog ==
+
+= 1.2.8 =
+
+  * Add Order by in request query
+
+= 1.2.7 =
+
+  * Fixed Parse Error
+
+= 1.2.6 =
+
+  * Enhancements
+    * Added Filter to Exclude Post types
+  * Bugs
+    * Fixed Query Issue on parse_request
+    * Resolving Issues with Cornerstone
+
+= 1.2.5 =
+  
+  * Fixed Category/Tag Update Issue + Typo on Admin Page
+
+= 1.2.4 =
+
+  * Fixed Slug issue with Yoast SEO
+
+= 1.2.3 =
+
+  * Fixed PHP Notice on Edit Post Page
+
+= 1.2.2 =
+
+  * Fixed Typo of Class Object for term on Admin Page
+
+= 1.2.1 =
+  * Fixed Class Typo
+
+= 1.2 =
+
+  * Enhancements
+    * Added Filter to Exclude/Ignore URL to be processed
+    * Added Translation Capability
+    * Split the Code using OOPS Concept to improve performance and applied the filters according to the need
+    * Removed some unnecessary filters
+  * Bugs
+    * Fixed Vulnerability Issues
+
+= 1.1 =
+  
+  * Enhancements
+    * Added PostTypes Permalinks Page
+      * View all the PostTypes permalinks
+      * Search Permalinks
+      * Sort by Title
+      * Pagination
+    * Added Categories Permalinks Page
+      * View all the Category/Tags permalinks
+      * Search Permalinks
+      * Pagination
+
+  * Bug Fixes
+     * 404 Issues
+     * Child pages bug
+    
+= 1.0.2 =
+  
+  * Fixed Notice and some URL Issues
+
+= 1.0.1 =
+  
+  * Fixed issue with AMP Pages
+
+= 1.0 =
+  
+  * Updated Query on the `custom_permalinks_request` Function
+
+= 0.9.3 =
+
+ * Fixed PolyLang Conflicts
+
+= 0.9.2 =
+
+ * Fixed WPML Conflicts
+
+= 0.9.1 =
+
+ * Fixed issues of Filters and Actions (Replaces 'edit_files' with 10)
+
+= 0.9 =
+
+ * Resolved the conflict with PolyLang Plugin
 
 = 0.8 =
 

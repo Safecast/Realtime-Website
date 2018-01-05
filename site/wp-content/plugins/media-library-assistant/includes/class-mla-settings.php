@@ -23,15 +23,6 @@ class MLASettings {
 	const JAVASCRIPT_INLINE_EDIT_VIEW_SLUG = 'mla-inline-edit-view-scripts';
 
 	/**
-	 * Object name for localizing JavaScript - MLA View List Table
-	 *
-	 * @since 1.40
-	 *
-	 * @var	string
-	 */
-	const JAVASCRIPT_INLINE_EDIT_VIEW_OBJECT = 'mla_inline_edit_view_vars';
-
-	/**
 	 * Slug for localizing and enqueueing JavaScript - MLA Upload List Table
 	 *
 	 * @since 1.40
@@ -41,13 +32,13 @@ class MLASettings {
 	const JAVASCRIPT_INLINE_EDIT_UPLOAD_SLUG = 'mla-inline-edit-upload-scripts';
 
 	/**
-	 * Object name for localizing JavaScript - MLA Upload List Table
+	 * Slug for localizing and enqueueing JavaScript - MLA Custom Fields List Table
 	 *
-	 * @since 1.40
+	 * @since 2.50
 	 *
 	 * @var	string
 	 */
-	const JAVASCRIPT_INLINE_EDIT_UPLOAD_OBJECT = 'mla_inline_edit_upload_vars';
+	const JAVASCRIPT_INLINE_EDIT_CUSTOM_SLUG = 'mla-inline-edit-custom-scripts';
 
 	/**
 	 * Slug for localizing and enqueueing JavaScript - MLA Custom tab
@@ -57,6 +48,15 @@ class MLASettings {
 	 * @var	string
 	 */
 	const JAVASCRIPT_INLINE_MAPPING_CUSTOM_SLUG = 'mla-inline-mapping-custom-scripts';
+
+	/**
+	 * Slug for localizing and enqueueing JavaScript - MLA IPTC/EXIF List Table
+	 *
+	 * @since 2.60
+	 *
+	 * @var	string
+	 */
+	const JAVASCRIPT_INLINE_EDIT_IPTC_EXIF_SLUG = 'mla-inline-edit-iptc-exif-scripts';
 
 	/**
 	 * Slug for localizing and enqueueing JavaScript - MLA IPTC/EXIF tab
@@ -93,6 +93,8 @@ class MLASettings {
 	 * @return	void
 	 */
 	public static function initialize( ) {
+		MLASettings::_localize_tablist();
+
 		//add_action( 'admin_page_access_denied', 'MLASettings::mla_admin_page_access_denied_action' );
 		add_action( 'admin_init', 'MLASettings::mla_admin_init_action' );
 		add_action( 'admin_menu', 'MLASettings::mla_admin_menu_action' );
@@ -100,6 +102,48 @@ class MLASettings {
 		add_filter( 'set-screen-option', 'MLASettings::mla_set_screen_option_filter', 10, 3 ); // $status, $option, $value
 		add_filter( 'screen_options_show_screen', 'MLASettings::mla_screen_options_show_screen_filter', 10, 2 ); // $show_screen, $this
 		self::_version_upgrade();
+
+		if( defined('DOING_AJAX') && DOING_AJAX && isset( $_REQUEST['action'] ) ) {
+			// Ajax handlers
+			switch ( $_REQUEST['action'] ) {
+				case self::JAVASCRIPT_INLINE_EDIT_UPLOAD_SLUG:
+					require_once( MLA_PLUGIN_PATH . 'includes/class-mla-settings-upload-tab.php' );
+					break;
+				case self::JAVASCRIPT_INLINE_EDIT_VIEW_SLUG:
+					require_once( MLA_PLUGIN_PATH . 'includes/class-mla-settings-view-tab.php' );
+					break;
+				case self::JAVASCRIPT_INLINE_EDIT_CUSTOM_SLUG:
+				case self::JAVASCRIPT_INLINE_MAPPING_CUSTOM_SLUG:
+					require_once( MLA_PLUGIN_PATH . 'includes/class-mla-settings-custom-fields-tab.php' );
+					break;
+				case self::JAVASCRIPT_INLINE_EDIT_IPTC_EXIF_SLUG:
+				case self::JAVASCRIPT_INLINE_MAPPING_IPTC_EXIF_SLUG:
+					require_once( MLA_PLUGIN_PATH . 'includes/class-mla-settings-iptc-exif-tab.php' );
+					break;
+			}
+		} elseif ( isset( $_REQUEST['page'] ) && is_string( $_REQUEST['page'] ) && ( 'mla-settings-menu-' == substr( $_REQUEST['page'], 0, 18 ) ) ) {
+			// Settings/Media Library Assistant current tab
+			switch( substr( $_REQUEST['page'], 18 ) ) {
+				case 'upload':
+					require_once( MLA_PLUGIN_PATH . 'includes/class-mla-settings-upload-tab.php' );
+					break;
+				case 'view':
+					require_once( MLA_PLUGIN_PATH . 'includes/class-mla-settings-view-tab.php' );
+					break;
+				case 'shortcodes':
+					require_once( MLA_PLUGIN_PATH . 'includes/class-mla-settings-shortcodes-tab.php' );
+					break;
+				case 'custom_field':
+					require_once( MLA_PLUGIN_PATH . 'includes/class-mla-settings-custom-fields-tab.php' );
+					break;
+				case 'iptc_exif':
+					require_once( MLA_PLUGIN_PATH . 'includes/class-mla-settings-iptc-exif-tab.php' );
+					break;
+				case 'documentation':
+					require_once( MLA_PLUGIN_PATH . 'includes/class-mla-settings-documentation-tab.php' );
+					break;
+			}
+		}
 	}
 
 	/**
@@ -225,17 +269,20 @@ class MLASettings {
 			 * Add format, option and no_null to IPTC/EXIF custom mapping rules
 			 */
 			$option_value = MLACore::mla_get_option( 'iptc_exif_mapping' );
-			$new_values = array();
-
-			foreach ( $option_value['custom'] as $key => $value ) {
-				$value['format'] = isset( $value['format'] ) ? $value['format'] : 'native';
-				$value['option'] = isset( $value['option'] ) ? $value['option'] : 'text';
-				$value['no_null'] = isset( $value['no_null'] ) ? $value['no_null'] : false;
-				$new_values[ $key ] = $value;
+			
+			if ( !empty( $option_value['custom'] ) ) {
+				$new_values = array();
+	
+				foreach ( $option_value['custom'] as $key => $value ) {
+					$value['format'] = isset( $value['format'] ) ? $value['format'] : 'native';
+					$value['option'] = isset( $value['option'] ) ? $value['option'] : 'text';
+					$value['no_null'] = isset( $value['no_null'] ) ? $value['no_null'] : false;
+					$new_values[ $key ] = $value;
+				}
+	
+				$option_value['custom'] = $new_values;
+				MLACore::mla_update_option( 'iptc_exif_mapping', $option_value );
 			}
-
-			$option_value['custom'] = $new_values;
-			MLACore::mla_update_option( 'iptc_exif_mapping', $option_value );
 		} // version is less than 2.13
 
 		MLACore::mla_update_option( MLACoreOptions::MLA_VERSION_OPTION, MLACore::CURRENT_MLA_VERSION );
@@ -321,10 +368,12 @@ class MLASettings {
 	 * @return	void
 	 */
 	public static function mla_admin_init_action() {
-		add_action( 'wp_ajax_' . self::JAVASCRIPT_INLINE_EDIT_VIEW_SLUG, 'MLASettings::mla_inline_edit_view_action' );
-		add_action( 'wp_ajax_' . self::JAVASCRIPT_INLINE_EDIT_UPLOAD_SLUG, 'MLASettings::mla_inline_edit_upload_action' );
-		add_action( 'wp_ajax_' . self::JAVASCRIPT_INLINE_MAPPING_CUSTOM_SLUG, 'MLASettings::mla_inline_mapping_custom_action' );
-		add_action( 'wp_ajax_' . self::JAVASCRIPT_INLINE_MAPPING_IPTC_EXIF_SLUG, 'MLASettings::mla_inline_mapping_iptc_exif_action' );
+		add_action( 'wp_ajax_' . self::JAVASCRIPT_INLINE_EDIT_VIEW_SLUG, 'MLASettings_View::mla_inline_edit_view_action' );
+		add_action( 'wp_ajax_' . self::JAVASCRIPT_INLINE_EDIT_UPLOAD_SLUG, 'MLASettings_Upload::mla_inline_edit_upload_action' );
+		add_action( 'wp_ajax_' . self::JAVASCRIPT_INLINE_EDIT_CUSTOM_SLUG, 'MLASettings_CustomFields::mla_inline_edit_custom_action' );
+		add_action( 'wp_ajax_' . self::JAVASCRIPT_INLINE_MAPPING_CUSTOM_SLUG, 'MLASettings_CustomFields::mla_inline_mapping_custom_action' );
+		add_action( 'wp_ajax_' . self::JAVASCRIPT_INLINE_EDIT_IPTC_EXIF_SLUG, 'MLASettings_IPTCEXIF::mla_inline_edit_iptc_exif_action' );
+		add_action( 'wp_ajax_' . self::JAVASCRIPT_INLINE_MAPPING_IPTC_EXIF_SLUG, 'MLASettings_IPTCEXIF::mla_inline_mapping_iptc_exif_action' );
 	}
 
 	/**
@@ -353,106 +402,6 @@ class MLASettings {
 		}
 
 		wp_enqueue_style( MLACore::STYLESHEET_SLUG );
-
-		/*
-		 * Initialize common script variables
-		 */
-		$script_variables = array(
-			'error' => __( 'Error while making the changes.', 'media-library-assistant' ),
-			'ntdeltitle' => __( 'Remove From Bulk Edit', 'media-library-assistant' ),
-			'notitle' => '(' . __( 'no slug', 'media-library-assistant' ) . ')',
-			'comma' => _x( ',', 'tag_delimiter', 'media-library-assistant' ),
-			'useSpinnerClass' => false,
-			'ajax_nonce' => wp_create_nonce( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME ) 
-		);
-
-		if ( version_compare( get_bloginfo( 'version' ), '4.2', '>=' ) ) {
-			$script_variables['useSpinnerClass'] = true;
-		}
-
-		$mapping_variables = array(
-			'bulkChunkSize' => MLACore::mla_get_option( MLACoreOptions::MLA_BULK_CHUNK_SIZE ),
-			'bulkWaiting' => __( 'Waiting', 'media-library-assistant' ),
-			'bulkRunning' => __( 'Running', 'media-library-assistant' ),
-			'bulkComplete' => __( 'Complete', 'media-library-assistant' ),
-			'bulkUnchanged' => __( 'Unchanged', 'media-library-assistant' ),
-			'bulkSuccess' => __( 'Succeeded', 'media-library-assistant' ),
-			'bulkFailure' => __( 'Failed', 'media-library-assistant' ),
-			'bulkSkip' => __( 'Skipped', 'media-library-assistant' ),
-			'bulkRedone' => __( 'Reprocessed', 'media-library-assistant' ),
-			'bulkCanceled' => __( 'CANCELED', 'media-library-assistant' ),
-		);
-
-
-		$suffix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
-
-		/*
-		 * Select tab-specific scripts and variables
-		 */		
-		switch ( $_REQUEST['mla_tab'] ) {
-			case 'view':
-				wp_enqueue_script( self::JAVASCRIPT_INLINE_EDIT_VIEW_SLUG,
-					MLA_PLUGIN_URL . "js/mla-inline-edit-view-scripts{$suffix}.js", 
-					array( 'wp-lists', 'suggest', 'jquery' ), MLACore::CURRENT_MLA_VERSION, false );
-
-				$script_variables['fields'] = array( 'original_slug', 'slug', 'singular', 'plural', 'specification', 'menu_order' );
-				$script_variables['checkboxes'] = array( 'post_mime_type', 'table_view' );
-				$script_variables['ajax_action'] = self::JAVASCRIPT_INLINE_EDIT_VIEW_SLUG;
-
-				wp_localize_script( self::JAVASCRIPT_INLINE_EDIT_VIEW_SLUG,
-					self::JAVASCRIPT_INLINE_EDIT_VIEW_OBJECT, $script_variables );
-				return;
-			case 'upload':
-				wp_enqueue_script( self::JAVASCRIPT_INLINE_EDIT_UPLOAD_SLUG,
-					MLA_PLUGIN_URL . "js/mla-inline-edit-upload-scripts{$suffix}.js", 
-					array( 'wp-lists', 'suggest', 'jquery' ), MLACore::CURRENT_MLA_VERSION, false );
-
-				$script_variables['fields'] = array( 'original_slug', 'slug', 'mime_type', 'icon_type', 'core_type', 'mla_type', 'source', 'standard_source' );
-				$script_variables['checkboxes'] = array( 'disabled' );
-				$script_variables['ajax_action'] = self::JAVASCRIPT_INLINE_EDIT_UPLOAD_SLUG;
-
-				wp_localize_script( self::JAVASCRIPT_INLINE_EDIT_UPLOAD_SLUG,
-					self::JAVASCRIPT_INLINE_EDIT_UPLOAD_OBJECT, $script_variables );
-				return;
-			case 'custom_field':
-				wp_enqueue_script( self::JAVASCRIPT_INLINE_MAPPING_CUSTOM_SLUG,
-					MLA_PLUGIN_URL . "js/mla-inline-mapping-scripts{$suffix}.js", 
-					array( 'jquery' ), MLACore::CURRENT_MLA_VERSION, false );
-
-				$tab_variables = array(
-					'page' => 'mla-settings-menu-custom_field',
-					'mla_tab' => 'custom_field',
-					'screen' => 'settings_page_mla-settings-menu-custom_field',
-					'ajax_action' => self::JAVASCRIPT_INLINE_MAPPING_CUSTOM_SLUG,
-					'fieldsId' => '#mla-display-settings-custom-field-tab',
-					'totalItems' => $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE `post_type` = 'attachment'" )
-				);
-
-				$script_variables = array_merge( $script_variables, $mapping_variables, $tab_variables );
-
-				wp_localize_script( self::JAVASCRIPT_INLINE_MAPPING_CUSTOM_SLUG,
-					self::JAVASCRIPT_INLINE_MAPPING_OBJECT, $script_variables );
-				return;
-			case 'iptc_exif':
-				wp_enqueue_script( self::JAVASCRIPT_INLINE_MAPPING_IPTC_EXIF_SLUG,
-					MLA_PLUGIN_URL . "js/mla-inline-mapping-scripts{$suffix}.js", 
-					array( 'jquery' ), MLACore::CURRENT_MLA_VERSION, false );
-
-				$tab_variables = array(
-					'page' => 'mla-settings-menu-iptc_exif',
-					'mla_tab' => 'iptc_exif',
-					'screen' => 'settings_page_mla-settings-menu-iptc_exif',
-					'ajax_action' => self::JAVASCRIPT_INLINE_MAPPING_IPTC_EXIF_SLUG,
-					'fieldsId' => '#mla-display-settings-iptc-exif-tab',
-					'totalItems' => $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE `post_type` = 'attachment' AND ( `post_mime_type` LIKE 'image/%' OR `post_mime_type` LIKE 'application/%pdf%' )" ),
-				);
-
-				$script_variables = array_merge( $script_variables, $mapping_variables, $tab_variables );
-
-				wp_localize_script( self::JAVASCRIPT_INLINE_MAPPING_IPTC_EXIF_SLUG,
-					self::JAVASCRIPT_INLINE_MAPPING_OBJECT, $script_variables );
-				return;
-		}
 	}
 
 	/**
@@ -476,7 +425,7 @@ class MLASettings {
 			$tab = 'general';
 		 }
 
-		$tab = self::mla_get_options_tablist( $tab ) ? '-' . $tab : '-general';
+		$tab = self::_get_options_tablist( $tab ) ? '-' . $tab : '-general';
 		self::$current_page_hook = add_submenu_page( 'options-general.php', __( 'Media Library Assistant', 'media-library-assistant' ) . ' ' . __( 'Settings', 'media-library-assistant' ), __( 'Media Library Assistant', 'media-library-assistant' ), 'manage_options', MLACoreOptions::MLA_SETTINGS_SLUG . $tab, 'MLASettings::mla_render_settings_page' );
 		add_action( 'load-' . self::$current_page_hook, 'MLASettings::mla_add_menu_options_action' );
 		add_action( 'load-' . self::$current_page_hook, 'MLASettings::mla_add_help_tab_action' );
@@ -525,6 +474,39 @@ class MLASettings {
 
 				add_screen_option( $option, $args );
 			} // upload
+			elseif ( 'shortcodes' == $_REQUEST['mla_tab'] ) {
+				$option = 'per_page';
+
+				$args = array(
+					 'label' => __( 'Shortcode templates per page', 'media-library-assistant' ),
+					'default' => 10,
+					'option' => 'mla_shortcode_templates_per_page' 
+				);
+
+				add_screen_option( $option, $args );
+			} // shortcodes
+			elseif ( 'custom_field' == $_REQUEST['mla_tab'] ) {
+				$option = 'per_page';
+
+				$args = array(
+					 'label' => __( 'Rules per page', 'media-library-assistant' ),
+					'default' => 10,
+					'option' => 'mla_custom_field_rules_per_page' 
+				);
+
+				add_screen_option( $option, $args );
+			} // custom_field
+			elseif ( 'iptc_exif' == $_REQUEST['mla_tab'] ) {
+				$option = 'per_page';
+
+				$args = array(
+					 'label' => __( 'Rules per page', 'media-library-assistant' ),
+					'default' => 10,
+					'option' => 'mla_iptc_exif_rules_per_page' 
+				);
+
+				add_screen_option( $option, $args );
+			} // iptc_exif
 			elseif ( 'documentation' == $_REQUEST['mla_tab'] ) {
 				if ( isset( $_REQUEST['mla-example-display'] ) || isset( $_REQUEST['mla-example-search'] ) ) {
 					$option = 'per_page';
@@ -551,10 +533,9 @@ class MLASettings {
 	public static function mla_add_help_tab_action( ) {
 		$screen = get_current_screen();
 
-		/*
-		 * Is this our page and the Views, Uploads or Documentation tab?
-		 */
-		if ( ! in_array( $screen->id, array( 'settings_page_' . MLACoreOptions::MLA_SETTINGS_SLUG . '-view', 'settings_page_' . MLACoreOptions::MLA_SETTINGS_SLUG . '-upload', 'settings_page_' . MLACoreOptions::MLA_SETTINGS_SLUG . '-documentation' ) ) ) {
+		// Do we have options/help information for this tab?
+		$screen_suffix = substr( $screen->id, strlen( 'settings_page_' . MLACoreOptions::MLA_SETTINGS_SLUG ) ) ;
+		if ( ! in_array( $screen_suffix, array( '-view', '-upload', '-shortcodes', '-custom_field', '-iptc_exif', '-documentation' ) ) ) {
 			return;
 		}
 
@@ -569,7 +550,7 @@ class MLASettings {
 			$file_suffix = str_replace( '-documentation', '-example', $file_suffix );
 		} elseif ( isset( $_REQUEST['mla_admin_action'] ) ) {
 			switch ( $_REQUEST['mla_admin_action'] ) {
-				case MLA::MLA_ADMIN_SINGLE_EDIT_DISPLAY:
+				case MLACore::MLA_ADMIN_SINGLE_EDIT_DISPLAY:
 					$file_suffix .= '-edit';
 					break;
 			} // switch
@@ -605,7 +586,7 @@ class MLASettings {
 				);
 			} else {
 				/* translators: 1: ERROR tag 2: function name 3: template key */
-				error_log( sprintf( _x( '%1$s: %2$s discarding "%3$s"; no title/order', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), 'mla_add_help_tab_action', $id ), 0 );
+				MLACore::mla_debug_add( sprintf( _x( '%1$s: %2$s discarding "%3$s"; no title/order', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), 'mla_add_help_tab_action', $id ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 			}
 		}
 
@@ -644,357 +625,17 @@ class MLASettings {
 	 * @param	string	Name of the option being changed
 	 * @param	string	New value of the option
 	 *
-	 * @return	string|void	New value if this is our option, otherwise nothing
+	 * @return	mixed	New value if this is our option, otherwise original status
 	 */
 	public static function mla_set_screen_option_filter( $status, $option, $value ) {
-		if ( in_array( $option, array ( 'mla_views_per_page', 'mla_uploads_per_page', 'mla_types_per_page', 'mla_example_plugins_per_page' ) ) ) {
+		if ( in_array( $option, array ( 'mla_views_per_page', 'mla_uploads_per_page', 'mla_types_per_page', 'mla_shortcode_templates_per_page', 'mla_custom_field_rules_per_page', 'mla_iptc_exif_rules_per_page', 'mla_example_plugins_per_page' ) ) ) {
 			return $value;
-		} elseif ( $status ) {
-			return $status;
-		}
-	}
-
-	/**
-	 * Ajax handler for Post MIME Types inline editing (quick and bulk edit)
-	 *
-	 * Adapted from wp_ajax_inline_save in /wp-admin/includes/ajax-actions.php
-	 *
-	 * @since 1.40
-	 *
-	 * @return	void	echo HTML <tr> markup for updated row or error message, then die()
-	 */
-	public static function mla_inline_edit_view_action() {
-		set_current_screen( $_REQUEST['screen'] );
-
-		check_ajax_referer( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME );
-
-		if ( empty( $_REQUEST['original_slug'] ) ) {
-			echo __( 'ERROR', 'media-library-assistant' ) . ': ' . __( 'No view slug found', 'media-library-assistant' );
-			die();
 		}
 
-		$request = array( 'original_slug' => $_REQUEST['original_slug'] );
-		$request['slug'] = $_REQUEST['slug'];
-		$request['specification'] = $_REQUEST['specification'];
-		$request['singular'] = $_REQUEST['singular'];
-		$request['plural'] = $_REQUEST['plural'];
-		$request['post_mime_type'] = isset( $_REQUEST['post_mime_type'] ) && ( '1' == $_REQUEST['post_mime_type'] );
-		$request['table_view'] = isset( $_REQUEST['table_view'] ) && ( '1' == $_REQUEST['table_view'] );
-		$request['menu_order'] = $_REQUEST['menu_order'];
-		$results = MLAMime::mla_update_post_mime_type( $request );
+		MLACore::mla_debug_add( __LINE__ . " MLASettings::mla_set_screen_option_filter( {$option} ) status = " . var_export( $status, true ), MLACore::MLA_DEBUG_CATEGORY_ANY );
+		MLACore::mla_debug_add( __LINE__ . " MLASettings::mla_set_screen_option_filter( {$option} ) value = " . var_export( $value, true ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 
-		if ( false === strpos( $results['message'], __( 'ERROR', 'media-library-assistant' ) ) ) {
-			$new_item = (object) MLAMime::mla_get_post_mime_type( $_REQUEST['slug'] );
-		} else {
-			$new_item = (object) MLAMime::mla_get_post_mime_type( $_REQUEST['original_slug'] );
-		}
-
-		$new_item->post_ID = $_REQUEST['post_ID'];
-
-		//	Create an instance of our package class and echo the new HTML
-		$MLAListViewTable = new MLA_View_List_Table();
-		$MLAListViewTable->single_row( $new_item );
-		die(); // this is required to return a proper result
-	}
-
-	/**
-	 * Ajax handler for Upload MIME Types inline editing (quick and bulk edit)
-	 *
-	 * Adapted from wp_ajax_inline_save in /wp-admin/includes/ajax-actions.php
-	 *
-	 * @since 1.40
-	 *
-	 * @return	void	echo HTML <tr> markup for updated row or error message, then die()
-	 */
-	public static function mla_inline_edit_upload_action() {
-		set_current_screen( $_REQUEST['screen'] );
-
-		check_ajax_referer( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME );
-
-		if ( empty( $_REQUEST['original_slug'] ) ) {
-			echo __( 'ERROR', 'media-library-assistant' ) . ': ' . __( 'No upload slug found', 'media-library-assistant' );
-			die();
-		}
-
-		$request = array( 'original_slug' => $_REQUEST['original_slug'] );
-		$request['slug'] = $_REQUEST['slug'];
-		$request['mime_type'] = $_REQUEST['mime_type'];
-		$request['icon_type'] = $_REQUEST['icon_type'];
-		$request['disabled'] = isset( $_REQUEST['disabled'] ) && ( '1' == $_REQUEST['disabled'] );
-		$results = MLAMime::mla_update_upload_mime( $request );
-
-		if ( false === strpos( $results['message'], __( 'ERROR', 'media-library-assistant' ) ) ) {
-			$new_item = (object) MLAMime::mla_get_upload_mime( $_REQUEST['slug'] );
-		} else {
-			$new_item = (object) MLAMime::mla_get_upload_mime( $_REQUEST['original_slug'] );
-		}
-		$new_item->post_ID = $_REQUEST['post_ID'];
-
-		//	Create an instance of our package class and echo the new HTML
-		$MLAListUploadTable = new MLA_Upload_List_Table();
-		$MLAListUploadTable->single_row( $new_item );
-		die(); // this is required to return a proper result
-	}
-
-	/**
-	 * Ajax handler for Custom Fields tab inline mapping
-	 *
-	 * @since 2.00
-	 *
-	 * @return	void	echo json response object, then die()
-	 */
-	public static function mla_inline_mapping_custom_action() {
-		MLACore::mla_debug_add( 'MLASettings::mla_inline_mapping_custom_action $_REQUEST = ' . var_export( $_REQUEST, true ), MLACore::MLA_DEBUG_CATEGORY_AJAX );
-		set_current_screen( $_REQUEST['screen'] );
-		check_ajax_referer( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME );
-
-		/*
-		 * Convert the ajax bulk_action back to the older Submit button equivalent
-		 */
-		if ( ! empty( $_REQUEST['bulk_action'] ) ) {
-			if ( 'custom-field-options-map' == $_REQUEST['bulk_action'] ) {
-				$_REQUEST['custom-field-options-map'] = __( 'Map All Rules, All Attachments Now', 'media-library-assistant' );
-			} else {
-				$match_count = preg_match( '/custom_field_mapping\[(.*)\]\[(.*)\]\[(.*)\]/', $_REQUEST['bulk_action'], $matches );
-				if ( $match_count ) {
-					$_REQUEST['custom_field_mapping'][ $matches[1] ][ $matches[2] ][ $matches[3] ] = __( 'Map All Attachments', 'media-library-assistant' );
-				}
-			}
-		}
-
-		/*
-		 * Check for action or submit buttons.
-		 */
-
-		if ( isset( $_REQUEST['custom_field_mapping'] ) && is_array( $_REQUEST['custom_field_mapping'] ) ) {
-			/*
-			 * Find the current chunk
-			 */
-			$offset = isset( $_REQUEST['offset'] ) ? $_REQUEST['offset'] : 0;
-			$length = isset( $_REQUEST['length'] ) ? $_REQUEST['length'] : 0;
-
-			/*
-			 * Check for page-level submit button to map attachments.
-			 */
-			if ( !empty( $_REQUEST['custom-field-options-map'] ) ) {
-				$page_content = self::_process_custom_field_mapping( NULL, $offset, $length );
-			} else {
-				$page_content = array(
-					'message' => '',
-					'body' => '',
-					'processed' => 0,
-					'unchanged' => 0,
-					'success' =>  0
-				);
-
-				/*
-				 * Check for single-rule action buttons
-				 */
-				foreach ( $_REQUEST['custom_field_mapping'] as $key => $value ) {
-					$value = stripslashes_deep( $value );
-
-					if ( isset( $value['action'] ) ) {
-						$settings = array( $key => $value );
-						foreach ( $value['action'] as $action => $label ) {
-							switch( $action ) {
-								case 'map_now':
-									$page_content = self::_process_custom_field_mapping( $settings, $offset, $length );
-									break;
-								case 'add_rule_map':
-									if ( 'none' == $value['name'] ) {
-										$page_content['message'] = __( 'Custom field no mapping rule changes detected.', 'media-library-assistant' );
-										break;
-									}
-									// fallthru
-								case 'add_field_map':
-									if ( '' == $value['name'] ) {
-										$page_content['message'] = __( 'Custom field no mapping rule changes detected.', 'media-library-assistant' );
-										break;
-									}
-
-									if ( 0 == $offset ) {
-										$page_content = self::_save_custom_field_settings( $settings );
-										if ( false !== strpos( $page_content['message'], __( 'ERROR', 'media-library-assistant' ) ) ) {
-											$page_content['processed'] = 0;
-											$page_content['unchanged'] = 0;
-											$page_content['success'] = 0;
-											break;
-										}
-									}
-
-									$current_values = MLACore::mla_get_option( 'custom_field_mapping' );
-									$settings = array( $value['name'] => $current_values[$value['name']] );
-									$map_content = self::_process_custom_field_mapping( $settings, $offset, $length );
-									$page_content['message'] .= '<br>&nbsp;<br>' . $map_content['message'];
-									$page_content['processed'] = $map_content['processed'];
-									$page_content['unchanged'] = $map_content['unchanged'];
-									$page_content['success'] = $map_content['success'];
-									$page_content['refresh'] = true;
-									break;
-								default:
-									// ignore everything else
-							} //switch action
-						} // foreach action
-					} /// isset action
-				} // foreach rule
-			} // specific rule check
-		} // isset custom_field_mapping
-		else {
-			$page_content = array(
-				'message' => '',
-				'body' => '',
-				'processed' => 0,
-				'unchanged' => 0,
-				'success' =>  0
-			);
-		}
-
-		$chunk_results = array( 
-			'message' => $page_content['message'],
-			'processed' => $page_content['processed'],
-			'unchanged' => $page_content['unchanged'],
-			'success' => $page_content['success'],
-			'refresh' => isset( $page_content['refresh'] ) && true == $page_content['refresh'],
-		);
-
-		MLACore::mla_debug_add( 'MLASettings::mla_inline_mapping_custom_action $chunk_results = ' . var_export( $chunk_results, true ), MLACore::MLA_DEBUG_CATEGORY_AJAX );
-		wp_send_json_success( $chunk_results );
-	}
-
-	/**
-	 * Ajax handler for IPTC/EXIF tab inline mapping
-	 *
-	 * @since 2.00
-	 *
-	 * @return	void	echo json response object, then die()
-	 */
-	public static function mla_inline_mapping_iptc_exif_action() {
-		MLACore::mla_debug_add( 'MLASettings::mla_inline_mapping_iptc_exif_action $_REQUEST = ' . var_export( $_REQUEST, true ), MLACore::MLA_DEBUG_CATEGORY_AJAX );
-		set_current_screen( $_REQUEST['screen'] );
-		check_ajax_referer( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME );
-
-		/*
-		 * Convert the ajax bulk_action back to the older Submit button equivalent
-		 */
-		if ( ! empty( $_REQUEST['bulk_action'] ) ) {
-			switch ( $_REQUEST['bulk_action'] ) {
-				case 'iptc-exif-options-process-standard':
-				$_REQUEST['iptc-exif-options-process-standard'] = __( 'Map All Attachments, Standard Fields Now', 'media-library-assistant' );
-					break;
-				case 'iptc-exif-options-process-taxonomy':
-				$_REQUEST['iptc-exif-options-process-taxonomy'] = __( 'Map All Attachments, Taxonomy Terms Now', 'media-library-assistant' );
-					break;
-				case 'iptc-exif-options-process-custom':
-				$_REQUEST['iptc-exif-options-process-custom'] = __( 'Map All Attachments, Custom Fields Now', 'media-library-assistant' );
-					break;
-				default:
-					$match_count = preg_match( '/iptc_exif_mapping\[custom\]\[(.*)\]\[(.*)\]\[(.*)\]/', $_REQUEST['bulk_action'], $matches );
-					if ( $match_count ) {
-						$_REQUEST['iptc_exif_mapping']['custom'][ $matches[1] ][ $matches[2] ][ $matches[3] ] = __( 'Map All Attachments', 'media-library-assistant' );
-					}
-			}
-		}
-
-		/*
-		 * Check for action or submit buttons.
-		 */
-		if ( isset( $_REQUEST['iptc_exif_mapping'] ) && is_array( $_REQUEST['iptc_exif_mapping'] ) ) {
-			/*
-			 * Find the current chunk
-			 */
-			$offset = isset( $_REQUEST['offset'] ) ? $_REQUEST['offset'] : 0;
-			$length = isset( $_REQUEST['length'] ) ? $_REQUEST['length'] : 0;
-
-			/*
-			 * Check for page-level submit button to map attachments.
-			 */
-			if ( !empty( $_REQUEST['iptc-exif-options-process-standard'] ) ) {
-				$page_content = self::_process_iptc_exif_standard( $offset, $length );
-			} elseif ( !empty( $_REQUEST['iptc-exif-options-process-taxonomy'] ) ) {
-				$page_content = self::_process_iptc_exif_taxonomy( $offset, $length );
-			} elseif ( !empty( $_REQUEST['iptc-exif-options-process-custom'] ) ) {
-				$page_content = self::_process_iptc_exif_custom( NULL, $offset, $length );
-			} else {
-				$page_content = array(
-					'message' => '',
-					'body' => '',
-					'processed' => 0,
-					'unchanged' => 0,
-					'success' =>  0
-				);
-
-				/*
-				 * Check for single-rule action buttons
-				 */
-				foreach ( $_REQUEST['iptc_exif_mapping']['custom'] as $key => $value ) {
-					$value = stripslashes_deep( $value );
-
-					if ( isset( $value['action'] ) ) {
-						$settings = array( 'custom' => array( $key => $value ) );
-						foreach ( $value['action'] as $action => $label ) {
-							switch( $action ) {
-								case 'map_now':
-									$page_content = self::_process_iptc_exif_custom( $settings, $offset, $length );
-									break;
-								case 'add_rule_map':
-									if ( 'none' == $value['name'] ) {
-										$page_content['message'] = __( 'IPTC/EXIF no mapping changes detected.', 'media-library-assistant' );
-										break;
-									}
-									// fallthru
-								case 'add_field_map':
-									if ( '' == $value['name'] ) {
-										$page_content['message'] = __( 'IPTC/EXIF no mapping changes detected.', 'media-library-assistant' );
-										break;
-									}
-
-									if ( 0 == $offset ) {
-										$page_content = self::_save_iptc_exif_custom_settings( $settings );
-										if ( false !== strpos( $page_content['message'], __( 'ERROR', 'media-library-assistant' ) ) ) {
-											$page_content['processed'] = 0;
-											$page_content['unchanged'] = 0;
-											$page_content['success'] = 0;
-											break;
-										}
-									}
-
-									$current_values = MLACore::mla_get_option( 'iptc_exif_mapping' );
-									$settings = array( 'custom' => array( $value['name'] => $current_values['custom'][$value['name']] ) );
-									$map_content = self::_process_iptc_exif_custom( $settings, $offset, $length );
-									$page_content['message'] .= '<br>&nbsp;<br>' . $map_content['message'];
-									$page_content['processed'] = $map_content['processed'];
-									$page_content['unchanged'] = $map_content['unchanged'];
-									$page_content['success'] = $map_content['success'];
-									$page_content['refresh'] = true;
-									break;
-								default:
-									// ignore everything else
-							} //switch action
-						} // foreach action
-					} /// isset action
-				} // foreach rule
-			}
-		} // isset custom_field_mapping
-		else {
-			$page_content = array(
-				'message' => '',
-				'body' => '',
-				'processed' => 0,
-				'unchanged' => 0,
-				'success' =>  0
-			);
-		}
-
-		$chunk_results = array( 
-			'message' => $page_content['message'],
-			'processed' => $page_content['processed'],
-			'unchanged' => $page_content['unchanged'],
-			'success' => $page_content['success'],
-			'refresh' => isset( $page_content['refresh'] ) && true == $page_content['refresh'],
-		);
-
-		MLACore::mla_debug_add( 'MLASettings::mla_inline_mapping_iptc_exif_action $chunk_results = ' . var_export( $chunk_results, true ), MLACore::MLA_DEBUG_CATEGORY_AJAX );
-		wp_send_json_success( $chunk_results );
+		return $status;
 	}
 
 	/**
@@ -1008,7 +649,7 @@ class MLASettings {
 	 * @return	array	Updated array of links for the Plugin
 	 */
 	public static function mla_add_plugin_settings_link_filter( $links, $file ) {
-		if ( $file == 'media-library-assistant/index.php' ) {
+		if ( $file == 'media-library-assistant/index.php' && current_user_can( 'manage_options' ) ) {
 			$settings_link = sprintf( '<a href="%s">%s</a>', admin_url( 'options-general.php?page=' . MLACoreOptions::MLA_SETTINGS_SLUG . '-general' ), __( 'Settings', 'media-library-assistant' ) );
 			array_unshift( $links, $settings_link );
 		}
@@ -1081,7 +722,7 @@ class MLASettings {
 					break;
 				default:
 					/* translators: 1: ERROR tag 2: function name 3: option type, e.g., radio, select, text */
-					error_log( sprintf( _x( '%1$s: %2$s unknown type = "%3$s"', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), '_save_settings(1)', var_export( $value, true ) ), 0 );
+					MLACore::mla_debug_add( sprintf( _x( '%1$s: %2$s unknown type = "%3$s"', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), '_save_settings(1)', var_export( $value, true ) ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 			} // $value['type']
 		}  // isset $key
 		else {
@@ -1118,7 +759,7 @@ class MLASettings {
 					break;
 				default:
 					/* translators: 1: ERROR tag 2: function name 3: option type, e.g., radio, select, text */
-					error_log( sprintf( _x( '%1$s: %2$s unknown type = "%3$s"', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), '_save_settings(2)', var_export( $value, true ) ), 0 );
+					MLACore::mla_debug_add( sprintf( _x( '%1$s: %2$s unknown type = "%3$s"', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), '_save_settings(2)', var_export( $value, true ) ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 			} // $value['type']
 		}  // ! isset $key
 
@@ -1258,7 +899,7 @@ class MLASettings {
 				break;
 			default:
 				/* translators: 1: ERROR tag 2: function name 3: option type, e.g., radio, select, text */
-				error_log( sprintf( _x( '%1$s: %2$s unknown type = "%3$s"', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), 'mla_render_settings_page', var_export( $value, true ) ), 0 );
+				MLACore::mla_debug_add( sprintf( _x( '%1$s: %2$s unknown type = "%3$s"', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), 'mla_render_settings_page', var_export( $value, true ) ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 		} //switch
 
 		return '';
@@ -1286,7 +927,7 @@ class MLASettings {
 	 * render => rendering function for tab messages and content. Usage:
 	 *     $tab_content = ['render']( );
 	 *
-	 * The array must be populated at runtime in MLASettings::mla_localize_tablist();
+	 * The array must be populated at runtime in MLASettings::_localize_tablist();
 	 * localization calls cannot be placed in the "public static" array definition itself.
 	 *
 	 * @since 0.80
@@ -1305,15 +946,15 @@ class MLASettings {
 	 *
 	 * @return	void
 	 */
-	public static function mla_localize_tablist() {
+	private static function _localize_tablist() {
 		self::$mla_tablist = array(
 			'general' => array( 'title' => __ ( 'General', 'media-library-assistant' ), 'render' => array( 'MLASettings', '_compose_general_tab' ) ),
-			'view' => array( 'title' => __ ( 'Views', 'media-library-assistant' ), 'render' => array( 'MLASettings', '_compose_view_tab' ) ),
-			'upload' => array( 'title' => __ ( 'Uploads', 'media-library-assistant' ), 'render' => array( 'MLASettings', '_compose_upload_tab' ) ),
-			'mla_gallery' => array( 'title' => __ ( 'Shortcodes', 'media-library-assistant' ), 'render' => array( 'MLASettings', '_compose_mla_gallery_tab' ) ),
-			'custom_field' => array( 'title' => __ ( 'Custom Fields', 'media-library-assistant' ), 'render' => array( 'MLASettings', '_compose_custom_field_tab' ) ),
-			'iptc_exif' => array( 'title' => 'IPTC/EXIF', 'render' => array( 'MLASettings', '_compose_iptc_exif_tab' ) ),
-			'documentation' => array( 'title' => __ ( 'Documentation', 'media-library-assistant' ), 'render' => array( 'MLASettings', '_compose_documentation_tab' ) ),
+			'view' => array( 'title' => __ ( 'Views', 'media-library-assistant' ), 'render' => array( 'MLASettings_View', 'mla_compose_view_tab' ) ),
+			'upload' => array( 'title' => __ ( 'Uploads', 'media-library-assistant' ), 'render' => array( 'MLASettings_Upload', 'mla_compose_upload_tab' ) ),
+			'shortcodes' => array( 'title' => __ ( 'Shortcodes', 'media-library-assistant' ), 'render' => array( 'MLASettings_Shortcodes', 'mla_compose_shortcodes_tab' ) ),
+			'custom_field' => array( 'title' => __ ( 'Custom Fields', 'media-library-assistant' ), 'render' => array( 'MLASettings_CustomFields', 'mla_compose_custom_field_tab' ) ),
+			'iptc_exif' => array( 'title' => __ ( 'IPTC/EXIF', 'media-library-assistant' ), 'render' => array( 'MLASettings_IPTCEXIF', 'mla_compose_iptc_exif_tab' ) ),
+			'documentation' => array( 'title' => __ ( 'Documentation', 'media-library-assistant' ), 'render' => array( 'MLASettings_Documentation', 'mla_compose_documentation_tab' ) ),
 			'debug' => array( 'title' => __ ( 'Debug', 'media-library-assistant' ), 'render' => array( 'MLASettings', '_compose_debug_tab' ) ),
 		);
 	}
@@ -1327,7 +968,7 @@ class MLASettings {
 	 *
 	 * @return	array|false	The entire tablist ( $tab = NULL ), a single tab entry or false if not found/not allowed
 	 */
-	private static function mla_get_options_tablist( $tab = NULL ) {
+	private static function _get_options_tablist( $tab = NULL ) {
 		if ( is_string( $tab ) ) {
 			if ( isset( self::$mla_tablist[ $tab ] ) ) {
 				$results = self::$mla_tablist[ $tab ];
@@ -1362,7 +1003,7 @@ class MLASettings {
 	private static function _compose_settings_tabs( $active_tab = 'general' ) {
 		$tablist_item = self::$page_template_array['tablist-item'];
 		$tabs = '';
-		foreach ( self::mla_get_options_tablist() as $key => $item ) {
+		foreach ( self::_get_options_tablist() as $key => $item ) {
 			$item_values = array(
 				'data-tab-id' => $key,
 				'nav-tab-active' => ( $active_tab == $key ) ? 'nav-tab-active' : '',
@@ -1535,7 +1176,7 @@ class MLASettings {
 	 *
 	 * @return string|false The action name or False if no action was selected
 	 */
-	private static function _current_bulk_action( )	{
+	public static function mla_current_bulk_action( )	{
 		$action = false;
 
 		if ( isset( $_REQUEST['action'] ) ) {
@@ -1555,1662 +1196,6 @@ class MLASettings {
 		} // isset action2
 
 		return $action;
-	}
-
-	/**
-	 * Compose the Edit View tab content for the Settings subpage
-	 *
-	 * @since 1.40
-	 *
-	 * @param	array	data values for the item
-	 * @param	string	Display template
- 	 *
-	 * @return	array	'message' => status/error messages, 'body' => tab content
-	 */
-	private static function _compose_edit_view_tab( $view, $template ) {
-		$page_values = array(
-			'Edit View' => __( 'Edit View', 'media-library-assistant' ),
-			'form_url' => admin_url( 'options-general.php' ) . '?page=mla-settings-menu-view&mla_tab=view',
-			'action' => MLA::MLA_ADMIN_SINGLE_EDIT_UPDATE,
-			'original_slug' => $view['slug'],
-			'_wpnonce' => wp_nonce_field( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME, true, false ),
-			'Slug' => __( 'Slug', 'media-library-assistant' ),
-			'The slug is' => __( 'The &#8220;slug&#8221; is the URL-friendly, unique key for the view. It must be all lowercase and contain only letters, numbers, periods (.), slashes (/) and hyphens (-). For &#8220;<strong>Post MIME Type</strong>&#8221; views, the slug is also the MIME type specification and <strong>must be a valid MIME</strong> type, e.g., &#8220;image&#8221; or &#8220;image/jpeg&#8221;.', 'media-library-assistant' ),
-			'Singular Label' => __( 'Singular Label', 'media-library-assistant' ),
-			'Plural Label' => __( 'Plural Label', 'media-library-assistant' ),
-			'The labels' => __( 'The labels, e.g., &#8220;Image&#8221; and &#8220;Images&#8221; are used for column headers and other display purposes.', 'media-library-assistant' ),
-			'Specification' => __( 'Specification', 'media-library-assistant' ),
-			'If the specification' => __( 'If the MIME type specification differs from the slug, enter it here. You may include multiple MIME types, e.g., &#8220;audio,video&#8221; and/or wildcard specs, e.g.,  &#8220;*/*ms*&#8221;. This field will be ignored if the Post MIME Type box is checked.', 'media-library-assistant' ),
-			'Post MIME Type' => __( 'Post MIME Type', 'media-library-assistant' ),
-			'Check Post MIME' => __( 'Check this box if you want to add this entry to the list of MIME types returned by wp_get_mime_types().', 'media-library-assistant' ),
-			'Table View' => __( 'Table View', 'media-library-assistant' ),
-			'Check Table View' => __( 'Check this box if you want to add this entry to the list of Media/Assistant table views.', 'media-library-assistant' ),
-			'Menu Order' => __( 'Menu Order', 'media-library-assistant' ),
-			'You can choose' => __( 'You can choose your own table view order by entering a number (1 for first, etc.) in this field.', 'media-library-assistant' ),
-			'Description' => __( 'Description', 'media-library-assistant' ),
-			'The description can' => __( 'The description can contain any documentation or notes you need to understand or use the item.', 'media-library-assistant' ),
-			'Update' => __( 'Update', 'media-library-assistant' ),
-			'Cancel' => __( 'Cancel', 'media-library-assistant' ),
-		);
-
-		foreach ( $view as $key => $value ) {
-			switch ( $key ) {
-				case 'post_mime_type':
-				case 'table_view':
-					$page_values[ $key ] = $value ? 'checked="checked"' : '';
-					break;
-				default:
-					$page_values[ $key ] = $value;
-			}
-		}
-
-		return array(
-			'message' => '',
-			'body' => MLAData::mla_parse_template( $template, $page_values )
-		);
-	}
-
-	/**
-	 * Compose the Post MIME Type Views tab content for the Settings subpage
-	 *
-	 * @since 1.40
- 	 *
-	 * @return	array	'message' => status/error messages, 'body' => tab content
-	 */
-	private static function _compose_view_tab( ) {
-		$page_template_array = MLACore::mla_load_template( 'admin-display-settings-view-tab.tpl' );
-		if ( ! is_array( $page_template_array ) ) {
-			/* translators: 1: ERROR tag 2: function name 3: non-array value */
-			error_log( sprintf( _x( '%1$s: %2$s non-array "%3$s"', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), 'MLASettings::_compose_view_tab', var_export( $page_template_array, true ) ), 0 );
-			return '';
-		}
-
-		/*
-		 * Convert checkbox values, if present
-		 */
-		if ( isset( $_REQUEST['mla_view_item'] ) ) {
-			$_REQUEST['mla_view_item']['post_mime_type'] = isset( $_REQUEST['mla_view_item']['post_mime_type'] );
-			$_REQUEST['mla_view_item']['table_view'] = isset( $_REQUEST['mla_view_item']['table_view'] );
-		}
-
-		/*
-		 * Set default values, check for Add New Post MIME Type View button
-		 */
-		$add_form_values = array (
-			'slug' => '',
-			'singular' => '',
-			'plural' => '',
-			'specification' => '',
-			'post_mime_type' => 'checked="checked"',
-			'table_view' => 'checked="checked"',
-			'menu_order' => '',
-			'description' => ''
-			);
-
-		if ( !empty( $_REQUEST['mla-view-options-save'] ) ) {
-			check_admin_referer( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME );
-			$page_content = self::_save_view_settings( );
-		} elseif ( !empty( $_REQUEST['mla-add-view-submit'] ) ) {
-			check_admin_referer( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME );
-			$page_content = MLAMime::mla_add_post_mime_type( $_REQUEST['mla_view_item'] );
-			if ( false !== strpos( $page_content['message'], __( 'ERROR', 'media-library-assistant' ) ) ) {
-				$add_form_values = $_REQUEST['mla_view_item'];
-				$add_form_values['post_mime_type'] = $add_form_values['post_mime_type'] ? 'checked="checked"' : '';
-				$add_form_values['table_view'] = $add_form_values['table_view'] ? 'checked="checked"' : '';
-			}
-		} else {
-			$page_content = array(
-				'message' => '',
-				'body' => '' 
-			);
-		}
-
-		/*
-		 * Process bulk actions that affect an array of items
-		 */
-		$bulk_action = self::_current_bulk_action();
-		if ( $bulk_action && ( $bulk_action != 'none' ) ) {
-			if ( isset( $_REQUEST['cb_mla_item_ID'] ) ) {
-				/*
-				 * Convert post-ID to slug; separate loop required because delete changes post_IDs
-				 */
-				$slugs = array();
-				foreach ( $_REQUEST['cb_mla_item_ID'] as $post_ID )
-					$slugs[] = MLAMime::mla_get_post_mime_type_slug( $post_ID );
-
-				foreach ( $slugs as $slug ) {
-					switch ( $bulk_action ) {
-						case 'delete':
-							$item_content = MLAMime::mla_delete_post_mime_type( $slug );
-							break;
-						case 'edit':
-							$request = array( 'slug' => $slug );
-							if ( '-1' != $_REQUEST['post_mime_type'] ) {
-								$request['post_mime_type'] = '1' == $_REQUEST['post_mime_type'];
-							}
-							if ( '-1' != $_REQUEST['table_view'] ) {
-								$request['table_view'] = '1' == $_REQUEST['table_view'];
-							}
-							if ( !empty( $_REQUEST['menu_order'] ) ) {
-								$request['menu_order'] = $_REQUEST['menu_order'];
-							}
-							$item_content = MLAMime::mla_update_post_mime_type( $request );
-							break;
-						default:
-							$item_content = array(
-								/* translators: 1: bulk_action, e.g., delete, edit, restore, trash */
-								 'message' => sprintf( __( 'Unknown bulk action %1$s', 'media-library-assistant' ), $bulk_action ),
-								'body' => '' 
-							);
-					} // switch $bulk_action
-
-					$page_content['message'] .= $item_content['message'] . '<br>';
-				} // foreach cb_attachment
-			} // isset cb_attachment
-			else {
-				/* translators: 1: action name, e.g., edit */
-				$page_content['message'] = sprintf( __( 'Bulk Action %1$s - no items selected.', 'media-library-assistant' ), $bulk_action );
-			}
-		} // $bulk_action
-
-		/*
-		 * Process row-level actions that affect a single item
-		 */
-		if ( !empty( $_REQUEST['mla_admin_action'] ) ) {
-			check_admin_referer( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME );
-
-			switch ( $_REQUEST['mla_admin_action'] ) {
-				case MLACore::MLA_ADMIN_SINGLE_DELETE:
-					$page_content = MLAMime::mla_delete_post_mime_type( $_REQUEST['mla_item_slug'] );
-					break;
-				case MLA::MLA_ADMIN_SINGLE_EDIT_DISPLAY:
-					$view = MLAMime::mla_get_post_mime_type( $_REQUEST['mla_item_slug'] );
-					$page_content = self::_compose_edit_view_tab( $view, $page_template_array['single-item-edit'] );
-					break;
-				case MLA::MLA_ADMIN_SINGLE_EDIT_UPDATE:
-					if ( !empty( $_REQUEST['update'] ) ) {
-						$page_content = MLAMime::mla_update_post_mime_type( $_REQUEST['mla_view_item'] );
-						if ( false !== strpos( $page_content['message'], __( 'ERROR', 'media-library-assistant' ) ) ) {
-							$message = $page_content['message'];
-							$page_content = self::_compose_edit_view_tab( $_REQUEST['mla_view_item'], $page_template_array['single-item-edit'] );
-							$page_content['message'] = $message;
-						}
-			} else {
-						$page_content = array(
-							/* translators: 1: view name/slug */
-							'message' => sprintf( __( 'Edit view "%1$s" cancelled.', 'media-library-assistant' ), $_REQUEST['mla_view_item']['original_slug'] ),
-							'body' => '' 
-						);
-					}
-					break;
-				default:
-					$page_content = array(
-						/* translators: 1: bulk_action, e.g., single_item_delete, single_item_edit */
-						 'message' => sprintf( __( 'Unknown mla_admin_action - "%1$s"', 'media-library-assistant' ), $_REQUEST['mla_admin_action'] ),
-						'body' => '' 
-					);
-					break;
-			} // switch ($_REQUEST['mla_admin_action'])
-		} // (!empty($_REQUEST['mla_admin_action'])
-
-		if ( !empty( $page_content['body'] ) ) {
-			return $page_content;
-		}
-
-		/*
-		 * Check for disabled status
-		 */
-		if ( 'checked' != MLACore::mla_get_option( MLACoreOptions::MLA_ENABLE_POST_MIME_TYPES ) ) {
-			/*
-			 * Fill in with any page-level options
-			 */
-			$options_list = '';
-			foreach ( MLACoreOptions::$mla_option_definitions as $key => $value ) {
-				if ( 'view' == $value['tab'] ) {
-					$options_list .= self::mla_compose_option_row( $key, $value );
-				}
-			}
-
-			$page_values = array(
-				'Support is disabled' => __( 'View and Post MIME Type Support is disabled', 'media-library-assistant' ),
-				'form_url' => admin_url( 'options-general.php' ) . '?page=mla-settings-menu-view&mla_tab=view',
-				'options_list' => $options_list,
-				'Save Changes' => __( 'Save Changes', 'media-library-assistant' ),
-				'_wpnonce' => wp_nonce_field( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME, true, false ),
-			);
-
-			$page_content['body'] .= MLAData::mla_parse_template( $page_template_array['view-disabled'], $page_values );
-			return $page_content;
-		}
-
-		/*
-		 * Display the View Table
-		 */
-		$_SERVER['REQUEST_URI'] = remove_query_arg( array(
-			'mla_admin_action',
-			'mla_item_slug',
-			'mla_item_ID',
-			'_wpnonce',
-			'_wp_http_referer',
-			'action',
-			'action2',
-			'cb_mla_item_ID',
-			'mla-optional-uploads-search',
-			'mla-optional-uploads-display'
-		), $_SERVER['REQUEST_URI'] );
-
-		//	Create an instance of our package class
-		$MLAListViewTable = new MLA_View_List_Table();
-
-		//	Fetch, prepare, sort, and filter our data
-		$MLAListViewTable->prepare_items();
-		$MLAListViewTable->views();
-
-		/*
-		 * Start with any page-level options
-		 */
-		$options_list = '';
-		foreach ( MLACoreOptions::$mla_option_definitions as $key => $value ) {
-			if ( 'view' == $value['tab'] ) {
-				$options_list .= self::mla_compose_option_row( $key, $value );
-			}
-		}
-
-		$page_values = array(
-			'Library Views Processing' => __( 'Library Views/Post MIME Type Processing', 'media-library-assistant' ),
-			'In this tab' => __( 'In this tab you can manage the list of "Post MIME Types", which are used by WordPress to define the views for the <em><strong>Media/Library</strong></em> screen and the <em><strong>Media Manager/Add Media</strong></em> "media items" drop down list. MLA&rsquo;s <em><strong>Media/Assistant</strong></em> screen uses an enhanced version of the list, <em>Table Views</em>, to support views with multiple MIME Types (e.g., "audio,video") and wildcard specifications (e.g. "*/*ms*").', 'media-library-assistant' ),
-			/* translators: 1: Documentation hyperlink */
-			'You can find' => sprintf( __( 'You can find more information about library views, Post MIME types and how MLA and WordPress use them in the %1$s section of the Documentation or by clicking the <strong>"Help"</strong> tab in the upper-right corner of this screen.', 'media-library-assistant' ), '<a href="[+settingsURL+]?page=mla-settings-menu-documentation&amp;mla_tab=documentation#mla_views" title="' . __( 'Library View Processing documentation', 'media-library-assistant' ) . '">' . __( 'Library Views/Post MIME Type Processing', 'media-library-assistant' ) . '</a>' ),
-			'settingsURL' => admin_url('options-general.php'),
-			'form_url' => admin_url( 'options-general.php' ) . '?page=mla-settings-menu-view&mla_tab=view',
-			'_wpnonce' => wp_nonce_field( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME, true, false ),
-			'results' => ! empty( $_REQUEST['s'] ) ? '<h2 class="alignleft">' . __( 'Displaying search results for', 'media-library-assistant' ) . ': "' . $_REQUEST['s'] . '"</h2>' : '',
-			'Search Views' => __( 'Search Views', 'media-library-assistant' ),
-			's' => isset( $_REQUEST['s'] ) ? $_REQUEST['s'] : '',
-			'options_list' => $options_list,
-			'Save Changes' => __( 'Save Changes', 'media-library-assistant' ),
-			/* translators: %s: add new View */
-			'Add New View' => sprintf( __( 'Add New %1$s', 'media-library-assistant' ), __( 'View', 'media-library-assistant' ) ),
-			'Slug' => __( 'Slug', 'media-library-assistant' ),
-			'The slug is' => __( 'The &#8220;slug&#8221; is the URL-friendly, unique key for the view. It must be all lowercase and contain only letters, numbers, periods (.), slashes (/) and hyphens (-). For &#8220;<strong>Post MIME Type</strong>&#8221; views, the slug is also the MIME type specification and <strong>must be a valid MIME</strong> type, e.g., &#8220;image&#8221; or &#8220;image/jpeg&#8221;.', 'media-library-assistant' ),
-			'Singular Label' => __( 'Singular Label', 'media-library-assistant' ),
-			'Plural Label' => __( 'Plural Label', 'media-library-assistant' ),
-			'The labels' => __( 'The labels, e.g., &#8220;Image&#8221; and &#8220;Images&#8221; are used for column headers and other display purposes.', 'media-library-assistant' ),
-			'Specification' => __( 'Specification', 'media-library-assistant' ),
-			'If the specification' => __( 'If the MIME type specification differs from the slug, enter it here. You may include multiple MIME types, e.g., &#8220;audio,video&#8221; and/or wildcard specs, e.g.,  &#8220;*/*ms*&#8221;. This field will be ignored if the Post MIME Type box is checked.', 'media-library-assistant' ),
-			'Post MIME Type' => __( 'Post MIME Type', 'media-library-assistant' ),
-			'Check Post MIME' => __( 'Check this box if you want to add this entry to the list of MIME types returned by wp_get_mime_types().', 'media-library-assistant' ),
-			'Table View' => __( 'Table View', 'media-library-assistant' ),
-			'Check Table View' => __( 'Check this box if you want to add this entry to the list of Media/Assistant table views.', 'media-library-assistant' ),
-			'Menu Order' => __( 'Menu Order', 'media-library-assistant' ),
-			'You can choose' => __( 'You can choose your own table view order by entering a number (1 for first, etc.) in this field.', 'media-library-assistant' ),
-			'Description' => __( 'Description', 'media-library-assistant' ),
-			'The description can' => __( 'The description can contain any documentation or notes you need to understand or use the item.', 'media-library-assistant' ),
-			'Add View' => __( 'Add View', 'media-library-assistant' ),
-			'colspan' => $MLAListViewTable->get_column_count(),
-			'Quick Edit' => __( '<strong>Quick Edit</strong>', 'media-library-assistant' ),
-			'Cancel' => __( 'Cancel', 'media-library-assistant' ),
-			'Update' => __( 'Update', 'media-library-assistant' ),
-			'Bulk Edit' => __( 'Bulk Edit', 'media-library-assistant' ),
-			'No Change' => __( 'No Change', 'media-library-assistant' ),
-			'No' => __( 'No', 'media-library-assistant' ),
-			'Yes' => __( 'Yes', 'media-library-assistant' ),
-		);
-
-		foreach ( $add_form_values as $key => $value ) {
-			$page_values[ $key ] = $value;
-		}
-		$page_content['body'] = MLAData::mla_parse_template( $page_template_array['before-table'], $page_values );
-
-		//	 Now we can render the completed list table
-		ob_start();
-		$MLAListViewTable->display();
-		$page_content['body'] .= ob_get_contents();
-		ob_end_clean();
-
-		$page_content['body'] .= MLAData::mla_parse_template( $page_template_array['after-table'], $page_values );
-
-		return $page_content;
-	}
-
-	/**
-	 * Get an HTML select element representing a list of icon types
-	 *
-	 * @since 1.40
-	 *
-	 * @param	array	Display template array
-	 * @param	string	HTML name attribute value
-	 * @param	string	currently selected Icon Type
-	 *
-	 * @return string HTML select element or empty string on failure.
-	 */
-	public static function mla_get_icon_type_dropdown( $templates, $name, $selection = '.none.' ) {
-		$option_template = $templates['icon-type-select-option'];
-		if ( '.nochange.' == $selection ) {
-			$option_values = array (
-				'selected' => 'selected="selected"',
-				'value' => '.none.',
-				'text' => '&mdash; ' . __( 'No Change', 'media-library-assistant' ) . ' &mdash;'
-			);
-		} else {
-			$option_values = array (
-				'selected' => ( '.none.' == $selection ) ? 'selected="selected"' : '',
-				'value' => '.none.',
-				'text' => '&mdash; ' . __( 'None (select a value)', 'media-library-assistant' ) . ' &mdash;'
-			);
-		}
-
-		$options = MLAData::mla_parse_template( $option_template, $option_values );
-
-		$icon_types = MLAMime::mla_get_current_icon_types(); 
-		foreach ( $icon_types as $icon_type ) {
-			$option_values = array (
-				'selected' => ( $icon_type == $selection ) ? 'selected="selected"' : '',
-				'value' => $icon_type,
-				'text' => $icon_type
-			);
-
-			$options .= MLAData::mla_parse_template( $option_template, $option_values );					
-		} // foreach icon_type
-
-		return MLAData::mla_parse_template( $templates['icon-type-select'], array( 'name' => $name, 'options' => $options ) );
-	}
-
-	/**
-	 * Compose the Edit Upload type tab content for the Settings subpage
-	 *
-	 * @since 1.40
-	 *
-	 * @param	array	data values for the item
-	 * @param	string	Display template array
- 	 *
-	 * @return	array	'message' => status/error messages, 'body' => tab content
-	 */
-	private static function _compose_edit_upload_tab( $item, &$templates ) {
-		$page_values = array(
-			'Edit Upload MIME' => __( 'Edit Upload MIME Type', 'media-library-assistant' ),
-			'form_url' => admin_url( 'options-general.php' ) . '?page=mla-settings-menu-upload&mla_tab=upload',
-			'action' => MLA::MLA_ADMIN_SINGLE_EDIT_UPDATE,
-			'original_slug' => $item['slug'],
-			'_wpnonce' => wp_nonce_field( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME, true, false ),
-			'Extension' => __( 'Extension', 'media-library-assistant' ),
-			'The extension is' => __( 'The &#8220;extension&#8221; is the file extension for this type, and a unique key for the item. It must be all lowercase and contain only letters and numbers.', 'media-library-assistant' ),
-			'MIME Type' => __( 'MIME Type', 'media-library-assistant' ),
-			'The MIME Type' => __( 'The MIME Type must be all lowercase and contain only letters, numbers, periods (.), slashes (/) and hyphens (-). It <strong>must be a valid MIME</strong> type, e.g., &#8220;image&#8221; or &#8220;image/jpeg&#8221;.', 'media-library-assistant' ),
-			'Icon Type' => __( 'Icon Type', 'media-library-assistant' ),
-			'icon_types' => self::mla_get_icon_type_dropdown( $templates, 'mla_upload_item[icon_type]', $item['icon_type'] ),
-			'The Icon Type' => __( 'The Icon Type selects a thumbnail image displayed for non-image file types, such as PDF documents.', 'media-library-assistant' ),
-			'Inactive' => __( 'Inactive', 'media-library-assistant' ),
-			'Check this box' => __( 'Check this box if you want to remove this entry from the list of Upload MIME Types returned by get_allowed_mime_types().', 'media-library-assistant' ),
-			'Description' => __( 'Description', 'media-library-assistant' ),
-			'The description can' => __( 'The description can contain any documentation or notes you need to understand or use the item.', 'media-library-assistant' ),
-			'Update' => __( 'Update', 'media-library-assistant' ),
-			'Cancel' => __( 'Cancel', 'media-library-assistant' ),
-		);
-
-		foreach ( $item as $key => $value ) {
-			switch ( $key ) {
-				case 'disabled':
-					$page_values[ $key ] = $value ? 'checked="checked"' : '';
-					break;
-				default:
-					$page_values[ $key ] = $value;
-			}
-		}
-
-		return array(
-			'message' => '',
-			'body' => MLAData::mla_parse_template( $templates['single-item-edit'], $page_values )
-		);
-	}
-
-	/**
-	 * Compose the Optional File Upload MIME Types tab content for the Settings subpage
-	 *
-	 * @since 1.40
-	 *
-	 * @param	string	Display templates
- 	 *
-	 * @return	array	'message' => status/error messages, 'body' => tab content
-	 */
-	private static function _compose_optional_upload_tab( $page_template_array ) {
-		/*
-		 * Display the Optional Upload MIME Types Table
-		 */
-		$_SERVER['REQUEST_URI'] = add_query_arg( array( 'mla-optional-uploads-display' => 'true' ), remove_query_arg( array(
-			'mla_admin_action',
-			'mla_item_slug',
-			'mla_item_ID',
-			'_wpnonce',
-			'_wp_http_referer',
-			'action',
-			'action2',
-			'cb_attachment',
-			'mla-optional-uploads-search'
-		), $_SERVER['REQUEST_URI'] ) );
-
-		/*
-		 * Suppress display of the hidden columns selection list
-		 */
-		echo "  <style type='text/css'>\r\n";
-		echo "    form#adv-settings div.metabox-prefs,\r\n";
-		echo "    form#adv-settings fieldset.metabox-prefs {\r\n";
-		echo "      display: none;\r\n";
-		echo "    }\r\n";
-		echo "  </style>\r\n";
-
-		//	Create an instance of our package class
-		$MLAListUploadTable = new MLA_Upload_Optional_List_Table();
-
-		//	Fetch, prepare, sort, and filter our data
-		$MLAListUploadTable->prepare_items();
-
-		$page_content = array(
-			'message' => '',
-			'body' => '' 
-		);
-
-		$page_values = array(
-			'form_url' => admin_url( 'options-general.php' ) . '?page=mla-settings-menu-upload&mla_tab=upload',
-			'_wpnonce' => wp_nonce_field( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME, true, false ),
-			'Known File Extension' => __( 'Known File Extension/MIME Type Associations', 'media-library-assistant' ),
-			'results' => ! empty( $_REQUEST['s'] ) ? '<h2 class="alignleft">' . __( 'Displaying search results for', 'media-library-assistant' ) . ': "' . $_REQUEST['s'] . '"</h2>' : '',
-			'Search Known MIME' => __( 'Search Known MIME Types', 'media-library-assistant' ),
-			's' => isset( $_REQUEST['s'] ) ? $_REQUEST['s'] : '',
-			'Search Types' => __( 'Search Types', 'media-library-assistant' ),
-			'To search by' => __( 'To search by extension, use ".", e.g., ".doc"', 'media-library-assistant' ),
-			'Cancel' => __( 'Cancel', 'media-library-assistant' ),
-		);
-
-		$page_content['body'] = MLAData::mla_parse_template( $page_template_array['before-optional-uploads-table'], $page_values );
-
-		//	 Now we can render the completed list table
-		ob_start();
-//		$MLAListUploadTable->views();
-		$MLAListUploadTable->display();
-		$page_content['body'] .= ob_get_contents();
-		ob_end_clean();
-
-		$page_content['body'] .= MLAData::mla_parse_template( $page_template_array['after-optional-uploads-table'], $page_values );
-
-		return $page_content;
-	}
-
-	/**
-	 * Process an Optional Upload MIME Type selection
-	 *
-	 * @since 1.40
- 	 *
-	 * @param	integer	MLA Optional Upload MIME Type ID
- 	 *
-	 * @return	array	'message' => status/error messages, 'body' => tab content
-	 */
-	private static function _process_optional_upload_mime( $ID ) {
-		$optional_type = MLAMime::mla_get_optional_upload_mime( $ID );
-		$optional_type['disabled'] = false;
-
-		if ( false === $upload_type = MLAMime::mla_get_upload_mime( $optional_type['slug'] ) ) {
-			$optional_type['icon_type'] = '.none.';
-			return MLAMime::mla_add_upload_mime( $optional_type );
-		}
-
-		$optional_type['original_slug'] = $optional_type['slug'];
-		return MLAMime::mla_update_upload_mime( $optional_type );
-	}
-
-	/**
-	 * Compose the File Upload MIME Types tab content for the Settings subpage
-	 *
-	 * @since 1.40
- 	 *
-	 * @return	array	'message' => status/error messages, 'body' => tab content
-	 */
-	private static function _compose_upload_tab( ) {
-		$page_template_array = MLACore::mla_load_template( 'admin-display-settings-upload-tab.tpl' );
-		if ( ! is_array( $page_template_array ) ) {
-			/* translators: 1: ERROR tag 2: function name 3: non-array value */
-			error_log( sprintf( _x( '%1$s: %2$s non-array "%3$s"', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), 'MLASettings::_compose_upload_tab', var_export( $page_template_array, true ) ), 0 );
-			return '';
-		}
-
-		/*
-		 * Untangle confusion between searching, canceling and selecting on the Optional Uploads screen
-		 */
-		$bulk_action = self::_current_bulk_action();
-		if ( isset( $_REQUEST['mla-optional-uploads-cancel'] ) || $bulk_action && ( $bulk_action == 'select' ) ) {
-			unset( $_REQUEST['mla-optional-uploads-search'] );
-			unset( $_REQUEST['s'] );
-		}
-
-		/*
-		 * Convert checkbox values, if present
-		 */
-		if ( isset( $_REQUEST['mla_upload_item'] ) ) {
-			$_REQUEST['mla_upload_item']['disabled'] = isset( $_REQUEST['mla_upload_item']['disabled'] );
-		}
-
-		/*
-		 * Set default values, check for Add New Upload MIME Type button
-		 */
-		$add_form_values = array (
-			'slug' => '',
-			'mime_type' => '',
-			'icon_type' => '.none.',
-			'disabled' => '',
-			'description' => ''
-			);
-
-		if ( !empty( $_REQUEST['mla-upload-options-save'] ) ) {
-			check_admin_referer( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME );
-			$page_content = self::_save_upload_settings( );
-		} elseif ( !empty( $_REQUEST['mla-optional-uploads-search'] ) ) {
-			check_admin_referer( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME );
-			$page_content = self::_compose_optional_upload_tab( $page_template_array );
-		} elseif ( !empty( $_REQUEST['mla-optional-uploads-cancel'] ) ) {
-			$page_content = array(
-				 'message' => '',
-				'body' => '' 
-			);
-		} elseif ( !empty( $_REQUEST['mla-optional-uploads-display'] ) ) {
-			if ( 'true' != $_REQUEST['mla-optional-uploads-display'] ) {
-				check_admin_referer( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME );
-				unset( $_REQUEST['s'] );
-			}
-			$page_content = self::_compose_optional_upload_tab( $page_template_array );
-		} elseif ( !empty( $_REQUEST['mla-add-upload-submit'] ) ) {
-			check_admin_referer( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME );
-			$page_content = MLAMime::mla_add_upload_mime( $_REQUEST['mla_upload_item'] );
-			if ( false !== strpos( $page_content['message'], __( 'ERROR', 'media-library-assistant' ) ) ) {
-				$add_form_values = $_REQUEST['mla_upload_item'];
-				$add_form_values['disabled'] = $add_form_values['disabled'] ? 'checked="checked"' : '';
-			}
-		} else {
-			$page_content = array(
-				 'message' => '',
-				'body' => '' 
-			);
-		}
-
-		/*
-		 * Process bulk actions that affect an array of items
-		 */
-		if ( $bulk_action && ( $bulk_action != 'none' ) ) {
-			if ( isset( $_REQUEST['cb_mla_item_ID'] ) ) {
-				if ( 'select' == $bulk_action ) {
-					foreach ( $_REQUEST['cb_mla_item_ID'] as $ID ) {
-						$item_content = MLASettings::_process_optional_upload_mime( $ID );
-						$page_content['message'] .= $item_content['message'] . '<br>';
-					}
-				} else {
-					/*
-					 * Convert post-ID to slug; separate loop required because delete changes post_IDs
-					 */
-					$slugs = array();
-					foreach ( $_REQUEST['cb_mla_item_ID'] as $post_ID )
-						$slugs[] = MLAMime::mla_get_upload_mime_slug( $post_ID );
-
-					foreach ( $slugs as $slug ) {
-						switch ( $bulk_action ) {
-							case 'delete':
-								$item_content = MLAMime::mla_delete_upload_mime( $slug );
-								break;
-							case 'edit':
-								$request = array( 'slug' => $slug );
-								if ( '-1' != $_REQUEST['disabled'] ) {
-									$request['disabled'] = '1' == $_REQUEST['disabled'];
-								}
-								if ( '.none.' != $_REQUEST['icon_type'] ) {
-									$request['icon_type'] = $_REQUEST['icon_type'];
-								}
-								$item_content = MLAMime::mla_update_upload_mime( $request );
-								break;
-							default:
-								$item_content = array(
-									/* translators: 1: bulk_action, e.g., delete, edit, restore, trash */
-									 'message' => sprintf( __( 'Unknown bulk action %1$s', 'media-library-assistant' ), $bulk_action ),
-									'body' => '' 
-								);
-						} // switch $bulk_action
-
-						$page_content['message'] .= $item_content['message'] . '<br>';
-					} // foreach cb_attachment
-				} // != select
-			} // isset cb_attachment
-			else {
-				/* translators: 1: action name, e.g., edit */
-				$page_content['message'] = sprintf( __( 'Bulk Action %1$s - no items selected.', 'media-library-assistant' ), $bulk_action );
-			}
-		} // $bulk_action
-
-		/*
-		 * Process row-level actions that affect a single item
-		 */
-		if ( !empty( $_REQUEST['mla_admin_action'] ) ) {
-			check_admin_referer( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME );
-
-			switch ( $_REQUEST['mla_admin_action'] ) {
-				case MLACore::MLA_ADMIN_SINGLE_DELETE:
-					$page_content = MLAMime::mla_delete_upload_mime( $_REQUEST['mla_item_slug'] );
-					break;
-				case MLA::MLA_ADMIN_SINGLE_EDIT_DISPLAY:
-					$view = MLAMime::mla_get_upload_mime( $_REQUEST['mla_item_slug'] );
-					$page_content = self::_compose_edit_upload_tab( $view, $page_template_array );
-					break;
-				case MLA::MLA_ADMIN_SINGLE_EDIT_UPDATE:
-					if ( !empty( $_REQUEST['update'] ) ) {
-						$page_content = MLAMime::mla_update_upload_mime( $_REQUEST['mla_upload_item'] );
-						if ( false !== strpos( $page_content['message'], __( 'ERROR', 'media-library-assistant' ) ) ) {
-							$message = $page_content['message'];
-							$page_content = self::_compose_edit_upload_tab( $_REQUEST['mla_upload_item'], $page_template_array );
-							$page_content['message'] = $message;
-						}
-					} elseif ( !empty( $_REQUEST['mla_item_ID'] ) ) {
-						$page_content = self::_process_optional_upload_mime( $_REQUEST['mla_item_ID'] );
-					} else {
-						$page_content = array(
-							/* translators: 1: view name/slug */
-							'message' => sprintf( __( 'Edit view "%1$s" cancelled.', 'media-library-assistant' ), $_REQUEST['mla_upload_item']['original_slug'] ),
-							'body' => '' 
-						);
-					}
-					break;
-				default:
-					$page_content = array(
-						/* translators: 1: bulk_action, e.g., single_item_delete, single_item_edit */
-						 'message' => sprintf( __( 'Unknown mla_admin_action - "%1$s"', 'media-library-assistant' ), $_REQUEST['mla_admin_action'] ),
-						'body' => '' 
-					);
-					break;
-			} // switch ($_REQUEST['mla_admin_action'])
-		} // (!empty($_REQUEST['mla_admin_action'])
-
-		if ( !empty( $page_content['body'] ) ) {
-			return $page_content;
-		}
-
-		/*
-		 * Check for disabled status
-		 */
-		if ( 'checked' != MLACore::mla_get_option( MLACoreOptions::MLA_ENABLE_UPLOAD_MIMES ) ) {
-			/*
-			 * Fill in with any page-level options
-			 */
-			$options_list = '';
-			foreach ( MLACoreOptions::$mla_option_definitions as $key => $value ) {
-				if ( 'upload' == $value['tab'] ) {
-					$options_list .= self::mla_compose_option_row( $key, $value );
-				}
-			}
-
-			$page_values = array(
-				'Support is disabled' => __( 'Upload MIME Type Support is disabled', 'media-library-assistant' ),
-				'form_url' => admin_url( 'options-general.php' ) . '?page=mla-settings-menu-upload&mla_tab=upload',
-				'options_list' => $options_list,
-				'Save Changes' => __( 'Save Changes', 'media-library-assistant' ),
-				'_wpnonce' => wp_nonce_field( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME, true, false ),
-			);
-
-			$page_content['body'] .= MLAData::mla_parse_template( $page_template_array['upload-disabled'], $page_values );
-			return $page_content;
-		}
-
-		/*
-		 * Display the Upload MIME Types Table
-		 */
-		$_SERVER['REQUEST_URI'] = remove_query_arg( array(
-			'mla_admin_action',
-			'mla_item_slug',
-			'mla_item_ID',
-			'_wpnonce',
-			'_wp_http_referer',
-			'action',
-			'action2',
-			'cb_mla_item_ID',
-			'mla-optional-uploads-search',
-		), $_SERVER['REQUEST_URI'] );
-
-		//	Create an instance of our package class
-		$MLAListUploadTable = new MLA_Upload_List_Table();
-
-		//	Fetch, prepare, sort, and filter our data
-		$MLAListUploadTable->prepare_items();
-
-		/*
-		 * Start with any page-level options
-		 */
-		$options_list = '';
-		foreach ( MLACoreOptions::$mla_option_definitions as $key => $value ) {
-			if ( 'upload' == $value['tab'] ) {
-				$options_list .= self::mla_compose_option_row( $key, $value );
-			}
-		}
-
-		$page_values = array(
-			'File Extension Processing' => __( 'File Extension and MIME Type Processing', 'media-library-assistant' ),
-			'In this tab' => __( 'In this tab you can manage the list of file extension/MIME Type associations, which are used by WordPress to decide what kind of files can be uploaded to the Media Library and to fill in the <strong><em>post_mime_type</em></strong> value. To upload a file, the file extension must be in this list and be active.', 'media-library-assistant' ),
-			/* translators: 1: Documentation hyperlink */
-			'You can find' => sprintf( __( 'You can find more information about file extensions, MIME types and how WordPress uses them in the %1$s section of the Documentation or by clicking the <strong>"Help"</strong> tab in the upper-right corner of this screen.', 'media-library-assistant' ), '<a href="[+settingsURL+]?page=mla-settings-menu-documentation&amp;mla_tab=documentation#mla_uploads" title="' . __( 'File Extension Processing documentation', 'media-library-assistant' ) . '">' . __( 'File Extension and MIME Type Processing', 'media-library-assistant' ) . '</a>' ),
-			'settingsURL' => admin_url('options-general.php'),
-			'Search Uploads' => __( 'Search Uploads', 'media-library-assistant' ),
-			'To search by' => __( 'To search by extension, use ".", e.g., ".doc"', 'media-library-assistant' ),
-			'form_url' => admin_url( 'options-general.php' ) . '?page=mla-settings-menu-upload&mla_tab=upload',
-			'_wpnonce' => wp_nonce_field( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME, true, false ),
-			'options_list' => $options_list,
-			'Save Changes' => __( 'Save Changes', 'media-library-assistant' ),
-			/* translators: %s: add new Upload MIME Type */
-			'Add New Upload' => sprintf( __( 'Add New %1$s', 'media-library-assistant' ), __( 'Upload MIME Type', 'media-library-assistant' ) ),
-			'To search database' => __( 'To search the database of over 1,500 known extension/type associations, click "Search Known Types" below the form.', 'media-library-assistant' ),
-			'Extension' => __( 'Extension', 'media-library-assistant' ),
-			'The extension is' => __( 'The &#8220;extension&#8221; is the file extension for this type, and unique key for the item. It must be all lowercase and contain only letters and numbers.', 'media-library-assistant' ),
-			'MIME Type' => __( 'MIME Type', 'media-library-assistant' ),
-			'The MIME Type' => __( 'The MIME Type must be all lowercase and contain only letters, numbers, periods (.), slashes (/) and hyphens (-). It <strong>must be a valid MIME</strong> type, e.g., &#8220;image&#8221; or &#8220;image/jpeg&#8221;.', 'media-library-assistant' ),
-			'Icon Type' => __( 'Icon Type', 'media-library-assistant' ),
-			'The Icon Type' => __( 'The Icon Type selects a thumbnail image displayed for non-image file types, such as PDF documents.', 'media-library-assistant' ),
-			'Inactive' => __( 'Inactive', 'media-library-assistant' ),
-			'Check this box' => __( 'Check this box if you want to remove this entry from the list of Upload MIME Types returned by get_allowed_mime_types().', 'media-library-assistant' ),
-			'Description' => __( 'Description', 'media-library-assistant' ),
-			'The description can' => __( 'The description can contain any documentation or notes you need to understand or use the item.', 'media-library-assistant' ),
-			'Add Upload MIME' => __( 'Add Upload MIME Type', 'media-library-assistant' ),
-			'search_url' => wp_nonce_url( '?page=mla-settings-menu-upload&mla_tab=upload&mla-optional-uploads-search=Search', MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME ),
-			'Search Known Types' => __( 'Search Known Types', 'media-library-assistant' ),
-			'colspan' => $MLAListUploadTable->get_column_count(),
-			'Quick Edit' => __( '<strong>Quick Edit</strong>', 'media-library-assistant' ),
-			'Cancel' => __( 'Cancel', 'media-library-assistant' ),
-			'Update' => __( 'Update', 'media-library-assistant' ),
-			'Bulk Edit' => __( 'Bulk Edit', 'media-library-assistant' ),
-			'Status' => __( 'Status', 'media-library-assistant' ),
-			'No Change' => __( 'No Change', 'media-library-assistant' ),
-			'Active' => __( 'Active', 'media-library-assistant' ),
-			'results' => ! empty( $_REQUEST['s'] ) ? '<h2 class="alignleft">' . __( 'Displaying search results for', 'media-library-assistant' ) . ': "' . $_REQUEST['s'] . '"</h2>' : '',
-			's' => isset( $_REQUEST['s'] ) ? $_REQUEST['s'] : '',
-			'icon_types' => self::mla_get_icon_type_dropdown( $page_template_array, 'mla_upload_item[icon_type]' ),
-			'inline_icon_types' => self::mla_get_icon_type_dropdown( $page_template_array, 'icon_type' ),
-			'bulk_icon_types' => self::mla_get_icon_type_dropdown( $page_template_array, 'icon_type', '.nochange.' ),
-		);
-
-		foreach ( $add_form_values as $key => $value ) {
-			$page_values[ $key ] = $value;
-		}
-		$page_content['body'] = MLAData::mla_parse_template( $page_template_array['before-table'], $page_values );
-
-		//	 Now we can render the completed list table
-		ob_start();
-		$MLAListUploadTable->views();
-		$MLAListUploadTable->display();
-		$page_content['body'] .= ob_get_contents();
-		ob_end_clean();
-
-		$page_content['body'] .= MLAData::mla_parse_template( $page_template_array['after-table'], $page_values );
-
-		return $page_content;
-	}
-
-	/**
-	 * Compose the MLA Gallery tab content for the Settings subpage
-	 *
-	 * @since 0.80
-	 * @uses $page_template_array contains tab content template(s)
- 	 *
-	 * @return	array	'message' => status/error messages, 'body' => tab content
-	 */
-	private static function _compose_mla_gallery_tab( ) {
-		/*
-		 * Check for submit buttons to change or reset settings.
-		 * Initialize page messages and content.
-		 */
-		if ( !empty( $_REQUEST['mla-gallery-options-save'] ) ) {
-			check_admin_referer( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME );
-			$page_content = self::_save_gallery_settings( );
-		} else {
-			$page_content = array(
-				'message' => '',
-				'body' => '' 
-			);
-		}
-
-		if ( !empty( $page_content['body'] ) ) {
-			return $page_content;
-		}
-
-		/*
-		 * Compose shortcode jump table
-		 */
-		$shortcode_jump_rows = '';
-		foreach( MLATemplate_Support::$mla_template_definitions['style'] as $shortcode => $definition ) {
-			$template_values = array(
-				'shortcode' => $shortcode,
-				'Go to Style Templates' => sprintf( '%1$s [mla_%2$s] %3$s', __( 'Go to', 'media-library-assistant' ), $shortcode, __( 'Style Templates', 'media-library-assistant' ) ),
-				'Go to Markup Templates' => sprintf( '%1$s [mla_%2$s] %3$s', __( 'Go to', 'media-library-assistant' ), $shortcode, __( 'Markup Templates', 'media-library-assistant' ) ),
-			);
-
-			$shortcode_jump_rows .= MLAData::mla_parse_template( self::$page_template_array['shortcode-jump-row'], $template_values );
-		}
-
-		$page_values = array(
-			'MLA Shortcode Options' => __( 'MLA Shortcode Options', 'media-library-assistant' ),
-			'Shortcode Jump Rows' => $shortcode_jump_rows,
-			'In this tab' => __( 'In this tab you can view the default style and markup templates. You can also define additional templates and use the <code>mla_style</code> and <code>mla_markup</code> parameters to apply them in your <code>[mla_gallery]</code> shortcodes. <strong>NOTE:</strong> template additions and changes will not be made permanent until you click "Save Changes" at the bottom of this page.', 'media-library-assistant' ),
-			'form_url' => admin_url( 'options-general.php' ) . '?page=mla-settings-menu-mla_gallery&mla_tab=mla_gallery',
-			'options_list' => '',
-			'Go to Top' => __( 'Go to Top', 'media-library-assistant' ),
-			'Go to Bottom' => __( 'Go to Bottom', 'media-library-assistant' ),
-			'style_sections_list' => '',
-			'markup_sections_list' => '',
-			'Save Changes' => __( 'Save Changes', 'media-library-assistant' ),
-			'_wpnonce' => wp_nonce_field( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME, true, false ),
-			'_wp_http_referer' => wp_referer_field( false )
-		);
-
-		/*
-		 * Build default template selection lists
-		 */
-		MLACoreOptions::$mla_option_definitions['default_style']['options'][] = 'none';
-		MLACoreOptions::$mla_option_definitions['default_style']['texts'][] = '&mdash; ' . __( 'None', 'media-library-assistant' ) . ' &mdash;';
-		MLACoreOptions::$mla_option_definitions['default_style']['options'][] = 'theme';
-		MLACoreOptions::$mla_option_definitions['default_style']['texts'][] = '&mdash; ' . __( 'Theme', 'media-library-assistant' ) . ' &mdash;';
-
-		$templates = MLATemplate_Support::mla_get_style_templates( 'gallery' );
-		ksort($templates);
-		foreach ($templates as $key => $value ) {
-			MLACoreOptions::$mla_option_definitions['default_style']['options'][] = $key;
-			MLACoreOptions::$mla_option_definitions['default_style']['texts'][] = $key;
-		}
-
-		$templates = MLATemplate_Support::mla_get_markup_templates( 'gallery' );
-		ksort($templates);
-		foreach ($templates as $key => $value ) {
-			MLACoreOptions::$mla_option_definitions['default_markup']['options'][] = $key;
-			MLACoreOptions::$mla_option_definitions['default_markup']['texts'][] = $key;
-		}
-
-		/*
-		 * Check for MLA Viewer Support requirements,
-		 * starting with Imagick check
-		 */
-		if ( ! class_exists( 'Imagick' ) ) {
-			$not_supported_warning = '<br>&nbsp;&nbsp;' . __( 'Imagick support is not installed.', 'media-library-assistant' );
-		} else {
-			$not_supported_warning = '';
-		}
-
-		$ghostscript_path = MLACore::mla_get_option( 'ghostscript_path' );
-		if ( ! MLAShortcode_Support::mla_ghostscript_present( $ghostscript_path, true ) ) {
-			$not_supported_warning .= '<br>&nbsp;&nbsp;' . __( 'Ghostscript support is not installed.', 'media-library-assistant' );
-		}
-
-		if ( ! empty( $not_supported_warning ) ) {
-			MLACoreOptions::$mla_option_definitions['enable_mla_viewer']['help'] = '<strong>' . __( 'WARNING:', 'media-library-assistant' ) . __( ' MLA Viewer support may not be available', 'media-library-assistant' ) . ':</strong>' . $not_supported_warning;
-		}
-
-		/*
-		 * Start with any page-level options
-		 */
-		$options_list = '';
-		foreach ( MLACoreOptions::$mla_option_definitions as $key => $value ) {
-			if ( 'mla_gallery' == $value['tab'] ) {
-				$options_list .= self::mla_compose_option_row( $key, $value );
-			}
-		}
-
-		$page_values['options_list'] = $options_list;
-
-		/*
-		 * Add style templates by shortcode; defaults go first
-		 */
-		$style_sections_list = '';
-
-		foreach( MLATemplate_Support::$mla_template_definitions['style'] as $shortcode => $definition ) {
-			$templates = MLATemplate_Support::mla_get_style_templates( $definition['slug'] );
-			$style_options_list = '';
-
-			foreach ( $definition['default_names'] as $default ) {
-				if ( !array_key_exists( $default, $templates ) ) {
-					continue;
-				}
-
-				$value =$templates[ $default ];
-				if ( ! empty( $value ) ) {
-					$template_values = array (
-						'help' => __( 'This default template cannot be altered or deleted, but you can copy the styles.', 'media-library-assistant' )
-					);
-					$control_cells = MLAData::mla_parse_template( self::$page_template_array['mla-gallery-default'], $template_values );
-
-					$template_values = array (
-						'Name' => __( 'Name', 'media-library-assistant' ),
-						'name_name' => "mla_style_templates_name[{$shortcode}][{$default}]",
-						'name_id' => "mla_style_templates_name_{$shortcode}_{$default}",
-						'readonly' => 'readonly="readonly"',
-						'name_text' => $default,
-						'control_cells' => $control_cells,
-						'Styles' => $definition['label'],
-						'value_name' => "mla_style_templates_value[{$shortcode}][{$default}]",
-						'value_id' => "mla_style_templates_value_{$shortcode}_{$default}",
-						'value_text' => esc_textarea( $value ),
-						'value_help' => $definition['help'],
-					);
-
-					$style_options_list .= MLAData::mla_parse_template( self::$page_template_array['mla-gallery-style'], $template_values );
-				} // $value
-			} // foreach default
-
-			foreach ( $templates as $name => $value ) {
-				$slug = sanitize_title( $name );
-
-				if ( in_array( $name, $definition['default_names'] ) ) {
-					continue; // already handled above
-				}
-
-				$template_values = array (
-					'name' => "mla_style_templates_delete[{$shortcode}][{$slug}]",
-					'id' => "mla_style_templates_delete_{$shortcode}_{$slug}",
-					'value' => __( 'Delete this template', 'media-library-assistant' ),
-					'help' => __( 'Check the box to delete this template when you press Update at the bottom of the page.', 'media-library-assistant' )
-				);
-				$control_cells = MLAData::mla_parse_template( self::$page_template_array['mla-gallery-delete'], $template_values );
-
-				$template_values = array (
-					'Name' => __( 'Name', 'media-library-assistant' ),
-					'name_name' => "mla_style_templates_name[{$shortcode}][{$slug}]",
-					'name_id' => "mla_style_templates_name_{$shortcode}_{$slug}",
-					'readonly' => '',
-					'name_text' => $slug,
-					'control_cells' => $control_cells,
-					'Styles' => $definition['label'],
-					'value_name' => "mla_style_templates_value[{$shortcode}][{$slug}]",
-					'value_id' => "mla_style_templates_value_{$shortcode}_{$slug}",
-					'value_text' => esc_textarea( $value ),
-					'value_help' => $definition['help'],
-				);
-
-				$style_options_list .= MLAData::mla_parse_template( self::$page_template_array['mla-gallery-style'], $template_values );
-			} // foreach $templates
-
-			/*
-			 * Add blank style template for additions
-			 */
-			if ( ! empty( $value ) ) {
-				$template_values = array (
-					'help' => __( 'Fill in a name and styles to add a new template.', 'media-library-assistant' )
-				);
-				$control_cells = MLAData::mla_parse_template( self::$page_template_array['mla-gallery-default'], $template_values );
-
-				$template_values = array (
-					'Name' => __( 'Name', 'media-library-assistant' ),
-					'name_name' => "mla_style_templates_name[{$shortcode}][blank]",
-					'name_id' => "mla_style_templates_name_{$shortcode}_blank",
-					'readonly' => '',
-					'name_text' => '',
-					'control_cells' => $control_cells,
-					'Styles' => $definition['label'],
-					'value_name' => "mla_style_templates_value[{$shortcode}][blank]",
-					'value_id' => "mla_style_templates_value_{$shortcode}_blank",
-					'value_text' => '',
-					'value_help' => $definition['help'],
-				);
-
-				$style_options_list .= MLAData::mla_parse_template( self::$page_template_array['mla-gallery-style'], $template_values );
-			} // $value
-
-			/*
-			 * Compose the Styles section for this shortcode
-			 */
-			$template_values = array (
-				'shortcode' => $shortcode,
-				'template_type' => 'style',
-				'Go to Top' => __( 'Go to Top', 'media-library-assistant' ),
-				'Go to Bottom' => __( 'Go to Bottom', 'media-library-assistant' ),
-				'Templates' => "[mla_{$shortcode}] " . __( 'Style Templates', 'media-library-assistant' ),
-				'templates_list' => $style_options_list,
-			);
-
-			$style_sections_list .= MLAData::mla_parse_template( self::$page_template_array['templates-list'], $template_values );
-		} // $shortcode
-
-		$page_values['style_sections_list'] = $style_sections_list;
-
-		/*
-		 * Add markup templates; defaults go first
-		 */
-		$markup_sections_list = '';
-
-		foreach( MLATemplate_Support::$mla_template_definitions['markup'] as $shortcode => $definition ) {
-			$templates = MLATemplate_Support::mla_get_markup_templates( $definition['slug'] );
-			$markup_options_list = '';
-
-			$sorted_sections = array();
-			foreach( MLATemplate_Support::$mla_template_definitions['markup'][ $shortcode ]['sections'] as $section_slug => $section_definition ) {
-				$sorted_sections[ $section_definition['order'] ] = $section_definition;
-				$sorted_sections[ $section_definition['order'] ]['slug'] = $section_slug;
-			}
-			ksort( $sorted_sections, SORT_NUMERIC );
-
-			foreach ( $definition['default_names'] as $default ) {
-				if ( !array_key_exists( $default, $templates ) ) {
-					continue;
-				}
-
-				$value =$templates[ $default ];
-				if ( ! empty( $value ) ) {
-					$sections_list = '';
-					foreach( $sorted_sections as $section_definition ) {
-						$section_slug = $section_definition['slug'];
-						$template_values = array (
-							'Label' => $section_definition['label'],
-							'name' => "mla_markup_templates_sections[{$shortcode}][{$default}][{$section_slug}]",
-							'id' => "mla_markup_templates_name_{$shortcode}_{$default}_{$section_slug}",
-							'rows' => $section_definition['rows'],
-							'readonly' => 'readonly="readonly"',
-							'text' => isset( $value[ $section_slug ] ) ? esc_textarea( $value[ $section_slug ] ) : '',
-							'help' => $section_definition['help'],
-						);
-
-						$sections_list .= MLAData::mla_parse_template( self::$page_template_array['template-section'], $template_values );
-					} // $section
-
-					$template_values = array (
-						'help' => __( 'This default template cannot be altered or deleted, but you can copy the markup.', 'media-library-assistant' )
-					);
-					$control_cells = MLAData::mla_parse_template( self::$page_template_array['mla-gallery-default'], $template_values );
-
-					$template_values = array (
-						'Name' => __( 'Name', 'media-library-assistant' ),
-						'name_name' => "mla_markup_templates_name[{$shortcode}][{$default}]",
-						'name_id' => "mla_markup_templates_name_{$shortcode}_{$default}",
-						'readonly' => 'readonly="readonly"',
-						'name_text' => $default,
-						'control_cells' => $control_cells,
-						'sections_list' => $sections_list,
-					);
-
-					$markup_options_list .= MLAData::mla_parse_template( self::$page_template_array['mla-gallery-markup'], $template_values );
-				} // $value
-			} // foreach default
-
-			foreach ( $templates as $name => $value ) {
-				$slug = sanitize_title( $name );
-
-				if ( in_array( $name, $definition['default_names'] ) ) {
-					continue; // already handled above
-				}
-
-				if ( ! empty( $value ) ) {
-					$sections_list = '';
-					foreach( $sorted_sections as $section_definition ) {
-						$section_slug = $section_definition['slug'];
-						$template_values = array (
-							'Label' => $section_definition['label'],
-							'name' => "mla_markup_templates_sections[{$shortcode}][{$name}][{$section_slug}]",
-							'id' => "mla_markup_templates_name_{$shortcode}_{$name}_{$section_slug}",
-							'rows' => $section_definition['rows'],
-							'readonly' => '',
-							'text' => isset( $value[ $section_slug ] ) ? esc_textarea( $value[ $section_slug ] ) : '',
-							'help' => $section_definition['help'],
-						);
-
-						$sections_list .= MLAData::mla_parse_template( self::$page_template_array['template-section'], $template_values );
-					} // $section
-
-					$template_values = array (
-						'name' => "mla_markup_templates_delete[{$shortcode}][{$slug}]",
-						'id' => "mla_markup_templates_delete_{$shortcode}_{$slug}",
-						'value' => __( 'Delete this template', 'media-library-assistant' ),
-						'help' => __( 'Check the box to delete this template when you press Update at the bottom of the page.', 'media-library-assistant' )
-					);
-					$control_cells = MLAData::mla_parse_template( self::$page_template_array['mla-gallery-delete'], $template_values );
-
-					$template_values = array (
-						'Name' => __( 'Name', 'media-library-assistant' ),
-						'name_name' => "mla_markup_templates_name[{$shortcode}][{$slug}]",
-						'name_id' => "mla_markup_templates_name_{$shortcode}_{$slug}",
-						'readonly' => '',
-						'name_text' => $slug,
-						'control_cells' => $control_cells,
-						'sections_list' => $sections_list,
-					);
-
-					$markup_options_list .= MLAData::mla_parse_template( self::$page_template_array['mla-gallery-markup'], $template_values );
-				} // $value
-			} // foreach $templates
-
-			/*
-			 * Add blank markup template for additions
-			 */
-			if ( ! empty( $value ) ) {
-				$template_values = array (
-					'help' => __( 'Fill in a name and markup to add a new template.', 'media-library-assistant' )
-				);
-				$control_cells = MLAData::mla_parse_template( self::$page_template_array['mla-gallery-default'], $template_values );
-
-				$sections_list = '';
-				foreach( $sorted_sections as $section_definition ) {
-					$section_slug = $section_definition['slug'];
-					$template_values = array (
-						'Label' => $section_definition['label'],
-						'name' => "mla_markup_templates_sections[{$shortcode}][blank][{$section_slug}]",
-						'id' => "mla_markup_templates_name_{$shortcode}_blank_{$section_slug}",
-						'rows' => $section_definition['rows'],
-						'readonly' => '',
-						'text' => '',
-						'help' => $section_definition['help'],
-					);
-
-					$sections_list .= MLAData::mla_parse_template( self::$page_template_array['template-section'], $template_values );
-				} // $section
-
-				$template_values = array (
-					'Name' => __( 'Name', 'media-library-assistant' ),
-					'name_name' => "mla_markup_templates_name[{$shortcode}][blank]",
-					'name_id' => "mla_markup_templates_name_{$shortcode}_blank",
-					'name_text' => '',
-					'control_cells' => $control_cells,
-					'sections_list' => $sections_list,
-				);
-
-				$markup_options_list .= MLAData::mla_parse_template( self::$page_template_array['mla-gallery-markup'], $template_values );
-			} // $value
-
-			/*
-			 * Compose the Markup section for this shortcode
-			 */
-			$template_values = array (
-				'shortcode' => $shortcode,
-				'template_type' => 'markup',
-				'Go to Top' => __( 'Go to Top', 'media-library-assistant' ),
-				'Go to Bottom' => __( 'Go to Bottom', 'media-library-assistant' ),
-				'Templates' => "[mla_{$shortcode}] " . __( 'Markup Templates', 'media-library-assistant' ),
-				'templates_list' => $markup_options_list,
-			);
-
-			$markup_sections_list .= MLAData::mla_parse_template( self::$page_template_array['templates-list'], $template_values );
-		} // $shortcode
-
-		$page_values['markup_sections_list'] = $markup_sections_list;
-
-		$page_content['body'] = MLAData::mla_parse_template( self::$page_template_array['mla-gallery-tab'], $page_values );
-		return $page_content;
-	}
-
-	/**
-	 * Compose the Custom Field tab content for the Settings subpage
-	 *
-	 * @since 1.10
-	 * @uses $page_template_array contains tab content template(s)
- 	 *
-	 * @return	array	'message' => status/error messages, 'body' => tab content
-	 */
-	private static function _compose_custom_field_tab( ) {
-		/*
-		 * Check for action or submit buttons.
-		 * Initialize page messages and content.
-		 */
-		if ( isset( $_REQUEST['custom_field_mapping'] ) && is_array( $_REQUEST['custom_field_mapping'] ) ) {
-			check_admin_referer( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME );
-
-			/*
-			 * Check for page-level submit buttons to change settings or map attachments.
-			 * Initialize page messages and content.
-			 */
-			if ( !empty( $_REQUEST['custom-field-options-save'] ) ) {
-				$page_content = self::_save_custom_field_settings( );
-			} elseif ( !empty( $_REQUEST['custom-field-options-map'] ) ) {
-				$page_content = self::_process_custom_field_mapping( );
-			} else {
-				$page_content = array(
-					'message' => '',
-					'body' => '' 
-				);
-
-				/*
-				 * Check for single-rule action buttons
-				 */
-				foreach ( $_REQUEST['custom_field_mapping'] as $key => $value ) {
-					$value = stripslashes_deep( $value );
-
-					if ( isset( $value['action'] ) ) {
-						$settings = array( $key => $value );
-						foreach ( $value['action'] as $action => $label ) {
-							switch( $action ) {
-								case 'delete_field':
-									$delete_result = self::_delete_custom_field( $value );
-								case 'delete_rule':
-								case 'add_rule':
-								case 'add_field':
-								case 'update_rule':
-									$page_content = self::_save_custom_field_settings( $settings );
-									if ( isset( $delete_result ) ) {
-										$page_content['message'] = $delete_result . $page_content['message'];
-									}
-									break;
-								case 'map_now':
-									$page_content = self::_process_custom_field_mapping( $settings );
-									break;
-								case 'add_rule_map':
-								case 'add_field_map':
-									$page_content = self::_save_custom_field_settings( $settings );
-									if ( false === strpos( $page_content['message'], __( 'ERROR', 'media-library-assistant' ) ) ) {
-										$current_values = MLACore::mla_get_option( 'custom_field_mapping' );
-										$settings = array( $value['name'] => $current_values[$value['name']] );
-										$map_content = self::_process_custom_field_mapping( $settings );
-										$page_content['message'] .= '<br>&nbsp;<br>' . $map_content['message'];
-									}
-									break;
-								default:
-									// ignore everything else
-							} //switch action
-						} // foreach action
-					} /// isset action
-				} // foreach rule
-			} // specific rule check
-		} // isset custom_field_mapping
-		else {
-			$page_content = array(
-				'message' => '',
-				'body' => '' 
-			);
-		}
-
-		if ( !empty( $page_content['body'] ) ) {
-			return $page_content;
-		}
-
-		$page_values = array(
-			'Mapping Progress' => __( 'Custom Field Mapping Progress', 'media-library-assistant' ),
-			'DO NOT' => __( 'DO NOT DO THE FOLLOWING (they will cause mapping to fail)', 'media-library-assistant' ),
-			'DO NOT Close' => __( 'Close the window', 'media-library-assistant' ),
-			'DO NOT Reload' => __( 'Reload the page', 'media-library-assistant' ),
-			'DO NOT Click' => __( 'Click the browser&rsquo;s Stop, Back or forward buttons', 'media-library-assistant' ),
-			'Progress' => __( 'Progress', 'media-library-assistant' ),
-			'Cancel' => __( 'Cancel', 'media-library-assistant' ),
-			'Resume' => __( 'Resume', 'media-library-assistant' ),
-			'Close' => __( 'Close', 'media-library-assistant' ),
-			'Refresh' => __( 'Refresh', 'media-library-assistant' ),
-			'refresh_href' => '?page=mla-settings-menu-custom_field&mla_tab=custom_field',
-		);
-
-		$progress_div = MLAData::mla_parse_template( self::$page_template_array['mla-progress-div'], $page_values );
-
-		$page_values = array(
-			'mla-progress-div' => $progress_div,
-			'Custom Field Options' => __( 'Custom Field and Attachment Metadata Processing Options', 'media-library-assistant' ),
-			/* translators: 1: Documentation hyperlink */
-			'In this tab' => sprintf( __( 'In this tab you can define the rules for mapping several types of image metadata to WordPress custom fields. You can also use this screen to define rules for adding or updating fields within the WordPress-supplied "Attachment Metadata", stored in the "_wp_attachment_metadata" custom field. See the %1$s section of the Documentation for details.', 'media-library-assistant' ), '<a href="[+settingsURL+]?page=mla-settings-menu-documentation&amp;mla_tab=documentation#attachment_metadata_mapping" title="' . __( 'Updating Attachment Metadata Documentation', 'media-library-assistant' ) . '">' . __( 'Adding or changing Attachment Metadata', 'media-library-assistant' ) . '</a>' ),
-			/* translators: 1: Documentation hyperlink */
-			'You can find' => sprintf( __( 'You can find more information about using the controls in this tab to define mapping rules and apply them in the %1$s section of the Documentation.', 'media-library-assistant' ), '<a href="[+settingsURL+]?page=mla-settings-menu-documentation&amp;mla_tab=documentation#mla_custom_field_mapping" title="' . __( 'Custom Field Options documentation', 'media-library-assistant' ) . '">' . __( 'Custom Field and Attachment Metadata Processing Options', 'media-library-assistant' ) . '</a>' ),
-			'settingsURL' => admin_url('options-general.php'),
-			'form_url' => admin_url( 'options-general.php' ) . '?page=mla-settings-menu-custom_field&mla_tab=custom_field',
-			'options_list' => '',
-			'Custom field mapping' => __( 'Custom field mapping', 'media-library-assistant' ),
-			'custom_options_list' => '',
-			'Save Changes' => __( 'Save Changes', 'media-library-assistant' ),
-			'Map All Rules' => __( 'Map All Rules, All Attachments Now', 'media-library-assistant' ),
-			/* translators: 1: "Save Changes" */
-			'Click Save Changes' => sprintf( __( 'Click %1$s to update the "Enable custom field mapping..." checkbox and/or all rule changes and additions at once. <strong>No rule mapping will be performed.</strong>', 'media-library-assistant' ), '<strong>' . __( 'Save Changes', 'media-library-assistant' ) . '</strong>' ),
-			/* translators: 1: "Map All Rules..." */
-			'Click Map All' => sprintf( __( 'Click %1$s to apply all the rules at once (rule changes will be applied but not saved).', 'media-library-assistant' ), '<strong>' . __( 'Map All Rules, All Attachments Now', 'media-library-assistant' ) . '</strong>' ),
-			'_wpnonce' => wp_nonce_field( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME, true, false ),
-			'_wp_http_referer' => wp_referer_field( false )
-		);
-
-		/*
-		 * Start with any page-level options
-		 */
-		$options_list = '';
-		foreach ( MLACoreOptions::$mla_option_definitions as $key => $value ) {
-			if ( 'custom_field' == $value['tab'] ) {
-				$options_list .= self::mla_compose_option_row( $key, $value );
-			}
-		}
-
-		$page_values['options_list'] = $options_list;
-
-		/*
-		 * Add mapping options
-		 */
-		$page_values['custom_options_list'] = MLAOptions::mla_custom_field_option_handler( 'render', 'custom_field_mapping', MLACoreOptions::$mla_option_definitions['custom_field_mapping'] );
-
-		$page_content['body'] = MLAData::mla_parse_template( self::$page_template_array['custom-field-tab'], $page_values );
-		return $page_content;
-	}
-
-	/**
-	 * Compose the IPTC/EXIF tab content for the Settings subpage
-	 *
-	 * @since 1.00
-	 * @uses $page_template_array contains tab content template(s)
- 	 *
-	 * @return	array	'message' => status/error messages, 'body' => tab content
-	 */
-	private static function _compose_iptc_exif_tab( ) {
-		/*
-		 * Initialize page messages and content.
-		 * Check for submit buttons to change or reset settings.
-		 */
-		$page_content = array(
-			'message' => '',
-			'body' => '' 
-		);
-
-		if ( isset( $_REQUEST['iptc_exif_mapping'] ) && is_array( $_REQUEST['iptc_exif_mapping'] ) ) {
-			check_admin_referer( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME );
-
-			if ( !empty( $_REQUEST['iptc-exif-options-save'] ) ) {
-				$page_content = self::_save_iptc_exif_settings( );
-			} elseif ( !empty( $_REQUEST['iptc-exif-options-process-standard'] ) ) {
-				$page_content = self::_process_iptc_exif_standard( );
-			} elseif ( !empty( $_REQUEST['iptc-exif-options-process-taxonomy'] ) ) {
-				$page_content = self::_process_iptc_exif_taxonomy( );
-			} elseif ( !empty( $_REQUEST['iptc-exif-options-process-custom'] ) ) {
-				$page_content = self::_process_iptc_exif_custom( );
-			} else {
-				/*
-				 * Check for single-rule action buttons
-				 */
-				foreach ( $_REQUEST['iptc_exif_mapping']['custom'] as $key => $value ) {
-					$value = stripslashes_deep( $value );
-
-					if ( isset( $value['action'] ) ) {
-						$settings = array( 'custom' => array( $key => $value ) );
-						foreach ( $value['action'] as $action => $label ) {
-							switch( $action ) {
-								case 'delete_field':
-									$delete_result = self::_delete_custom_field( $value );
-								case 'delete_rule':
-								case 'add_rule':
-								case 'add_field':
-								case 'update_rule':
-									$page_content = self::_save_iptc_exif_custom_settings( $settings );
-									if ( isset( $delete_result ) ) {
-										$page_content['message'] = $delete_result . $page_content['message'];
-									}
-									break;
-								case 'map_now':
-									$page_content = self::_process_iptc_exif_custom( $settings );
-									break;
-								case 'add_rule_map':
-								case 'add_field_map':
-									$page_content = self::_save_iptc_exif_custom_settings( $settings );
-									if ( false === strpos( $page_content['message'], __( 'ERROR', 'media-library-assistant' ) ) ) {
-										$current_values = MLACore::mla_get_option( 'iptc_exif_mapping' );
-										$settings = array( 'custom' => array( $value['name'] => $current_values['custom'][$value['name']] ) );
-										$map_content = self::_process_iptc_exif_custom( $settings );
-										$page_content['message'] .= '<br>&nbsp;<br>' . $map_content['message'];
-									}
-									break;
-								default:
-									// ignore everything else
-							} //switch action
-						} // foreach action
-					} /// isset action
-				} // foreach rule
-			}
-
-			if ( !empty( $page_content['body'] ) ) {
-				return $page_content;
-			}
-		}
-
-		$page_values = array(
-			'Mapping Progress' => __( 'IPTC &amp; EXIF Mapping Progress', 'media-library-assistant' ),
-			'DO NOT' => __( 'DO NOT DO THE FOLLOWING (they will cause mapping to fail)', 'media-library-assistant' ),
-			'DO NOT Close' => __( 'Close the window', 'media-library-assistant' ),
-			'DO NOT Reload' => __( 'Reload the page', 'media-library-assistant' ),
-			'DO NOT Click' => __( 'Click the browser&rsquo;s Stop, Back or forward buttons', 'media-library-assistant' ),
-			'Progress' => __( 'Progress', 'media-library-assistant' ),
-			'Cancel' => __( 'Cancel', 'media-library-assistant' ),
-			'Resume' => __( 'Resume', 'media-library-assistant' ),
-			'Close' => __( 'Close', 'media-library-assistant' ),
-			'Refresh' => __( 'Refresh', 'media-library-assistant' ),
-			'refresh_href' => '?page=mla-settings-menu-iptc_exif&mla_tab=iptc_exif',
-		);
-
-		$progress_div = MLAData::mla_parse_template( self::$page_template_array['mla-progress-div'], $page_values );
-
-		$page_values = array(
-			'mla-progress-div' => $progress_div,
-			'IPTX/EXIF Options' => __( 'IPTC &amp; EXIF Processing Options', 'media-library-assistant' ),
-			'In this tab' => __( 'In this tab you can define the rules for mapping IPTC (International Press Telecommunications Council) and EXIF (EXchangeable Image File) metadata to WordPress standard attachment fields, taxonomy terms and custom fields. <strong>NOTE:</strong> settings changes will not be made permanent until you click "Save Changes" at the bottom of this page.', 'media-library-assistant' ),
-			/* translators: 1: Documentation hyperlink */
-			'You can find' => sprintf( __( 'You can find more information about using the controls in this tab to define mapping rules and apply them in the %1$s section of the Documentation.', 'media-library-assistant' ), '<a href="[+settingsURL+]?page=mla-settings-menu-documentation&amp;mla_tab=documentation#mla_iptc_exif_mapping" title="' . __( 'IPTC/EXIF Options documentation', 'media-library-assistant' ) . '">' . __( 'IPTC &amp; EXIF Processing Options', 'media-library-assistant' ) . '</a>' ),
-			'settingsURL' => admin_url('options-general.php'),
-			'form_url' => admin_url( 'options-general.php' ) . '?page=mla-settings-menu-iptc_exif&mla_tab=iptc_exif',
-			'options_list' => '',
-			'Standard field mapping' => __( 'Standard field mapping', 'media-library-assistant' ),
-			'Map Standard Fields' => __( 'Map All Attachments, Standard Fields Now', 'media-library-assistant' ),
-			'standard_options_list' => '',
-			'Taxonomy term mapping' => __( 'Taxonomy term mapping', 'media-library-assistant' ),
-			'Map Taxonomy Terms' => __( 'Map All Attachments, Taxonomy Terms Now', 'media-library-assistant' ),
-			'taxonomy_options_list' => '',
-			'Custom field mapping' => __( 'Custom field mapping', 'media-library-assistant' ),
-			'Map Custom Fields' => __( 'Map All Attachments, Custom Fields Now', 'media-library-assistant' ),
-			'custom_options_list' => '',
-			'Save Changes' => __( 'Save Changes', 'media-library-assistant' ),
-			/* translators: 1: "Save Changes" */
-			'Click Save Changes' => sprintf( __( 'Click %1$s to update the "Enable IPTC/EXIF mapping..." checkbox and/or all rule changes and additions at once. <strong>No rule mapping will be performed.</strong>', 'media-library-assistant' ), '<strong>' . __( 'Save Changes', 'media-library-assistant' ) . '</strong>' ),
-			'_wpnonce' => wp_nonce_field( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME, true, false ),
-			'_wp_http_referer' => wp_referer_field( false )
-		);
-
-		/*
-		 * Start with any page-level options
-		 */
-		$options_list = '';
-		foreach ( MLACoreOptions::$mla_option_definitions as $key => $value ) {
-			if ( 'iptc_exif' == $value['tab'] ) {
-				$options_list .= self::mla_compose_option_row( $key, $value );
-			}
-		}
-
-		$page_values['options_list'] = $options_list;
-
-		/*
-		 * Add mapping options
-		 */
-		$page_values['standard_options_list'] = MLAOptions::mla_iptc_exif_option_handler( 'render', 'iptc_exif_standard_mapping', MLACoreOptions::$mla_option_definitions['iptc_exif_standard_mapping'] );
-
-		$page_values['taxonomy_options_list'] = MLAOptions::mla_iptc_exif_option_handler( 'render', 'iptc_exif_taxonomy_mapping', MLACoreOptions::$mla_option_definitions['iptc_exif_taxonomy_mapping'] );
-
-		$page_values['custom_options_list'] = MLAOptions::mla_iptc_exif_option_handler( 'render', 'iptc_exif_custom_mapping', MLACoreOptions::$mla_option_definitions['iptc_exif_custom_mapping'] );
-
-		$page_content['body'] = MLAData::mla_parse_template( self::$page_template_array['iptc-exif-tab'], $page_values );
-		return $page_content;
-	}
-
-	/**
-	 * Compose the Example Plugin tab content for the Settings/Documentation subpage
-	 *
-	 * @since 2.32
-	 *
-	 * @return	array	'message' => status/error messages, 'body' => tab content
-	 */
-	private static function _compose_example_tab() {
-		$page_template_array = MLACore::mla_load_template( 'admin-display-settings-example-tab.tpl' );
-
-		/*
-		 * Display the Example Plugin Table
-		 */
-		$_SERVER['REQUEST_URI'] = add_query_arg( array( 'mla-example-display' => 'true' ), remove_query_arg( array(
-			'mla_admin_action',
-			'mla_item_slug',
-			'mla_item_ID',
-			'_wpnonce',
-			'_wp_http_referer',
-			'action',
-			'action2',
-			'cb_attachment',
-			'mla-example-search'
-		), $_SERVER['REQUEST_URI'] ) );
-
-		//	Create an instance of our package class
-		$MLAListExampleTable = new MLA_Example_List_Table();
-
-		//	Fetch, prepare, sort, and filter our data
-		$MLAListExampleTable->prepare_items();
-
-		$page_content = array(
-			'message' => '',
-			'body' => '' 
-		);
-
-		$page_values = array(
-			'results' => ! empty( $_REQUEST['s'] ) ? ' - ' . __( 'Displaying search results for', 'media-library-assistant' ) . ': "' . $_REQUEST['s'] . '"' : '',
-			'In this tab' => __( 'In this tab you can browse the list of MLA example plugins, install or update them in the Plugins/Installed Plugins area and see which examples you have already installed. <strong>To activate, deactivate or delete</strong> the plugins you must go to the Plugins/Installed Plugins admin submenu.' ),
-			/* translators: 1: Documentation hyperlink */
-			'You can find' => sprintf( __( 'You can find more information about using the example plugins in the %1$s section of the Documentation or by clicking the <strong>"Help"</strong> tab in the upper-right corner of this screen.', 'media-library-assistant' ), '<a href="[+settingsURL+]?page=mla-settings-menu-documentation&amp;mla_tab=documentation#mla_example_plugins" title="' . __( 'Example plugin documentation', 'media-library-assistant' ) . '">' . __( 'The Example Plugins', 'media-library-assistant' ) . '</a>' ),
-			'views' => '',
-			'settingsURL' => admin_url('options-general.php'),
-			'form_url' => admin_url( 'options-general.php' ) . '?page=mla-settings-menu-documentation&mla_tab=documentation',
-			'_wpnonce' => wp_nonce_field( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME, true, false ),
-			'Example Plugins' => __( 'Example Plugins', 'media-library-assistant' ),
-			'Search Example Plugins' => __( 'Search Example Plugins', 'media-library-assistant' ),
-			's' => isset( $_REQUEST['s'] ) ? esc_attr( stripslashes( $_REQUEST['s'] ) ) : '',
-			'Search Plugins' => __( 'Search Plugins', 'media-library-assistant' ),
-			'Search help' => __( 'Searches Name, Description, File Name and Tags', 'media-library-assistant' ),
-			'Cancel' => __( 'Cancel', 'media-library-assistant' ),
-		);
-
-		ob_start();
-		$MLAListExampleTable->views();
-		$page_values['views'] = ob_get_contents();
-		ob_end_clean();
-
-		$page_content['body'] = MLAData::mla_parse_template( $page_template_array['before-example-table'], $page_values );
-
-		//	 Now we can render the completed list table
-		ob_start();
-		$MLAListExampleTable->display();
-		$page_content['body'] .= ob_get_contents();
-		ob_end_clean();
-
-		$page_content['body'] .= MLAData::mla_parse_template( $page_template_array['after-example-table'], $page_values );
-
-		return $page_content;
-	}
-
-	/**
-	 * Compose the Documentation tab content for the Settings subpage
-	 *
-	 * @since 0.80
-	 * @uses $page_template_array contains tab content template(s)
- 	 *
-	 * @return	array	'message' => status/error messages, 'body' => tab content
-	 */
-	private static function _compose_documentation_tab( ) {
-		/*
-		 * Untangle confusion between searching, canceling and selecting on the Example Plugins submenu
-		 */
-		$bulk_action = self::_current_bulk_action();
-		if ( isset( $_REQUEST['mla-example-cancel'] ) || $bulk_action && ( $bulk_action == 'install' ) ) {
-			unset( $_REQUEST['mla-example-search'] );
-			unset( $_REQUEST['s'] );
-		}
-
-		/*
-		 * Display or Cancel the Example Plugins submenu, if requested
-		 */
-		if ( !empty( $_REQUEST['mla-example-search'] ) ) {
-			check_admin_referer( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME );
-			$page_content = self::_compose_example_tab();
-		} elseif ( !empty( $_REQUEST['mla-example-cancel'] ) ) {
-			$page_content = array(
-				'message' => '',
-				'body' => '' 
-			);
-		} elseif ( !empty( $_REQUEST['mla-example-display'] ) ) {
-			if ( 'true' != $_REQUEST['mla-example-display'] ) {
-				check_admin_referer( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME );
-				//unset( $_REQUEST['s'] );
-			}
-			$page_content = self::_compose_example_tab();
-		} else {
-			$page_content = array(
-				'message' => '',
-				'body' => '' 
-			);
-		}
-
-		/*
-		 * Process bulk actions that affect an array of items
-		 */
-		if ( $bulk_action && ( $bulk_action != 'none' ) ) {
-			$bulk_message = '';
-			if ( isset( $_REQUEST['cb_mla_item_ID'] ) ) {
-				foreach ( $_REQUEST['cb_mla_item_ID'] as $ID ) {
-					switch ( $bulk_action ) {
-						case 'install':
-							$item_content = MLA_Example_List_Table::mla_install_example_plugin( $ID );
-							break;
-						case 'update':
-							$item_content = MLA_Example_List_Table::mla_update_example_plugin( $ID );
-							break;
-						default:
-							/* translators: 1: bulk_action, e.g., delete, edit, restore, trash */
-							$item_content = sprintf( __( 'Unknown bulk action %1$s', 'media-library-assistant' ), $bulk_action );
-						break 2;  // Exit the switch and the foreach
-;
-					} // switch ($_REQUEST['mla_admin_action'])
-
-					$bulk_message .= $item_content . '<br>';
-				} // foreach $ID
-			} // isset cb_attachment
-			else {
-				/* translators: 1: action name, e.g., edit */
-				$bulk_message = sprintf( __( 'Bulk Action %1$s - no items selected.', 'media-library-assistant' ), $bulk_action );
-			}
-
-			$page_content = self::_compose_example_tab();
-			$page_content['message'] = $bulk_message;
-		} // $bulk_action
-
-		/*
-		 * Process row-level actions that affect a single item
-		 */
-		if ( !empty( $_REQUEST['mla_admin_action'] ) ) {
-			check_admin_referer( MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME );
-			$action_content = array( 'message' => '' );
-			if ( empty( $_REQUEST['mla_item_ID'] ) ) {
-				/* translators: 1: bulk_action, e.g., single_item_delete, single_item_edit */
-				$action_content['message'] = sprintf( __( 'Empty mla_item_ID - "%1$s"', 'media-library-assistant' ), $_REQUEST['mla_admin_action'] );
-			} else {
-				switch ( $_REQUEST['mla_admin_action'] ) {
-					case MLA::MLA_ADMIN_SINGLE_EDIT_DISPLAY:
-						$action_content = MLA_Example_List_Table::mla_install_example_plugin( $_REQUEST['mla_item_ID'] );
-						break;
-					case MLA::MLA_ADMIN_SINGLE_EDIT_UPDATE:
-						$action_content = MLA_Example_List_Table::mla_update_example_plugin( $_REQUEST['mla_item_ID'] );
-						break;
-					default:
-						/* translators: 1: bulk_action, e.g., single_item_delete, single_item_edit */
-						$action_content = sprintf( __( 'Unknown mla_admin_action - "%1$s"', 'media-library-assistant' ), $_REQUEST['mla_admin_action'] );
-						break;
-				} // switch ($_REQUEST['mla_admin_action'])
-			}
-
-			$page_content = self::_compose_example_tab();
-			$page_content['message'] = $action_content;
-		} // (!empty($_REQUEST['mla_admin_action'])
-
-		if ( !empty( $page_content['body'] ) ) {
-			return $page_content;
-		}
-
-		$page_template = MLACore::mla_load_template( 'documentation-settings-tab.tpl' );
-		if ( ! is_array( $page_template ) ) {
-			/* translators: 1: ERROR tag 2: function name 3: non-array value */
-			error_log( sprintf( _x( '%1$s: %2$s non-array "%3$s"', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), 'MLASettings::_compose_documentation_tab', var_export( $page_template, true ) ), 0 );
-			return '';
-		}
-
-		/*
-		 * Display the Documentation tab
-		 */
-		$page_values = array(
-			'example_url' => wp_nonce_url( '?page=mla-settings-menu-documentation&mla_tab=documentation&mla-example-search=Search', MLACore::MLA_ADMIN_NONCE_ACTION, MLACore::MLA_ADMIN_NONCE_NAME ),
-			'translate_url' => MLA_PLUGIN_URL . 'languages/MLA Internationalization Guide.pdf',
-			'phpDocs_url' => MLA_PLUGIN_URL . 'phpDocs/index.html',
-		);
-
-		$page_content['body'] = MLAData::mla_parse_template( $page_template['documentation-tab'], $page_values );
-		return $page_content;
 	}
 
 	/**
@@ -3440,6 +1425,9 @@ class MLASettings {
 			'Debug Settings' => __( 'Debug Settings', 'media-library-assistant' ),
 			'settings_list' => $settings_list,
 			'Error Log' => __( 'Error Log', 'media-library-assistant' ),
+			/* translators: 1: Documentation hyperlink */
+			'You can find' => sprintf( __( 'You can find more information about the MLA Reporting/MLA_DEBUG_LEVEL values in the %1$s section of the Documentation tab.', 'media-library-assistant' ), '<a href="[+settingsURL+]?page=mla-settings-menu-documentation&amp;mla_tab=documentation#mla_debug_tab" title="' . __( 'MLA Debug Tab documentation', 'media-library-assistant' ) . '" target="_blank">' . __( 'MLA Debug Tab', 'media-library-assistant' ) . '</a>' ),
+			'settingsURL' => admin_url('options-general.php'),
 			'Error Log Name' => $error_log_name,
 			'Error Log Size' => number_format( (float) $error_log_size ),
 			'error_log_text' => $error_log_contents,
@@ -3476,7 +1464,7 @@ class MLASettings {
 		$development_version =  ( ! empty( $development_version ) ) ? ' (' . $development_version . ')' : '';
 		self::$page_template_array = MLACore::mla_load_template( 'admin-display-settings-page.tpl' );
 		$current_tab_slug = isset( $_REQUEST['mla_tab'] ) ? $_REQUEST['mla_tab']: 'general';
-		$current_tab = self::mla_get_options_tablist( $current_tab_slug );
+		$current_tab = self::_get_options_tablist( $current_tab_slug );
 		$page_values = array(
 			'Support Our Work' => __( 'Support Our Work', 'media-library-assistant' ),
 			'Donate' => __( 'Donate', 'media-library-assistant' ),
@@ -3488,6 +1476,7 @@ class MLASettings {
 			'Media Library Assistant' => __( 'Media Library Assistant', 'media-library-assistant' ),
 			'Settings' => __( 'Settings', 'media-library-assistant' )
 		);
+//error_log( __LINE__ . " mla_render_settings_page( {$current_tab_slug} ) REQUEST = " . var_export( $_REQUEST, true ), 0 );
 
 		/*
 		 * Compose tab content
@@ -3505,447 +1494,24 @@ class MLASettings {
 
 		if ( ! empty( $page_content['message'] ) ) {
 			if ( false !== strpos( $page_content['message'], __( 'ERROR', 'media-library-assistant' ) ) ) {
-				$messages_class = 'mla_errors';
+				$messages_class = 'updated error';
+				$dismiss_button = '';
 			} else {
-				$messages_class = 'mla_messages';
+				$messages_class = 'updated notice is-dismissible';
+				$dismiss_button = "  <button class=\"notice-dismiss\" type=\"button\"><span class=\"screen-reader-text\">[+dismiss_text+].</span></button>\n";
 			}
 
 			$page_values['messages'] = MLAData::mla_parse_template( self::$page_template_array['messages'], array(
+				 'mla_messages_class' => $messages_class ,
 				 'messages' => $page_content['message'],
-				 'mla_messages_class' => $messages_class 
+				 'dismiss_button' => $dismiss_button,
+				 'dismiss_text' => __( 'Dismiss this notice', 'media-library-assistant' ),
 			) );
 		}
 
 		$page_values['tab_content'] = $page_content['body'];
 		echo MLAData::mla_parse_template( self::$page_template_array['page'], $page_values );
 	} // mla_render_settings_page
-
-	/**
-	 * Save MLA Gallery settings to the options table
- 	 *
-	 * @since 0.80
-	 *
-	 * @uses $_REQUEST
-	 *
-	 * @return	array	Message(s) reflecting the results of the operation
-	 */
-	private static function _save_gallery_settings( ) {
-		$settings_changed = false;
-		$message_list = '';
-		$error_list = '';
-
-		/*
-		 * Start with any page-level options
-		 */
-		foreach ( MLACoreOptions::$mla_option_definitions as $key => $value ) {
-			if ( 'mla_gallery' == $value['tab'] ) {
-				$this_setting_changed = false;
-				$old_value = MLACore::mla_get_option( $key );
-
-				if (  'select' == $value['type'] ) {
-					if ( $old_value != $_REQUEST[ MLA_OPTION_PREFIX . $key ] ) {
-						$this_setting_changed = true;
-					}
-				} elseif ( 'text' == $value['type'] ) {
-					if ( '' == $_REQUEST[ MLA_OPTION_PREFIX . $key ] ) {
-						$_REQUEST[ MLA_OPTION_PREFIX . $key ] = $value['std'];
-					}
-
-					if ( $old_value != $_REQUEST[ MLA_OPTION_PREFIX . $key ] ) {
-						$this_setting_changed = true;
-					}
-				} elseif ( 'checkbox' == $value['type'] ) {
-					if ( isset( $_REQUEST[ MLA_OPTION_PREFIX . $key ] ) ) {
-						$this_setting_changed = "checked" != $old_value;
-					} else {
-						$this_setting_changed = "checked" == $old_value;
-					}
-				}
-
-				/*
-				 * Always update to scrub default settings
-				 */
-				$message = self::mla_update_option_row( $key, $value );
-				if ( $this_setting_changed ) {
-					$settings_changed = true;
-					$message_list .= $message;
-				}
-			} // mla_gallery option
-		} // foreach mla_options
-
-		/*
-		 * Get the current style contents for comparison
-		 *     $new_names[ shortcode ][ template_name ]
-		 *     $old_templates, $new_templates [ template_name ] - omit shortcode for backwards compatibility
-		 */
-		$old_templates = MLATemplate_Support::mla_get_style_templates();
-		$new_templates = array();
-		$new_names = $_REQUEST['mla_style_templates_name'];
-		$new_values = stripslashes_deep( $_REQUEST['mla_style_templates_value'] );
-		$new_deletes = isset( $_REQUEST['mla_style_templates_delete'] ) ? $_REQUEST['mla_style_templates_delete']: array();
-
-		/*
-		 * Build new style template array, noting changes
-		 */
-		$templates_changed = false;
-		foreach ( $new_names as $shortcode => $template_names ) {
-			$definition = MLATemplate_Support::$mla_template_definitions['style'][ $shortcode ];
-
-			foreach ( $template_names as $name => $new_name ) {
-				if ( in_array( $name, $definition['default_names'] ) ) {
-					continue;
-				}
-
-				if ( array_key_exists( $shortcode, $new_deletes ) && array_key_exists( $name, $new_deletes[ $shortcode ] ) ) {
-					/* translators: 1: template type 2: template name */
-					$message_list .= '<br>' . sprintf( _x( 'Deleting %1$s "%2$s".', 'message_list', 'media-library-assistant' ), __( 'Style Template', 'media-library-assistant' ), $name );
-					$templates_changed = true;
-					continue;
-				}
-
-				$new_slug = sanitize_title( $new_name );
-				if ( 'blank' == $name ) {
-					if ( '' == $new_slug ) {
-						continue;
-					} elseif ( 'blank' == $new_slug ) {
-						/* translators: 1: ERROR tag 2: template name 3: template type */
-						$error_list .= '<br>' . sprintf( __( '%1$s: Reserved name "%2$s", new %3$s discarded.', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), $new_slug, __( 'Style Template', 'media-library-assistant' ) );
-						continue;
-					}
-
-					if ( array_key_exists( $new_slug, $old_templates ) ) {
-						/* translators: 1: ERROR tag 2: template name 3: template type */
-						$error_list .= '<br>' . sprintf( __( '%1$s: Duplicate name "%2$s", new %3$s discarded.', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), $new_slug, __( 'Style Template', 'media-library-assistant' ) );
-						continue;
-					} else {
-						/* translators: 1: template type 2: template name */
-						$message_list .= '<br>' . sprintf( _x( 'Adding new %1$s "%2$s".', 'message_list', 'media-library-assistant' ), __( 'Style Template', 'media-library-assistant' ), $new_slug );
-						$templates_changed = true;
-					}
-				} // 'blank' - reserved name
-
-				/*
-				 * Handle name changes, check for duplicates
-				 */
-				if ( '' == $new_slug ) {
-					/* translators: 1: ERROR tag 2: element name 3: old value */
-					$error_list .= '<br>' . sprintf( __( '%1$s: Blank %2$s, reverting to "%3$s".', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), __( 'style template name', 'media-library-assistant' ), $name );
-					$new_slug = $name;
-				}
-
-				if ( $new_slug != $name ) {
-					if ( array_key_exists( $new_slug, $old_templates ) ) {
-						/* translators: 1: ERROR tag 2: element name 3: new value 4: old value */
-						$error_list .= '<br>' . sprintf( __( '%1$s: Duplicate new %2$s "%3$s", reverting to "%4$s".', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), __( 'style template name', 'media-library-assistant' ), $new_slug, $name );
-						$new_slug = $name;
-					} elseif ( 'blank' == $new_slug ) {
-						/* translators: 1: ERROR tag 2: element name 3: new value 4: old value */
-						$error_list .= '<br>' . sprintf( __( '%1$s: Reserved %2$s "%3$s", reverting to "%4$s".', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), __( 'style template name', 'media-library-assistant' ), $new_slug, $name );
-						$new_slug = $name;
-					} elseif ( 'blank' != $name ) {
-						/* translators: 1: element name 2: old_value 3: new_value */
-						$message_list .= '<br>' . sprintf( _x( 'Changing %1$s from "%2$s" to "%3$s"', 'message_list', 'media-library-assistant' ), __( 'style template name', 'media-library-assistant' ), $name, $new_slug );
-						$templates_changed = true;
-					}
-				} // name changed
-
-				if ( ( 'blank' != $name ) && ( $new_values[ $shortcode ][ $name ] != $old_templates[ $name ] ) ) {
-					/* translators: 1: template type 2: template name */
-					$message_list .= '<br>' . sprintf( _x( 'Updating contents of %1$s "%2$s".', 'message_list', 'media-library-assistant' ), __( 'Style Template', 'media-library-assistant' ), $new_slug );
-					$templates_changed = true;
-				}
-
-				/*
-				 * Encode shortcode assignment in template content
-				 */
-				$new_templates[ $new_slug ] = sprintf( "<!-- mla_shortcode_slug=\"%1\$s\" -->\r\n%2\$s", $definition['slug'], $new_values[ $shortcode ][ $name ] );
-			} // foreach $name
-		} // each shortcode
-
-		if ( $templates_changed ) {
-			$settings_changed = true;
-			if ( false == MLATemplate_Support::mla_put_style_templates( $new_templates ) ) {
-				/* translators: 1: ERROR tag 2: template type */
-				$error_list .= '<br>' . sprintf( __( '%1$s: Update of %2$s failed.', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), __( 'Style Template', 'media-library-assistant' ) );
-			}
-		}
-
-		/*
-		 * Get the current markup contents for comparison
-		 */
-		$old_templates = MLATemplate_Support::mla_get_markup_templates();
-		$new_templates = array();
-		$new_names = $_REQUEST['mla_markup_templates_name'];
-		$new_deletes = isset( $_REQUEST['mla_markup_templates_delete'] ) ? $_REQUEST['mla_markup_templates_delete']: array();
-		$new_values = stripslashes_deep( $_REQUEST['mla_markup_templates_sections'] );
-
-		/*
-		 * Build new markup template array, noting changes
-		 */
-		$templates_changed = false;
-		foreach ( $new_names as $shortcode => $template_names ) {
-			$definition = MLATemplate_Support::$mla_template_definitions['markup'][ $shortcode ];
-
-			foreach ( $template_names as $name => $new_name ) {
-				if ( in_array( $name, $definition['default_names'] ) ) {
-					continue;
-				}
-
-				if ( array_key_exists( $shortcode, $new_deletes ) && array_key_exists( $name, $new_deletes[ $shortcode ] ) ) {
-					/* translators: 1: template type 2: template name */
-					$message_list .= '<br>' . sprintf( _x( 'Deleting %1$s "%2$s".', 'message_list', 'media-library-assistant' ), __( 'markup template', 'media-library-assistant' ), $name );
-					$templates_changed = true;
-					continue;
-				}
-
-				$new_slug = sanitize_title( $new_name );
-				if ( 'blank' == $name ) {
-					if ( '' == $new_slug ) {
-						continue;
-					}
-
-					if ( 'blank' == $new_slug ) {
-						/* translators: 1: ERROR tag 2: template name 3: template type */
-						$error_list .= '<br>' . sprintf( __( '%1$s: Reserved name "%2$s", new %3$s discarded.', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), $new_slug, __( 'markup template', 'media-library-assistant' ) );
-						continue;
-					}
-
-					if ( array_key_exists( $new_slug, $old_templates ) ) {
-						/* translators: 1: ERROR tag 2: template name 3: template type */
-						$error_list .= '<br>' . sprintf( __( '%1$s: Duplicate name "%2$s", new %3$s discarded.', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), $new_slug, __( 'markup template', 'media-library-assistant' ) );
-						continue;
-					} else {
-						/* translators: 1: template type 2: template name */
-						$message_list .= '<br>' . sprintf( _x( 'Adding new %1$s "%2$s".', 'message_list', 'media-library-assistant' ), __( 'markup template', 'media-library-assistant' ), $new_slug );
-						$templates_changed = true;
-					}
-				} // 'blank' - reserved name
-
-				/*
-				 * Handle name changes, check for duplicates
-				 */
-				if ( '' == $new_slug ) {
-					/* translators: 1: ERROR tag 2: element name 3: old value */
-					$error_list .= '<br>' . sprintf( __( '%1$s: Blank %2$s, reverting to "%3$s".', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), __( 'markup template name', 'media-library-assistant' ), $name );
-					$new_slug = $name;
-				}
-
-				if ( $new_slug != $name ) {
-					if ( array_key_exists( $new_slug, $old_templates ) ) {
-						/* translators: 1: ERROR tag 2: element name 3: new value 4: old value */
-						$error_list .= '<br>' . sprintf( __( '%1$s: Duplicate new %2$s "%3$s", reverting to "%4$s".', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), __( 'markup template name', 'media-library-assistant' ), $new_slug, $name );
-						$new_slug = $name;
-					} elseif ( 'blank' == $new_slug ) {
-						/* translators: 1: ERROR tag 2: element name 3: new value 4: old value */
-						$error_list .= '<br>' . sprintf( __( '%1$s: Reserved %2$s "%3$s", reverting to "%4$s".', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), __( 'markup template name', 'media-library-assistant' ), $new_slug, $name );
-						$new_slug = $name;
-					} elseif ( 'blank' != $name ) {
-						/* translators: 1: element name 2: old_value 3: new_value */
-						$message_list .= '<br>' . sprintf( _x( 'Changing %1$s from "%2$s" to "%3$s"', 'message_list', 'media-library-assistant' ), __( 'markup template name', 'media-library-assistant' ), $name, $new_slug );
-						$templates_changed = true;
-					}
-				} // name changed
-
-				if ( 'blank' != $name ) {
-					foreach ( $new_values[ $shortcode ][ $name ] as $section_name => $section_value ) {
-						$old_value = isset( $old_templates[ $name ][ $section_name ] ) ? $old_templates[ $name ][ $section_name ] : '';
-						if ( $section_value != $old_value ) {
-							/* translators: 1: section name, 2: template name */
-							$message_list .= '<br>' . sprintf( _x( 'Updating %1$s markup for "%2$s".', 'message_list', 'media-library-assistant' ), $section_name, $new_slug );
-							$templates_changed = true;
-						}
-					}
-				} // ! 'blank'
-
-				/*
-				 * Encode shortcode assignment in template content
-				 */
-				if ( isset( $new_values[ $shortcode ][ $name ]['arguments'] ) ) {
-					$new_values[ $shortcode ][ $name ]['arguments'] = sprintf( "mla_shortcode_slug=\"%1\$s\"\r\n%2\$s", $definition['slug'], $new_values[ $shortcode ][ $name ]['arguments'] );
-				} else {
-					$new_values[ $shortcode ][ $name ]['arguments'] = sprintf( "mla_shortcode_slug=\"%1\$s\"\r\n", $definition['slug'] );
-				}
-
-				foreach ( $new_values[ $shortcode ][ $name ] as $section_name => $section_value ) {
-					if ( !empty( $section_value ) ) {
-						$new_templates[ $new_slug ][ $section_name ] = $section_value;
-					}
-				}
-			} // foreach $name
-		} // foreach $shortcode
-
-		if ( $templates_changed ) {
-			$settings_changed = true;
-			if ( false == MLATemplate_Support::mla_put_markup_templates( $new_templates ) ) {
-				/* translators: 1: ERROR tag 2: template type */
-				$error_list .= '<br>' . sprintf( __( '%1$s: Update of %2$s failed.', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), __( 'markup template', 'media-library-assistant' ) );
-			}
-		}
-
-		if ( $settings_changed ) {
-			/* translators: 1: field type */
-			$message = sprintf( __( '%1$s settings saved.', 'media-library-assistant' ), __( 'Shortcodes', 'media-library-assistant' ) ) . "\r\n";
-		} else {
-			/* translators: 1: field type */
-			$message = sprintf( __( '%1$s no changes detected.', 'media-library-assistant' ), __( 'Shortcodes', 'media-library-assistant' ) ) . "\r\n";
-		}
-
-		$page_content = array(
-			'message' => $message . $error_list,
-			'body' => '' 
-		);
-
-		/*
-		 * Uncomment this for debugging.
-		 */
-		// $page_content['message'] .= $message_list;
-
-		return $page_content;
-	} // _save_gallery_settings
-
-	/**
-	 * Save View settings to the options table
- 	 *
-	 * @since 1.40
-	 *
-	 * @uses $_REQUEST
-	 *
-	 * @return	array	Message(s) reflecting the results of the operation
-	 */
-	private static function _save_view_settings( ) {
-		$message_list = '';
-
-		foreach ( MLACoreOptions::$mla_option_definitions as $key => $value ) {
-			if ( 'view' == $value['tab'] ) {
-				$message_list .= self::mla_update_option_row( $key, $value );
-			} // view option
-		} // foreach mla_options
-
-		$page_content = array(
-			'message' => __( 'View settings saved.', 'media-library-assistant' ) . "\r\n",
-			'body' => '' 
-		);
-
-		/*
-		 * Uncomment this for debugging.
-		 */
-		// $page_content['message'] .= $message_list;
-
-		return $page_content;
-	} // _save_view_settings
-
-	/**
-	 * Save Upload settings to the options table
- 	 *
-	 * @since 1.40
-	 *
-	 * @uses $_REQUEST
-	 *
-	 * @return	array	Message(s) reflecting the results of the operation
-	 */
-	private static function _save_upload_settings( ) {
-		$message_list = '';
-
-		if ( ! isset( $_REQUEST[ MLA_OPTION_PREFIX . MLACoreOptions::MLA_ENABLE_UPLOAD_MIMES ] ) )		
-			unset( $_REQUEST[ MLA_OPTION_PREFIX . MLACoreOptions::MLA_ENABLE_MLA_ICONS ] );
-
-		foreach ( MLACoreOptions::$mla_option_definitions as $key => $value ) {
-			if ( 'upload' == $value['tab'] ) {
-				$message_list .= self::mla_update_option_row( $key, $value );
-			} // upload option
-		} // foreach mla_options
-
-		$page_content = array(
-			'message' => __( 'Upload MIME Type settings saved.', 'media-library-assistant' ) . "\r\n",
-			'body' => '' 
-		);
-
-		/*
-		 * Uncomment this for debugging.
-		 */
-		// $page_content['message'] .= $message_list;
-
-		return $page_content;
-	} // _save_upload_settings
-
-	/**
-	 * Process custom field settings against all image attachments
-	 * without saving the settings to the mla_option
- 	 *
-	 * @since 1.10
-	 * @uses $_REQUEST if passed a NULL parameter
-	 *
-	 * @param	array | NULL	specific custom_field_mapping values 
-	 * @param	integer			offset for chunk mapping 
-	 * @param	integer			length for chunk mapping
-	 *
-	 * @return	array	Message(s) reflecting the results of the operation
-	 */
-	private static function _process_custom_field_mapping( $settings = NULL, $offset = 0, $length = 0 ) {
-		global $wpdb;
-		if ( NULL == $settings ) {
-			$source = 'custom_fields';
-			$settings = ( isset( $_REQUEST['custom_field_mapping'] ) ) ? stripslashes_deep( $_REQUEST['custom_field_mapping'] ) : array();
-			if ( isset( $settings[ MLACoreOptions::MLA_NEW_CUSTOM_FIELD ] ) ) {
-				unset( $settings[ MLACoreOptions::MLA_NEW_CUSTOM_FIELD ] );
-			}
-			if ( isset( $settings[ MLACoreOptions::MLA_NEW_CUSTOM_RULE ] ) ) {
-				unset( $settings[ MLACoreOptions::MLA_NEW_CUSTOM_RULE ] );
-			}
-		} else {
-			$source = 'custom_rule';
-			$settings = stripslashes_deep( $settings );
-		}
-
-		if ( empty( $settings ) ) {
-			return array(
-				'message' => __( 'ERROR', 'media-library-assistant' ) . ': ' . __( 'No custom field mapping rules to process.', 'media-library-assistant' ),
-				'body' => '' ,
-				'processed' => 0,
-				'unchanged' => 0,
-				'success' =>  0
-			);
-		}
-
-		if ( $length > 0 ) {
-			$limits = "LIMIT {$offset}, {$length}";
-		} else {
-			$limits = '';
-		}
-
-		$examine_count = 0;
-		$update_count = 0;
-		$post_ids = $wpdb->get_col( "SELECT ID FROM {$wpdb->posts} WHERE `post_type` = 'attachment' {$limits}" );
-
-		do_action( 'mla_begin_mapping', $source, NULL );
-		foreach ( $post_ids as $key => $post_id ) {
-			$updates = MLAOptions::mla_evaluate_custom_field_mapping( (integer) $post_id, 'custom_field_mapping', $settings );
-			$examine_count += 1;
-			if ( ! empty( $updates ) && isset( $updates['custom_updates'] ) ) {
-				$results = MLAData::mla_update_item_postmeta( (integer) $post_id, $updates['custom_updates'] );
-				if ( ! empty( $results ) ) {
-					$update_count += 1;
-				}
-			}
-		} // foreach post
-		do_action( 'mla_end_mapping' );
-
-		if ( $update_count ) {
-			/* translators: 1: field type 2: examined count 3: updated count */
-			$message = sprintf( __( '%1$s mapping completed; %2$d attachment(s) examined, %3$d updated.' ), __( 'Custom field', 'media-library-assistant' ), $examine_count, $update_count ) . "\r\n";
-		} else {
-			/* translators: 1: field type 2: examined count */
-			$message = sprintf( __( '%1$s mapping completed; %2$d attachment(s) examined, no changes detected.' ), __( 'Custom field', 'media-library-assistant' ), $examine_count ) . "\r\n";
-		}
-
-		return array(
-			'message' => $message,
-			'body' => '',
-			'processed' => $examine_count,
-			'unchanged' => $examine_count - $update_count,
-			'success' =>  $update_count
-		);
-	} // _process_custom_field_mapping
 
 	/**
 	 * Delete a custom field from the wp_postmeta table
@@ -3956,7 +1522,7 @@ class MLASettings {
 	 *
 	 * @return	array	Message(s) reflecting the results of the operation
 	 */
-	private static function _delete_custom_field( $value ) {
+	public static function mla_delete_custom_field( $value ) {
 		global $wpdb;
 
 		$post_meta_ids = $wpdb->get_col( $wpdb->prepare( "SELECT meta_id FROM {$wpdb->postmeta} LEFT JOIN {$wpdb->posts} ON ( {$wpdb->posts}.ID = {$wpdb->postmeta}.post_id ) WHERE {$wpdb->postmeta}.meta_key = '%s' AND {$wpdb->posts}.post_type = 'attachment'", $value['name'] ));
@@ -3972,339 +1538,7 @@ class MLASettings {
 		}
 
 		return __( 'No attachments contained this custom field.', 'media-library-assistant' ) . '<br>';
-	} // _delete_custom_field
-
-	/**
-	 * Save custom field settings to the options table
- 	 *
-	 * @since 1.10
-	 * @uses $_REQUEST if passed a NULL parameter
-	 *
-	 * @param	array | NULL	specific custom_field_mapping values 
-	 *
-	 * @return	array	Message(s) reflecting the results of the operation
-	 */
-	private static function _save_custom_field_settings( $new_values = NULL ) {
-		$message_list = '';
-		$option_messages = '';
-
-		if ( NULL == $new_values ) {
-			/*
-			 * Start with any page-level options
-			 */
-			foreach ( MLACoreOptions::$mla_option_definitions as $key => $value ) {
-				if ( 'custom_field' == $value['tab'] ) {
-					$option_messages .= self::mla_update_option_row( $key, $value );
-				}
-			}
-
-			/*
-			 * Add mapping options
-			 */
-			$new_values = ( isset( $_REQUEST['custom_field_mapping'] ) ) ? $_REQUEST['custom_field_mapping'] : array();
-		} // NULL
-
-		/*
-		 * Uncomment this for debugging.
-		 */
-		// $message_list = $option_messages . '<br>';
-
-		return array(
-			'message' => $message_list . MLAOptions::mla_custom_field_option_handler( 'update', 'custom_field_mapping', MLACoreOptions::$mla_option_definitions['custom_field_mapping'], $new_values ),
-			'body' => '' 
-		);
-	} // _save_custom_field_settings
-
-	/**
-	 * Process IPTC/EXIF standard field settings against all image attachments
-	 * without saving the settings to the mla_option
- 	 *
-	 * @since 1.00
-	 *
-	 * @uses $_REQUEST
-	 *
-	 * @param	integer			offset for chunk mapping 
-	 * @param	integer			length for chunk mapping
-	 *
-	 * @return	array	Message(s) reflecting the results of the operation
-	 */
-	private static function _process_iptc_exif_standard( $offset = 0, $length = 0 ) {
-		if ( ! isset( $_REQUEST['iptc_exif_mapping']['standard'] ) ) {
-			return array(
-				/* translators: 1: ERROR tag 2: field type */
-				'message' => sprintf( __( '%1$s: No %2$s settings to process.', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), __( 'Standard field', 'media-library-assistant' ) ),
-				'body' => '',
-				'processed' => 0,
-				'unchanged' => 0,
-				'success' => 0,
-			);
-		}
-
-		$examine_count = 0;
-		$update_count = 0;
-		$query = array( 'orderby' => 'none', 'post_parent' => 'all', 'post_mime_type' => 'image,application/*pdf*' );
-
-		if ( $length > 0 ) {
-			$query['numberposts'] = $length;
-			$query['offset'] = $offset;
-		}
-
-		do_action( 'mla_begin_mapping', 'iptc_exif_standard', NULL );
-		$posts = MLAShortcodes::mla_get_shortcode_attachments( 0, $query );
-
-		if ( is_string( $posts ) ) {
-			return array(
-				'message' => $posts,
-				'body' => '' 
-			);
-		}
-
-		foreach ( $posts as $key => $post ) {
-			$updates = MLAOptions::mla_evaluate_iptc_exif_mapping( $post, 'iptc_exif_standard_mapping', $_REQUEST['iptc_exif_mapping'] );
-
-			$examine_count += 1;
-			if ( ! empty( $updates ) ) {
-				$results = MLAData::mla_update_single_item( $post->ID, $updates );
-				if ( stripos( $results['message'], __( 'updated.', 'media-library-assistant' ) ) ) {
-					$update_count += 1;
-				}
-			}
-		} // foreach post
-		do_action( 'mla_end_mapping' );
-
-		if ( $update_count ) {
-			/* translators: 1: field type 2: examined count 3: updated count */
-			$message = sprintf( __( '%1$s mapping completed; %2$d attachment(s) examined, %3$d updated.' ), 'IPTC/EXIF ' . __( 'Standard field', 'media-library-assistant' ), $examine_count, $update_count ) . "\r\n";
-		} else {
-			/* translators: 1: field type 2: examined count */
-			$message = sprintf( __( '%1$s mapping completed; %2$d attachment(s) examined, no changes detected.' ), 'IPTC/EXIF ' . __( 'Standard field', 'media-library-assistant' ), $examine_count ) . "\r\n";
-		}
-
-		return array(
-			'message' => $message,
-			'body' => '',
-			'processed' => $examine_count,
-			'unchanged' => $examine_count - $update_count,
-			'success' => $update_count
-		);
-	} // _process_iptc_exif_standard
-
-	/**
-	 * Process IPTC/EXIF taxonomy term settings against all image attachments
-	 * without saving the settings to the mla_option
- 	 *
-	 * @since 1.00
-	 *
-	 * @uses $_REQUEST
-	 *
-	 * @param	integer			offset for chunk mapping 
-	 * @param	integer			length for chunk mapping
-	 *
-	 * @return	array	Message(s) reflecting the results of the operation
-	 */
-	private static function _process_iptc_exif_taxonomy( $offset = 0, $length = 0 ) {
-		if ( ! isset( $_REQUEST['iptc_exif_mapping']['taxonomy'] ) ) {
-			return array(
-				/* translators: 1: ERROR tag 2: field type */
-				'message' => sprintf( __( '%1$s: No %2$s settings to process.', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), __( 'Taxonomy term', 'media-library-assistant' ) ),
-				'body' => '',
-				'processed' => 0,
-				'unchanged' => 0,
-				'success' => 0,
-			);
-		}
-
-		$examine_count = 0;
-		$update_count = 0;
-		$query = array( 'orderby' => 'none', 'post_parent' => 'all', 'post_mime_type' => 'image,application/*pdf*' );
-
-		if ( $length > 0 ) {
-			$query['numberposts'] = $length;
-			$query['offset'] = $offset;
-		}
-
-		do_action( 'mla_begin_mapping', 'iptc_exif_taxonomy', NULL );
-		$posts = MLAShortcodes::mla_get_shortcode_attachments( 0, $query );
-
-		if ( is_string( $posts ) ) {
-			return array(
-				'message' => $posts,
-				'body' => '' 
-			);
-		}
-
-		foreach ( $posts as $key => $post ) {
-			$updates = MLAOptions::mla_evaluate_iptc_exif_mapping( $post, 'iptc_exif_taxonomy_mapping', $_REQUEST['iptc_exif_mapping'] );
-
-			$examine_count += 1;
-			if ( ! empty( $updates ) ) {
-				$results = MLAData::mla_update_single_item( $post->ID, array(), $updates['taxonomy_updates']['inputs'], $updates['taxonomy_updates']['actions'] );
-				if ( stripos( $results['message'], __( 'updated.', 'media-library-assistant' ) ) ) {
-					$update_count += 1;
-				}
-			}
-		} // foreach post
-		do_action( 'mla_end_mapping' );
-
-		if ( $update_count ) {
-			/* translators: 1: field type 2: examined count 3: updated count */
-			$message = sprintf( __( '%1$s mapping completed; %2$d attachment(s) examined, %3$d updated.' ), 'IPTC/EXIF ' . __( 'Taxonomy term', 'media-library-assistant' ), $examine_count, $update_count ) . "\r\n";
-		} else {
-			/* translators: 1: field type 2: examined count */
-			$message = sprintf( __( '%1$s mapping completed; %2$d attachment(s) examined, no changes detected.' ), 'IPTC/EXIF ' . __( 'Taxonomy term', 'media-library-assistant' ), $examine_count ) . "\r\n";
-		}
-
-		return array(
-			'message' => $message,
-			'body' => '',
-			'processed' => $examine_count,
-			'unchanged' => $examine_count - $update_count,
-			'success' => $update_count
-		);
-	} // _process_iptc_exif_taxonomy
-
-	/**
-	 * Process IPTC/EXIF custom field settings against all image attachments
-	 * without saving the settings to the mla_option
- 	 *
-	 * @since 1.00
-	 *
-	 * @uses $_REQUEST if passed a NULL parameter
-	 *
-	 * @param	array | NULL	specific iptc_exif_custom_mapping values 
-	 * @param	integer			offset for chunk mapping 
-	 * @param	integer			length for chunk mapping
-	 *
-	 * @return	array	Message(s) reflecting the results of the operation
-	 */
-	private static function _process_iptc_exif_custom( $settings = NULL, $offset = 0, $length = 0 ) {
-		if ( NULL == $settings ) {
-			$source = 'iptc_exif_custom';
-			$settings = ( isset( $_REQUEST['iptc_exif_mapping'] ) ) ? stripslashes_deep( $_REQUEST['iptc_exif_mapping'] ) : array();
-			if ( isset( $settings['custom'][ MLACoreOptions::MLA_NEW_CUSTOM_FIELD ] ) ) {
-				unset( $settings['custom'][ MLACoreOptions::MLA_NEW_CUSTOM_FIELD ] );
-			}
-			if ( isset( $settings['custom'][ MLACoreOptions::MLA_NEW_CUSTOM_RULE ] ) ) {
-				unset( $settings['custom'][ MLACoreOptions::MLA_NEW_CUSTOM_RULE ] );
-			}
-		} else {
-			$source = 'iptc_exif_custom_rule';
-			$settings = stripslashes_deep( $settings );
-		}
-
-		if ( empty( $settings['custom'] ) ) {
-			return array(
-				/* translators: 1: ERROR tag 2: field type */
-				'message' => sprintf( __( '%1$s: No %2$s settings to process.', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), __( 'Custom field', 'media-library-assistant' ) ),
-				'body' => '',
-				'processed' => 0,
-				'unchanged' => 0,
-				'success' => 0,
-			);
-		}
-
-		$examine_count = 0;
-		$update_count = 0;
-		$query = array( 'orderby' => 'none', 'post_parent' => 'all', 'post_mime_type' => 'image,application/*pdf*' );
-
-		if ( $length > 0 ) {
-			$query['numberposts'] = $length;
-			$query['offset'] = $offset;
-		}
-
-		do_action( 'mla_begin_mapping', $source, NULL );
-		$posts = MLAShortcodes::mla_get_shortcode_attachments( 0, $query );
-
-		if ( is_string( $posts ) ) {
-			return array(
-				'message' => $posts,
-				'body' => '' 
-			);
-		}
-
-		foreach ( $posts as $key => $post ) {
-			$updates = MLAOptions::mla_evaluate_iptc_exif_mapping( $post, 'iptc_exif_custom_mapping', $settings );
-
-			$examine_count += 1;
-			if ( ! empty( $updates ) ) {
-				$results = MLAData::mla_update_single_item( $post->ID, $updates );
-				if ( stripos( $results['message'], __( 'updated.', 'media-library-assistant' ) ) ) {
-					$update_count += 1;
-				}
-			}
-		} // foreach post
-		do_action( 'mla_end_mapping' );
-
-		if ( $update_count ) {
-			/* translators: 1: field type 2: examined count 3: updated count */
-			$message = sprintf( __( '%1$s mapping completed; %2$d attachment(s) examined, %3$d updated.' ), 'IPTC/EXIF ' . __( 'Custom field', 'media-library-assistant' ), $examine_count, $update_count ) . "\r\n";
-		} else {
-			/* translators: 1: field type 2: examined count */
-			$message = sprintf( __( '%1$s mapping completed; %2$d attachment(s) examined, no changes detected.' ), 'IPTC/EXIF ' . __( 'Custom field', 'media-library-assistant' ), $examine_count ) . "\r\n";
-		}
-
-		return array(
-			'message' => $message,
-			'body' => '',
-			'processed' => $examine_count,
-			'unchanged' => $examine_count - $update_count,
-			'success' => $update_count
-		);
-	} // _process_iptc_exif_custom
-
-	/**
-	 * Save IPTC/EXIF custom field settings to the options table
- 	 *
-	 * @since 1.30
-	 *
-	 * @param	array	specific iptc_exif_custom_mapping values 
-	 *
-	 * @return	array	Message(s) reflecting the results of the operation
-	 */
-	private static function _save_iptc_exif_custom_settings( $new_values ) {
-		return array(
-			'message' => MLAOptions::mla_iptc_exif_option_handler( 'update', 'iptc_exif_custom_mapping', MLACoreOptions::$mla_option_definitions['iptc_exif_mapping'], $new_values ),
-			'body' => '' 
-		);
-	} // _save_iptc_exif_custom_settings
-
-	/**
-	 * Save IPTC/EXIF settings to the options table
- 	 *
-	 * @since 1.00
-	 *
-	 * @uses $_REQUEST
-	 *
-	 * @return	array	Message(s) reflecting the results of the operation
-	 */
-	private static function _save_iptc_exif_settings( ) {
-		$message_list = '';
-		$option_messages = '';
-
-		/*
-		 * Start with any page-level options
-		 */
-		foreach ( MLACoreOptions::$mla_option_definitions as $key => $value ) {
-			if ( 'iptc_exif' == $value['tab'] ) {
-				$option_messages .= self::mla_update_option_row( $key, $value );
-			}
-		}
-
-		/*
-		 * Uncomment this for debugging.
-		 */
-		//$message_list = $option_messages . '<br>';
-
-		/*
-		 * Add mapping options
-		 */
-		$new_values = ( isset( $_REQUEST['iptc_exif_mapping'] ) ) ? $_REQUEST['iptc_exif_mapping'] : array( 'standard' => array(), 'taxonomy' => array(), 'custom' => array() );
-
-		return array(
-			'message' => $message_list . MLAOptions::mla_iptc_exif_option_handler( 'update', 'iptc_exif_mapping', MLACoreOptions::$mla_option_definitions['iptc_exif_mapping'], $new_values ),
-			'body' => '' 
-		);
-	} // _save_iptc_exif_settings
+	} // mla_delete_custom_field
 
 	/**
 	 * Save General settings to the options table
@@ -4574,7 +1808,7 @@ class MLASettings {
 		if (false === @fwrite($file_handle, $settings)) {
 			$error_info = error_get_last();
 			/* translators: 1: ERROR tag 2: PHP error information */
-			error_log( sprintf( _x( '%1$s: _export_settings $error_info = "%2$s".', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), var_export( $error_info, true ) ), 0 );
+			MLACore::mla_debug_add( sprintf( _x( '%1$s: _export_settings $error_info = "%2$s".', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), var_export( $error_info, true ) ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 
 			if ( false !== ( $tail = strpos( $error_info['message'], '</a>]: ' ) ) ) {
 				$php_errormsg = ':<br>' . substr( $error_info['message'], $tail + 7 );
@@ -4628,7 +1862,7 @@ class MLASettings {
 		if ( false === $settings ) {
 			$error_info = error_get_last();
 			/* translators: 1: ERROR tag 2: PHP error information */
-			error_log( sprintf( _x( '%1$s: _import_settings $error_info = "%2$s".', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), var_export( $error_info, true ) ), 0 );
+			MLACore::mla_debug_add( sprintf( _x( '%1$s: _import_settings $error_info = "%2$s".', 'error_log', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), var_export( $error_info, true ) ), MLACore::MLA_DEBUG_CATEGORY_ANY );
 
 			if ( false !== ( $tail = strpos( $error_info['message'], '</a>]: ' ) ) ) {
 				$php_errormsg = ':<br>' . substr( $error_info['message'], $tail + 7 );

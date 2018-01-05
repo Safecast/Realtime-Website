@@ -17,271 +17,6 @@
  */
 class MLAOptions {
 	/**
-	 * Provides a unique name for the current version option
-	 */
-	const MLA_VERSION_OPTION = MLACoreOptions::MLA_VERSION_OPTION; // 'current_version';
-
-	/**
-	 * Provides a unique name for the exclude revisions option
-	 */
-	const MLA_EXCLUDE_REVISIONS = MLACoreOptions::MLA_EXCLUDE_REVISIONS; // 'exclude_revisions';
-
-	/**
-	 * Provides a unique name for a database tuning option
-	 */
-	const MLA_FEATURED_IN_TUNING = MLACoreOptions::MLA_FEATURED_IN_TUNING; // 'featured_in_tuning';
-
-	/**
-	 * Provides a unique name for a database tuning option
-	 */
-	const MLA_INSERTED_IN_TUNING = MLACoreOptions::MLA_INSERTED_IN_TUNING; // 'inserted_in_tuning';
-
-	/**
-	 * Provides a unique name for a database tuning option
-	 */
-	const MLA_GALLERY_IN_TUNING = MLACoreOptions::MLA_GALLERY_IN_TUNING; // 'gallery_in_tuning';
-
-	/**
-	 * Provides a unique name for a database tuning option
-	 */
-	const MLA_MLA_GALLERY_IN_TUNING = MLACoreOptions::MLA_MLA_GALLERY_IN_TUNING; // 'mla_gallery_in_tuning';
-
-	/**
-	 * Provides a unique name for the taxonomy count Attachments option
-	 */
-	const MLA_COUNT_TERM_ATTACHMENTS = MLACoreOptions::MLA_COUNT_TERM_ATTACHMENTS; // 'count_term_attachments';
-
-	/**
-	 * Provides a unique name for the taxonomy support option
-	 */
-	const MLA_TAXONOMY_SUPPORT = MLACoreOptions::MLA_TAXONOMY_SUPPORT; // 'taxonomy_support';
-
-	/**
-	 * Provides a unique name for the admin screen page title option
-	 */
-	const MLA_SCREEN_PAGE_TITLE = MLACoreOptions::MLA_SCREEN_PAGE_TITLE; // 'admin_screen_page_title';
-
-	/**
-	 * Provides a unique name for the admin screen menu title option
-	 */
-	const MLA_SCREEN_MENU_TITLE = MLACoreOptions::MLA_SCREEN_MENU_TITLE; // 'admin_screen_menu_title';
-
-	/**
-	 * Provides a unique name for the admin screen menu order option
-	 */
-	const MLA_SCREEN_ORDER = MLACoreOptions::MLA_SCREEN_ORDER; // 'admin_screen_menu_order';
-
-	/**
-	 * Provides a unique name for the admin screen remove Media/Library option
-	 */
-	const MLA_SCREEN_DISPLAY_LIBRARY = MLACoreOptions::MLA_SCREEN_DISPLAY_LIBRARY; // 'admin_screen_display_default';
-
-	/**
-	 * Provides a unique name for the default orderby option
-	 */
-	const MLA_DEFAULT_ORDERBY = MLACoreOptions::MLA_DEFAULT_ORDERBY; // 'default_orderby';
-
-	/**
-	 * Provides a unique name for the default order option
-	 */
-	const MLA_DEFAULT_ORDER = MLACoreOptions::MLA_DEFAULT_ORDER; // 'default_order';
-
-	/**
-	 * Provides a unique name for the Media/Assistant submenu table views width option
-	 */
-	const MLA_TABLE_VIEWS_WIDTH = MLACoreOptions::MLA_TABLE_VIEWS_WIDTH; // 'table_views_width';
-
-	/**
-	 * Provides a unique name for the Media/Assistant submenu table thumbnail/icon size option
-	 */
-	const MLA_TABLE_ICON_SIZE = MLACoreOptions::MLA_TABLE_ICON_SIZE; // 'table_icon_size';
-
-	/**
-	 * Provides a unique name for the Bulk Update and Map All chunk size option
-	 */
-	const MLA_BULK_CHUNK_SIZE = MLACoreOptions::MLA_BULK_CHUNK_SIZE; // 'bulk_chunk_size';
-
-	/**
-	 * Provides a unique name for the taxonomy filter maximum depth option
-	 */
-	const MLA_TAXONOMY_FILTER_DEPTH = MLACoreOptions::MLA_TAXONOMY_FILTER_DEPTH; // 'taxonomy_filter_depth';
-
-	/**
-	 * Provides a unique name for the taxonomy filter maximum depth option
-	 */
-	const MLA_TAXONOMY_FILTER_INCLUDE_CHILDREN = MLACoreOptions::MLA_TAXONOMY_FILTER_INCLUDE_CHILDREN; // 'taxonomy_filter_include_children';
-
-	/**
-	 * Provides a unique name for the display Search Media controls option
-	 */
-	const MLA_SEARCH_MEDIA_FILTER_SHOW_CONTROLS = MLACoreOptions::MLA_SEARCH_MEDIA_FILTER_SHOW_CONTROLS; // 'search_media_filter_show_controls';
-
-	/**
-	 * Provides a unique name for the display Search Media controls option
-	 */
-	const MLA_SEARCH_MEDIA_FILTER_DEFAULTS = MLACoreOptions::MLA_SEARCH_MEDIA_FILTER_DEFAULTS; // 'search_media_filter_defaults';
-
-	/**
-	 * Provides a "size" attribute value for the EXIF/Template Value field
-	 */
-	const MLA_EXIF_SIZE = MLACoreOptions::MLA_EXIF_SIZE; // 30;
-
-	/**
-	 * Provides a unique name for the Custom Field "new rule" key
-	 */
-	const MLA_NEW_CUSTOM_RULE = MLACoreOptions::MLA_NEW_CUSTOM_RULE; // '__NEW_RULE__';
-
-	/**
-	 * Provides a unique name for the Custom Field "new field" key
-	 */
-	const MLA_NEW_CUSTOM_FIELD = MLACoreOptions::MLA_NEW_CUSTOM_FIELD; // '__NEW_FIELD__';
-
-	/**
-	 * Provides a unique name for the "searchable taxonomies" option
-	 */
-	const MLA_EDIT_MEDIA_SEARCH_TAXONOMY = MLACoreOptions::MLA_EDIT_MEDIA_SEARCH_TAXONOMY; // 'edit_media_search_taxonomy';
-
-	/**
-	 * Provides a unique name for the Edit Media additional meta boxes option
-	 */
-	const MLA_EDIT_MEDIA_META_BOXES = MLACoreOptions::MLA_EDIT_MEDIA_META_BOXES; // 'edit_media_meta_boxes';
-
-	/**
-	 * Provides a unique name for the Media/Add New bulk edit option
-	 */
-	const MLA_ADD_NEW_BULK_EDIT = MLACoreOptions::MLA_ADD_NEW_BULK_EDIT; // 'add_new_bulk_edit';
-
-	/**
-	 * Provides a unique name for the Media/Add New bulk edit "on top" option
-	 */
-	const MLA_ADD_NEW_BULK_EDIT_ON_TOP = MLACoreOptions::MLA_ADD_NEW_BULK_EDIT_ON_TOP; // 'add_new_bulk_edit_on_top';
-
-	/**
-	 * Provides a unique name for the Media Grid toolbar option, which
-	 * also controls the ATTACHMENT DETAILS enhancements
-	 */
-	const MLA_MEDIA_GRID_TOOLBAR = MLACoreOptions::MLA_MEDIA_GRID_TOOLBAR; // 'media_grid_toolbar';
-
-	/**
-	 * Provides a unique name for the Media Manager toolbar option, which
-	 * also controls the ATTACHMENT DETAILS enhancements
-	 */
-	const MLA_MEDIA_MODAL_TOOLBAR = MLACoreOptions::MLA_MEDIA_MODAL_TOOLBAR; // 'media_modal_toolbar';
-
-	/**
-	 * Provides a unique name for the Media Manager toolbar MIME Types option
-	 */
-	const MLA_MEDIA_MODAL_MIMETYPES = MLACoreOptions::MLA_MEDIA_MODAL_MIMETYPES; // 'media_modal_mimetypes';
-
-	/**
-	 * Provides a unique name for the Media Manager toolbar Month and Year option
-	 */
-	const MLA_MEDIA_MODAL_MONTHS = MLACoreOptions::MLA_MEDIA_MODAL_MONTHS; // 'media_modal_months';
-
-	/**
-	 * Provides a unique name for the Media Manager toolbar Taxonomy Terms option
-	 */
-	const MLA_MEDIA_MODAL_TERMS = MLACoreOptions::MLA_MEDIA_MODAL_TERMS; // 'media_modal_terms';
-
-	/**
-	 * Provides a unique name for the Media Manager toolbar Taxonomy "Terms Search" option
-	 */
-	const MLA_MEDIA_MODAL_TERMS_SEARCH = MLACoreOptions::MLA_MEDIA_MODAL_TERMS_SEARCH; // 'media_modal_terms_search';
-
-	/**
-	 * Provides a unique name for the Media Manager toolbar Search Box option
-	 */
-	const MLA_MEDIA_MODAL_SEARCHBOX = MLACoreOptions::MLA_MEDIA_MODAL_SEARCHBOX; // 'media_modal_searchbox';
-
-	/**
-	 * Provides a unique name for the Media Manager toolbar Search Box Controls option
-	 */
-	const MLA_MEDIA_MODAL_SEARCHBOX_CONTROLS = MLACoreOptions::MLA_MEDIA_MODAL_SEARCHBOX_CONTROLS; // 'media_modal_searchbox_controls';
-
-	/**
-	 * Provides a unique name for the Media Manager Attachment Details searchable taxonomy option
-	 * This option is for hierarchical taxonomies, e.g., "Att. Categories".
-	 */
-	const MLA_MEDIA_MODAL_DETAILS_CATEGORY_METABOX = MLACoreOptions::MLA_MEDIA_MODAL_DETAILS_CATEGORY_METABOX; // 'media_modal_details_category_metabox';
-
-	/**
-	 * Provides a unique name for the Media Manager Attachment Details searchable taxonomy option
-	 * This option is for flat taxonomies, e.g., "Att. Tags".
-	 */
-	const MLA_MEDIA_MODAL_DETAILS_TAG_METABOX = MLACoreOptions::MLA_MEDIA_MODAL_DETAILS_TAG_METABOX; // 'media_modal_details_tag_metabox';
-
-	/**
-	 * Provides a unique name for the Media Manager Attachment Details auto-fill option
-	 */
-	const MLA_MEDIA_MODAL_DETAILS_AUTOFILL = MLACoreOptions::MLA_MEDIA_MODAL_DETAILS_AUTOFILL; // 'media_modal_details_autofill';
-
-	/**
-	 * Provides a unique name for the Media Manager orderby option
-	 */
-	const MLA_MEDIA_MODAL_ORDERBY = MLACoreOptions::MLA_MEDIA_MODAL_ORDERBY; // 'media_modal_orderby';
-
-	/**
-	 * Provides a unique name for the Media Manager order option
-	 */
-	const MLA_MEDIA_MODAL_ORDER = MLACoreOptions::MLA_MEDIA_MODAL_ORDER; // 'media_modal_order';
-
-	/**
-	 * Provides a unique name for the Post MIME Types option
-	 */
-	const MLA_POST_MIME_TYPES = MLACoreOptions::MLA_POST_MIME_TYPES; // 'post_mime_types';
-
-	/**
-	 * Provides a unique name for the Enable Post MIME Types option
-	 */
-	const MLA_ENABLE_POST_MIME_TYPES = MLACoreOptions::MLA_ENABLE_POST_MIME_TYPES; // 'enable_post_mime_types';
-
-	/**
-	 * Provides a unique name for the Upload MIME Types option
-	 */
-	const MLA_UPLOAD_MIMES = MLACoreOptions::MLA_UPLOAD_MIMES; // 'upload_mimes';
-
-	/**
-	 * Provides a unique name for the Enable Upload MIME Types option
-	 */
-	const MLA_ENABLE_UPLOAD_MIMES = MLACoreOptions::MLA_ENABLE_UPLOAD_MIMES; // 'enable_upload_mimes';
-
-	/**
-	 * Provides a unique name for the Enable MLA Icons option
-	 */
-	const MLA_ENABLE_MLA_ICONS = MLACoreOptions::MLA_ENABLE_MLA_ICONS; // 'enable_mla_icons';
-
-	/**
-	 * Provides a unique name for the Debug display limit option
-	 */
-	const MLA_DEBUG_DISPLAY_LIMIT = MLACoreOptions::MLA_DEBUG_DISPLAY_LIMIT; // 'debug_display_limit';
-
-	/**
-	 * Provides a unique name for the Debug alternate log file option
-	 */
-	const MLA_DEBUG_FILE = MLACoreOptions::MLA_DEBUG_FILE; // 'debug_file';
-
-	/**
-	 * Provides a unique name for the Debug replace PHP log file option
-	 */
-	const MLA_DEBUG_REPLACE_PHP_LOG = MLACoreOptions::MLA_DEBUG_REPLACE_PHP_LOG; // 'debug_replace_php_log';
-
-	/**
-	 * Provides a unique name for the Debug replace PHP error_reporting option
-	 */
-	const MLA_DEBUG_REPLACE_PHP_REPORTING = MLACoreOptions::MLA_DEBUG_REPLACE_PHP_REPORTING; // 'debug_replace_php_reporting';
-
-	/**
-	 * Provides a unique name for the Debug replace MLA_DEBUG_LEVEL option
-	 */
-	const MLA_DEBUG_REPLACE_LEVEL = MLACoreOptions::MLA_DEBUG_REPLACE_LEVEL; // 'debug_replace_level';
-
-	/**
-	 * $mla_option_definitions moved to MLACore::
-	 */
-	 
-	//public static $mla_option_definitions = array ();
-
-	/**
 	 * Initialization function, similar to __construct()
 	 *
 	 * @since 1.00
@@ -289,8 +24,6 @@ class MLAOptions {
 	 * @return	void
 	 */
 	public static function initialize( ) {
-		MLAOptions::_load_option_templates();
-
  		if ( ( 'checked' == MLACore::mla_get_option( 'enable_iptc_exif_mapping' ) ) ||
 			( 'checked' == MLACore::mla_get_option( 'enable_custom_field_mapping' ) ) ||
  			( 'checked' == MLACore::mla_get_option( 'enable_iptc_exif_update' ) ) ||
@@ -300,6 +33,8 @@ class MLAOptions {
 
 			add_action( 'add_attachment', 'MLAOptions::mla_add_attachment_action', 0x7FFFFFFF, 1 );
 			add_filter( 'wp_update_attachment_metadata', 'MLAOptions::mla_update_attachment_metadata_filter', 0x7FFFFFFF, 2 );
+
+			MLACore::mla_debug_add( __LINE__ . " MLAOptions::initialize() hooks set", MLACore::MLA_DEBUG_CATEGORY_REST );
 		}
 	}
 
@@ -320,19 +55,17 @@ class MLAOptions {
 	 * @return	void
 	 */
 	private static function _load_option_templates() {
-		MLAOptions::$mla_option_templates = MLACore::mla_load_template( 'mla-option-templates.tpl' );
-
-		/* 	
-		 * Load the option settings templates
-		 */
 		if ( is_null( MLAOptions::$mla_option_templates ) ) {
-			MLACore::mla_debug_add( '<strong>mla_debug _load_option_templates()</strong> ' . __( 'error loading tpls/mla-option-templates.tpl', 'media-library-assistant' ) );
-			return;
-		} elseif ( !MLAOptions::$mla_option_templates ) {
-			MLACore::mla_debug_add( '<strong>mla_debug _load_option_templates()</strong> ' . __( 'tpls/mla-option-templates.tpl not found', 'media-library-assistant' ) );
-			MLAOptions::$mla_option_templates = NULL;
-			return;
-		}
+			MLAOptions::$mla_option_templates = MLACore::mla_load_template( 'mla-option-templates.tpl' );
+
+			if ( is_null( MLAOptions::$mla_option_templates ) ) {
+				MLACore::mla_debug_add( '<strong>mla_debug _load_option_templates()</strong> ' . __( 'error loading tpls/mla-option-templates.tpl', 'media-library-assistant' ) );
+				MLAOptions::$mla_option_templates = array();
+			} elseif ( !MLAOptions::$mla_option_templates ) {
+				MLACore::mla_debug_add( '<strong>mla_debug _load_option_templates()</strong> ' . __( 'tpls/mla-option-templates.tpl not found', 'media-library-assistant' ) );
+				MLAOptions::$mla_option_templates = array();
+			}
+		} // is_null()
 	}
 
 	/**
@@ -499,6 +232,8 @@ class MLAOptions {
 	 * @return	string	HTML table row markup for 'render' else message(s) reflecting the results of the operation.
 	 */
 	public static function mla_taxonomy_option_handler( $action, $key, $value, $args = NULL ) {
+		MLAOptions::_load_option_templates();
+
 		switch ( $action ) {
 			case 'render':
 				$taxonomies = get_taxonomies( array ( 'show_ui' => true ), 'objects' );
@@ -577,8 +312,8 @@ class MLAOptions {
 				 * Add the "filter on custom field" row
 				 */
 				$selected = empty( $tax_metakey ) ? 'none' : $tax_metakey;
-				$tax_metakey_options = MLAOptions::_compose_custom_field_option_list( $selected, array() );
-				
+				$tax_metakey_options = MLAOptions::mla_compose_custom_field_option_list( $selected, array() );
+
 				$option_values = array (
 					'key' => MLACoreOptions::MLA_FILTER_METAKEY,
 					'name' =>  '( ' . __( 'Custom Field', 'media-library-assistant' ) . ' )',
@@ -701,6 +436,8 @@ class MLAOptions {
 	 * @return	string	HTML table row markup for 'render' else message(s) reflecting the results of the operation.
 	 */
 	public static function mla_search_option_handler( $action, $key, $value, $args = NULL ) {
+		MLAOptions::_load_option_templates();
+
 		switch ( $action ) {
 			case 'render':
 				$current_values = MLACore::mla_get_option( $key );
@@ -726,6 +463,9 @@ class MLAOptions {
 
 					'content_checked' => ( in_array( 'content', $search_fields ) ) ? 'checked="checked"' : '',
 					'Description' => __( 'Description', 'media-library-assistant' ),
+
+					'file_checked' => ( in_array( 'file', $search_fields ) ) ? 'checked="checked"' : '',
+					'File' => __( 'File', 'media-library-assistant' ),
 
 					'terms_checked' => ( in_array( 'terms', $search_fields ) ) ? 'checked="checked"' : '',
 					'Terms' => __( 'Terms', 'media-library-assistant' ),
@@ -847,6 +587,7 @@ class MLAOptions {
 	 * @return	void
 	 */
 	public static function mla_add_attachment_action( $post_ID ) {
+		MLACore::mla_debug_add( __LINE__ . " MLAOptions::mla_add_attachment_action( $post_ID )", MLACore::MLA_DEBUG_CATEGORY_METADATA );
 		MLAOptions::$add_attachment_id = $post_ID;
 		do_action('mla_add_attachment', $post_ID);
  	} // mla_add_attachment_action
@@ -909,6 +650,8 @@ class MLAOptions {
 
 		$options = apply_filters( 'mla_update_attachment_metadata_options', $options, $data, $post_id );
 		$data = apply_filters( 'mla_update_attachment_metadata_prefilter', $data, $post_id, $options );
+		MLACore::mla_debug_add( __LINE__ . " MLAOptions::mla_update_attachment_metadata_filter( $post_id ) \$data = " . var_export( $data, true ), MLACore::MLA_DEBUG_CATEGORY_METADATA );
+		MLACore::mla_debug_add( __LINE__ . " MLAOptions::mla_update_attachment_metadata_filter( $post_id ) \$options = " . var_export( $options, true ), MLACore::MLA_DEBUG_CATEGORY_METADATA );
 
 		if ( $options['is_upload'] ) {
 			if ( $options['enable_iptc_exif_mapping'] || $options['enable_custom_field_mapping'] ) {
@@ -918,10 +661,13 @@ class MLAOptions {
 			if ( $options['enable_iptc_exif_mapping'] ) {
 				$item = get_post( $post_id );
 				$updates = MLAOptions::mla_evaluate_iptc_exif_mapping( $item, 'iptc_exif_mapping', NULL, $data, true );
+				MLACore::mla_debug_add( __LINE__ . " MLAOptions::mla_update_attachment_metadata_filter( $post_id ) \$updates = " . var_export( $updates, true ), MLACore::MLA_DEBUG_CATEGORY_METADATA );
 				$updates = MLAOptions::_update_attachment_metadata( $updates, $data );
+				MLACore::mla_debug_add( __LINE__ . " MLAOptions::mla_update_attachment_metadata_filter( $post_id ) \$updates = " . var_export( $updates, true ), MLACore::MLA_DEBUG_CATEGORY_METADATA );
 
 				if ( !empty( $updates ) ) {
 					$item_content = MLAData::mla_update_single_item( $post_id, $updates );
+					MLACore::mla_debug_add( __LINE__ . " MLAOptions::mla_update_attachment_metadata_filter( $post_id ) \$item_content = " . var_export( $item_content, true ), MLACore::MLA_DEBUG_CATEGORY_METADATA );
 				}
 			}
 
@@ -1024,6 +770,10 @@ class MLAOptions {
 	 * @return	array	Updates suitable for MLAData::mla_update_single_item, if any
 	 */
 	public static function mla_evaluate_custom_field_mapping( $post_id, $category, $settings = NULL, $attachment_metadata = NULL ) {
+		if ( 'checked' != MLACore::mla_get_option( MLACoreOptions::MLA_ALLOW_CUSTOM_FIELD_MAPPING ) ) {
+			return array();
+		}
+
 		if ( NULL == $settings ) {
 			$settings = MLACore::mla_get_option( 'custom_field_mapping' );
 		}
@@ -1035,14 +785,14 @@ class MLAOptions {
 			/*
 			 * Convert checkbox value(s)
 			 */
-			$setting_value['no_null'] = isset( $setting_value['no_null'] );
+			$setting_value['no_null'] = isset( $setting_value['no_null'] ) && ( false !== $setting_value['no_null'] );
 
 			$setting_value = apply_filters( 'mla_mapping_rule', $setting_value, $post_id, $category, $attachment_metadata );
 			if ( NULL === $setting_value ) {
 				continue;
 			}
 
-			if ( 'none' == $setting_value['data_source'] ) {
+			if ( ( 'none' == $setting_value['data_source'] ) || ( isset( $setting_value['active'] ) && false == $setting_value['active'] ) ) {
 				continue;
 			}
 
@@ -1122,10 +872,10 @@ class MLAOptions {
 	 *
 	 * @return	string	HTML markup with select field options
 	 */
-	private static function _compose_custom_field_option_list( $selection = 'none', $blacklist = array() ) {
-		/*
-		 * Add the "None" option to the front of the list
-		 */
+	public static function mla_compose_custom_field_option_list( $selection = 'none', $blacklist = array() ) {
+		MLAOptions::_load_option_templates();
+
+		// Add the "None" option to the front of the list
 		$option_template = MLAOptions::$mla_option_templates['custom-field-select-option'];
 		$option_values = array (
 			'selected' => ( 'none' == $selection ) ? 'selected="selected"' : '',
@@ -1134,9 +884,7 @@ class MLAOptions {
 		);
 		$custom_field_options = MLAData::mla_parse_template( $option_template, $option_values );					
 
-		/*
-		 * Add an option for each name without a rule, i.e., not in the blacklist
-		 */
+		// Add an option for each name without a rule, i.e., not in the blacklist
 		$blacklist_names = array();
 		foreach ( $blacklist as $value ) {
 			$blacklist_names[] = $value['name'];
@@ -1158,7 +906,7 @@ class MLAOptions {
 		} // foreach custom_field_name
 
 		return $custom_field_options;
-	} // _compose_custom_field_option_list
+	} // mla_compose_custom_field_option_list
 
 	/**
 	 * Compose a (Custom Field) Data Source Options list with current selection
@@ -1170,7 +918,9 @@ class MLAOptions {
 	 *
 	 * @return	string	HTML markup with select field options
 	 */
-	private static function _compose_data_source_option_list( $selection = 'none' ) {
+	public static function mla_compose_data_source_option_list( $selection = 'none' ) {
+		MLAOptions::_load_option_templates();
+
 		$option_template = MLAOptions::$mla_option_templates['custom-field-select-option'];
 
 		$option_values = array (
@@ -1226,7 +976,7 @@ class MLAOptions {
 		} // foreach custom_field_name
 
 		return $custom_field_options;
-	} // _compose_data_source_option_list
+	} // mla_compose_data_source_option_list
 
 	/**
 	 * Update custom field mappings
@@ -1448,276 +1198,13 @@ class MLAOptions {
 	 * @return	string	HTML table row markup for 'render' else message(s) reflecting the results of the operation.
 	 */
 	public static function mla_custom_field_option_handler( $action, $key, $value, $args = NULL ) {
+error_log( __LINE__ . " MLAOptions::mla_custom_field_option_handler( $action, $key )", 0 );
+return "MLAOptions::mla_custom_field_option_handler( $action, $key ) deprecated.";
+
+		// Added in 2.63
+		MLAOptions::_load_option_templates();
+
 		$current_values = MLACore::mla_get_option( 'custom_field_mapping' );
-
-		switch ( $action ) {
-			case 'render':
-				if (empty( $current_values ) ) {
-					$table_rows = MLAData::mla_parse_template( MLAOptions::$mla_option_templates['custom-field-empty-row'],
-					array(
-						'No Mapping Rules' => __( 'No Custom Field Mapping Rules Defined', 'media-library-assistant' ),
-						'column_count' => 7 ) );
-				} else {
-					$row_template = MLAOptions::$mla_option_templates['custom-field-rule-row'];
-					$table_rows = '';
-					$index = 0;
-				}
-
-				/*
-				 * One row for each existing rule, case insensitive "natural order"
-				 */
-				$sorted_keys = array();
-				foreach ( $current_values as $row_name => $current_value ) {
-					$sorted_keys[ $current_value['name'] ] = $current_value['name'];
-				}
-				natcasesort( $sorted_keys );
-
-				$sorted_names = array();
-				foreach ( $sorted_keys as $row_name ) {
-					$sorted_names[ $row_name ] = array();
-				}
-
-				/*
-				 * Allow for multiple rules mapping the same name (an old bug)
-				 */						
-				foreach ( $current_values as $row_name => $current_value ) {
-					$sorted_names[ $current_value['name'] ][] = $row_name;
-				}
-
-				foreach ( $sorted_names as $sorted_keys ) {
-					foreach ( $sorted_keys as $row_name ) {
-						$current_value = $current_values[ $row_name ];
-						$row_values = array (
-							'column_count' => 7,
-							'column_count_meta' => (7 - 2),
-							'index' => $index++,
-							'key' => esc_attr( $row_name ),
-							'name_attr' => esc_attr( $row_name ),
-							'name' => esc_html( $row_name ),
-							'data_source_options' => MLAOptions::_compose_data_source_option_list( $current_value['data_source'] ),
-							'keep_selected' => '',
-							'Keep' => __( 'Keep', 'media-library-assistant' ),
-							'replace_selected' => '',
-							'Replace' => __( 'Replace', 'media-library-assistant' ),
-							'native_format' => '',
-							'Native' => __( 'Native', 'media-library-assistant' ),
-							'commas_format' => '',
-							'Commas' => __( 'Commas', 'media-library-assistant' ),
-							'raw_format' => '',
-							'Raw' => __( 'Raw', 'media-library-assistant' ),
-							'mla_column_checked' => '',
-							'quick_edit_checked' => '',
-							'bulk_edit_checked' => '',
-							'meta_name_size' => 30,
-							'meta_name' => esc_attr( $current_value['meta_name'] ),
-							'Option' => __( 'Option', 'media-library-assistant' ),
-							'text_option' => '',
-							'Text' => __( 'Text', 'media-library-assistant' ),
-							'single_option' => '',
-							'Single' => __( 'Single', 'media-library-assistant' ),
-							'export_option' => '',
-							'Export' => __( 'Export', 'media-library-assistant' ),
-							'array_option' => '',
-							'Array' => __( 'Array', 'media-library-assistant' ),
-							'multi_option' => '',
-							'Multi' => __( 'Multi', 'media-library-assistant' ),
-							'no_null_checked' => '',
-							'Delete NULL values' => __( 'Delete NULL values', 'media-library-assistant' ),
-							'Delete Rule' => __( 'Delete Rule', 'media-library-assistant' ),
-							'Delete Field' => __( 'Delete Rule AND Field', 'media-library-assistant' ),
-							'Update Rule' => __( 'Update Rule', 'media-library-assistant' ),
-							'Map All Attachments' => __( 'Map All Attachments', 'media-library-assistant' ),
-						);
-
-						if ( $current_value['keep_existing'] ) {
-							$row_values['keep_selected'] = 'selected="selected"';
-						} else {
-							$row_values['replace_selected'] = 'selected="selected"';
-						}
-
-						switch( $current_value['format'] ) {
-							case 'commas':
-								$row_values['commas_format'] = 'selected="selected"';
-								break;
-							case 'raw':
-								$row_values['raw_format'] = 'selected="selected"';
-								break;
-							default:
-								$row_values['native_format'] = 'selected="selected"';
-						} // format
-
-						if ( $current_value['mla_column'] ) {
-							$row_values['mla_column_checked'] = 'checked="checked"';
-						}
-
-						if ( $current_value['quick_edit'] ) {
-							$row_values['quick_edit_checked'] = 'checked="checked"';
-						}
-
-						if ( $current_value['bulk_edit'] ) {
-							$row_values['bulk_edit_checked'] = 'checked="checked"';
-						}
-
-						switch( $current_value['option'] ) {
-							case 'single':
-								$row_values['single_option'] = 'selected="selected"';
-								break;
-							case 'export':
-								$row_values['export_option'] = 'selected="selected"';
-								break;
-							case 'array':
-								$row_values['array_option'] = 'selected="selected"';
-								break;
-							case 'multi':
-								$row_values['multi_option'] = 'selected="selected"';
-								break;
-							default:
-								$row_values['text_option'] = 'selected="selected"';
-						} // option
-
-						if ( $current_value['no_null'] ) {
-							$row_values['no_null_checked'] = 'checked="checked"';
-						}
-
-						$table_rows .= MLAData::mla_parse_template( $row_template, $row_values );
-					} // foreach current_value
-				} // foreach sorted_name
-
-				/*
-				 * Add a row for defining a new Custom Rule
-				 */
-				$row_template = MLAOptions::$mla_option_templates['custom-field-new-rule-row'];
-				$row_values = array (
-					'column_count' => 7,
-					'column_count_meta' => (7 - 2),
-					'Add new Rule' => __( 'Add a new Mapping Rule', 'media-library-assistant' ),
-					'index' => MLACoreOptions::MLA_NEW_CUSTOM_RULE,
-					'field_name_options' => MLAOptions::_compose_custom_field_option_list( 'none', $current_values ),
-					'data_source_options' => MLAOptions::_compose_data_source_option_list( 'none' ),
-					'keep_selected' => '',
-					'Keep' => __( 'Keep', 'media-library-assistant' ),
-					'replace_selected' => 'selected="selected"',
-					'Replace' => __( 'Replace', 'media-library-assistant' ),
-					'native_format' => 'selected="selected"',
-					'Native' => __( 'Native', 'media-library-assistant' ),
-					'commas_format' => '',
-					'Commas' => __( 'Commas', 'media-library-assistant' ),
-					'raw_format' => '',
-					'Raw' => __( 'Raw', 'media-library-assistant' ),
-					'mla_column_checked' => '',
-					'quick_edit_checked' => '',
-					'bulk_edit_checked' => '',
-					'meta_name_size' => 30,
-					'meta_name' => '',
-					'Option' => __( 'Option', 'media-library-assistant' ),
-					'text_option' => '',
-					'Text' => __( 'Text', 'media-library-assistant' ),
-					'single_option' => '',
-					'Single' => __( 'Single', 'media-library-assistant' ),
-					'export_option' => '',
-					'Export' => __( 'Export', 'media-library-assistant' ),
-					'array_option' => '',
-					'Array' => __( 'Array', 'media-library-assistant' ),
-					'multi_option' => '',
-					'Multi' => __( 'Multi', 'media-library-assistant' ),
-					'no_null_checked' => '',
-					'Delete NULL values' => __( 'Delete NULL values', 'media-library-assistant' ),
-					'Add Rule' => __( 'Add Rule', 'media-library-assistant' ),
-					'Map All Attachments' => __( 'Add Rule and Map All Attachments', 'media-library-assistant' ),
-				);
-				$table_rows .= MLAData::mla_parse_template( $row_template, $row_values );
-
-				/*
-				 * Add a row for defining a new Custom Field
-				 */
-				$row_template = MLAOptions::$mla_option_templates['custom-field-new-field-row'];
-				$row_values = array (
-					'column_count' => 7,
-					'column_count_meta' => (7 - 2),
-					'Add new Field' => __( 'Add a new Field and Mapping Rule', 'media-library-assistant' ),
-					'index' => MLACoreOptions::MLA_NEW_CUSTOM_FIELD,
-					'field_name_size' => '24',
-					'data_source_options' => MLAOptions::_compose_data_source_option_list( 'none' ),
-					'keep_selected' => '',
-					'Keep' => __( 'Keep', 'media-library-assistant' ),
-					'replace_selected' => 'selected="selected"',
-					'Replace' => __( 'Replace', 'media-library-assistant' ),
-					'native_format' => 'selected="selected"',
-					'Native' => __( 'Native', 'media-library-assistant' ),
-					'commas_format' => '',
-					'Commas' => __( 'Commas', 'media-library-assistant' ),
-					'raw_format' => '',
-					'Raw' => __( 'Raw', 'media-library-assistant' ),
-					'mla_column_checked' => '',
-					'quick_edit_checked' => '',
-					'bulk_edit_checked' => '',
-					'meta_name_size' => 30,
-					'meta_name' => '',
-					'Option' => __( 'Option', 'media-library-assistant' ),
-					'text_option' => '',
-					'Text' => __( 'Text', 'media-library-assistant' ),
-					'single_option' => '',
-					'Single' => __( 'Single', 'media-library-assistant' ),
-					'export_option' => '',
-					'Export' => __( 'Export', 'media-library-assistant' ),
-					'array_option' => '',
-					'Array' => __( 'Array', 'media-library-assistant' ),
-					'multi_option' => '',
-					'Multi' => __( 'Multi', 'media-library-assistant' ),
-					'no_null_checked' => '',
-					'Delete NULL values' => __( 'Delete NULL values', 'media-library-assistant' ),
-					'Add Field' => __( 'Add Field', 'media-library-assistant' ),
-					'Map All Attachments' => __( 'Add Field and Map All Attachments', 'media-library-assistant' ),
-				);
-				$table_rows .= MLAData::mla_parse_template( $row_template, $row_values );
-
-				$option_values = array (
-					'Field Title' => __( 'Field Title', 'media-library-assistant' ),
-					'Data Source' => __( 'Data Source', 'media-library-assistant' ),
-					'Existing Text' => __( 'Existing Text', 'media-library-assistant' ),
-					'Format' => __( 'Format', 'media-library-assistant' ),
-					'MLA Column' => __( 'MLA Column', 'media-library-assistant' ),
-					'Quick Edit' => __( 'Quick Edit', 'media-library-assistant' ),
-					'Bulk Edit' => __( 'Bulk Edit', 'media-library-assistant' ),
-					'table_rows' => $table_rows,
-					'help' => $value['help']
-				);
-
-				return MLAData::mla_parse_template( MLAOptions::$mla_option_templates['custom-field-table'], $option_values );
-			case 'update':
-			case 'delete':
-				$settings_changed = false;
-				$messages = '';
-
-				$results = MLAOptions::_update_custom_field_mapping( $current_values, $args );
-				$messages .= $results['message'];
-				$current_values = $results['values'];
-				$settings_changed = $results['changed'];
-
-				if ( $settings_changed ) {
-					$settings_changed = MLACore::mla_update_option( 'custom_field_mapping', $current_values );
-					if ( $settings_changed ) {
-						$results = __( 'Custom field mapping rules updated.', 'media-library-assistant' ) . "\r\n";
-					} else {
-						$results = __( 'ERROR', 'media-library-assistant' ) . ': ' . __( 'Custom field mapping rules update failed.', 'media-library-assistant' ) . "\r\n";
-					}
-				} else {
-					$results = __( 'Custom field no mapping rule changes detected.', 'media-library-assistant' ) . "\r\n";
-				}
-
-				return $results . $messages;
-			case 'reset':
-				$current_values = MLACoreOptions::$mla_option_definitions['custom_field_mapping']['std'];
-				$settings_changed = MLACore::mla_update_option( 'custom_field_mapping', $current_values );
-				if ( $settings_changed ) {
-					return __( 'Custom field mapping settings saved.', 'media-library-assistant' ) . "\r\n";
-				} else {
-					return __( 'ERROR', 'media-library-assistant' ) . ': ' . __( 'Custom field mapping settings reset failed.', 'media-library-assistant' ) . "\r\n";
-				}
-			default:
-				/* translators: 1: ERROR tag 2: option name 3: action, e.g., update, delete, reset */
-				return '<br>' . sprintf( __( '%1$s: Custom %2$s unknown action "%3$s"', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), $key, $action ) . "\r\n";
-		} // switch $action
 	} // mla_custom_field_option_handler
 
 	/**
@@ -1734,6 +1221,9 @@ class MLAOptions {
 	 */
 	private static function _get_term_id( $term_name, $term_parent, $taxonomy, &$post_terms ) {
 		static $term_cache = array();
+
+		// WordPress encodes special characters, e.g., "&" as HTML entities in term names
+		$term_name = _wp_specialchars( $term_name );
 
 		if ( isset( $term_cache[ $taxonomy ] ) && isset( $term_cache[ $taxonomy ][ $term_parent ] ) && isset( $term_cache[ $taxonomy ][ $term_parent ][ $term_name ] ) ) {
 			return $term_cache[ $taxonomy ][ $term_parent ][ $term_name ];
@@ -1753,10 +1243,18 @@ class MLAOptions {
 			}
 		}
 
-		$post_term = term_exists( $term_name, $taxonomy, $term_parent );
-		if ( $post_term !== 0 && $post_term !== NULL ) {
-			$term_cache[ $taxonomy ][ $term_parent ][ $term_name ] = $post_term['term_id'];
-			return $post_term['term_id'];
+		if ( 0 === $term_parent ) {
+			$post_term = get_term_by( 'name', $term_name, $taxonomy );
+			if ( false !== $post_term ) {
+				$term_cache[ $taxonomy ][ $term_parent ][ $term_name ] = $post_term->term_id;
+				return $post_term->term_id;
+			}
+		} else {
+			$post_term = term_exists( $term_name, $taxonomy, $term_parent );
+			if ( $post_term !== 0 && $post_term !== NULL ) {
+				$term_cache[ $taxonomy ][ $term_parent ][ $term_name ] = absint( $post_term['term_id'] );
+				return absint( $post_term['term_id'] );
+			}
 		}
 
 		$post_term = wp_insert_term( $term_name, $taxonomy, array( 'parent' => $term_parent ) );
@@ -1782,6 +1280,10 @@ class MLAOptions {
 	 * @return	array	Updates suitable for MLAData::mla_update_single_item, if any
 	 */
 	public static function mla_evaluate_iptc_exif_mapping( $post, $category, $settings = NULL, $attachment_metadata = NULL, $is_upload = false ) {
+		if ( 'checked' != MLACore::mla_get_option( MLACoreOptions::MLA_ALLOW_IPTC_EXIF_MAPPING ) ) {
+			return array();
+		}
+
 		$image_metadata = MLAData::mla_fetch_attachment_image_metadata( $post->ID );
 
 		/*
@@ -1805,10 +1307,16 @@ class MLAOptions {
 
 		$settings = apply_filters( 'mla_mapping_settings', $settings, $post->ID, $category, $attachment_metadata );
 
+		MLACore::mla_debug_add( __LINE__ . " MLAOptions::mla_evaluate_iptc_exif_mapping( {$post->ID}, {$category}, {$data_source_category} ) \$settings = " . var_export( $settings, true ), MLACore::MLA_DEBUG_CATEGORY_METADATA );
+
 		if ( $update_all || ( 'iptc_exif_standard_mapping' == $category ) ) {
 			foreach ( $settings['standard'] as $setting_key => $setting_value ) {
 				$setting_value = apply_filters( 'mla_mapping_rule', $setting_value, $post->ID, 'iptc_exif_standard_mapping', $attachment_metadata );
 				if ( NULL === $setting_value ) {
+					continue;
+				}
+
+				if ( isset( $setting_value['active'] ) && false == $setting_value['active'] ) {
 					continue;
 				}
 
@@ -1917,7 +1425,7 @@ class MLAOptions {
 				if ( ! MLACore::mla_taxonomy_support($setting_key, 'support') ) {
 					continue;
 				}
-							
+
 				/*
 				 * Convert checkbox value(s)
 				 */
@@ -1925,6 +1433,10 @@ class MLAOptions {
 
 				$setting_value = apply_filters( 'mla_mapping_rule', $setting_value, $post->ID, 'iptc_exif_taxonomy_mapping', $attachment_metadata );
 				if ( NULL === $setting_value ) {
+					continue;
+				}
+
+				if ( isset( $setting_value['active'] ) && false == $setting_value['active'] ) {
 					continue;
 				}
 
@@ -2087,7 +1599,7 @@ class MLAOptions {
 			}
 		} // update taxonomy term mappings
 
-		if ( $update_all || ( 'iptc_exif_custom_mapping' == $category ) ) {
+		if ( ( $update_all || ( 'iptc_exif_custom_mapping' == $category ) ) && !empty( $settings['custom'] ) ) {
 			$custom_updates = array();
 			foreach ( $settings['custom'] as $setting_key => $setting_value ) {
 				/*
@@ -2098,6 +1610,10 @@ class MLAOptions {
 				$setting_name = $setting_value['name'];
 				$setting_value = apply_filters( 'mla_mapping_rule', $setting_value, $post->ID, 'iptc_exif_custom_mapping', $attachment_metadata );
 				if ( NULL === $setting_value ) {
+					continue;
+				}
+
+				if ( isset( $setting_value['active'] ) && false == $setting_value['active'] ) {
 					continue;
 				}
 
@@ -2196,6 +1712,8 @@ class MLAOptions {
 		} // update custom field mappings
 
 		$updates = apply_filters( 'mla_mapping_updates', $updates, $post->ID, $category, $settings, $attachment_metadata );
+		MLACore::mla_debug_add( __LINE__ . " MLAOptions::mla_evaluate_iptc_exif_mapping( {$post->ID}, {$category}, {$data_source_category} ) \$updates = " . var_export( $updates, true ), MLACore::MLA_DEBUG_CATEGORY_METADATA );
+
 		return $updates;
 	} // mla_evaluate_iptc_exif_mapping
 
@@ -2209,7 +1727,9 @@ class MLAOptions {
 	 *
 	 * @return	string	HTML markup with select field options
 	 */
-	private static function _compose_iptc_option_list( $selection = 'none' ) {
+	public static function mla_compose_iptc_option_list( $selection = 'none' ) {
+		MLAOptions::_load_option_templates();
+
 		$option_template = MLAOptions::$mla_option_templates['iptc-exif-select-option'];
 		$option_values = array (
 			'selected' => ( 'none' == $selection ) ? 'selected="selected"' : '',
@@ -2229,7 +1749,7 @@ class MLAOptions {
 		} // foreach iptc_key
 
 		return $iptc_options;
-	} // _compose_iptc_option_list
+	} // mla_compose_iptc_option_list
 
 	/**
 	 * Compose an hierarchical taxonomy Parent options list with current selection
@@ -2242,7 +1762,7 @@ class MLAOptions {
 	 *
 	 * @return	string	HTML markup with select field options
 	 */
-	private static function _compose_parent_option_list( $taxonomy, $selection = 0 ) {
+	public static function mla_compose_parent_option_list( $taxonomy, $selection = 0 ) {
 		$dropdown_options = array(
 			'show_option_all' => '',
 			'show_option_none' => '&mdash; ' . __( 'None (select a value)', 'media-library-assistant' ) . ' &mdash;',
@@ -2276,7 +1796,7 @@ class MLAOptions {
 		$dropdown_options = str_replace( "value='-1' ", 'value="0"', $dropdown_options );
 
 		return $dropdown_options;
-	} // _compose_parent_option_list
+	} // mla_compose_parent_option_list
 
 	/**
 	 * Update Standard field portion of IPTC/EXIF mappings
@@ -2505,6 +2025,10 @@ class MLAOptions {
 		$custom_field_names = MLAOptions::_get_custom_field_names();
 		$new_values = stripslashes_deep( $new_values );
 
+		if ( empty( $new_values['custom'] ) ) {
+			$new_values['custom'] = array();
+		}
+
 		foreach ( $new_values['custom'] as $the_key => $new_value ) {
 			$any_setting_changed = false;
 			/*
@@ -2541,7 +2065,7 @@ class MLAOptions {
 
 			$new_value = $new_value;
 
-			if ( isset( $current_values['custom'][ $new_key ] ) ) {
+			if ( isset( $current_values['custom'] ) && isset( $current_values['custom'][ $new_key ] ) ) {
 				$old_values = $current_values['custom'][ $new_key ];
 				$any_setting_changed = false;
 			} else {
@@ -2667,7 +2191,7 @@ class MLAOptions {
 
 		$custom_field_mapping = MLACore::mla_get_option( 'custom_field_mapping' );
 		$iptc_exif_mapping = MLACore::mla_get_option( 'iptc_exif_mapping' );
-		$iptc_exif_mapping = $iptc_exif_mapping['custom'];
+		$iptc_exif_mapping = !empty( $iptc_exif_mapping['custom'] ) ? $iptc_exif_mapping['custom'] : array();
 
 		$limit = (int) apply_filters( 'postmeta_form_limit', 100 );
 		$keys = $wpdb->get_col( "
@@ -2678,19 +2202,19 @@ class MLAOptions {
 			ORDER BY meta_key
 			LIMIT $limit" );
 
-		/*
-		 * Add any names in mapping rules that don't exist in the database
-		 */
+		// Add any names in mapping rules that don't exist in the database
 		if ( $keys ) {
-			foreach ( $custom_field_mapping as $value )
+			foreach ( $custom_field_mapping as $value ) {
 				if ( ! in_array( $value['name'], $keys ) ) {
 					$keys[] = $value['name'];
 				}
+			}
 
-			foreach ( $iptc_exif_mapping as $value )
+			foreach ( $iptc_exif_mapping as $value ) {
 				if ( ! in_array( $value['name'], $keys ) ) {
 					$keys[] = $value['name'];
 				}
+			}
 
 			natcasesort($keys);
 		}
@@ -2712,488 +2236,13 @@ class MLAOptions {
 	 * @return	string	HTML table row markup for 'render' else message(s) reflecting the results of the operation.
 	 */
 	public static function mla_iptc_exif_option_handler( $action, $key, $value, $args = NULL ) {
+error_log( __LINE__ . " MLAOptions::mla_iptc_exif_option_handler( $action, $key )", 0 );
+return " MLAOptions::mla_iptc_exif_option_handler( $action, $key ) deprecated.";
+
+		// Added in 2.63
+		MLAOptions::_load_option_templates();
+
 		$current_values = MLACore::mla_get_option( 'iptc_exif_mapping' );
-
-		switch ( $action ) {
-			case 'render':
-
-				switch ( $key ) {
-					case 'iptc_exif_standard_mapping':
-						$row_template = MLAOptions::$mla_option_templates['iptc-exif-standard-row'];
-						$table_rows = '';
-
-						foreach ( $current_values['standard'] as $row_name => $row_value ) {
-							$row_values = array (
-								'key' => esc_attr( $row_name ),
-								'name_attr' => esc_attr( $row_value['name'] ),
-								'name' => esc_html( $row_value['name'] ),
-								'iptc_field_options' => MLAOptions::_compose_iptc_option_list( $row_value['iptc_value'] ),
-								'exif_size' => MLACoreOptions::MLA_EXIF_SIZE,
-								'exif_text' => esc_attr( $row_value['exif_value'] ),
-								'iptc_selected' => '',
-								'IPTC' => __( 'IPTC', 'media-library-assistant' ),
-								'exif_selected' => '',
-								'EXIF' => __( 'EXIF', 'media-library-assistant' ),
-								'keep_selected' => '',
-								'Keep' => __( 'Keep', 'media-library-assistant' ),
-								'replace_selected' => '',
-								'Replace' => __( 'Replace', 'media-library-assistant' ),
-							);
-
-							if ( $row_value['iptc_first'] ) {
-								$row_values['iptc_selected'] = 'selected="selected"';
-							} else {
-								$row_values['exif_selected'] = 'selected="selected"';
-							}
-
-							if ( $row_value['keep_existing'] ) {
-								$row_values['keep_selected'] = 'selected="selected"';
-							} else {
-								$row_values['replace_selected'] = 'selected="selected"';
-							}
-
-							$table_rows .= MLAData::mla_parse_template( $row_template, $row_values );
-						} // foreach row
-
-						$option_values = array (
-							'Field Title' => __( 'Field Title', 'media-library-assistant' ),
-							'IPTC Value' => __( 'IPTC Value', 'media-library-assistant' ),
-							'EXIF/Template Value' => __( 'EXIF/Template Value', 'media-library-assistant' ),
-							'Priority' => __( 'Priority', 'media-library-assistant' ),
-							'Existing Text' => __( 'Existing Text', 'media-library-assistant' ),
-							'table_rows' => $table_rows,
-							'help' => $value['help']
-						);
-
-						return MLAData::mla_parse_template( MLAOptions::$mla_option_templates['iptc-exif-standard-table'], $option_values );
-					case 'iptc_exif_taxonomy_mapping':
-						$row_template = MLAOptions::$mla_option_templates['iptc-exif-taxonomy-row'];
-						$select_template = MLAOptions::$mla_option_templates['iptc-exif-select'];
-						$table_rows = '';
-						$taxonomies = get_taxonomies( array ( 'show_ui' => true ), 'objects' );
-
-						foreach ( $taxonomies as $row_name => $row_value ) {
-							if ( ! MLACore::mla_taxonomy_support($row_name, 'support') ) {
-								continue;
-							}
-							
-							$row_values = array (
-								'key' => esc_attr( $row_name ),
-								'name' => esc_html( $row_value->labels->name ),
-								'hierarchical' => (string) $row_value->hierarchical,
-								'iptc_field_options' => '',
-								'exif_size' => MLACoreOptions::MLA_EXIF_SIZE,
-								'exif_text' => '',
-								'iptc_selected' => '',
-								'IPTC' => __( 'IPTC', 'media-library-assistant' ),
-								'exif_selected' => '',
-								'EXIF' => __( 'EXIF', 'media-library-assistant' ),
-								'keep_selected' => '',
-								'Keep' => __( 'Keep', 'media-library-assistant' ),
-								'replace_selected' => '',
-								'Replace' => __( 'Replace', 'media-library-assistant' ),
-								'delimiters_size' => 4,
-								'delimiters_text' => '',
-								'parent_select' => ''
-							);
-
-							if ( array_key_exists( $row_name, $current_values['taxonomy'] ) ) {
-								$current_value = $current_values['taxonomy'][ $row_name ];
-								$row_values['iptc_field_options'] = MLAOptions::_compose_iptc_option_list( $current_value['iptc_value'] );
-								$row_values['exif_text'] = esc_attr( $current_value['exif_value'] );
-
-								if ( $current_value['iptc_first'] ) {
-									$row_values['iptc_selected'] = 'selected="selected"';
-								} else {
-									$row_values['exif_selected'] = 'selected="selected"';
-								}
-
-								if ( $current_value['keep_existing'] ) {
-									$row_values['keep_selected'] = 'selected="selected"';
-								} else {
-									$row_values['replace_selected'] = 'selected="selected"';
-								}
-
-								$row_values['delimiters_text'] = $current_value['delimiters'];
-
- 								if ( $row_value->hierarchical ) {
-									$parent = ( isset( $current_value['parent'] ) ) ? (integer) $current_value['parent'] : 0;
-									$select_values = array (
-										'array' => 'taxonomy',
-										'key' => esc_attr( $row_name ),
-										'element' => 'parent',
-										'options' => MLAOptions::_compose_parent_option_list( $row_name, $parent )
-									);
-									$row_values['parent_select'] = MLAData::mla_parse_template( $select_template, $select_values );
-								}
-							} else {
-								$row_values['iptc_field_options'] = MLAOptions::_compose_iptc_option_list( 'none' );
-								$row_values['iptc_selected'] = 'selected="selected"';
-								$row_values['keep_selected'] = 'selected="selected"';
-
-								if ( $row_value->hierarchical ) {
-									$select_values = array (
-										'array' => 'taxonomy',
-										'key' => esc_attr( $row_name ),
-										'element' => 'parent',
-										'options' => MLAOptions::_compose_parent_option_list( $row_name, 0 )
-									);
-									$row_values['parent_select'] = MLAData::mla_parse_template( $select_template, $select_values );
-								}
-							}
-
-							$table_rows .= MLAData::mla_parse_template( $row_template, $row_values );
-						} // foreach row
-
-						$option_values = array (
-							'Field Title' => __( 'Field Title', 'media-library-assistant' ),
-							'IPTC Value' => __( 'IPTC Value', 'media-library-assistant' ),
-							'EXIF/Template Value' => __( 'EXIF/Template Value', 'media-library-assistant' ),
-							'Priority' => __( 'Priority', 'media-library-assistant' ),
-							'Existing Text' => __( 'Existing Text', 'media-library-assistant' ),
-							'Delimiter(s)' => __( 'Delimiter(s)', 'media-library-assistant' ),
-							'Parent' => __( 'Parent', 'media-library-assistant' ),
-							'table_rows' => $table_rows,
-							'help' => $value['help']
-						);
-
-						return MLAData::mla_parse_template( MLAOptions::$mla_option_templates['iptc-exif-taxonomy-table'], $option_values );
-					case 'iptc_exif_custom_mapping':
-						if ( empty( $current_values['custom'] ) ) {
-							$table_rows = MLAData::mla_parse_template( MLAOptions::$mla_option_templates['iptc-exif-custom-empty-row'],
-							array(
-								'No Mapping Rules' => __( 'No Custom Field Mapping Rules Defined', 'media-library-assistant' ),
-								'column_count' => 5 ) );
-						} else {
-							$row_template = MLAOptions::$mla_option_templates['iptc-exif-custom-rule-row'];
-							$table_rows = '';
-							$index = 0;
-						}
-
-						/*
-						 * One row for each existing rule, case insensitive "natural order"
-						 */
-						$sorted_keys = array();
-						foreach ( $current_values['custom'] as $row_name => $current_value ) {
-							$sorted_keys[ $current_value['name'] ] = $current_value['name'];
-						}
-						natcasesort( $sorted_keys );
-
-						$sorted_names = array();
-						foreach ( $sorted_keys as $row_name ) {
-							$sorted_names[ $row_name ] = array();
-						}
-
-						/*
-						 * Allow for multiple rules mapping the same name (an old bug)
-						 */						
-						foreach ( $current_values['custom'] as $row_name => $current_value ) {
-							$sorted_names[ $current_value['name'] ][] = $row_name;
-						}
-
-						foreach ( $sorted_names as $sorted_keys ) {
-							foreach ( $sorted_keys as $row_name ) {
-								$current_value = $current_values['custom'][ $row_name ];
-								$row_values = array (
-									'column_count' => 5,
-							'column_count_meta' => (5 - 2),
-									'index' => $index++,
-									'key' => esc_attr( $row_name ),
-									'name_attr' => esc_attr( $current_value['name'] ),
-									'name' => esc_html( $current_value['name'] ),
-									'iptc_field_options' => MLAOptions::_compose_iptc_option_list( $current_value['iptc_value'] ),
-									'exif_size' => MLACoreOptions::MLA_EXIF_SIZE,
-									'exif_text' => esc_attr( $current_value['exif_value'] ),
-									'iptc_selected' => '',
-									'IPTC' => __( 'IPTC', 'media-library-assistant' ),
-									'exif_selected' => '',
-									'EXIF' => __( 'EXIF', 'media-library-assistant' ),
-									'keep_selected' => '',
-									'Keep' => __( 'Keep', 'media-library-assistant' ),
-									'replace_selected' => '',
-									'Replace' => __( 'Replace', 'media-library-assistant' ),
-							'Format' => __( 'Format', 'media-library-assistant' ),
-							'native_format' => '',
-							'Native' => __( 'Native', 'media-library-assistant' ),
-							'commas_format' => '',
-							'Commas' => __( 'Commas', 'media-library-assistant' ),
-							'raw_format' => '',
-							'Raw' => __( 'Raw', 'media-library-assistant' ),
-							'Option' => __( 'Option', 'media-library-assistant' ),
-							'text_option' => '',
-							'Text' => __( 'Text', 'media-library-assistant' ),
-							'single_option' => '',
-							'Single' => __( 'Single', 'media-library-assistant' ),
-							'export_option' => '',
-							'Export' => __( 'Export', 'media-library-assistant' ),
-							'array_option' => '',
-							'Array' => __( 'Array', 'media-library-assistant' ),
-							'multi_option' => '',
-							'Multi' => __( 'Multi', 'media-library-assistant' ),
-							'no_null_checked' => '',
-							'Delete NULL values' => __( 'Delete NULL values', 'media-library-assistant' ),
-									'Delete Rule' => __( 'Delete Rule', 'media-library-assistant' ),
-									'Delete Field' => __( 'Delete Rule AND Field', 'media-library-assistant' ),
-									'Update Rule' => __( 'Update Rule', 'media-library-assistant' ),
-									'Map All Attachments' => __( 'Map All Attachments', 'media-library-assistant' ),
-								);
-
-								if ( $current_value['iptc_first'] ) {
-									$row_values['iptc_selected'] = 'selected="selected"';
-								} else {
-									$row_values['exif_selected'] = 'selected="selected"';
-								}
-
-								if ( $current_value['keep_existing'] ) {
-									$row_values['keep_selected'] = 'selected="selected"';
-								} else {
-									$row_values['replace_selected'] = 'selected="selected"';
-								}
-
-						switch( $current_value['format'] ) {
-							case 'commas':
-								$row_values['commas_format'] = 'selected="selected"';
-								break;
-							case 'raw':
-								$row_values['raw_format'] = 'selected="selected"';
-								break;
-							default:
-								$row_values['native_format'] = 'selected="selected"';
-						} // format
-
-						switch( $current_value['option'] ) {
-							case 'single':
-								$row_values['single_option'] = 'selected="selected"';
-								break;
-							case 'export':
-								$row_values['export_option'] = 'selected="selected"';
-								break;
-							case 'array':
-								$row_values['array_option'] = 'selected="selected"';
-								break;
-							case 'multi':
-								$row_values['multi_option'] = 'selected="selected"';
-								break;
-							default:
-								$row_values['text_option'] = 'selected="selected"';
-						} // option
-
-						if ( $current_value['no_null'] ) {
-							$row_values['no_null_checked'] = 'checked="checked"';
-						}
-
-								$table_rows .= MLAData::mla_parse_template( $row_template, $row_values );
-							} // foreach current_values key
-						} // foreach sorted_name
-
-						/*
-						 * Add a row for defining a new rule, existing Custom Field
-						 */
-						$row_template = MLAOptions::$mla_option_templates['iptc-exif-custom-new-rule-row'];
-						$row_values = array (
-							'column_count' => 5 ,
-					'column_count_meta' => (5 - 2),
-							'Add new Rule' => __( 'Add a new Mapping Rule', 'media-library-assistant' ),
-							'index' => MLACoreOptions::MLA_NEW_CUSTOM_RULE,
-							'field_name_options' => MLAOptions::_compose_custom_field_option_list( 'none', $current_values['custom'] ),
-							'iptc_field_options' => MLAOptions::_compose_iptc_option_list( 'none' ),
-							'exif_size' => MLACoreOptions::MLA_EXIF_SIZE,
-							'exif_text' => '',
-							'iptc_selected' => 'selected="selected"',
-							'IPTC' => __( 'IPTC', 'media-library-assistant' ),
-							'exif_selected' => '',
-							'EXIF' => __( 'EXIF', 'media-library-assistant' ),
-							'keep_selected' => 'selected="selected"',
-							'Keep' => __( 'Keep', 'media-library-assistant' ),
-							'replace_selected' => '',
-							'Replace' => __( 'Replace', 'media-library-assistant' ),
-					'Format' => __( 'Format', 'media-library-assistant' ),
-					'native_format' => 'selected="selected"',
-					'Native' => __( 'Native', 'media-library-assistant' ),
-					'commas_format' => '',
-					'Commas' => __( 'Commas', 'media-library-assistant' ),
-					'raw_format' => '',
-					'Raw' => __( 'Raw', 'media-library-assistant' ),
-					'Option' => __( 'Option', 'media-library-assistant' ),
-					'text_option' => '',
-					'Text' => __( 'Text', 'media-library-assistant' ),
-					'single_option' => '',
-					'Single' => __( 'Single', 'media-library-assistant' ),
-					'export_option' => '',
-					'Export' => __( 'Export', 'media-library-assistant' ),
-					'array_option' => '',
-					'Array' => __( 'Array', 'media-library-assistant' ),
-					'multi_option' => '',
-					'Multi' => __( 'Multi', 'media-library-assistant' ),
-					'no_null_checked' => '',
-					'Delete NULL values' => __( 'Delete NULL values', 'media-library-assistant' ),
-							'Add Rule' => __( 'Add Rule', 'media-library-assistant' ),
-							'Map All Attachments' => __( 'Add Rule and Map All Attachments', 'media-library-assistant' ),
-						);
-						$table_rows .= MLAData::mla_parse_template( $row_template, $row_values );
-
-						/*
-						 * Add a row for defining a new rule, new Custom Field
-						 */
-						$row_template = MLAOptions::$mla_option_templates['iptc-exif-custom-new-field-row'];
-						$row_values = array (
-							'column_count' => 5 ,
-					'column_count_meta' => (5 - 2),
-							'Add new Field' => __( 'Add a new Field and Mapping Rule', 'media-library-assistant' ),
-							'index' => MLACoreOptions::MLA_NEW_CUSTOM_FIELD,
-							'field_name_size' => '24',
-							'iptc_field_options' => MLAOptions::_compose_iptc_option_list( 'none' ),
-							'exif_size' => MLACoreOptions::MLA_EXIF_SIZE,
-							'exif_text' => '',
-							'iptc_selected' => 'selected="selected"',
-							'IPTC' => __( 'IPTC', 'media-library-assistant' ),
-							'exif_selected' => '',
-							'EXIF' => __( 'EXIF', 'media-library-assistant' ),
-							'keep_selected' => 'selected="selected"',
-							'Keep' => __( 'Keep', 'media-library-assistant' ),
-							'replace_selected' => '',
-							'Replace' => __( 'Replace', 'media-library-assistant' ),
-					'Format' => __( 'Format', 'media-library-assistant' ),
-					'native_format' => 'selected="selected"',
-					'Native' => __( 'Native', 'media-library-assistant' ),
-					'commas_format' => '',
-					'Commas' => __( 'Commas', 'media-library-assistant' ),
-					'raw_format' => '',
-					'Raw' => __( 'Raw', 'media-library-assistant' ),
-					'Option' => __( 'Option', 'media-library-assistant' ),
-					'text_option' => '',
-					'Text' => __( 'Text', 'media-library-assistant' ),
-					'single_option' => '',
-					'Single' => __( 'Single', 'media-library-assistant' ),
-					'export_option' => '',
-					'Export' => __( 'Export', 'media-library-assistant' ),
-					'array_option' => '',
-					'Array' => __( 'Array', 'media-library-assistant' ),
-					'multi_option' => '',
-					'Multi' => __( 'Multi', 'media-library-assistant' ),
-					'no_null_checked' => '',
-					'Delete NULL values' => __( 'Delete NULL values', 'media-library-assistant' ),
-							'Add Field' => __( 'Add Field', 'media-library-assistant' ),
-							'Map All Attachments' => __( 'Add Field and Map All Attachments', 'media-library-assistant' ),
-						);
-						$table_rows .= MLAData::mla_parse_template( $row_template, $row_values );
-
-						$option_values = array (
-							'Field Title' => __( 'Field Title', 'media-library-assistant' ),
-							'IPTC Value' => __( 'IPTC Value', 'media-library-assistant' ),
-							'EXIF/Template Value' => __( 'EXIF/Template Value', 'media-library-assistant' ),
-							'Priority' => __( 'Priority', 'media-library-assistant' ),
-							'Existing Text' => __( 'Existing Text', 'media-library-assistant' ),
-							'table_rows' => $table_rows,
-							'help' => $value['help']
-						);
-
-						return MLAData::mla_parse_template( MLAOptions::$mla_option_templates['iptc-exif-custom-table'], $option_values );
-					default:
-						/* translators: 1: ERROR tag 2: option name */
-						return '<br>' . sprintf( __( '%1$s: Render unknown custom %2$s.', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), $key ) . "\r\n";
-				} // switch $key
-			case 'update':
-			case 'delete':
-				$settings_changed = false;
-				$messages = '';
-
-				switch ( $key ) {
-					case 'iptc_exif_standard_mapping':
-						$results = MLAOptions::_update_iptc_exif_standard_mapping( $current_values, $args );
-						$messages .= $results['message'];
-						$current_values = $results['values'];
-						$settings_changed = $results['changed'];
-						break;
-					case 'iptc_exif_taxonomy_mapping':
-						$results = MLAOptions::_update_iptc_exif_taxonomy_mapping( $current_values, $args );
-						$messages .= $results['message'];
-						$current_values = $results['values'];
-						$settings_changed = $results['changed'];
-						break;
-					case 'iptc_exif_custom_mapping':
-						$results = MLAOptions::_update_iptc_exif_custom_mapping( $current_values, $args );
-						$messages .= $results['message'];
-						$current_values = $results['values'];
-						$settings_changed = $results['changed'];
-						break;
-					case 'iptc_exif_mapping':
-						$results = MLAOptions::_update_iptc_exif_standard_mapping( $current_values, $args );
-						$messages .= $results['message'];
-						$current_values = $results['values'];
-						$settings_changed = $results['changed'];
-
-						$results = MLAOptions::_update_iptc_exif_taxonomy_mapping( $current_values, $args );
-						$messages .= $results['message'];
-						$current_values = $results['values'];
-						$settings_changed |= $results['changed'];
-
-						$results = MLAOptions::_update_iptc_exif_custom_mapping( $current_values, $args );
-						$messages .= $results['message'];
-						$current_values = $results['values'];
-						$settings_changed |= $results['changed'];
-						break;
-					default:
-						/* translators: 1: ERROR tag 2: option name */
-						return '<br>' . sprintf( __( '%1$s: Update/delete unknown custom %2$s.', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), $key ) . "\r\n";
-				} // switch $key
-
-			if ( $settings_changed ) {
-				$settings_changed = MLACore::mla_update_option( 'iptc_exif_mapping', $current_values );
-				if ( $settings_changed ) {
-					$results = __( 'IPTC/EXIF mapping settings updated.', 'media-library-assistant' ) . "\r\n";
-				} else {
-					$results = __( 'ERROR', 'media-library-assistant' ) . ': ' . __( 'IPTC/EXIF settings update failed.', 'media-library-assistant' ) . "\r\n";
-				}
-			} else {
-				$results = __( 'IPTC/EXIF no mapping changes detected.', 'media-library-assistant' ) . "\r\n";
-			}
-
-			return $results . $messages;
-			case 'reset':
-				switch ( $key ) {
-					case 'iptc_exif_standard_mapping':
-						$current_values['standard'] = MLACoreOptions::$mla_option_definitions['iptc_exif_mapping']['std']['standard'];
-						$settings_changed = MLACore::mla_update_option( 'iptc_exif_mapping', $current_values );
-						if ( $settings_changed ) {
-							/* translators: 1: field type */
-							return sprintf( __( '%1$s settings saved.', 'media-library-assistant' ), 'IPTC/EXIF ' . __( 'Standard field', 'media-library-assistant' ) ) . "\r\n";
-						} else {
-							/* translators: 1: ERROR tag 2: field type */
-							return sprintf( __( '%1$s: IPTC/EXIF %2$s settings update failed.', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), __( 'Standard field', 'media-library-assistant' ) ) . "\r\n";
-						}
-					case 'iptc_exif_taxonomy_mapping':
-						$current_values['taxonomy'] = MLACoreOptions::$mla_option_definitions['iptc_exif_mapping']['std']['taxonomy'];
-						$settings_changed = MLACore::mla_update_option( 'iptc_exif_mapping', $current_values );
-						if ( $settings_changed ) {
-							/* translators: 1: field type */
-							return sprintf( __( '%1$s settings saved.', 'media-library-assistant' ), 'IPTC/EXIF ' . __( 'Taxonomy term', 'media-library-assistant' ) ) . "\r\n";
-						} else {
-							/* translators: 1: ERROR tag 2: field type */
-							return sprintf( __( '%1$s: IPTC/EXIF %2$s settings update failed.', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), __( 'Taxonomy term', 'media-library-assistant' ) ) . "\r\n";
-						}
-					case 'iptc_exif_custom_mapping':
-						$current_values['custom'] = MLACoreOptions::$mla_option_definitions['iptc_exif_mapping']['std']['custom'];
-						$settings_changed = MLACore::mla_update_option( 'iptc_exif_mapping', $current_values );
-						if ( $settings_changed ) {
-							/* translators: 1: field type */
-							return sprintf( __( '%1$s settings saved.', 'media-library-assistant' ), 'IPTC/EXIF ' . __( 'Custom field', 'media-library-assistant' ) ) . "\r\n";
-						} else {
-							/* translators: 1: ERROR tag 2: field type */
-							return sprintf( __( '%1$s: IPTC/EXIF %2$s settings update failed.', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), __( 'Custom field', 'media-library-assistant' ) ) . "\r\n";
-						}
-					case 'iptc_exif_mapping':
-						MLACore::mla_delete_option( $key );
-						/* translators: 1: option name, e.g., taxonomy_support */
-						return '<br>' . sprintf( __( 'Reset custom %1$s', 'media-library-assistant' ), $key ) . "\r\n";
-					default:
-						/* translators: 1: ERROR tag 2: option name, e.g., taxonomy_support */
-						return '<br>' . sprintf( __( '%1$s: Reset unknown custom %2$s', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), $key ) . "\r\n";
-				} // switch $key
-			default:
-				/* translators: 1: ERROR tag 2: option name 3: action, e.g., update, delete, reset */
-				return '<br>' . sprintf( __( '%1$s: Custom %2$s unknown action "%3$s"', 'media-library-assistant' ), __( 'ERROR', 'media-library-assistant' ), $key, $action ) . "\r\n";
-		} // switch $action
 	} // mla_iptc_exif_option_handler
 } // class MLAOptions
 ?>

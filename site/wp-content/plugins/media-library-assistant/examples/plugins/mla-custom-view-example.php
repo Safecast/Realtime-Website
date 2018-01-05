@@ -5,7 +5,11 @@
  * This example adds a Media/Assistant submenu table view for items attached to
  * non-published parent posts/pages.
  *
- * @packageMLA Custom View Example
+ * Created for support topic "Filter by post status"
+ * opened on 2/24/2015 by "milkchic".
+ * https://wordpress.org/support/topic/filter-by-post-status/
+ *
+ * @package MLA Custom View Example
  * @version 1.01
  */
 
