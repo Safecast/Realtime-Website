@@ -602,6 +602,7 @@ add_action('save_post', 'update_sensors_post_title');
 
 define("TIME_OFFLINE_SHORT",    3960);
 define("TIME_OFFLINE_LONG", 	7920);
+define("TIME_OFFLINE_VERY_LONG", 63072000);
 define("SENSOR_TABLE_PAGE", 	17);
 
 if (!function_exists('generateSensorsTable')) {

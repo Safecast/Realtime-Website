@@ -11,6 +11,14 @@
 	$lastTimeSince = time() - $lastTimestamp;
 	$lastTimeAgo   = human_time_diff($lastTimestamp).($langIsJap ? '前' : ' ago');
 
+	if (strpos($lastTimeAgo, '48 years') !== false) {
+		$lastTimeAgo ="very long ago";
+	}
+
+	if (strpos($lastTimeAgo, '48年') !== false) {
+		$lastTimeAgo ="長い時間前";
+	}
+
 	$maxCpm        = get_post_meta(get_the_ID(), 'sensor_measurement_max_cpm', true);
 	$maxUsievert   = get_post_meta(get_the_ID(), 'sensor_measurement_max_usvh', true);
 	$maxLatitude   = get_post_meta(get_the_ID(), 'sensor_measurement_max_latitude', true);
@@ -20,6 +28,13 @@
 	$maxTimeSince  = time() - $maxTimestamp;
 	$maxTimeAgo    = human_time_diff($maxTimestamp).($langIsJap ? '前' : ' ago');
 
+	if (strpos($maxTimeAgo, '48 years') !== false) {
+		$maxTimeAgo ="very long ago";
+	}
+
+	if (strpos($maxTimeAgo, '48年') !== false) {
+		$maxTimeAgo ="長い時間前";
+	}
 	$status      = $langIsJap ? 'オンライン' : 'Online';
 	$statusClass = 'info';
 	$alarm	     =get_post_meta(get_the_ID(), 'alarm', true);
@@ -31,6 +46,7 @@
 		$status      = $langIsJap ? 'オフライン（短）' : 'Offline short';
 		$statusClass = 'warning';
 	}
+
 
 
 	$download  = $langIsJap ? '詳細データ' : 'More sensor data';
