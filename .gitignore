@@ -12,7 +12,7 @@ site/wp-content/uploads/*
 site/wp-content/backups/*
 site/wp-content/updraft/*
 site/wp-content/themes/safecast/assets/map/*
-site/wp-content/plugins/siteguard/really-simple-captcha/
+site/wp-content/plugins/siteguard/really-simple-captcha/*
 site/wp-config.php
 plots/
 

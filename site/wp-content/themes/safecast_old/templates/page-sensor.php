@@ -1,7 +1,6 @@
 <?php
 	$id            = get_post_meta(get_the_ID(), 'sensor_id', true);
-	$langIsJap     = qtrans_getLanguage() == "jp";
-
+	$langIsJap     = qtrans_getLanguage() == "ja";
 	$lastCpm       = get_post_meta(get_the_ID(), 'sensor_measurement_last_cpm', true);
 	$lastUsievert  = get_post_meta(get_the_ID(), 'sensor_measurement_last_usvh', true);
 	$lastLatitude  = get_post_meta(get_the_ID(), 'sensor_measurement_last_latitude', true);
@@ -9,14 +8,10 @@
 	$lastGmt       = get_post_meta(get_the_ID(), 'sensor_measurement_last_gmt', true);
 	$lastTimestamp = strtotime($lastGmt);
 	$lastTimeSince = time() - $lastTimestamp;
-	$lastTimeAgo   = human_time_diff($lastTimestamp).($langIsJap ? '前' : ' ago');
+	$lastTimeAgo   = human_time_diff($lastTimestamp).($langIsJap ? '前' : ' ago'); 
 
-	if (strpos($lastTimeAgo, '48 years') !== false) {
-		$lastTimeAgo ="very long ago";
-	}
-
-	if (strpos($lastTimeAgo, '48年') !== false) {
-		$lastTimeAgo ="長い時間前";
+	if (empty($lastTimestamp)) {
+		$lastTimeAgo =$langIsJap ? '格納されていない' : 'Not stored';
 	}
 
 	$maxCpm        = get_post_meta(get_the_ID(), 'sensor_measurement_max_cpm', true);
@@ -28,13 +23,10 @@
 	$maxTimeSince  = time() - $maxTimestamp;
 	$maxTimeAgo    = human_time_diff($maxTimestamp).($langIsJap ? '前' : ' ago');
 
-	if (strpos($maxTimeAgo, '48 years') !== false) {
-		$maxTimeAgo ="very long ago";
+	if (empty($lastTimestamp)) {
+		$maxTimeAgo =$langIsJap ? '格納されていない' : 'Not stored';
 	}
 
-	if (strpos($maxTimeAgo, '48年') !== false) {
-		$maxTimeAgo ="長い時間前";
-	}
 	$status      = $langIsJap ? 'オンライン' : 'Online';
 	$statusClass = 'info';
 	$alarm	     =get_post_meta(get_the_ID(), 'alarm', true);
