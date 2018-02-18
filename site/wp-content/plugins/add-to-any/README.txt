@@ -3,7 +3,7 @@ Contributors: micropat, addtoany
 Tags: AddToAny, share, sharing, social, share buttons, share button, social media, media, marketing, links, email, seo, woocommerce, google, linkedin, reddit, facebook, like, twitter, pinterest, whatsapp, instagram, youtube, share this, sharethis, feed, icons
 Requires at least: 3.7
 Tested up to: 4.9
-Stable tag: 1.7.22
+Stable tag: 1.7.25
 
 Share buttons for WordPress including the AddToAny sharing button, Facebook, Twitter, Google+, Pinterest, WhatsApp, many more, and follow icons too.
 
@@ -61,7 +61,7 @@ AddToAny is the universal sharing platform, and the AddToAny plugin is the most 
 = Wide Support =
 
 * Over 10 years of development
-* Over 7 million downloads
+* Over 8 million downloads
 * Translated into dozens of languages
 * Ongoing support from the community
 
@@ -145,7 +145,7 @@ For more technical information on setting your pages up for Facebook sharing, se
 
 = Why do share links route through AddToAny? =
 
-Since 2006, AddToAny is trusted across the web to always route to each service's current endpoint. This routing enables publisher customization, visitor personalization, and keeps the AddToAny plugin remarkably lightweight without the need for constant plugin updates. In AddToAny menus, visitors see the services they actually use. On mobile, AddToAny presents the choice of sharing to a service's native app or mobile site and the preference is used on the next share. Publishers take advantage of AddToAny services such as <a href="https://www.addtoany.com/buttons/customize/wordpress/email_template">email templates</a>, <a href="https://www.addtoany.com/buttons/customize/wordpress/twitter_message">Twitter templates</a>, <a href="https://www.addtoany.com/buttons/customize/wordpress/link_tracking">URL shortener & parameters</a>, and more. Just as service icons change, service endpoints change too, and AddToAny is updated daily to reflect service endpoint and API changes.
+AddToAny routing enables publisher customization, visitor personalization, and keeps the AddToAny plugin remarkably lightweight without the need for constant plugin updates. In AddToAny menus, visitors see the services they actually use. On mobile, AddToAny presents the choice of sharing to a service's native app or mobile site and the preference is used on the next share. Publishers take advantage of AddToAny services such as <a href="https://www.addtoany.com/buttons/customize/wordpress/email_template">email templates</a>, <a href="https://www.addtoany.com/buttons/customize/wordpress/twitter_message">Twitter templates</a>, <a href="https://www.addtoany.com/buttons/customize/wordpress/templates">custom parameters</a>, <a href="https://www.addtoany.com/buttons/customize/wordpress/link_tracking">URL shorteners</a>, localization, and more. Just as service icons change, service endpoints change too, and AddToAny is updated daily to reflect service endpoint and API changes.
 
 = Where are buttons such as Instagram, YouTube, Snapchat? =
 
@@ -253,11 +253,11 @@ It depends on your theme, but you can try adding the following CSS code to your 
 
 To align right:
 
-`.addtoany_share_save_container { text-align:right; }`
+`.addtoany_content { text-align:right; }`
 
 To align center:
 
-`.addtoany_share_save_container { text-align:center; }`
+`.addtoany_content { text-align:center; }`
 
 = How can I remove the button(s) from individual posts and pages? =
 
@@ -351,10 +351,33 @@ Upload (or move) the `add-to-any` plugin directory into the `/wp-content/mu-plug
 
 == Changelog ==
 
+= 1.7.25 =
+* Fix service count options in settings
+* Load JS for the customizer only when the customizer is used (thanks Neil)
+
+= 1.7.24 =
+* Move JS into a single block to prevent issues caused by some site optimization plugins
+* Simplify file paths & URLs
+* Prevent Cloudflare's experimental Rocket Loader from causing script issues
+* Remove Google+ share count options because Google+ no longer provides counters
+* Remove AIM, BuddyMarks, diHITT, Jamespot, Netlog, NewsVine, NUjij, Segnalo, Stumpedia, YouMob
+
+= 1.7.23 =
+* Add `addtoany_content` class name to container in content
+ * The container's `addtoany_share_save_container` class name will be removed in a future plugin update
+ * Reference `.addtoany_content` instead of `.addtoany_share_save_container`
+* Add `addtoany_share` class name to universal share button
+ * The button's `addtoany_share_save` class name will be removed in a future plugin update
+ * Reference `.addtoany_share` instead of `.addtoany_share_save`
+* Add Medium follow button
+* Update Blogger service code
+* Remove Klipfolio
+* Remove Webnews
+
 = 1.7.22 =
 * Use WordPress 4.9 code editor for Additional CSS and Additional JavaScript boxes
 * Rename CSS handles to `addtoany`
-* Remove Use default CSS option
+* Remove "Use default CSS" option
  * If needed, you can disable the default stylesheet using `add_action( 'wp_enqueue_scripts', function() { wp_dequeue_style( 'addtoany' ); }, 21 );`
 * Remove menu style button in admin
 * Use Italian language pack (thanks truttle, blogforum)
@@ -938,8 +961,11 @@ Upload (or move) the `add-to-any` plugin directory into the `/wp-content/mu-plug
 
 == Upgrade Notice ==
 
+= 1.7.23 =
+If you have CSS code customizations referencing the universal button (`.addtoany_share_save`) or the standard share buttons container (`.addtoany_share_save_container`), those class names have been deprecated and will be removed in a future plugin update. The new class names are `.addtoany_share` and `.addtoany_content` respectively. Please update your custom CSS if you are referencing the deprecated class names.
+
 = 1.7.18 =
-* The background for floating bars now defaults to `transparent`. You can change the background for your floating bars in the "Floating" tab of Settings > AddToAny.
+The background for floating bars now defaults to `transparent`. You can change the background for your floating bars in the "Floating" tab of Settings > AddToAny.
 
 = 1.7.13 =
 For [WooCommerce](https://woocommerce.com/) sites, the default standard placement for share buttons has moved from the product description to after the product meta block. You can customize exactly where share buttons display by [editing](https://docs.woocommerce.com/document/editing-projects-templates-safely/) your `share.php` Single Product Share template.

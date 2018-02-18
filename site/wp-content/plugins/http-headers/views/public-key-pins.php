@@ -1,17 +1,18 @@
 <?php 
+if (!defined('ABSPATH')) {
+    exit;
+}
 $public_key_pins = get_option ( 'hh_public_key_pins', 0 );
 ?>
 <tr valign="top">
 	<th scope="row">Public-Key-Pins
-		<p class="description">HTTP Public Key Pinning (HPKP) is a security
-			mechanism which allows HTTPS websites to resist impersonation by
-			attackers using mis-issued or otherwise fraudulent certificates.</p>
+		<p class="description"><?php _e('HTTP Public Key Pinning (HPKP) is a security mechanism which allows HTTPS websites to resist impersonation by attackers using mis-issued or otherwise fraudulent certificates.', 'http-headers'); ?></p>
 
 		<p>
 		<label><input type="checkbox" class="http-header-value"
 			name="hh_public_key_pins_report_only" value="1"
 			<?php checked(get_option('hh_public_key_pins_report_only'), 1, true); ?>
-			<?php echo $public_key_pins == 1 ? NULL : ' readonly'; ?> /> "Report-Only" (for reporting-only purposes)</label>
+			<?php echo $public_key_pins == 1 ? NULL : ' readonly'; ?> /> "Report-Only" (<?php _e('for reporting-only purposes', 'http-headers'); ?>)</label>
 		</p>
 	</th>
 	<td>

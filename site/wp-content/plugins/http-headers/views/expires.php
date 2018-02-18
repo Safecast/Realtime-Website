@@ -1,9 +1,14 @@
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
 <tr>
 	<th scope="row">Expires
-		<p class="description">The Expires header contains the date/time after which the response is considered stale.</p>
-		<p class="description">Invalid dates, like the value 0, represent a date in the past and mean that the resource is already expired.</p>
-		<p class="description">If there is a Cache-Control header with the "max-age" or "s-max-age" directive in the response, the Expires header is ignored.</p>
-		<p class="description">* Works only in Apache mode</p>
+		<p class="description"><?php _e('The Expires header contains the date/time after which the response is considered stale.', 'http-headers'); ?></p>
+		<p class="description"><?php _e('Invalid dates, like the value 0, represent a date in the past and mean that the resource is already expired.', 'http-headers'); ?></p>
+	    <p class="description"><?php _e("If there is a Cache-Control header with the 'max-age' or 's-max-age' directive in the response, the Expires header is ignored.", 'http-headers'); ?></p>
+		<p class="description"><?php _e('* Works only in Apache mode', 'http-headers'); ?></p>
 	</th>
 	<td>
         <fieldset>

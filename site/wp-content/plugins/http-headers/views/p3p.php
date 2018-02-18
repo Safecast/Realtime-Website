@@ -1,6 +1,11 @@
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
         <tr valign="top">
 	        <th scope="row">P3P
-	        	<p class="description">The Platform for Privacy Preferences Project (P3P) is a protocol allowing websites to declare their intended use of information they collect about web browser users.</p>
+	        	<p class="description"><?php _e('The Platform for Privacy Preferences Project (P3P) is a protocol allowing websites to declare their intended use of information they collect about web browser users.', 'http-headers'); ?></p>
 	        </th>
 	        <td>
 	       		<fieldset>

@@ -1,6 +1,11 @@
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
 <tr>
 	<th scope="row">Cache-Control
-		<p class="description">The Cache-Control general-header field is used to specify directives for caching mechanisms in both, requests and responses. Caching directives are unidirectional, meaning that a given directive in a request is not implying that the same directive is to be given in the response.</p>
+		<p class="description"><?php _e('The Cache-Control general-header field is used to specify directives for caching mechanisms in both, requests and responses. Caching directives are unidirectional, meaning that a given directive in a request is not implying that the same directive is to be given in the response.', 'http-headers'); ?></p>
 	</th>
 	<td>
         <fieldset>
@@ -48,7 +53,7 @@
 						?><input type="checkbox" class="http-header-value" name="hh_cache_control_value[<?php echo $item; ?>]" id="hh_cache_control_value_<?php echo $item; ?>" value="1"<?php checked(array_key_exists($item, $cache_control_value), 1, true); ?>><?php
 						break;
 					case 'int':
-						?><input type="text" class="http-header-value" name="hh_cache_control_value[<?php echo $item; ?>]" id="hh_cache_control_value_<?php echo $item; ?>" value="<?php echo array_key_exists($item, $cache_control_value) && strlen($cache_control_value[$item]) > 0 ? (int) $cache_control_value[$item] : NULL; ?>"> seconds<?php
+						?><input type="text" class="http-header-value" name="hh_cache_control_value[<?php echo $item; ?>]" id="hh_cache_control_value_<?php echo $item; ?>" size="6" value="<?php echo array_key_exists($item, $cache_control_value) && strlen($cache_control_value[$item]) > 0 ? (int) $cache_control_value[$item] : NULL; ?>"> <?php _e('seconds', 'http-headers');
 						break;
 				}
 				?>	

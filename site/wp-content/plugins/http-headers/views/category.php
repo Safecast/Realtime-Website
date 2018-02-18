@@ -1,13 +1,16 @@
 <?php 
+if (!defined('ABSPATH')) {
+    exit;
+} 
 include dirname(__FILE__) . '/includes/config.inc.php';
 include dirname(__FILE__) . '/includes/breadcrumbs.inc.php';
 ?>
 <table class="hh-index-table">
 	<thead>
 		<tr>
-			<th>Header</th>
-			<th style="width: 45%">Value</th>
-			<th class="hh-status">Status</th>
+			<th><?php _e('Header', 'http-headers'); ?></th>
+			<th style="width: 45%"><?php _e('Value', 'http-headers'); ?></th>
+			<th class="hh-status"><?php _e('Status', 'http-headers'); ?></th>
 			<th></th>
 		</tr>
 	</thead>
@@ -111,7 +114,7 @@ include dirname(__FILE__) . '/includes/breadcrumbs.inc.php';
 				case 'hh_access_control_allow_origin':
 					if ($value == 'origin')
 					{
-						$value = get_option('hh_access_control_allow_origin_url');
+					    $value = join('<br>', get_option('hh_access_control_allow_origin_url', array()));
 					}
 					break;
 				case 'hh_access_control_expose_headers':
@@ -208,18 +211,26 @@ include dirname(__FILE__) . '/includes/breadcrumbs.inc.php';
 					$item[0] = join('', $_names);
 					$value = join('', $_values);
 					break;
+				case 'hh_report_to':
+				    $tmp = array();
+				    foreach ($value as $a_item)
+				    {
+				        $tmp[] = sprintf('{"url": "%s", "group": "%s", "max-age": %u%s}',
+				            $a_item['url'], $a_item['group'], $a_item['max-age'], isset($a_item['includeSubDomains']) ? ', includeSubDomains' : NULL);
+				    }
+				    $value = join(', ', $tmp);
 				default:
 					$value = !is_array($value) ? $value : join(', ', $value);
 			}
 		}
-		$status = $isOn ? 'On' : 'Off';
+		$status = $isOn ? __('On', 'http-headers') : __('Off', 'http-headers');
 		?>
 		<tr<?php echo $isOn ? ' class="active"' : NULL; ?>>
 			<td><?php echo $item[0]; ?></td>
 			<td><?php echo $value; ?></td>
 			<td class="hh-status hh-status-<?php echo $isOn ? 'on' : 'off'; ?>"><span><?php echo $status; ?></span></td>
 			<td><a href="<?php echo get_admin_url(); ?>options-general.php?page=http-headers&header=<?php 
-				echo $index; ?>">Edit</a></td>
+				echo $index; ?>"><?php _e('Edit', 'http-headers'); ?></a></td>
 		</tr>
 		<?php
 	}

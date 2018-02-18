@@ -30,7 +30,7 @@ class Custom_Permalinks_Frontend {
 		global $wpdb;
 		global $_CPRegisteredURL;
 
-		// First, search for a matching custom permalink, 
+		// First, search for a matching custom permalink,
 		// and if found, generate the corresponding original URL
 
 		$original_url = NULL;
@@ -55,24 +55,47 @@ class Custom_Permalinks_Frontend {
 		}
 
 		if ( defined( 'POLYLANG_VERSION' ) ) {
-			require_once( CUSTOM_PERMALINKS_PATH . 'frontend/class-custom-permalinks-form.php' );
-			$custom_permalinks_form = new Custom_Permalinks_Form();
-			$request = $custom_permalinks_form->custom_permalinks_check_conflicts( $request );
+			require_once(
+				CUSTOM_PERMALINKS_PATH . 'frontend/class-custom-permalinks-form.php'
+			);
+			$cp_form = new Custom_Permalinks_Form();
+			$request = $cp_form->custom_permalinks_check_conflicts( $request );
 		}
 		$request_noslash = preg_replace( '@/+@','/', trim( $request, '/' ) );
 
+        $remove_pager = '';
+		if ( false !== strpos( $request_noslash, '/page/' ) ) {
+            $check_pager  = explode( '/', $request_noslash );
+            $get_pager_no = count( $check_pager ) - 1;
+            if ( is_numeric( $check_pager[$get_pager_no] ) ) {
+                $remove_pager = '/page/' . $check_pager[$get_pager_no];
+                $request_noslash = str_replace( $remove_pager, '', $request_noslash );
+            }
+        }
+        if ( false !== strpos( $request_noslash, '/comment-page-' ) ) {
+            $check_pager  = explode( '/comment-page-', $request_noslash );
+            $get_pager_no = count( $check_pager ) - 1;
+            if ( is_numeric( $check_pager[$get_pager_no] ) ) {
+                $remove_pager = '/comment-page-' . $check_pager[$get_pager_no];
+                $request_noslash = str_replace( $remove_pager, '', $request_noslash );
+            }
+        }
+
 		$sql = $wpdb->prepare( "SELECT p.ID, pm.meta_value, p.post_type, p.post_status " .
-						" FROM $wpdb->posts AS p INNER JOIN $wpdb->postmeta AS pm ON (pm.post_id = p.ID) " .
-						" WHERE pm.meta_key = 'custom_permalink' " .
-						" AND (pm.meta_value = '%s' OR pm.meta_value = '%s') " .
-						" AND p.post_status != 'trash' AND p.post_type != 'nav_menu_item' " .
-            " ORDER BY FIELD(post_status,'publish','private','draft','auto-draft','inherit')," .
-						" FIELD(post_type,'post','page') LIMIT 1", $request_noslash, $request_noslash . "/" );
+					" FROM $wpdb->posts AS p INNER JOIN $wpdb->postmeta AS pm ON (pm.post_id = p.ID) " .
+					" WHERE pm.meta_key = 'custom_permalink' " .
+					" AND (pm.meta_value = '%s' OR pm.meta_value = '%s') " .
+					" AND p.post_status != 'trash' AND p.post_type != 'nav_menu_item' " .
+					" ORDER BY FIELD(post_status,'publish','private','draft','auto-draft','inherit')," .
+					" FIELD(post_type,'post','page') LIMIT 1", $request_noslash, $request_noslash . "/" );
 
 		$posts = $wpdb->get_results( $sql );
 
 		if ( ! $posts ) {
-			$sql = $wpdb->prepare( "SELECT p.ID, pm.meta_value, p.post_type, p.post_status FROM $wpdb->posts AS p " .
+            $def_query = apply_filters( 'custom_permalinks_like_query', '__false' );
+            if ( defined( 'POLYLANG_VERSION' ) || defined( 'AMP__VERSION' )
+                || defined( 'TASTY_RECIPES_PLUGIN_VERSION' ) || '__false' !== $def_query ) {
+                $sql = $wpdb->prepare( "SELECT p.ID, pm.meta_value, p.post_type, p.post_status FROM $wpdb->posts AS p " .
 							" LEFT JOIN $wpdb->postmeta AS pm ON (p.ID = pm.post_id) WHERE " .
 							" meta_key = 'custom_permalink' AND meta_value != '' AND " .
 							" ( LOWER(meta_value) = LEFT(LOWER('%s'), LENGTH(meta_value)) OR " .
@@ -83,12 +106,12 @@ class Custom_Permalinks_Frontend {
 							" FIELD(post_type,'post','page'), p.ID ASC LIMIT 1",
 							$request_noslash, $request_noslash . "/" );
 
-			$posts = $wpdb->get_results( $sql );
+                $posts = $wpdb->get_results( $sql );
+            }
 		}
 
 		if ( $posts ) {
 			// A post matches our request
-
 			// Preserve this url for later if it's the same as the permalink (no extra stuff)
 			if ( $request_noslash == trim( $posts[0]->meta_value, '/' ) ) {
 				$_CPRegisteredURL = $request;
@@ -113,6 +136,9 @@ class Custom_Permalinks_Frontend {
 						str_replace( $post_meta, $get_original_url, strtolower( $request_noslash ) )
 					);
 				}
+				if ( $remove_pager !== '' ) {
+					$original_url = $original_url . $remove_pager;
+				}
 			}
 		}
 
@@ -135,11 +161,13 @@ class Custom_Permalinks_Frontend {
 
 					if ( $term['kind'] == 'category' ) {
 						$category_link = $this->custom_permalinks_original_category_link( $term['id'] );
-						$original_url = str_replace( trim( $permalink, '/' ), $category_link, trim( $request, '/' ) );
 					} else {
 						$category_link = $this->custom_permalinks_original_tag_link( $term['id'] );
-						$original_url = str_replace( trim( $permalink, '/' ), $category_link, trim( $request, '/' ) );
 					}
+
+					$original_url = str_replace(
+						trim( $permalink, '/' ), $category_link, trim( $request, '/' )
+					);
 				}
 			}
 		}
@@ -148,14 +176,22 @@ class Custom_Permalinks_Frontend {
 			$original_url = str_replace( '//', '/', $original_url );
 
 			if ( ( $pos = strpos( $_SERVER['REQUEST_URI'], '?' ) ) !== false ) {
-				$query_vars = substr( $_SERVER['REQUEST_URI'], $pos + 1);
+				$query_vars    = substr( $_SERVER['REQUEST_URI'], $pos + 1);
 				$original_url .= ( strpos( $original_url, '?' ) === false ? '?' : '&' ) . $query_vars;
 			}
 
 			// Now we have the original URL, run this back through WP->parse_request, in order to
 			// parse parameters properly.  We set $_SERVER variables to fool the function.
-			$old_request_uri = $_SERVER['REQUEST_URI']; $old_query_string = $_SERVER['QUERY_STRING'];
+			$old_request_uri  = $_SERVER['REQUEST_URI'];
+			$old_query_string = '';
+			if ( isset( $_SERVER['QUERY_STRING'] ) ) {
+				$old_query_string = $_SERVER['QUERY_STRING'];
+			}
 			$_SERVER['REQUEST_URI'] = '/' . ltrim( $original_url, '/' );
+			$path_info = apply_filters( 'custom_permalinks_path_info', '__false' );
+			if ( '__false' !== $path_info ) {
+				$_SERVER['PATH_INFO'] = '/' . ltrim( $original_url, '/' );
+			}
 			$_SERVER['QUERY_STRING'] = ( ( $pos = strpos( $original_url, '?' ) ) !== false ? substr( $original_url, $pos + 1 ) : '' );
 			parse_str( $_SERVER['QUERY_STRING'], $query_array );
 			$old_values = array();
@@ -174,7 +210,8 @@ class Custom_Permalinks_Frontend {
 			add_filter( 'request', array( $this, 'custom_permalinks_request' ), 10, 1 );
 
 			// Restore values
-			$_SERVER['REQUEST_URI'] = $old_request_uri; $_SERVER['QUERY_STRING'] = $old_query_string;
+			$_SERVER['REQUEST_URI']  = $old_request_uri;
+			$_SERVER['QUERY_STRING'] = $old_query_string;
 			foreach ( $old_values as $key => $value ) {
 				$_REQUEST[$key] = $value;
 			}
@@ -187,7 +224,7 @@ class Custom_Permalinks_Frontend {
 	 * Action to redirect to the custom permalink
 	 */
 	public function custom_permalinks_redirect() {
-		global $wpdb;		
+		global $wpdb;
 
 		$custom_permalink = '';
 		$original_permalink = '';
@@ -203,22 +240,44 @@ class Custom_Permalinks_Frontend {
 
 		if ( defined( 'POLYLANG_VERSION' ) ) {
 			require_once( CUSTOM_PERMALINKS_PATH . 'frontend/class-custom-permalinks-form.php' );
-			$custom_permalinks_form = new Custom_Permalinks_Form();
-			$request = $custom_permalinks_form->custom_permalinks_check_conflicts( $request );
+			$cp_form = new Custom_Permalinks_Form();
+			$request = $cp_form->custom_permalinks_check_conflicts( $request );
 		}
 		$request_noslash = preg_replace( '@/+@','/', trim( $request, '/' ) );
 
+        $remove_pager = '';
+		if ( false !== strpos( $request_noslash, '/page/' ) ) {
+            $check_pager  = explode( '/', $request_noslash );
+            $get_pager_no = count( $check_pager ) - 1;
+            if ( is_numeric( $check_pager[$get_pager_no] ) ) {
+                $remove_pager = '/page/' . $check_pager[$get_pager_no];
+                $request_noslash = str_replace( $remove_pager, '', $request_noslash );
+            }
+        }
+        if ( false !== strpos( $request_noslash, '/comment-page-' ) ) {
+            $check_pager  = explode( '/comment-page-', $request_noslash );
+            $get_pager_no = count( $check_pager ) - 1;
+            if ( is_numeric( $check_pager[$get_pager_no] ) ) {
+                $remove_pager = '/comment-page-' . $check_pager[$get_pager_no];
+                $request_noslash = str_replace( $remove_pager, '', $request_noslash );
+            }
+        }
+
 		$sql = $wpdb->prepare( "SELECT p.ID, pm.meta_value, p.post_type, p.post_status " .
-						" FROM $wpdb->posts AS p INNER JOIN $wpdb->postmeta AS pm ON (pm.post_id = p.ID) " .
-						" WHERE pm.meta_key = 'custom_permalink' " .
-						" AND (pm.meta_value = '%s' OR pm.meta_value = '%s') " .
-						" AND p.post_status != 'trash' AND p.post_type != 'nav_menu_item' " .
-            " ORDER BY FIELD(post_status,'publish','private','draft','auto-draft','inherit')," .
-						" FIELD(post_type,'post','page') LIMIT 1", $request_noslash, $request_noslash . "/" );
+					" FROM $wpdb->posts AS p INNER JOIN $wpdb->postmeta AS pm ON (pm.post_id = p.ID) " .
+					" WHERE pm.meta_key = 'custom_permalink' " .
+					" AND (pm.meta_value = '%s' OR pm.meta_value = '%s') " .
+					" AND p.post_status != 'trash' AND p.post_type != 'nav_menu_item' " .
+					" ORDER BY FIELD(post_status,'publish','private','draft','auto-draft','inherit')," .
+					" FIELD(post_type,'post','page') LIMIT 1", $request_noslash, $request_noslash . "/" );
+
 		$posts = $wpdb->get_results( $sql );
 
 		if ( ! $posts ) {
-			$sql = $wpdb->prepare( "SELECT p.ID, pm.meta_value, p.post_type, p.post_status FROM $wpdb->posts AS p " .
+    		$def_query = apply_filters( 'custom_permalinks_like_query', '__false' );
+        	if ( defined( 'POLYLANG_VERSION' ) || defined( 'AMP__VERSION' )
+        		|| defined( 'TASTY_RECIPES_PLUGIN_VERSION' ) || '__false' !== $def_query ) {
+            	$sql = $wpdb->prepare( "SELECT p.ID, pm.meta_value, p.post_type, p.post_status FROM $wpdb->posts AS p " .
 							" LEFT JOIN $wpdb->postmeta AS pm ON (p.ID = pm.post_id) WHERE " .
 							" meta_key = 'custom_permalink' AND meta_value != '' AND " .
 							" ( LOWER(meta_value) = LEFT(LOWER('%s'), LENGTH(meta_value)) OR " .
@@ -229,11 +288,12 @@ class Custom_Permalinks_Frontend {
 							" FIELD(post_type,'post','page'), p.ID ASC LIMIT 1",
 							$request_noslash, $request_noslash . "/" );
 
-			$posts = $wpdb->get_results( $sql );
+				$posts = $wpdb->get_results( $sql );
+			}
 		}
 
 		if ( ! isset( $posts[0]->ID ) || ! isset( $posts[0]->meta_value )
-				|| empty( $posts[0]->meta_value ) ) {
+			|| empty( $posts[0]->meta_value ) ) {
 			global $wp_query;
 
 			// If the post/tag/category we're on has a custom permalink, get it and check against the request
@@ -360,7 +420,7 @@ class Custom_Permalinks_Frontend {
 		return $permalink;
 	}
 
-		/**
+	/**
 	 * Get original permalink for page
 	 */
 	public function custom_permalinks_original_page_link( $post_id ) {
@@ -441,5 +501,4 @@ class Custom_Permalinks_Frontend {
 		}
 		return false;
 	}
-
 }

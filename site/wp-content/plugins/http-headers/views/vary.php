@@ -1,6 +1,11 @@
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
 <tr>
 	<th scope="row">Vary
-		<p class="description">The Vary HTTP response header determines how to match future request headers to decide whether a cached response can be used rather than requesting a fresh one from the origin server. It is used by the server to indicate which headers it used when selecting a representation of a resource in a content negotiation algorithm.</p>
+		<p class="description"><?php _e('The Vary HTTP response header determines how to match future request headers to decide whether a cached response can be used rather than requesting a fresh one from the origin server. It is used by the server to indicate which headers it used when selecting a representation of a resource in a content negotiation algorithm.', 'http-headers'); ?></p>
 	</th>
 	<td>
 		<fieldset>

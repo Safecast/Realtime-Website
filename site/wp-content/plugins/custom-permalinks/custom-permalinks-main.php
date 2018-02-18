@@ -9,16 +9,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! function_exists( "add_action" ) || ! function_exists( "add_filter" ) ) {
+if ( ! function_exists( 'add_action' ) || ! function_exists( 'add_filter' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
 	exit();
 }
 
-define( 'CUSTOM_PERMALINKS_PLUGIN_VERSION', '1.2.8' );
+define( 'CUSTOM_PERMALINKS_PLUGIN_VERSION', '1.2.17' );
 
 if ( ! defined( 'CUSTOM_PERMALINKS_PATH' ) ) {
-	define( 'CUSTOM_PERMALINKS_PATH', plugin_dir_path( __FILE__ ) );
+	define( 'CUSTOM_PERMALINKS_PATH', plugin_dir_path( CUSTOM_PERMALINKS_FILE ) );
+}
+
+if ( ! defined( 'CUSTOM_PERMALINKS_BASENAME' ) ) {
+	define( 'CUSTOM_PERMALINKS_BASENAME', plugin_basename( CUSTOM_PERMALINKS_FILE ) );
 }
 
 require_once( CUSTOM_PERMALINKS_PATH . 'frontend/class-custom-permalinks-frontend.php' );
@@ -38,6 +42,8 @@ if ( is_admin() ) {
  * Add textdomain hook for translation
  */
 function custom_permalinks_translation_capability() {
-	load_plugin_textdomain( 'custom-permalinks', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+	load_plugin_textdomain( 'custom-permalinks', FALSE,
+		basename( dirname( CUSTOM_PERMALINKS_FILE ) ) . '/languages/'
+	);
 }
 add_action( 'plugins_loaded', 'custom_permalinks_translation_capability' );

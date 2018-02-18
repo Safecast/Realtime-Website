@@ -1,7 +1,11 @@
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
 <tr>
 	<th scope="row">Timing-Allow-Origin
-		<p class="description">The Timing-Allow-Origin header indicates whether a resource provides the complete timing information.
-		SEO tools use the Resource Timing API to analyze the speed and weight of your web page resources.</p>
+		<p class="description"><?php _e('The Timing-Allow-Origin header indicates whether a resource provides the complete timing information. SEO tools use the Resource Timing API to analyze the speed and weight of your web page resources.', 'http-headers'); ?></p>
 	</th>
 	<td>
 	    <fieldset>
@@ -27,6 +31,6 @@
 		}
 		?>
 		</select>
-		<input type="text" name="hh_timing_allow_origin_url" class="http-header-value" placeholder="http://domain.com" value="<?php echo esc_attr(get_option('hh_timing_allow_origin_url')); ?>"<?php echo $timing_allow_origin == 1 && $timing_allow_origin_value == 'origin' ? NULL : ' style="display: none" readonly'; ?> />
+		<input type="text" name="hh_timing_allow_origin_url" class="http-header-value" placeholder="http://domain.com" value="<?php echo esc_attr(get_option('hh_timing_allow_origin_url')); ?>" size="35"<?php echo $timing_allow_origin == 1 && $timing_allow_origin_value == 'origin' ? NULL : ' style="display: none" readonly'; ?> />
 	</td>
 </tr>

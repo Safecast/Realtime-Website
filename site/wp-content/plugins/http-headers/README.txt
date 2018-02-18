@@ -3,8 +3,8 @@ Contributors: zinoui
 Donate link: https://zinoui.com/donation
 Tags: custom headers, http headers, headers, security, http header, header, cross domain, cors, xss, clickjacking, mitm, cross origin, cross site, privacy, p3p, hsts, referrer, csp, caching, compression, access control, authentication
 Requires at least: 3.2
-Tested up to: 4.8.1
-Stable tag: 1.8.0
+Tested up to: 4.9.1
+Stable tag: 1.9.4
 License: GPLv2 or later
 
 HTTP Headers adds CORS & security HTTP headers to your website.
@@ -34,6 +34,7 @@ Headers supported by HTTP Headers includes:
 * Public-Key-Pins-Report-Only
 * P3P
 * Referrer-Policy
+* Report-To
 * Strict-Transport-Security
 * Timing-Allow-Origin
 * Vary
@@ -77,6 +78,36 @@ These HTTP headers are being used in production services by popular websites as 
 Updates are on they way, so stay tuned at [@DimitarIvanov](https://twitter.com/DimitarIvanov)
 
 == Changelog ==
+
+= 1.9.4 =
+*Release Date - 13th January, 2018*
+
+* In-plugin security improvement
+
+= 1.9.3 =
+*Release Date - 10th January, 2018*
+
+* Bug fix
+
+= 1.9.2 =
+*Release Date - 4th January, 2018*
+
+* Security improvements
+
+= 1.9.1 =
+*Release Date - 27th December, 2017*
+
+* Updated translations
+
+= 1.9.0 =
+*Release Date - 23th December, 2017*
+
+* Added support of "Report-To" header
+* Added support of translations
+* Added support of Import/Export
+* Updated "Content-Security-Policy" header (added directives: object-src, frame-src, worker-src, manifest-src, base-uri, report-to)
+* Updated "WWW-Authenticate" header (support multiple users)
+* Updated "Access-Control" headers (added list of origins)
 
 = 1.8.0 =
 *Release Date - 31st August, 2017*

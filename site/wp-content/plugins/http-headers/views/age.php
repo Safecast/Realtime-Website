@@ -1,6 +1,11 @@
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
 <tr>
 	<th scope="row">Age
-		<p class="description">The Age header contains the time in seconds the object has been in a proxy cache.</p>
+		<p class="description"><?php _e('The Age header contains the time in seconds the object has been in a proxy cache.', 'http-headers'); ?></p>
 	</th>
 	<td>
         <fieldset>
@@ -17,7 +22,7 @@
 	<td>
 		<?php settings_fields( 'http-headers-age' ); ?>
 		<?php do_settings_sections( 'http-headers-age' ); ?>
-		<input type="text" name="hh_age_value" class="http-header-value" value="<?php echo esc_attr(get_option('hh_age_value')); ?>"<?php echo $age == 1 ? NULL : ' checked'; ?>>
-		seconds
+		<input type="text" name="hh_age_value" class="http-header-value" size="5" value="<?php echo esc_attr(get_option('hh_age_value')); ?>"<?php echo $age == 1 ? NULL : ' checked'; ?>>
+		<?php _e('seconds', 'http-headers'); ?>
 	</td>
 </tr>

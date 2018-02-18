@@ -19,6 +19,9 @@ select[readonly] {
 .hh-table > tbody > tr > th .description{
 	font-weight: normal;
 }
+.hh-table .hh-center{
+	text-align: center;
+}
 .hh-panel{
 	background-color: #fff;
 	padding: .7em 2em 1em;
@@ -175,7 +178,6 @@ select[readonly] {
 	padding: 20px;
 }
 .hh-textarea-manual{
-	height: 450px;
 	width: 100%;
 }
 .hh-hidden{

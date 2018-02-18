@@ -1,6 +1,11 @@
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
 <tr>
 	<th scope="row">Custom headers
-		<p class="description">Common non-standard response fields:
+		<p class="description"><?php _e('Common non-standard response fields:', 'http-headers'); ?>
 			<br>X-Pingback
 			<br>X-Cache
 			<br>X-Edge-Location
@@ -36,8 +41,8 @@
 		<table>
 			<thead>
 				<tr>
-					<th>Header</th>
-					<th>Value</th>
+					<th><?php _e('Header', 'http-headers'); ?></th>
+					<th><?php _e('Value', 'http-headers'); ?></th>
 					<th></th>
 				</tr>
 			</thead>
@@ -48,7 +53,7 @@
 				?>
 				<tr>
 					<td><input type="text" name="hh_custom_headers_value[name][]" class="http-header-value" placeholder="X-Custom-Name"></td>
-					<td><input type="text" name="hh_custom_headers_value[value][]" class="http-header-value" placeholder="some value"></td>
+					<td><input type="text" name="hh_custom_headers_value[value][]" class="http-header-value" placeholder="<?php esc_attr_e('Value', 'http-headers'); ?>"></td>
 					<td></td>
 				</tr>
 				<?php 
@@ -62,15 +67,15 @@
 					?>
 					<tr>
 						<td><input type="text" name="hh_custom_headers_value[name][]" class="http-header-value" placeholder="X-Custom-Name" value="<?php echo esc_attr($name); ?>"<?php echo $custom_headers == 1 ? NULL : ' readonly'; ?>></td>
-						<td><input type="text" name="hh_custom_headers_value[value][]" class="http-header-value" placeholder="some value" value="<?php echo esc_attr($custom_headers_value['value'][$key]); ?>"<?php echo $custom_headers == 1 ? NULL : ' readonly'; ?>></td>
-						<td><button type="button" class="button button-small hh-btn-delete-header" title="Delete">x</button></td>
+						<td><input type="text" name="hh_custom_headers_value[value][]" class="http-header-value" placeholder="<?php esc_attr_e('Value', 'http-headers'); ?>" value="<?php echo esc_attr($custom_headers_value['value'][$key]); ?>"<?php echo $custom_headers == 1 ? NULL : ' readonly'; ?>></td>
+						<td><button type="button" class="button button-small hh-btn-delete-header" title="<?php esc_attr_e('Delete', 'http-headers'); ?>">x</button></td>
 					</tr>
 					<?php
 				}
 			}
 			?>
 				<tr>
-					<td colspan="2"><button type="button" class="button" id="hh-btn-add-header">+ Add header</button></td>
+					<td colspan="3"><button type="button" class="button" id="hh-btn-add-header">+ <?php _e('Add header', 'http-headers'); ?></button></td>
 				</tr>
 			</tbody>
 		</table>

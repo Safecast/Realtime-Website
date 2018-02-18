@@ -8,7 +8,7 @@ Author URI: http://wordpress.ieonly.com/category/my-plugins/anti-malware/
 Contributors: scheeeli, gotmls
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QZHD8QHZ2E7PE
 Description: This Anti-Virus/Anti-Malware plugin searches for Malware and other Virus like threats and vulnerabilities on your server and helps you remove them. It's always growing and changing to adapt to new threats so let me know if it's not working for you.
-Version: 4.17.44
+Version: 4.17.57
 */
 if (isset($_SERVER["DOCUMENT_ROOT"]) && ($SCRIPT_FILE = str_replace($_SERVER["DOCUMENT_ROOT"], "", isset($_SERVER["SCRIPT_FILENAME"])?$_SERVER["SCRIPT_FILENAME"]:isset($_SERVER["SCRIPT_NAME"])?$_SERVER["SCRIPT_NAME"]:"")) && strlen($SCRIPT_FILE) > strlen("/".basename(__FILE__)) && substr(__FILE__, -1 * strlen($SCRIPT_FILE)) == substr($SCRIPT_FILE, -1 * strlen(__FILE__)))
 	include(dirname(__FILE__)."/safe-load/index.php");
@@ -18,7 +18,7 @@ else
  *           /  /\     GOTMLS Main Plugin File
  *          /  /:/     @package GOTMLS
  *         /__/::\
- Copyright \__\/\:\__  © 2012-2017 Eli Scheetz (email: eli@gotmls.net)
+ Copyright \__\/\:\__  © 2012-2018 Eli Scheetz (email: eli@gotmls.net)
  *            \  \:\/\
  *             \__\::/ This program is free software; you can redistribute it
  *     ___     /__/:/ and/or modify it under the terms of the GNU General Public
@@ -109,7 +109,7 @@ function GOTMLS_display_header($optional_box = "") {
 	if (isset($GLOBALS["GOTMLS"]["tmp"]["settings_array"]["auto_UPDATE_definitions"]) && $GLOBALS["GOTMLS"]["tmp"]["settings_array"]["auto_UPDATE_definitions"])
 		array_unshift($Update_Definitions, admin_url('admin-ajax.php?action=GOTMLS_auto_update&'.GOTMLS_set_nonce(__FUNCTION__."109").'&UPDATE_definitions_array=1'));
 	else
-		$Update_Definitions[] = str_replace("://", "://www.", $Update_Definitions[0]);
+		$Update_Definitions[] = str_replace("//", "//www.", $Update_Definitions[0]);
 	$Update_Link = '<div style="text-align: center;"><a href="';
 	$new_version = "";
 	$file = basename(GOTMLS_plugin_path).'/index.php';
@@ -439,7 +439,8 @@ setDiv("div_file");
 		}
 		if ('.($defLatest+strlen($isRegistered)).')
 			check_for_updates("Definition_Updates");
-//		else			showhide("registerKeyForm", true);
+/*		else
+			showhide("registerKeyForm", true);*/
 		if (divNAtext)
 			loadGOTMLS();
 		else
@@ -837,8 +838,8 @@ function GOTMLS_update_definitions() {
 	$moreJS = "";
 	$finJS = "\n}";
 	$form = 'registerKeyForm';
-	$innerHTML = "<li style=\\\"color: #f00\\\">Your Installation Key is not yet Registered!</li>";
-	$autoUpJS = '<span style="color: #C00;">This new feature is currently only available for BETA testing to registered users who have donated above the default level.</span><br />';
+	$innerHTML = "<li style=\\\"color: #f00\\\">Your Installation Key could not be confirmed!</li>";
+	$autoUpJS = '<span style="color: #C00;">This new feature is currently only available to registered users who have donated above the default level.</span><br />';
 	foreach ($GLOBALS["GOTMLS"]["tmp"]["definitions_array"] as $threat_level=>$definition_names)
 		foreach ($definition_names as $definition_name=>$definition_version)
 			if (is_array($definition_version) && isset($definition_version[0]) && strlen($definition_version[0]) == 5)
@@ -848,17 +849,18 @@ function GOTMLS_update_definitions() {
 	if (isset($_REQUEST["UPDATE_definitions_array"]) && strlen($_REQUEST["UPDATE_definitions_array"]) && GOTMLS_get_nonce()) {
 		if (strlen($_REQUEST["UPDATE_definitions_array"]) > 1) {
 			$GOTnew_definitions = maybe_unserialize(GOTMLS_decode($_REQUEST["UPDATE_definitions_array"]));
-			if (is_array($GOTnew_definitions))
+			if (is_array($GOTnew_definitions)) {
+				$form = 'autoUpdateDownload';
 				$GLOBALS["GOTMLS"]["tmp"]["onLoad"] .= "updates_complete('Downloaded Definitions');";
+			}
 		} elseif (($DEF = GOTMLS_get_URL('http:'.GOTMLS_update_home.'definitions.php?ver='.GOTMLS_Version.'&wp='.$wp_version.'&'.GOTMLS_set_nonce(__FUNCTION__."870").'&d='.ur1encode(GOTMLS_siteurl))) && is_array($GOTnew_definitions = maybe_unserialize(GOTMLS_decode($DEF))) && count($GOTnew_definitions)) {
-			$user_info = $GOTnew_definitions["you"];
-			if (isset($user_info["user_email"]) && strlen($user_info["user_email"]) == 32) {
+			if (isset($GOTnew_definitions["you"]["user_email"]) && strlen($GOTnew_definitions["you"]["user_email"]) == 32) {
+				$user_info = $GOTnew_definitions["you"];
 				if ($user_info["user_email"] == md5($current_user->user_email))
 					$toInfo = $current_user->user_email;
 				elseif (!($toInfo = $wpdb->get_var("SELECT `user_nicename` FROM $wpdb->users WHERE MD5(`user_email`) = '".$user_info["user_email"]."'")))
 					$toInfo = get_option("siteurl");
 				$innerHTML = "<li style=\\\"color: #0C0\\\">Your Installation Key is Registered to:<br /> $toInfo</li>";
-				$finJS .= "\nif (divNAtext)\n\tloadGOTMLS();\nelse\n\tdivNAtext = setTimeout('loadGOTMLS()', 4000);";
 				$form = 'autoUpdateForm';
 				if (isset($user_info["user_donations"]) && isset($user_info["user_donation_total"]) && isset($user_info["user_donation_freshness"])) {
 					$user_donations_src = $user_info["user_donations"];
@@ -869,9 +871,9 @@ function GOTMLS_update_definitions() {
 					}
 					if ($user_donations_src > 0 && $user_info["user_donation_total"] > 0)
 						$li = "<li> You have made $user_donations_src donation".($user_donations_src?'s totalling':' for').' $'.$user_info["user_donation_total"].".</li><!-- ".$user_info["user_donation_freshness"]." -->";
-				} else
-					$autoUpJS = '<span style="color: #C00;">This new feature is currently only available for BETA testing to users who have donated above the default level.</span>';
-			}
+				}
+			} else 
+				$innerHTML = "<li style=\\\"color: #f00\\\">Your Installation Key is not registered!</li>";
 			unset($GOTnew_definitions["you"]);
 			asort($GOTnew_definitions);
 			if (serialize($GOTnew_definitions) == serialize($GLOBALS["GOTMLS"]["tmp"]["definitions_array"]))
@@ -881,10 +883,12 @@ function GOTMLS_update_definitions() {
 				$GLOBALS["GOTMLS"]["tmp"]["definitions_array"] = $GOTnew_definitions;
 				$GLOBALS["GOTMLS"]["tmp"]["onLoad"] .= "updates_complete('New Definitions Automatically Installed :-)');";
 			}
+			$finJS .= "\nif (divNAtext)\n\tloadGOTMLS();\nelse\n\tdivNAtext = setTimeout('loadGOTMLS()', 4000);";
 			$finJS .= "\nif (typeof stopCheckingDefinitions !== 'undefined')\n\tclearTimeout(stopCheckingDefinitions);";
 		} else
 			$innerHTML = "<li style=\\\"color: #f00\\\"><a title='report error' href='#' onclick=\\\"stopCheckingDefinitions = checkupdateserver(alt_addr+'&error=".GOTMLS_encode(serialize(array("get_URL"=>$GLOBALS["GOTMLS"]["get_URL"])))."', 'Definition_Updates');\\\">Automatic Update Connection Failed!</a></li>";
-	}
+	} else 
+		$innerHTML = "<li style=\\\"color: #f00\\\">".GOTMLS_Invalid_Nonce("Nonce Error")."</li>";	
 	if (isset($GOTnew_definitions) && is_array($GOTnew_definitions)) {
 		$GLOBALS["GOTMLS"]["tmp"]["definitions_array"] = GOTMLS_array_replace($GLOBALS["GOTMLS"]["tmp"]["definitions_array"], $GOTnew_definitions);	
 		if (file_exists(GOTMLS_plugin_path.'definitions_update.txt'))
@@ -904,7 +908,6 @@ function GOTMLS_update_definitions() {
 		asort($GOTMLS_definitions_versions);
 		$autoUpJS .= '<span style="color: #0C0;">(Newest Definition Updates Installed.)</span>';
 	} else {
-		$form = 'autoUpdateDownload';
 		$autoUpJS .= '<span style="color: #0C0;">(No newer Definition Updates are available at this time.)</span>';
 		$innerHTML .= "<li style=\\\"color: #0C0\\\">No Newer Definition Updates Available.</li>";
 	}
@@ -913,7 +916,7 @@ function GOTMLS_update_definitions() {
 			$li = "<li style=\\\"color: #f00;\\\">You have not donated yet!</li>";
 		if (strlen($moreJS) == 0)
 			$moreJS = 'if (foundUpdates = document.getElementById("check_wp_core_div_NA"))
-		foundUpdates.innerHTML = "<a href=\'javascript:document.ppdform.submit();\' onclick=\'document.ppdform.amount.value=32;\' style=\'color: #f00;\'>Donate $29+ now to BETA test the new Scan Core File feature and get Automatic Definition Updates.</a>";';
+		foundUpdates.innerHTML = "<a href=\'javascript:document.ppdform.submit();\' onclick=\'document.ppdform.amount.value=32;\' style=\'color: #f00;\'>Donate $29+ now then enable Automatic Definition Updates to Scan for Core Files changes.</a>";';
 		$moreJS .= "\n\tif (foundUpdates = document.getElementById('pastDonations'))\n\tfoundUpdates.innerHTML = '$li';";
 		@header("Content-type: text/javascript");
 		if (is_array($GOTMLS_definitions_versions) && count($GOTMLS_definitions_versions) && (strlen($new_ver = trim(array_pop($GOTMLS_definitions_versions))) == 5) && $saved) {
@@ -1079,18 +1082,18 @@ function GOTMLS_settings() {
 		$QuickScan .= '&nbsp;'.$lt.((is_dir(dirname(__FILE__)."/../../../wp-content/".strtolower($ScanFolder)))?'a href="'.admin_url("admin.php?page=GOTMLS-settings&scan_type=Quick+Scan&scan_only[]=wp-content/".strtolower($ScanFolder)."&$GOTMLS_nonce_URL")."\" class=\"button-primary\" style=\"height: 22px; line-height: 13px; padding: 3px;\"$gt$ScanFolder$lt/a":"!-- No $ScanFolder in wp-content --").$gt;
 	$scan_opts .= "\n$lt".'p'.$gt.$lt.'b'.$gt.__("Skip files with the following extensions:",'gotmls')."$lt/b$gt".(($default_exclude_ext!=implode(",", $GLOBALS["GOTMLS"]["tmp"]["settings_array"]["exclude_ext"]))?" {$lt}a href=\"javascript:void(0);\" onclick=\"document.getElementById('exclude_ext').value = '$default_exclude_ext';\"{$gt}[Restore Defaults]$lt/a$gt":"").$lt.'/p'.$gt.'
 	'.$lt.'div style="padding: 0 30px;"'.$gt.$lt.'input type="text" placeholder="'.__("a comma separated list of file extentions to skip",'gotmls').'" name="exclude_ext" id="exclude_ext" value="'.implode(",", $GLOBALS["GOTMLS"]["tmp"]["settings_array"]["exclude_ext"]).'" style="width: 100%;" /'."$gt$lt/div$gt$lt".'p'.$gt.$lt.'b'.$gt.__("Skip directories with the following names:",'gotmls')."$lt/b$gt$lt/p$gt$lt".'div style="padding: 0 30px;"'.$gt.$lt.'input type="text" placeholder="'.__("a folder name or comma separated list of folder names to skip",'gotmls').'" name="exclude_dir" value="'.implode(",", $GLOBALS["GOTMLS"]["tmp"]["settings_array"]["exclude_dir"]).'" style="width: 100%;" /'.$gt.$lt.'/div'.$gt.'
-	'.$lt.'table style="width: 100%" cellspacing="10"'.$gt.$lt.'tr'.$gt.$lt.'td nowrap valign="top" style="white-space: nowrap; width: 1px;"'.$gt.$lt.'b'.$gt.__("Automatically Update Definitions:",'gotmls').$lt."br$gt$lt/b$gt$lt/td$gt$lt".'td'.$gt.$lt.'div id="UPDATE_definitions_div"'.$gt.$lt.'br'.$gt.$lt.'span style="color: #C00;"'.$gt.__("This new BETA feature is only available to registered users who have donated at a certain level.",'gotmls')."$lt/span$gt$lt/div$gt$lt/td$gt$lt".'td align="right" valign="bottom"'.$gt.$lt.'input type="submit" id="save_settings" value="'.__("Save Settings",'gotmls').'" class="button-primary" onclick="document.getElementById(\'scan_type\').value=\'Save\';" /'."$gt$lt/td$gt$lt/tr$gt$lt/table$gt$lt/form$gt";
+	'.$lt.'table style="width: 100%" cellspacing="10"'.$gt.$lt.'tr'.$gt.$lt.'td nowrap valign="top" style="white-space: nowrap; width: 1px;"'.$gt.$lt.'b'.$gt.__("Automatically Update Definitions:",'gotmls').$lt."br$gt$lt/b$gt$lt/td$gt$lt".'td'.$gt.$lt.'div id="UPDATE_definitions_div"'.$gt.$lt.'br'.$gt.$lt.'span style="color: #C00;"'.$gt.__("This feature is only available to registered users who have donated at a certain level.",'gotmls')."$lt/span$gt$lt/div$gt$lt/td$gt$lt".'td align="right" valign="bottom"'.$gt.$lt.'input type="submit" id="save_settings" value="'.__("Save Settings",'gotmls').'" class="button-primary" onclick="document.getElementById(\'scan_type\').value=\'Save\';" /'."$gt$lt/td$gt$lt/tr$gt$lt/table$gt$lt/form$gt";
 	$title_tagline = $lt."li$gt Site Title: ".htmlspecialchars($wpdb->get_var("SELECT `option_value` FROM `$wpdb->options` WHERE `option_name` = 'blogname'"));
 	$title_tagline .= "$lt/li$gt$lt"."li$gt Tagline: ".htmlspecialchars($wpdb->get_var("SELECT `option_value` FROM `$wpdb->options` WHERE `option_name` = 'blogdescription'"));
 	if (preg_match('/h[\@a]ck[3e]d.*by/is', $title_tagline))
-		echo $lt.'div class="error"'.$gt.sprintf(__("Your Site Title or Tagline suggests that you may have been hacked ...%sThis prevents actively outputing the buffer on-the-fly and will severely degrade the performance of this (and many other) Plugins. You can change those options on the %sGeneral Settings$lt/a$gt page.",'gotmls'), "$title_tagline$lt/li$gt", $lt.'a href="'.admin_url("options-general.php").'"'.$gt)."$lt/div$gt";
+		echo $lt.'div class="error"'.$gt.sprintf(__("Your Site Title or Tagline suggests that you may have been hacked ...%sThis could impact the indexing of your site and may even lead to blacklisting. You can change those options on the %sGeneral Settings$lt/a$gt page.",'gotmls'), "$title_tagline$lt/li$gt", $lt.'a href="'.admin_url("options-general.php").'"'.$gt)."$lt/div$gt";
 	@ob_start();
 	$OB_default_handlers = array("default output handler", "zlib output compression");
 	$OB_handlers = @ob_list_handlers();
 	if (is_array($OB_handlers) && count($OB_handlers))
 		foreach ($OB_handlers as $OB_last_handler)
 			if (!in_array($OB_last_handler, $OB_default_handlers))
-				echo $lt.'div class="error"'.$gt.sprintf(__("Another Plugin or Theme is using '%s' to handle output buffers. <br />This prevents actively outputing the buffer on-the-fly and will severely degrade the performance of this (and many other) Plugins. <br />Consider disabling caching and compression plugins (at least during the scanning process).",'gotmls'), $OB_last_handler)."$lt/div$gt";
+				echo $lt.'div class="error"'.$gt.sprintf(__("Another Plugin or Theme is using '%s' to handle output buffers. <br />This prevents actively outputing the buffer on-the-fly and could severely degrade the performance of this (and many other) Plugins. <br />Consider disabling caching and compression plugins (at least during the scanning process).",'gotmls'), $OB_last_handler)."$lt/div$gt";
 	GOTMLS_display_header();
 	$scan_groups = array_merge(array(__("Scanned Files",'gotmls')=>"scanned",__("Selected Folders",'gotmls')=>"dirs",__("Scanned Folders",'gotmls')=>"dir",__("Skipped Folders",'gotmls')=>"skipdirs",__("Skipped Files",'gotmls')=>"skipped",__("Read/Write Errors",'gotmls')=>"errors",__("Quarantined Files",'gotmls')=>"bad"), $GLOBALS["GOTMLS"]["tmp"]["threat_levels"]);
 	echo $lt.'script type="text/javascript">

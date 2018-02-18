@@ -1,7 +1,12 @@
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
 <tr>
 	<th scope="row">Cookie security
-		<p class="description">A secure cookie is only sent to the server with a encrypted request over the HTTPS protocol.</p>
-		<p class="description">To prevent cross-site scripting (XSS) attacks, HttpOnly cookies are inaccessible to JavaScript's Document.cookie API; they are only sent to the server.</p> 
+		<p class="description"><?php _e('A secure cookie is only sent to the server with a encrypted request over the HTTPS protocol.', 'http-headers'); ?></p>
+		<p class="description"><?php _e("To prevent cross-site scripting (XSS) attacks, HttpOnly cookies are inaccessible to JavaScript's Document.cookie API; they are only sent to the server.", 'http-headers'); ?></p> 
 	</th>
 	<td>
 		<fieldset>

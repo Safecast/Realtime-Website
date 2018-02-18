@@ -1,6 +1,11 @@
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
 <tr>
 	<th scope="row">Access-Control-Expose-Headers
-		<p class="description">The Access-Control-Expose-Headers response header brings information about headers that browsers could allow accessing.</p>
+		<p class="description"><?php _e('The Access-Control-Expose-Headers response header brings information about headers that browsers could allow accessing.', 'http-headers'); ?></p>
 	</th>
 	<td>
 		<fieldset>

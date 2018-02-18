@@ -1,7 +1,12 @@
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
 <tr valign="top">
     <th scope="row">X-DNS-Prefetch-Control
-    	<p class="description">The X-DNS-Prefetch-Control HTTP response header controls DNS prefetching, a feature by which browsers proactively perform domain name resolution on both links that the user may choose to follow as well as URLs for items referenced by the document, including images, CSS, JavaScript, and so forth.</p>
-		<p class="description">This prefetching is performed in the background, so that the DNS is likely to have been resolved by the time the referenced items are needed. This reduces latency when the user clicks a link.</p>
+    	<p class="description"><?php _e('The X-DNS-Prefetch-Control HTTP response header controls DNS prefetching, a feature by which browsers proactively perform domain name resolution on both links that the user may choose to follow as well as URLs for items referenced by the document, including images, CSS, JavaScript, and so forth.', 'http-headers'); ?></p>
+		<p class="description"><?php _e('This prefetching is performed in the background, so that the DNS is likely to have been resolved by the time the referenced items are needed. This reduces latency when the user clicks a link.', 'http-headers'); ?></p>
     </th>
     <td>
    		<fieldset>

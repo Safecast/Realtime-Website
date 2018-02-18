@@ -619,12 +619,15 @@ if (!function_exists('generateSensorsTable')) {
 			<th data-hide="phone,tablet" data-type="numeric">%s</th>
 			<th data-hide="phone,tablet" data-type="numeric">%s</th>
 			<th data-hide="phone">%s</th>
+			<th data-hide="phone">%s</th>
+			
 		</tr>
 	</thead>
 	<tbody>',
 		($lang == 'jp' ? '検索' : 'Search'),
 		($lang == 'jp' ? '場所' : 'Location'),
 		'ID',
+		($lang == 'jp' ? 'Model' : 'Model'),					  
 		($lang == 'jp' ? '撮影時 (GMT)' : 'Time of Capture (GMT)'),
 		'µSv/h',
 		'cpm',
@@ -645,9 +648,11 @@ if (!function_exists('generateSensorsTable')) {
 			$cpm         = addslashes($sensor['measurement']['cpm']);
 			$latitude    = addslashes($sensor['measurement']['latitude']);
 			$longitude   = addslashes($sensor['measurement']['longitude']);
+			$sensorModel = addslashes($sensor['model']);
 			$status      = ($lang == 'jp' ? 'オンライン' : 'Online');
 			$statusValue = 0;
 			$statusClass = 'info';
+
 
 			if ($timeSince >= TIME_OFFLINE_LONG) {
 				$status      = ($lang == 'jp' ? 'オフライン（長）' : 'Offline long');
@@ -666,7 +671,10 @@ if (!function_exists('generateSensorsTable')) {
 						<a href="%s">%s</a>
 				</td>
 				<td class="id">%s</td>
-				<td class="time" data-value="%s"><span class="ago">%s</span><span class="gmt">%s</span></td>
+				<td class="id">%s</td>
+				<td class="time" data-value="%s">
+				     <span class="ago">%s</span>
+					 <span class="gmt">%s</span></td>
 				<td><span class="measure-sievert">%s</span></td>
 				<td><span class="measure-cpm">%s</span></td>
 				<td class="latitude">%s</td>
@@ -675,7 +683,7 @@ if (!function_exists('generateSensorsTable')) {
 					<span class="status"><a href="%s" class="btn btn-sm btn-%s">%s</a></span>
 				</td>
 		</tr>',
-	$id, $permalink, $location, $id, $timestamp, $timeAgo, $timeGMT, $usievert, $cpm,
+	$id, $permalink, $location, $id, $sensorModel, $timestamp, $timeAgo, $timeGMT, $usievert, $cpm,
 	$latitude, $longitude, $statusValue, $permalink, $statusClass, $status, $id);
 		}
 

@@ -1,6 +1,11 @@
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
 <tr valign="top">
 	<th scope="row">X-Powered-By
-		<p class="description">Specifies the technology (e.g. ASP.NET, PHP, JBoss, Express) supporting the web application, i.e. the scripting language. It is recommended to remove it or provide misleading information to throw off hackers that might target a particular technology/version.</p>
+		<p class="description"><?php _e('Specifies the technology (e.g. ASP.NET, PHP, JBoss, Express) supporting the web application, i.e. the scripting language. It is recommended to remove it or provide misleading information to throw off hackers that might target a particular technology/version.', 'http-headers'); ?></p>
 	</th>
 	<td>
 		<fieldset>

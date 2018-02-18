@@ -3,8 +3,8 @@ Contributors: ShortPixel
 Donate link: https://www.paypal.me/resizeImage
 Tags: image, resize, rescale, bulk resize, bulk rescale, downsize, 
 Requires at least: 3.5
-Tested up to: 4.8
-Stable tag: 1.8.2
+Tested up to: 4.9
+Stable tag: 1.8.3
 
 Automatically resize your images after upload using this plugin. Specify height&width, the plugin will do the rest quickly and transparently.
 
@@ -42,6 +42,12 @@ Is that simple, just give it a try, it is safe and free! :-)
 1. Full preview of the settings screen.
 
 == Changelog ==
+
+= 1.8.3 =
+
+Release date: 20th December 2017
+
+* [Fix] Skip animated GIFs that GD can't resize.
 
 = 1.8.2 =
 

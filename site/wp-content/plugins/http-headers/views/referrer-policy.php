@@ -1,6 +1,11 @@
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
 <tr valign="top">
 					<th scope="row">Referrer-Policy
-						<p class="description">The Referrer-Policy HTTP header governs which referrer information, sent in the Referer header, should be included with requests made.</p>
+		<p class="description"><?php _e('The Referrer-Policy HTTP header governs which referrer information, sent in the Referer header, should be included with requests made.', 'http-headers'); ?></p>
 					</th>
 					<td>
 			       		<fieldset>

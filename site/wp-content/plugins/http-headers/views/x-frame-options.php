@@ -1,6 +1,11 @@
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
 <tr valign="top">
 	<th scope="row">X-Frame-Options
-		<p class="description">This header can be used to indicate whether or not a browser should be allowed to render a page in a &lt;frame&gt;, &lt;iframe&gt; or &lt;object&gt; . Use this to avoid clickjacking attacks.</p>
+		<p class="description"><?php _e('This header can be used to indicate whether or not a browser should be allowed to render a page in a &lt;frame&gt;, &lt;iframe&gt; or &lt;object&gt;. Use this to avoid clickjacking attacks.', 'http-headers'); ?></p>
 	</th>
 	<td>
 		<fieldset>

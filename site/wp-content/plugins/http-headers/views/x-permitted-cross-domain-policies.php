@@ -1,6 +1,11 @@
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
 <tr valign="top">
     <th scope="row">X-Permitted-Cross-Domain-Policies
-    	<p class="description">A cross-domain policy file is an XML document that grants a web client, such as Adobe Flash Player or Adobe Acrobat (though not necessarily limited to these), permission to handle data across domains.</p>
+    	<p class="description"><?php _e('A cross-domain policy file is an XML document that grants a web client, such as Adobe Flash Player or Adobe Acrobat (though not necessarily limited to these), permission to handle data across domains.', 'http-headers'); ?></p>
     </th>
     <td>
    		<fieldset>

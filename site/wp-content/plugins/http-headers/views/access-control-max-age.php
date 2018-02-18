@@ -1,6 +1,11 @@
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
 <tr>
 	<th scope="row">Access-Control-Max-Age
-		<p class="description">The Access-Control-Max-Age header indicates how much time, the result of a preflight request, can be cached.</p>
+		<p class="description"><?php _e('The Access-Control-Max-Age header indicates how much time, the result of a preflight request, can be cached.', 'http-headers'); ?></p>
 	</th>
 	<td>
         <fieldset>

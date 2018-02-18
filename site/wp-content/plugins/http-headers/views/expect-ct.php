@@ -1,6 +1,11 @@
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
 <tr valign="top">
 		        <th scope="row">Expect-CT
-		        	<p class="description">Expect-CT is an HTTP header that allows sites to opt in to reporting and/or enforcement of Certificate Transparency requirements, which prevents the use of misissued certificates for that site from going unnoticed. When a site enables the Expect-CT header, they are requesting that Chrome check that any certificate for that site appears in public CT logs.</p>
+		<p class="description"><?php _e('Expect-CT is an HTTP header that allows sites to opt in to reporting and/or enforcement of Certificate Transparency requirements, which prevents the use of misissued certificates for that site from going unnoticed. When a site enables the Expect-CT header, they are requesting that Chrome check that any certificate for that site appears in public CT logs.', 'http-headers'); ?></p>
 		        </th>
 		        <td>
 		       		<fieldset>

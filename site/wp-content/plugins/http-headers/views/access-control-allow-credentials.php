@@ -1,6 +1,11 @@
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
 <tr>
 	<th scope="row">Access-Control-Allow-Credentials
-		<p class="description">The Access-Control-Allow-Credentials header indicates whether the response to request can be exposed when the credentials flag is true.</p>
+		<p class="description"><?php _e('The Access-Control-Allow-Credentials header indicates whether the response to request can be exposed when the credentials flag is true.', 'http-headers'); ?></p>
 	</th>
 	<td>
 		<fieldset>

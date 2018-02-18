@@ -24,7 +24,12 @@
 			var $el = $('input[name="hh_access_control_allow_origin_url"]'),
 				readOnly = $(this).find('option:selected').val() != 'origin';
 			if ($el.length) {
-				$el.prop('readOnly', readOnly).toggle(!readOnly);
+				$el.prop('readOnly', readOnly);//.toggle(!readOnly);
+			}
+			if (readOnly) {
+				$(".hh-acao").addClass("hh-hidden");
+			} else {
+				$(".hh-acao").removeClass("hh-hidden");
 			}
 		}).on('change', 'select[name="hh_timing_allow_origin_value"]', function () {
 			var $el = $('input[name="hh_timing_allow_origin_url"]'),
@@ -34,7 +39,7 @@
 			}
 		}).on('change', '.http-header', function () {
 			var $this = $(this),
-				$el = $this.closest('tr').find('.http-header-value');
+				$el = $this.closest('table').find('.http-header-value');
 			
 			if (!$el.length) {
 				return;
@@ -55,9 +60,10 @@
 			$('select[name="hh_timing_allow_origin_value"]').trigger('change');
 		}).on('submit', '#frmIspect', function (e) {
 			e.preventDefault();
-			var $this = $(this);
+			var $this = $(this),
+				$box = $('#hh-result').empty();
 			$.post($this.attr('action'), $this.serialize()).done(function (data) {
-				$('#hh-result').html(data);
+				$box.html(data);
 			});
 			return false;
 		}).on('change', '#authentication', function () {
@@ -70,11 +76,46 @@
 		}).on('click', '#hh-btn-add-header', function () {
 			$(this).closest('tr').before('<tr> \
 					<td><input type="text" name="hh_custom_headers_value[name][]" class="http-header-value" placeholder="X-Custom-Name"></td> \
-					<td><input type="text" name="hh_custom_headers_value[value][]" class="http-header-value" placeholder="some value"></td> \
-					<td><button type="button" class="button button-small hh-btn-delete-header" title="Delete">x</button></td> \
+					<td><input type="text" name="hh_custom_headers_value[value][]" class="http-header-value" placeholder="' + hh.lbl_value + '"></td> \
+					<td><button type="button" class="button button-small hh-btn-delete-header" title="' + hh.lbl_delete + '">x</button></td> \
 				</tr>');
-		}).on('click', '.hh-btn-delete-header', function () {
+		}).on('click', '#hh-btn-add-endpoint', function () {
+			var $this = $(this),
+				index = Math.ceil(Math.random() * 9999),
+				$table = $this.closest("table"),
+				$clone = $table.find("tr:nth-child(2)").clone(),
+				name = $table.find("tr:nth-last-child(2)").find(":input:first").attr("name"),
+				m = name.match(/^hh_report_to_value\[(\d+)\]/),
+				index = Number(m[1]) + 1;
+			
+			$clone.find('input[type="text"]').val("");
+			$clone.find('input[type="checkbox"]').prop("checked", false);
+			$clone.find("option:first").prop("selected", true);
+			$clone.find("td:last").html('<button type="button" class="button button-small hh-btn-delete-endpoint" title="' + hh.lbl_delete + '">x</button>');
+			$clone.find(":input").each(function () {
+				this.name = this.name.replace('[0]', '[' + index + ']');
+			});
+			
+			$this.closest('tr').before($clone);
+		}).on('click', '.hh-btn-delete-header, .hh-btn-delete-endpoint, .hh-btn-delete-origin, .hh-btn-delete-user', function () {
 			$(this).closest('tr').remove();
+		}).on("click", ".hh-btn-add-origin", function () {
+			$(this).closest('tr').before('<tr class="hh-acao"> \
+					<td>&nbsp;</td> \
+					<td><input type="text" name="hh_access_control_allow_origin_url[]" class="http-header-value" placeholder="http://domain.com" size="35" /></td> \
+					<td><button type="button" class="button button-small hh-btn-delete-origin" title="' + hh.lbl_delete + '">x</button></td> \
+				</tr>');
+		}).on("click", ".hh-btn-add-user", function () {
+			$(this).closest('tr').before('<tr> \
+					<td>&nbsp;</td> \
+					<td><input type="text" name="hh_www_authenticate_user[]" class="http-header-value" /></td> \
+					<td><input type="text" name="hh_www_authenticate_pswd[]" class="http-header-value" /></td> \
+					<td><button type="button" class="button button-small hh-btn-delete-user" title="' + hh.lbl_delete + '">x</button></td> \
+				</tr>');
+		}).on("click", ".hh-btn-import-choose", function () {
+			$("#hh-import-file").trigger("click");
+		}).on("change", "#hh-import-file", function () {
+			$("#hh-import-name").html(this.files[0].name);
 		});
 		
 		$('.hh-tabs').on('click', 'ul a', function (e) {

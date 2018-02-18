@@ -1,6 +1,11 @@
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
 <tr>
 	<th scope="row">Access-Control-Allow-Methods
-		<p class="description">The Access-Control-Allow-Methods header is returned by the server in a response to a preflight request and informs the browser about the HTTP methods that can be used in the actual request.</p>
+		<p class="description"><?php _e('The Access-Control-Allow-Methods header is returned by the server in a response to a preflight request and informs the browser about the HTTP methods that can be used in the actual request.', 'http-headers'); ?></p>
 	</th>
 	<td>
 		<fieldset>

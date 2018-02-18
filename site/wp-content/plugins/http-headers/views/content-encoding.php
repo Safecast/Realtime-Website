@@ -1,6 +1,11 @@
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
 <tr>
 	<th scope="row">Content-Encoding
-		<p class="description">Compression is an important way to increase the performance of a Web site. For some documents, size reduction of up to 70% lowers the bandwidth capacity needs. </p>
+		<p class="description"><?php _e('Compression is an important way to increase the performance of a Web site. For some documents, size reduction of up to 70% lowers the bandwidth capacity needs.', 'http-headers'); ?></p>
 	</th>
 	<td>
 		<fieldset>
@@ -19,7 +24,7 @@
 		<?php do_settings_sections( 'http-headers-ce' ); ?>
 		<table>
 		<tbody><tr>
-			<th colspan="2">By content type</th>
+			<th colspan="2"><?php _e('By content type', 'http-headers'); ?></th>
 		</tr><tr>
 		<?php
 		$items = array(
@@ -64,7 +69,7 @@
 		</tr>
 		
 		<tr>
-			<th colspan="2">By extension</th>
+			<th colspan="2"><?php _e('By extension', 'http-headers'); ?></th>
 		</tr>
 		<tr>
 		<?php

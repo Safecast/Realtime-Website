@@ -1,4 +1,7 @@
 <?php 
+if (!defined('ABSPATH')) {
+    exit;
+}
 include dirname(__FILE__) . '/includes/config.inc.php';
 include dirname(__FILE__) . '/includes/breadcrumbs.inc.php';
 ?>

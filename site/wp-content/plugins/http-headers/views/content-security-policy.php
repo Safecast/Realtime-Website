@@ -1,15 +1,18 @@
 <?php 
+if (!defined('ABSPATH')) {
+    exit;
+}
 $content_security_policy = get_option('hh_content_security_policy', 0);
 ?>
 <tr valign="top">
 	<th scope="row">Content Security Policy
-		<p class="description">Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware.</p>
+		<p class="description"><?php _e('Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware.', 'http-headers'); ?></p>
 		
 		<p>
 		<label><input type="checkbox" class="http-header-value"
 			name="hh_content_security_policy_report_only" value="1"
 			<?php checked(get_option('hh_content_security_policy_report_only'), 1, true); ?>
-			<?php echo $content_security_policy == 1 ? NULL : ' readonly'; ?> /> "Report-Only" (for reporting-only purposes)</label>
+			<?php echo $content_security_policy == 1 ? NULL : ' readonly'; ?> /> "Report-Only" (<?php _e('for reporting-only purposes', 'http-headers'); ?>)</label>
 		</p>
 	</th>
 	<td>
@@ -29,15 +32,17 @@ $content_security_policy = get_option('hh_content_security_policy', 0);
 		<table>
 			<thead>
 				<tr>
-					<th>Directive</th>
-					<th>Value</th>
+					<th><?php _e('Directive', 'http-headers'); ?></th>
+					<th><?php _e('Value', 'http-headers'); ?></th>
 				</tr>
 			</thead>
 			<tbody>
 			<?php 
 			$directives = array('default-src', 'script-src', 'style-src', 'img-src', 'connect-src', 
 				'font-src', 'media-src', 'sandbox', 'report-uri', 'child-src', 'form-action',
-				'frame-ancestors', 'plugin-types');
+				'frame-ancestors', 'plugin-types', 
+			    'object-src', 'frame-src', 'worker-src', 'manifest-src', 'base-uri', 'report-to',
+			);
 			$csp = get_option('hh_content_security_policy_value');
 			foreach ($directives as $item)
 			{
@@ -45,7 +50,7 @@ $content_security_policy = get_option('hh_content_security_policy', 0);
 				<tr>
         			<td><?php echo $item; ?></td>
         			<td class="hh-td-inner" valign="middle">
-        				<input type="text" name="hh_content_security_policy_value[<?php echo $item; ?>]" class="http-header-value" 
+        				<input type="text" name="hh_content_security_policy_value[<?php echo $item; ?>]" class="http-header-value" size="40"
         					value="<?php echo esc_attr(@$csp[$item]); ?>"<?php echo $content_security_policy == 1 ? NULL : ' readonly'; ?>>
         			</td>
         		</tr>

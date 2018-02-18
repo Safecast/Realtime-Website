@@ -45,6 +45,7 @@
 	$uploadDir = wp_upload_dir();
 	$fileURI   = sprintf("https://api.safecast.org/en-US/devices/%s/measurements?order=captured_at+desc", $id);
         $sensorType = get_post_meta(get_the_ID(), 'sensor_type', TRUE);
+        $sensorModel = get_post_meta(get_the_ID(), 'sensor_model', TRUE);
 ?>
 
 <div class="sensor-page-header container-fluid">
@@ -80,8 +81,9 @@
 						<a href="<?php echo $fileURI; ?>" target="_blank"><?php echo $download; ?></a>
 					</div>
                                       <div class="author_info">
-                                        Sensor:<?php echo $sensorType ?> <br>           
- 					Alarm:<?php echo $alarm ?><br>
+                                        Sensor:<?php echo $sensorType ?> <br> 
+										Model :<?php echo $sensorModel ?> <br>  
+ 					                    Alarm :<?php echo $alarm ?><br>
                                     </div>
 				</div>
 			</div>

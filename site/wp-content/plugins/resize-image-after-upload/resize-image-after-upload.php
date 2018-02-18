@@ -4,7 +4,7 @@ Plugin Name: Resize Image After Upload
 Plugin URI: https://wordpress.org/plugins/resize-image-after-upload/
 Description: Automatically resize uploaded images to within specified maximum width and height. Also has option to force recompression of JPEGs. Configuration options found under <a href="options-general.php?page=resize-after-upload">Settings > Resize Image Upload</a>
 Author: ShortPixel
-Version: 1.8.1
+Version: 1.8.3
 Author URI: https://shortpixel.com
 
 Copyright (C) 2017 ShortPixel
@@ -24,7 +24,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-$PLUGIN_VERSION = '1.8.2';
+$PLUGIN_VERSION = '1.8.3';
 $DEBUG_LOGGER = false;
 
 
@@ -252,7 +252,7 @@ function jr_uploadresize_options(){
 
   		<h4 style="font-size: 15px;font-weight: bold;margin: 2em 0 0;">Like the plugin?</h4>
 
-  		<p>This plugin was written for free (as in free beer) by me, <a href="http://philr.ae" target="_blank">Phil Rae</a>. If you find it useful please consider donating some small change to my beer fund because beer is very seldom free. Thanks!</p>
+  		<p>This plugin was written for free (as in free beer). If you find it useful please consider donating some small change to my beer fund because beer is very seldom free. Thanks!</p>
 
   		<p style="padding-bottom:2em;" class="resizeimage-button-wrapper">
   		  <a class="resizeimage-button" href="https://www.paypal.me/resizeImage" target="_blank">Donate cash</a>
@@ -430,6 +430,12 @@ function jr_uploadresize_resize($image_data){
     $image_data = jr_uploadresize_convert_image( $image_data, $compression_level );
   }
 
+  if($image_data['type'] == 'image/gif' && is_ani($image_data['file'])) {
+    //animated gif, don't resize
+    jr_error_log("--animated-gif-not-resized");
+    return $image_data;
+  }
+
   //---------- In with the old v1.6.2, new v1.7 (WP_Image_Editor) ------------
 
   if($resizing_enabled || $force_jpeg_recompression) {
@@ -564,6 +570,29 @@ function jr_uploadresize_convert_image( $params, $compression_level ){
   }
 
   return $params;
+}
+
+function is_ani($filename) {
+  if(!($fh = @fopen($filename, 'rb')))
+    return false;
+  $count = 0;
+  //an animated gif contains multiple "frames", with each frame having a
+  //header made up of:
+  // * a static 4-byte sequence (\x00\x21\xF9\x04)
+  // * 4 variable bytes
+  // * a static 2-byte sequence (\x00\x2C) (some variants may use \x00\x21 ?)
+
+  // We read through the file til we reach the end of the file, or we've found
+  // at least 2 frame headers
+  $chunk = false;
+  while(!feof($fh) && $count < 2) {
+    //add the last 20 characters from the previous string, to make sure the searched pattern is not split.
+    $chunk = ($chunk ? substr($chunk, -20) : "") . fread($fh, 1024 * 100); //read 100kb at a time
+    $count += preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
+  }
+
+  fclose($fh);
+  return $count > 1;
 }
 
 /**
