@@ -1,0 +1,32 @@
+# Translation of Plugins - Use Google Libraries - Development (trunk) in Japanese
+# This file is distributed under the same license as the Plugins - Use Google Libraries - Development (trunk) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2017-07-02 05:08:34+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: GlotPress/2.4.0-alpha\n"
+"Language: ja_JP\n"
+"Project-Id-Version: Plugins - Use Google Libraries - Development (trunk)\n"
+
+#. Author URI of the plugin/theme
+msgid "http://jasonpenney.net/"
+msgstr "http://jasonpenney.net/"
+
+#. Author of the plugin/theme
+msgid "Jason Penney"
+msgstr "Jason Penney (ジェイソンペニー)"
+
+#. Description of the plugin/theme
+msgid "Allows your site to use common javascript libraries from Google's AJAX Libraries CDN, rather than from WordPress's own copies."
+msgstr "あなたのサイトでは、WordPress の独自のコピーではなく、Google の AJAX ライブラリー CDN の一般的な JavaScript ライブラリーを使用できます。"
+
+#. Plugin URI of the plugin/theme
+msgid "http://jasonpenney.net/wordpress-plugins/use-google-libraries/"
+msgstr "http://jasonpenney.net/wordpress-plugins/use-google-libraries/"
+
+#. Plugin Name of the plugin/theme
+msgid "Use Google Libraries"
+msgstr "Google ライブラリを使用"

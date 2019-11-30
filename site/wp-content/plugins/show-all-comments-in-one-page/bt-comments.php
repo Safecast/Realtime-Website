@@ -3,8 +3,8 @@
  * Plugin Name: BT Comments
  * Description: Show all comments in one page with filter.
  * Author: biztechc
- * Author URI: http://www.biztechconsultancy.com
- * Version: 4.0.2
+ * Author URI: https://www.appjetty.com/
+ * Version: 4.1.2
  */
 add_action('admin_menu', 'bt_comments_create_menu');
 
@@ -28,6 +28,8 @@ function register_bt_comments_settings() {
     register_setting('bt-comments-settings-group', 'biztech_open_new_tab');
     register_setting('bt-comments-settings-group', 'biztech_comments_order');
     register_setting('bt-comments-settings-group', 'bt_display_filter');
+    register_setting('bt-comments-settings-group', 'bt_show_post_link');
+    register_setting('bt-comments-settings-group', 'bt_show_comment_link');
 }
 
 function bt_comments_settings_page() {
@@ -51,6 +53,8 @@ function bt_comments_settings_page() {
     $set_biztech_open_new_tab = get_option('biztech_open_new_tab');
     $set_comments_order = get_option('biztech_comments_order');
     $set_display_filter = get_option('bt_display_filter');
+    $show_post_link = get_option('bt_show_post_link');
+    $show_comment_link = get_option('bt_show_comment_link');
     ?>
     <div class="wrap">
         <h2>Show All Comments Settings</h2>
@@ -61,7 +65,7 @@ function bt_comments_settings_page() {
             <table class="form-table">
 
                 <tr valign="top">
-                    <th scope="row"><?php _e( 'Post Type' ); ?></th>
+                    <th scope="row"><?php _e('Post Type'); ?></th>
                     <td>
                         <fieldset>
                             <?php
@@ -72,13 +76,10 @@ function bt_comments_settings_page() {
                             unset($post_types['nav_menu_item']);
 
                             foreach ($post_types as $post_type) {
-                                if (in_array("$post_type", $set_bt_post_type) == true) {
-                                    $checked = 'checked=checked';
-                                }
+                                $checked = in_array("$post_type", $set_bt_post_type) ? ' checked="checked"' : '';
                                 ?>
                                 <label><input type="checkbox"  value="<?php echo $post_type; ?>" name="bt_post_type[]" <?php echo $checked; ?>> <span><?php echo $post_type; ?></span></label><br>
                                 <?php
-                                $checked = '';
                             }
                             ?>   
                         </fieldset>
@@ -86,19 +87,19 @@ function bt_comments_settings_page() {
                 </tr>
 
                 <tr valign="top">
-                    <th scope="row"><?php _e( 'Pagination' ); ?></th>
+                    <th scope="row"><?php _e('Pagination'); ?></th>
                     <td>
                         <fieldset>
                             <?php
                             if ($set_bt_pagination == 'yes') {
                                 ?>
-                                <label><input type="radio"  value="yes" name="bt_pagination" checked="checked"> <span><?php _e( 'Yes' ); ?></span></label><br>
-                                <label><input type="radio"  value="no"  name="bt_pagination"> <span><?php _e( 'No' ); ?></span></label>
+                                <label><input type="radio"  value="yes" name="bt_pagination" checked="checked"> <span><?php _e('Yes'); ?></span></label><br>
+                                <label><input type="radio"  value="no"  name="bt_pagination"> <span><?php _e('No'); ?></span></label>
                                 <?php
                             } else {
                                 ?>
-                                <label><input type="radio"  value="yes" name="bt_pagination"> <span><?php _e( 'Yes' ); ?></span></label><br>
-                                <label><input type="radio"  value="no"  name="bt_pagination" checked="checked"> <span><?php _e( 'No' ); ?></span></label>
+                                <label><input type="radio"  value="yes" name="bt_pagination"> <span><?php _e('Yes'); ?></span></label><br>
+                                <label><input type="radio"  value="no"  name="bt_pagination" checked="checked"> <span><?php _e('No'); ?></span></label>
                                 <?php
                             }
                             ?>
@@ -107,17 +108,37 @@ function bt_comments_settings_page() {
                 </tr>
 
                 <tr valign="top">
-                    <th scope="row"><?php _e( 'Comments Per Page' ); ?></th>
+                    <th scope="row"><?php _e('Comments Per Page'); ?></th>
                     <td><input type="number" class="small-text" value="<?php echo $set_bt_comments_per_page; ?>"  min="1" step="1" name="bt_comments_per_page"></td>
                 </tr>
 
                 <tr valign="top">
-                    <th scope="row"><?php _e( 'Exclude Post Id' ); ?></th>
-                    <td><input type="text" name="bt_exclude_post" value="<?php echo $set_bt_exclude_post; ?>" /> <?php _e( 'Exclude post id with comma separated. like 11,22,33' ); ?></td>
+                    <th scope="row"><?php _e('Enable post title link?'); ?></th>
+                    <td>
+                        <fieldset>
+                            <label><input type="radio"  value="yes" name="bt_show_post_link" <?php echo ($show_post_link == 'yes' ? 'checked' : ''); ?>> <span><?php _e('Yes'); ?></span></label><br>
+                            <label><input type="radio"  value="no"  name="bt_show_post_link" <?php echo ($show_post_link == 'no' ? 'checked' : ''); ?>> <span><?php _e('No'); ?></span></label>
+                        </fieldset>
+                    </td>
+                </tr>
+                
+                <tr valign="top">
+                    <th scope="row"><?php _e('Enable go to comment link?'); ?></th>
+                    <td>
+                        <fieldset>
+                            <label><input type="radio"  value="yes" name="bt_show_comment_link" <?php echo ($show_comment_link == 'yes' ? 'checked' : ''); ?>> <span><?php _e('Yes'); ?></span></label><br>
+                            <label><input type="radio"  value="no"  name="bt_show_comment_link" <?php echo ($show_comment_link == 'no' ? 'checked' : ''); ?>> <span><?php _e('No'); ?></span></label>
+                        </fieldset>
+                    </td>
                 </tr>
 
                 <tr valign="top">
-                    <th scope="row"><?php _e( 'Avatar Size' ); ?></th>
+                    <th scope="row"><?php _e('Exclude Post Id'); ?></th>
+                    <td><input type="text" name="bt_exclude_post" value="<?php echo $set_bt_exclude_post; ?>" /> <?php _e('Exclude post id with comma separated. like 11,22,33'); ?></td>
+                </tr>
+
+                <tr valign="top">
+                    <th scope="row"><?php _e('Avatar Size'); ?></th>
                     <td><input type="number" class="small-text" value="<?php
                         if ($set_biztech_sac_avatar == NULL) {
                             echo "50";
@@ -128,7 +149,7 @@ function bt_comments_settings_page() {
                 </tr>
 
                 <tr valign="top">
-                    <th scope="row"><?php _e( 'Show Comment Date' ); ?></th>
+                    <th scope="row"><?php _e('Show Comment Date'); ?></th>
                     <td>
                         <fieldset>
                             <?php {
@@ -146,7 +167,7 @@ function bt_comments_settings_page() {
                 </tr>
 
                 <tr valign="top">
-                    <th scope="row"><?php _e( 'Open Comment in New TAB' ); ?></th>
+                    <th scope="row"><?php _e('Open Comment in New TAB'); ?></th>
                     <td>
                         <fieldset>
                             <?php {
@@ -165,20 +186,20 @@ function bt_comments_settings_page() {
 
 
                 <tr valign="top">
-                    <th scope="row"><?php _e( 'Comments Order' ); ?></th>
+                    <th scope="row"><?php _e('Comments Order'); ?></th>
                     <td>
                         <fieldset>
                             <?php
                             if ($set_comments_order == 'no') {
                                 ?>
 
-                                <label><input type="radio"  value="yes" name="biztech_comments_order"> <span><?php _e( 'Newest comments First' ); ?></span></label><br>
+                                <label><input type="radio"  value="yes" name="biztech_comments_order"> <span><?php _e('Newest comments First'); ?></span></label><br>
                                 <label><input type="radio"  value="no"  name="biztech_comments_order" checked="checked"> <span>Oldest comments First</span></label>
                                 <?php
                             } else {
                                 ?>
-                                <label><input type="radio"  value="yes" name="biztech_comments_order" checked="checked"> <span><?php _e( 'Newest comments First' ); ?></span></label><br>
-                                <label><input type="radio"  value="no"  name="biztech_comments_order"> <span><?php _e( 'Oldest comments First' ); ?></span></label>
+                                <label><input type="radio"  value="yes" name="biztech_comments_order" checked="checked"> <span><?php _e('Newest comments First'); ?></span></label><br>
+                                <label><input type="radio"  value="no"  name="biztech_comments_order"> <span><?php _e('Oldest comments First'); ?></span></label>
 
                                 <?php
                             }
@@ -187,19 +208,19 @@ function bt_comments_settings_page() {
                     </td>
                 </tr>
                 <tr valign="top">
-                    <th scope="row"><?php _e( 'Display Filter' ); ?></th>
+                    <th scope="row"><?php _e('Display Filter'); ?></th>
                     <td>
                         <fieldset>
                             <?php
                             if ($set_display_filter == 'yes') {
                                 ?>
-                                <label><input type="radio"  value="yes" name="bt_display_filter" checked="checked"> <span><?php _e( 'Yes' ); ?></span></label><br>
-                                <label><input type="radio"  value="no"  name="bt_display_filter"> <span><?php _e( 'No' ); ?></span></label>
+                                <label><input type="radio"  value="yes" name="bt_display_filter" checked="checked"> <span><?php _e('Yes'); ?></span></label><br>
+                                <label><input type="radio"  value="no"  name="bt_display_filter"> <span><?php _e('No'); ?></span></label>
                                 <?php
                             } else {
                                 ?>
-                                <label><input type="radio"  value="yes" name="bt_display_filter"> <span><?php _e( 'Yes' ); ?></span></label><br>
-                                <label><input type="radio"  value="no"  name="bt_display_filter" checked="checked"> <span><?php _e( 'No' ); ?></span></label>
+                                <label><input type="radio"  value="yes" name="bt_display_filter"> <span><?php _e('Yes'); ?></span></label><br>
+                                <label><input type="radio"  value="no"  name="bt_display_filter" checked="checked"> <span><?php _e('No'); ?></span></label>
                                 <?php
                             }
                             ?>
@@ -259,7 +280,7 @@ function custom_comments($attr) {
 
     $post_type = get_option('bt_post_type');
 
-    if ($_REQUEST['sac_post_types'] != null) {
+    if (isset($_REQUEST['sac_post_types']) &&  $_REQUEST['sac_post_types'] != null) {
 
         $post_type = array($_REQUEST['sac_post_types']);
     }
@@ -297,6 +318,7 @@ function custom_comments($attr) {
     global $wp_version;
     if ($wp_version >= 4.1) {
         $defaults = array(
+            'orderby' => 'comment_date',
             'order' => $order,
             'post_type' => $post_type,
             'status' => 'approve',
@@ -305,10 +327,10 @@ function custom_comments($attr) {
             'date_query' => null
         );
 
-        if ($_REQUEST['sac_posts'] != null) {
+        if (isset($_REQUEST['sac_posts']) && $_REQUEST['sac_posts'] != null) {
 
             $defaults['post__in'] = array($_REQUEST['sac_posts']);
-        } else if ($_REQUEST['sac_category'] != null && $_REQUEST['sac_post_types'] == 'post') {
+        } else if (isset($_REQUEST['sac_post_types']) && $_REQUEST['sac_category'] != null && $_REQUEST['sac_post_types'] == 'post') {
 
             $category_args = array(
                 'posts_per_page' => -1,
@@ -356,7 +378,7 @@ function custom_comments($attr) {
             "
         );
 
-        if ($_REQUEST['sac_posts'] != null) {
+        if (isset($_REQUEST['sac_posts']) && $_REQUEST['sac_posts'] != null) {
 
             $sac_posts = $_REQUEST['sac_posts'];
             $getIncludePostId = $wpdb->get_results(
@@ -369,7 +391,7 @@ function custom_comments($attr) {
                 ORDER BY c.comment_date $order 
                 "
             );
-        } else if ($_REQUEST['sac_category'] != null && $_REQUEST['sac_post_types'] == 'post') {
+        } else if (isset($_REQUEST['sac_category']) && $_REQUEST['sac_category'] != null && $_REQUEST['sac_post_types'] == 'post') {
 
             $sac_category = $_REQUEST['sac_category'];
             $getIncludePostId = $wpdb->get_results(
@@ -461,17 +483,17 @@ function custom_comments($attr) {
             'cpage' => '%#%',
         );
 
-        if ($_REQUEST['sac_post_types'] != null) {
+        if (isset($_REQUEST['sac_post_types']) &&  $_REQUEST['sac_post_types'] != null) {
 
             $query_arg['sac_post_types'] = $_REQUEST['sac_post_types'];
         }
 
-        if ($_REQUEST['sac_category'] != null) {
+        if (isset($_REQUEST['sac_category']) && $_REQUEST['sac_category'] != null) {
 
             $query_arg['sac_category'] = $_REQUEST['sac_category'];
         }
 
-        if ($_REQUEST['sac_posts'] != null) {
+        if (isset($_REQUEST['sac_posts']) && $_REQUEST['sac_posts'] != null) {
 
             $query_arg['sac_posts'] = $_REQUEST['sac_posts'];
         }
@@ -582,13 +604,16 @@ function sac_wp_enqueue_styles_and_scripts() {
 
     $ajax_url = admin_url('admin-ajax.php') . '?cache=' . time();
     wp_localize_script('sac-script', 'sac_ajax_url', $ajax_url);
+    if(isset($_REQUEST['sac_posts'])){
     $sac_posts = $_REQUEST['sac_posts'];
     wp_localize_script('sac-script', 'sac_posts', $sac_posts);
-    $sac_category = '';
-    if ($_REQUEST['sac_post_types'] == 'post') {
-        $sac_category = $_REQUEST['sac_category'];
     }
-    wp_localize_script('sac-script', 'sac_category', $sac_category);
+    $sac_category = '';
+    if (isset($_REQUEST['sac_post_types']) &&  $_REQUEST['sac_post_types'] == 'post') {
+        $sac_category = $_REQUEST['sac_category'];
+        wp_localize_script('sac-script', 'sac_category', $sac_category);
+    }
+    
 }
 
 add_filter('pre_option_page_comments', '__return_true');
@@ -600,21 +625,39 @@ function custom_comments_template($comment, $args, $depth) {
     $getAvatarSize = get_option('biztech_sac_avatar');
     $getdate = get_option('biztech_show_date');
     $open_new_tab = get_option('biztech_open_new_tab');
+    $show_post_link = get_option('bt_show_post_link');
+    $show_comment_link = get_option('bt_show_comment_link');
     ?>
     <li>
         <div class="avatar-custom"><?php echo get_avatar($comment, $getAvatarSize); ?></div>
         <div class="custom-comment-wrap">
             <h4 class="custom-comment-meta">
-                <?php _e( 'From' ); ?> <span class="custom-comment-author"><?php echo $comment->comment_author; ?></span> 
-                <?php _e( 'on' ); ?> <span class="custom-comment-on-title"><a href="<?php echo esc_url(get_permalink($comment->comment_post_ID)); ?>" target="_blank"><?php echo $comment->post_title; ?></a></span>
+                <?php _e('From'); ?> <span class="custom-comment-author"><?php echo $comment->comment_author; ?></span>
+                <?php _e('on'); ?> 
+                <?php
+                if (isset($show_post_link) && $show_post_link == "yes") {
+                    ?>
+                    <span class = "custom-comment-on-title"><a href = "<?php echo esc_url(get_permalink($comment->comment_post_ID)); ?>" target = "_blank"><?php echo $comment->post_title; ?></a></span>
+                    <?php
+                } else {
+                    ?>
+                    <span class = "custom-comment-on-title"><?php echo $comment->post_title; ?></span>
+                    <?php
+                }
+                ?>
+
             </h4>
             <blockquote><?php echo apply_filters("the_content", $comment->comment_content); ?></blockquote>
             <?php
-            if (isset($open_new_tab) && $open_new_tab == 'on') {
-                $new_tab = 'target="_blank"';
-            }
+            if ( isset( $show_comment_link ) && ( $show_comment_link == 'yes' ) ) {
+                if (isset($open_new_tab) && $open_new_tab == 'on') {
+                    $new_tab = 'target="_blank"';
+                }
             ?>
-            <span class="custom-comment-link"><a href="<?php echo $comment->guid . '#comment-' . $comment->comment_ID; ?>" <?php echo $new_tab; ?>><?php _e( 'Go to comment' ); ?></a></span><br>
+            <span class="custom-comment-link"><a href="<?php echo $comment->guid . '#comment-' . $comment->comment_ID; ?>" <?php echo $new_tab; ?>><?php _e('Go to comment'); ?></a></span><br>
+            <?php
+            }            
+            ?>            
             <?php
             if (isset($getdate) && $getdate == 'on') {
                 ?>
@@ -636,4 +679,5 @@ function bt_comments_uninstall() {
     delete_option('bt_exclude_post');
     delete_option('biztech_sac_avatar');
     delete_option('bt_display_filter');
+    delete_option('bt_show_comment_link');
 }

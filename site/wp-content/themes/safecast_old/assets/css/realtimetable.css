@@ -1,0 +1,51 @@
+/*!
+ * Sensors Table css
+ */
+
+.ago {
+	display: block;
+}
+
+.gmt {
+	display: inline-block;
+	color: #666;
+	font-size: .7em;
+}
+
+.measure-sievert {
+	color:#6ba5bd;
+}
+
+.measure-cpm {
+	color:#6ba5bd;
+}
+
+.model{
+	display: inline-block;
+	color: #666;
+	font-size: .7em;
+}
+
+.status {
+	display: inline-block;
+	padding: 2px 5px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-khtml-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.table {
+  max-width: 100%;
+  background-color: transparent;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.table td {
+  vertical-align: middle !important;	
+}
+
+#filter {
+  margin-bottom: 15px;
+}

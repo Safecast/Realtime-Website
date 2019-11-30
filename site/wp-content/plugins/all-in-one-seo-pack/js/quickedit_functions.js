@@ -5,9 +5,9 @@ jQuery(document).on( 'click', '.visibility-notice', function() {
         data: {
             action: 'aioseo_dismiss_visibility_notice'
         }
-    })
+    });
 
-})
+});
 
 jQuery(document).on( 'click', '.yst_notice', function() {
 
@@ -16,9 +16,9 @@ jQuery(document).on( 'click', '.yst_notice', function() {
         data: {
             action: 'aioseo_dismiss_yst_notice'
         }
-    })
+    });
 
-})
+});
 
 jQuery(document).on( 'click', '.woo-upgrade-notice', function() {
 
@@ -27,9 +27,20 @@ jQuery(document).on( 'click', '.woo-upgrade-notice', function() {
         data: {
             action: 'aioseo_dismiss_woo_upgrade_notice'
         }
-    })
+    });
 
-})
+});
+
+jQuery(document).on( 'click', '.sitemap_max_urls_notice', function() {
+
+    jQuery.ajax({
+        url: ajaxurl,
+        data: {
+            action: 'aioseo_dismiss_sitemap_max_url_notice'
+        }
+    });
+
+});
 
 
 function aioseop_ajax_edit_meta_form( post_id, meta, nonce ) {
@@ -38,10 +49,8 @@ function aioseop_ajax_edit_meta_form( post_id, meta, nonce ) {
 	var element = uform.html(); var input;
 	input = '<textarea id="aioseop_new_'+meta+'_' + post_id + '" style="font-size:13px;width:100%;float:left;position:relative;z-index:1;" rows=4 cols=32>'  + post_title + '</textarea>';
 	input += '<label style="float:left">';
-	input += '<a class="aioseop_mpc_SEO_admin_options_edit" href="javascript:void(0);" id="aioseop_'+meta+'_save_' + post_id + '" >';
-	input += '<img src="' + aioseopadmin.imgUrl+'accept.png" border="0" alt="" title="'+meta+'" /></a>';
-	input += '<a class="aioseop_mpc_SEO_admin_options_edit" href="javascript:void(0);" id="aioseop_'+meta+'_cancel_' + post_id + '" >';
-	input += '<img src="' + aioseopadmin.imgUrl+'delete.png" border="0" alt="" title="'+meta+'" /></a>';
+	input += '<a class="aioseop-icon-qedit aioseop-icon-qedit-accept" href="javascript:void(0);" id="aioseop_' + meta + '_save_' + post_id + '" title="Accept" >';
+	input += '<a class="aioseop-icon-qedit aioseop-icon-qedit-delete" href="javascript:void(0);" id="aioseop_' + meta + '_cancel_' + post_id + '" title="Decline" >';
 	input += '</label>';
 	uform.html( input );
 	uform.attr( "class", "aioseop_mpc_admin_meta_options aio_editing" );
@@ -63,7 +72,7 @@ function handle_post_meta( p, t, m, n ) {
 		loading += '</label><div style="float:left">Please wait…</div>';
 		jQuery("div#aioseop_"+m+"_"+p).fadeIn('fast', function() {
 			var aioseop_sack = new sack(aioseopadmin.requestUrl);
-			aioseop_sack.execute = 1; 
+			aioseop_sack.execute = 1;
 			aioseop_sack.method = 'POST';
 			aioseop_sack.setVar( "action", "aioseop_ajax_save_meta");
 			aioseop_sack.setVar( "post_id", p );
@@ -71,11 +80,14 @@ function handle_post_meta( p, t, m, n ) {
 			aioseop_sack.setVar( "target_meta", m );
 			aioseop_sack.setVar( "_inline_edit", jQuery('input#_inline_edit').val() );
 			aioseop_sack.setVar( "_nonce", n );
+			// TODO Add alert function. Check example of correct code. https://eslint.org/docs/rules/no-alert
+			/* eslint-disable no-alert */
 			aioseop_sack.onError = function() {alert('Ajax error on saving title'); };
+			/* eslint-enable no-alert */
 			aioseop_sack.runAJAX();
-		})
+		});
 		jQuery("div#aioseop_"+m+"_"+p).html(loading);
 		jQuery("div#aioseop_"+m+"_"+p).attr( "class", "aioseop_mpc_admin_meta_options" );
-		
-	})
+
+	});
 }

@@ -1,379 +1,543 @@
 <?php
 /*
-Plugin Name: Advanced TinyMCE Config
+Plugin Name: Advanced TinyMCE Configuration
 Plugin URI: http://www.laptoptips.ca/projects/advanced-tinymce-configuration/
-Description: Set advanced options for TinyMCE, the visual editor in WordPress.
-Version: 1.2
+Description: Set advanced TinyMCE options for the classic block and classic editor.
+Version: 1.5
 Author: Andrew Ozz
 Author URI: http://www.laptoptips.ca/
+License: GPL2
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: adv-mce-config
+Domain Path: /languages
 
-Released under the GPL v.2, http://www.gnu.org/copyleft/gpl.html
+	Advanced TinyMCE Configuration is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 2 of the License, or
+	any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	Advanced TinyMCE Configuration is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License along
+	with Advanced TinyMCE Configuration. If not, see https://www.gnu.org/licenses/gpl-2.0.html.
+
+	Copyright 2011-2019 Andrew Ozz. All rights reserved.
 */
 
-function advmceconf_is_mce_version_4() {
-	return ( isset( $GLOBALS['tinymce_version'] ) && substr( $GLOBALS['tinymce_version'], 0, 1 ) >= 4 );
-}
-
-add_action( 'pre_current_active_plugins', 'advmceconf_warn_plugins_screen' );
-function advmceconf_warn_plugins_screen( $plugins ) {
-	if ( advmceconf_is_mce_version_4() && get_option( 'advmceconf_version' ) < 12 ) {
-		?>
-		<div class="error"><p>
-			<?php
-			_e('The Advanced TinyMCE Config plugin requires attention: you are running TinyMCE 4.0 (WordPress 3.9 or newer) but the settings for the editor have not been updated. This can result in errors while editing, or the editor may fail completely.', 'advmceconf');
-			?>
-		</p></div>
-		<?php
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 add_filter( 'tiny_mce_before_init', 'advmceconf_config_mce', 1111 );
 function advmceconf_config_mce( $config ) {
 	global $plugin_page;
 
-	if ( ! empty( $plugin_page ) && $plugin_page == 'advanced-tinymce-configuration/adv-mce-config.php' ) {
+	if ( ! empty( $plugin_page ) && $plugin_page == 'advanced-tinymce-configuration' ) {
 		global $advmceconf_show_defaults;
 
 		$advmceconf_show_defaults = $config;
 		return $config;
 	}
 
-	$options = get_option('advmceconf_options');
+	$options = get_option( 'advmceconf_options' );
 
-	if ( empty( $options ) || !is_array( $options ) )
+	if ( empty( $options ) || ! is_array( $options ) ) {
 		return $config;
+	}
 
 	return array_merge( $config, $options );
 }
 
-add_action('admin_head-settings_page_advanced-tinymce-configuration/adv-mce-config', 'advmceconf_style');
+add_action( 'admin_head-settings_page_advanced-tinymce-configuration', 'advmceconf_style' );
 function advmceconf_style() {
 	?>
 	<style type="text/css">
-	.advmceconf-wrap {
-		border: 1px solid #ddd;
-		border-radius: 3px;
-		background-color: #f8f8f8;
-		padding: 0 12px;
-		margin: 16px 0;
-	}
+		.wrap.advmceconf {
+			max-width: 80em;
+		}
 
-	.advmceconf-table {
-		table-layout: fixed;
-		border-collapse: collapse;
-		margin: 8px 0;
-		width: 100%;
-		clear: both;
-	}
+		.advmceconf-wrap {
+			border: 1px solid #ddd;
+			border-radius: 3px;
+			background-color: #f8f8f8;
+			padding: .5em 2em 1em;
+			margin: 1em 0;
+		}
 
-	#advmceconf-defaults {
-		white-space: -moz-pre-wrap !important;
-		word-wrap: break-word;
-		white-space: pre-wrap;
-	}
+		.advmceconf-wrap img.advmceconf-example {
+			border: 1px solid #bbb;
+			max-width: 100%;
+			height: auto;
+		}
 
-	.advmceconf-table td {
-		padding: 7px 4px;
-		line-height: 20px;
-		vertical-align: top;
-	}
+		.advmceconf-form {
+			padding: 2em 0 0;
+		}
 
-	#advmceconf-defaults td {
-		border-bottom: 1px solid #ddd;
-	}
+		.advmceconf-table {
+			table-layout: fixed;
+			border-collapse: collapse;
+			margin: 0 0 3em;
+			width: 100%;
+			clear: both;
+		}
 
-	.advmceconf-table th {
-		font-weight: bold;
-		text-shadow: rgba(255,255,255,1) 0 1px 0;
-		padding: 10px 4px;
-		border-bottom: 1px solid #ddd;
-		text-align: left;
-	}
+		.advmceconf-table td {
+			padding: 0.3em;
+			line-height: 1.5;
+			vertical-align: top;
+		}
 
-	.advmceconf-table td.names input {
-		width: 100%;
-	}
+		.advmceconf-table th {
+			font-weight: bold;
+			text-shadow: rgba(255,255,255,1) 0 1px 0;
+			padding: 0.5em 0.5em 0;
+			text-align: left;
+		}
 
-	.advmceconf-table textarea {
-		width: 99%;
-		min-height: 80px;
-	}
+		.advmceconf-table td.names input {
+			width: 100%;
+		}
 
-	.advmceconf-table th.names {
-		width: 220px;
-	}
+		.advmceconf-table textarea {
+			width: 100%;
+			min-height: 100px;
+			margin: 1px;
+		}
 
-	#advmceconf-set th.names {
-		width: 250px;
-	}
+		.advmceconf-table th.names {
+			width: 24%;
+		}
 
-	#advmceconf-defaults .names {
-		text-align: right;
-	}
+		.advmceconf-table .sep {
+			width: 1em;
+			text-align: center;
+		}
 
-	.advmceconf-table .sep {
-		width: 10px;
-		text-align: center;
-	}
+		.advmceconf-table .actions {
+			width: 100px;
+			text-align: center;
+			vertical-align: middle;
+		}
 
-	.advmceconf-table .actions {
-		width: 100px;
-		text-align: center;
-	}
+		.advmceconf .advmceconf-defaults {
+			white-space: -moz-pre-wrap !important;
+			word-wrap: break-word;
+			white-space: pre-wrap;
+		}
 
-	.advmceconf-table td.actions {
-		vertical-align: middle;
-	}
+		.advmceconf .advmceconf-defaults td,
+		.advmceconf .advmceconf-defaults th {
+			border-bottom: 1px solid #ddd;
+			padding: .6em .3em;
+		}
 
-	.advmceconf-hilite td {
-		background: #fee;
-	}
+		.advmceconf .advmceconf-defaults th {
+			padding-bottom: 0.4em;
+		}
+
+		.advmceconf .advmceconf-defaults .names {
+			text-align: right;
+		}
+
+		.advmceconf .advmceconf-defaults td.actions {
+			padding: .3em 0 .4em;
+		}
+
+		.advmceconf-code-links a {
+			text-decoration: none;
+		}
+
+		@media screen and (max-width: 782px) {
+			.advmceconf-table .actions {
+				display: none;
+			}
+		}
 	</style>
 	<?php
 }
 
+add_filter( 'plugin_action_links', 'advmceconf_add_settings_link', 10, 2 );
+function advmceconf_add_settings_link( $links, $file ) {
+	if ( $file === 'advanced-tinymce-configuration/adv-mce-config.php' && current_user_can( 'manage_options' ) ) {
+		$settings_link = sprintf(
+			'<a href="%s">%s</a>',
+			admin_url( 'options-general.php?page=advanced-tinymce-configuration' ),
+			__( 'Settings', 'adv-mce-config' )
+		);
+
+		$links = (array) $links;
+		array_unshift( $links, $settings_link );
+	}
+
+	return $links;
+}
+
 add_action( 'admin_menu', 'advmceconf_menu' );
 function advmceconf_menu() {
-    if ( function_exists('add_options_page') )
-	   add_options_page( 'TinyMCE Config', 'TinyMCE Config', 'manage_options', __FILE__, 'advmceconf_admin' );
+	if ( function_exists( 'add_options_page' ) ) {
+		add_options_page( 'TinyMCE Config', 'TinyMCE Config', 'manage_options', 'advanced-tinymce-configuration', 'advmceconf_admin' );
+	}
 }
 
 function advmceconf_admin() {
 	global $advmceconf_show_defaults;
 
-	if ( ! current_user_can('manage_options') )
-		wp_die('Access denied');
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_die( 'Invalid request' );
+	}
 
 	$message = '';
 	$options = get_option( 'advmceconf_options', array() );
 	$version = get_option( 'advmceconf_version', 0 );
 
-	if ( ! empty($_POST['advmceconf_save']) ) {
-		check_admin_referer('advmceconf-save-options');
+	if ( ! empty( $_POST['advmceconf_save'] ) ) {
+		check_admin_referer( 'advmceconf-save-options' );
 		$old_options = $options;
 
-		if ( empty( $_POST['advmceconf_options'] ) || ! is_array( $_POST['advmceconf_options'] ) )
+		if ( empty( $_POST['advmceconf_options'] ) || ! is_array( $_POST['advmceconf_options'] ) ) {
 			$new_options = array();
-		else
+		} else {
 			$new_options = $_POST['advmceconf_options'];
+		}
 
-		if ( ! empty( $_POST['advmceconf-new'] ) && isset( $_POST['advmceconf-new-val'] ) )
+		if ( ! empty( $_POST['advmceconf-new'] ) && isset( $_POST['advmceconf-new-val'] ) ) {
 			$new_options[ $_POST['advmceconf-new'] ] = $_POST['advmceconf-new-val'];
+		}
 
 		foreach ( $new_options as $key => $val ) {
 			$key = preg_replace( '/[^a-z0-9_]+/i', '', $key );
-			if ( empty($key) )
+			if ( empty( $key ) )
 				continue;
 
-			if ( isset( $_POST[$key] ) && empty( $_POST[$key] ) ) {
-				unset( $options[$key] );
+			if ( isset( $_POST[ $key ] ) && empty( $_POST[ $key ] ) ) {
+				unset( $options[ $key ] );
 				continue;
 			}
 
-			$val = stripslashes($val);
-			if ( 'true' == $val )
-				$options[$key] = true;
-			elseif ( 'false' == $val )
-				$options[$key] = false;
-			else
-				$options[$key] = $val;
+			$val = stripslashes( $val );
+
+			if ( 'true' == $val ) {
+				$options[ $key ] = true;
+			} elseif ( 'false' == $val ) {
+				$options[ $key ] = false;
+			} else {
+				$options[ $key ] = $val;
+			}
 		}
 
 		if ( $options != $old_options ) {
-			update_option('advmceconf_options', $options);
-			$message = '<div class="updated fade"><p>' . __('Options saved.', 'advmceconf') . '</p></div>';
+			update_option( 'advmceconf_options', $options);
+			$message = '<div class="updated fade"><p>' . __( 'Options saved.', 'adv-mce-config' ) . '</p></div>';
 		}
 
-		if ( $version < 12 && advmceconf_is_mce_version_4() ) {
+		if ( $version < 12 ) {
 			update_option( 'advmceconf_version', 12 );
 			$version = 12;
-		} elseif ( ! $version ) {
-			update_option( 'advmceconf_version', 11 );
-			$version = 11;
 		}
 	}
 
 	?>
-	<div class="wrap">
-	<?php screen_icon(); ?>
-	<h2><?php _e('Advanced TinyMCE Settings', 'advmceconf'); ?></h2>
+	<div class="wrap advmceconf">
+	<h1><?php _e( 'Advanced TinyMCE Settings', 'adv-mce-config' ); ?></h1>
 	<?php
 
-	if ( $version < 12 && advmceconf_is_mce_version_4() ) {
-		?>
-		<div class="error"><p>
-		<?php
-			_e('You are running TinyMCE 4.0 (WordPress 3.9 or newer) but the settings for the editor have not been updated. This can result in errors while editing, or the editor may fail completely. ', 'advmceconf');
-			_e('(This notice will dissapear after the settings are updated.)', 'advmceconf');
-		?>
-		</p></div>
-		<?php
-	}
-
-	if ( $message )
+	if ( $message ) {
 		echo $message;
+	}
 
 	?>
 	<div class="advmceconf-wrap">
-	<p><?php _e('To add a setting to TinyMCE type the name on the left and the value on the right. Do not add quotes around the setting name or value. To remove a setting, delete both the name and value. To add boolean values type <code>true</code> or <code>false</code>, these strings are converted to boolean.', 'advmceconf'); ?></p>
-	<p><?php _e('Description of all settings is available in the', 'advmceconf'); ?> <a href="http://www.tinymce.com/wiki.php" target="_blank"><?php _e('TinyMCE documentation', 'advmceconf'); ?></a>.</p>
-	<p><?php _e('Several of the more commonly used settings are:', 'advmceconf'); ?></p>
-	<ul class="ul-disc">
-	<?php
+	<h2><?php _e( 'How-to:', 'adv-mce-config' ); ?></h2>
+	<ol>
+		<li><?php _e( 'To add a setting to TinyMCE, type the name on the left and the value on the right.', 'adv-mce-config' ); ?></li>
+		<li><?php _e( 'Do not add quotes around the name or value.', 'adv-mce-config' ); ?></li>
+		<li><?php _e( 'To remove a setting, delete both name and value.', 'adv-mce-config' ); ?></li>
+		<li><?php _e( 'To add boolean values type <code>true</code> or <code>false</code>. These strings are converted to boolean when saving.', 'adv-mce-config' ); ?></li>
+		<li><?php _e( 'You can add JavaScript arrays, objects and functions in the value field.', 'adv-mce-config' ); ?></li>
+		<li><?php _e( 'When copying settings from the examples in the TinyMCE documentation, make sure you copy only the setting name and value, not the whole example.', 'adv-mce-config' ); ?></li>
+		<li><?php _e( 'When pasting, make sure both the name and value do not start or end with empty spaces.', 'adv-mce-config' ); ?></li>
+		<li><?php _e( 'Both the name and value must follow the JavaScript syntax. Line breaks are only allowed when using arrays or objects.', 'adv-mce-config' ); ?></li>
+	</ol>
 
-	if ( advmceconf_is_mce_version_4() ) {
-		?>
-		<li><a href="http://www.tinymce.com/wiki.php/Configuration:block_formats" target="_blank">block_formats</a></li>
-		<li><a href="http://www.tinymce.com/wiki.php/Configuration:style_formats" target="_blank">style_formats</a></li>
-		<li><a href="http://www.tinymce.com/wiki.php/Configuration:invalid_elements" target="_blank">invalid_elements</a></li>
-		<li><a href="http://www.tinymce.com/wiki.php/Configuration:extended_valid_elements" target="_blank">extended_valid_elements</a></li>
-		<?php
-	} else {
-		?>
-		<li><a href="http://www.tinymce.com/wiki.php/Configuration3x:theme_advanced_blockformats" target="_blank">theme_advanced_blockformats</a></li>
-		<li><a href="http://www.tinymce.com/wiki.php/Configuration3x:theme_advanced_styles" target="_blank">theme_advanced_styles</a></li>
-		<li><a href="http://www.tinymce.com/wiki.php/Configuration3x:theme_advanced_text_colors" target="_blank">theme_advanced_text_colors</a></li>
-		<li><a href="http://www.tinymce.com/wiki.php/Configuration3x:theme_advanced_background_colors" target="_blank">theme_advanced_background_colors</a></li>
-		<li><a href="http://www.tinymce.com/wiki.php/Configuration3x:invalid_elements" target="_blank">invalid_elements</a></li>
-		<li><a href="http://www.tinymce.com/wiki.php/Configuration3x:extended_valid_elements" target="_blank">extended_valid_elements</a></li>
-		<?php
-	}
+	<h3><?php _e( 'Example:', 'adv-mce-config' ); ?></h3>
+	<p><?php _e( 'To add the <code>block_formats</code> setting from the example in the TinyMCE documentation:', 'adv-mce-config' ); ?></p>
+	<p><img width="880" height="170" class="advmceconf-example" src="<?php echo plugins_url( 'images/block-formats-example.png', __FILE__ ); ?>" title="<?php esc_attr_e( 'Screenshot of the example.', 'adv-mce-config' ); ?>"></p>
+	<p><?php _e( 'you need to enter <code>block_formats</code> in the Option name field and <code>Paragraph=p;Header 1=h1;Header 2=h2;Header 3=h3</code> in the Value field:', 'adv-mce-config' ); ?></p>
+	<p><img width="880" height="170" class="advmceconf-example" src="<?php echo plugins_url( 'images/block-formats-setting.png', __FILE__ ); ?>" title="<?php esc_attr_e( 'Screenshot of the added setting.', 'adv-mce-config' ); ?>"></p>
 
-	?>
+	<p><?php _e( 'Description of all settings is available in the', 'adv-mce-config' ); ?> <a href="https://www.tiny.cloud/docs/configure/" target="_blank" rel="noreferrer noopener"><?php _e( 'TinyMCE documentation', 'adv-mce-config' ); ?></a>.</p>
+	<p><?php _e( 'Several of the more commonly used settings are:', 'adv-mce-config' ); ?></p>
+	<ul class="ul-disc advmceconf-code-links">
+		<li><a href="https://www.tiny.cloud/docs/configure/content-formatting/#block_formats" target="_blank" rel="noreferrer noopener"><code>block_formats</code></a></li>
+		<li><a href="https://www.tiny.cloud/docs/configure/content-formatting/#style_formats" target="_blank" rel="noreferrer noopener"><code>style_formats</code></a></li>
+		<li><a href="https://www.tiny.cloud/docs/configure/content-filtering/#invalid_elements" target="_blank" rel="noreferrer noopener"><code>invalid_elements</code></a></li>
+		<li><a href="https://www.tiny.cloud/docs/configure/content-filtering/#extended_valid_elements" target="_blank" rel="noreferrer noopener"><code>extended_valid_elements</code></a></li>
 	</ul>
 	</div>
 
-	<table id="advmceconf-defaults" class="advmceconf-table showhide" style="display: none;">
-	<thead><tr>
-	<th class="names"><?php _e('Name', 'advmceconf'); ?></th>
-	<th class="sep">&nbsp;</th>
-	<th><?php _e('Value', 'advmceconf'); ?></th>
-	<th class="actions">&nbsp;</th>
-	</tr></thead>
-	<tbody>
+	<h2><?php _e( 'Defaults', 'adv-mce-config' ); ?></h2>
+	<div class="showhide" style="display: none;">
 	<?php
 
 	ob_start();
 	wp_editor( '', 'content', array( 'media_buttons' => false, 'quicktags' => false ) );
 	ob_end_clean();
 
-	if ( !empty($advmceconf_show_defaults) && is_array($advmceconf_show_defaults) ) {
-		$n = 1;
-		$change = esc_attr( __('Change', 'advmceconf') );
+	$edit   = esc_html( _x( 'Edit', 'Edit options button', 'adv-mce-config' ) );
+	$change = esc_html( __( 'Change', 'adv-mce-config' ) );
+
+	if ( ! empty( $advmceconf_show_defaults ) && is_array( $advmceconf_show_defaults ) ) {
+		?>
+		<table class="advmceconf-table advmceconf-defaults advmceconf-initial">
+		<thead>
+			<tr>
+				<th class="names"><?php _e( 'Name', 'adv-mce-config' ); ?></th>
+				<th class="sep">:</th>
+				<th><?php _e( 'Default value', 'adv-mce-config' ); ?></th>
+				<th class="actions">&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+		<?php
 
 		foreach ( $advmceconf_show_defaults as $def_field => $def_value ) {
-			if ( is_bool( $def_value ) )
+			if ( is_bool( $def_value ) ) {
 				$def_value = $def_value ? 'true' : 'false';
-			?>
+			}
 
-			<tr>
-			<td id="name-<?php echo $n; ?>" class="names"><?php echo $def_field; ?></td>
-			<td class="sep">:</td>
-			<td id="val-<?php echo $n; ?>"><?php echo htmlspecialchars( $def_value, ENT_QUOTES ); ?></td>
-			<td class="actions"><input type="button" data-num="<?php echo $n; ?>" class="button" value="<?php echo $change; ?>" /></td>
+			if ( array_key_exists( $def_field, $options ) ) {
+				$tr_class = ' class="highlight"';
+				$edit_class = ' changed';
+				$button = $edit;
+			} else {
+				$tr_class = '';
+				$edit_class = '';
+				$button = $change;
+			}
+
+			?>
+			<tr<?php echo $tr_class; ?>>
+				<td class="names"><?php echo $def_field; ?></td>
+				<td class="sep">:</td>
+				<td class="values"><?php echo htmlspecialchars( $def_value, ENT_QUOTES ); ?></td>
+				<td class="actions"><button type="button" class="button<?php echo $edit_class; ?>" data-optname="<?php echo esc_attr( $def_field ); ?>"><?php echo $button; ?></button></td>
 			</tr>
 			<?php
 
-			$n++;
+		}
+
+		?>
+		</tbody>
+		</table>
+		<?php
+
+		if ( ! empty( $options ) ) {
+			$added_options   = array_diff_key( $options, $advmceconf_show_defaults );
+			$changed_options = array_intersect_key( $options, $advmceconf_show_defaults );
+
+
+			if ( ! empty( $added_options ) ) {
+				?>
+				<h3><?php _e( 'Options added with this plugin', 'adv-mce-config' ) ?></h3>
+				<table class="advmceconf-table advmceconf-defaults advmceconf-added">
+				<thead>
+					<tr>
+						<th class="names"><?php _e( 'Name', 'adv-mce-config' ); ?></th>
+						<th class="sep">:</th>
+						<th><?php _e( 'Value', 'adv-mce-config' ); ?></th>
+						<th class="actions">&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody>
+				<?php
+
+				foreach ( $added_options as $opt_field => $opt_value ) {
+					if ( is_bool( $opt_value ) ) {
+						$opt_value = $opt_value ? 'true' : 'false';
+					}
+
+					?>
+					<tr>
+						<td class="names"><?php echo $opt_field; ?></td>
+						<td class="sep">:</td>
+						<td><?php echo htmlspecialchars( $opt_value, ENT_QUOTES ); ?></td>
+						<td class="actions"><button type="button" class="button current-option" data-optname="<?php echo esc_attr( $opt_field ); ?>"><?php echo $edit; ?></button></td>
+					</tr>
+					<?php
+				}
+
+				?>
+				</tbody>
+				</table>
+				<?php
+			}
+
+			if ( ! empty( $changed_options ) ) {
+				?>
+				<h3><?php _e( 'Options changed from this plugin', 'adv-mce-config' ) ?></h3>
+				<table class="advmceconf-table advmceconf-defaults advmceconf-changed">
+				<thead>
+					<tr>
+						<th class="names"><?php _e( 'Name', 'adv-mce-config' ); ?></th>
+						<th class="sep">:</th>
+						<th><?php _e( 'Value', 'adv-mce-config' ); ?></th>
+						<th class="actions">&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody>
+				<?php
+
+				$edit = esc_attr( _x( 'Edit', 'Edit options button', 'adv-mce-config' ) );
+
+				foreach ( $changed_options as $opt_field => $opt_value ) {
+					if ( is_bool( $opt_value ) ) {
+						$opt_value = $opt_value ? 'true' : 'false';
+					}
+
+					?>
+					<tr>
+						<td id="name-<?php echo $n; ?>" class="names"><?php echo $opt_field; ?></td>
+						<td class="sep">:</td>
+						<td id="val-<?php echo $n; ?>"><?php echo htmlspecialchars( $opt_value, ENT_QUOTES ); ?></td>
+						<td class="actions"><button type="button" class="button current-option" data-optname="<?php echo esc_attr( $opt_field ); ?>"><?php echo $edit; ?></button></td>
+					</tr>
+					<?php
+				}
+
+				?>
+				</tbody>
+				</table>
+				<?php
+			}
 		}
 	}
 
-?>
-</tbody>
-</table>
+	?>
+	</div>
 
-<p>
-	<button type="button" class="button showhide"><?php _e('Show the default TinyMCE settings', 'advmceconf'); ?></button>
-	<button type="button" class="button showhide" style="display: none;"><?php _e('Hide the default TinyMCE settings', 'advmceconf'); ?></button>
-</p>
+	<p>
+		<button type="button" class="button showhide"><?php _e( 'Show the default TinyMCE settings', 'adv-mce-config' ); ?></button>
+		<button type="button" class="button showhide" style="display: none;"><?php _e( 'Hide the default TinyMCE settings', 'adv-mce-config' ); ?></button>
+	</p>
 
-<form method="post" action="" style="padding:10px 0">
-	<table class="advmceconf-table" id="advmceconf-set">
-	<thead><tr>
-	<th class="names"><?php _e('Option name', 'advmceconf'); ?></th>
-	<th><?php _e('Value', 'advmceconf'); ?></th>
-	<th class="actions">&nbsp;</th>
-	</tr></thead>
+	<form method="post" action="" class="advmceconf-form">
+	<h2><?php _e( 'Edit options', 'adv-mce-config' ); ?></h2>
+	<table class="advmceconf-table advmceconf-set">
+	<thead>
+		<tr>
+			<th class="names"><?php _e( 'Name', 'adv-mce-config' ); ?></th>
+			<th class="values"><?php _e( 'Value', 'adv-mce-config' ); ?></th>
+			<th class="actions">&nbsp;</th>
+		</tr>
+	</thead>
 	<tbody>
 	<?php
 
-	$remove = esc_attr( __('Remove', 'advmceconf') );
+	$remove = esc_attr( __( 'Clear', 'adv-mce-config' ) );
+
 	foreach ( $options as $field => $value ) {
 		$field = esc_attr( $field );
 		$id = "advmceconf_option-{$field}";
 		$name = "advmceconf_options[{$field}]";
 
-		if ( is_bool($value) )
+		if ( is_bool( $value ) ) {
 			$value = $value ? 'true' : 'false';
+		}
 
 		?>
 		<tr>
-		<td class="names"><input type="text" name="<?php echo $field; ?>" id="<?php echo $field; ?>" value="<?php echo $field; ?>" /></td>
-		<td><textarea name="<?php echo $name; ?>" id="<?php echo $id; ?>" spellcheck="false"><?php echo htmlspecialchars( $value, ENT_NOQUOTES ); ?></textarea></td>
-		<td class="actions"><input type="button" class="button remove" value="<?php echo $remove; ?>" /></td>
+			<td class="names"><input type="text" name="<?php echo $field; ?>" id="<?php echo $field; ?>" value="<?php echo $field; ?>" spellcheck="false"></td>
+			<td class="values"><textarea name="<?php echo $name; ?>" id="<?php echo $id; ?>" spellcheck="false"><?php echo htmlspecialchars( $value, ENT_NOQUOTES ); ?></textarea></td>
+			<td class="actions"><button type="button" class="button remove"><?php echo $remove; ?></button></td>
 		</tr>
 		<?php
 	}
 
 	?>
-	<tr>
-	<td class="names"><input type="text" name="advmceconf-new" id="advmceconf-new" value="" /></td>
-	<td><textarea name="advmceconf-new-val" id="advmceconf-new-val" spellcheck="false"></textarea></td>
-	<td>&nbsp;</td>
-	</tr>
 	</tbody>
 	</table>
 
+	<h2><?php _e( 'Add new option', 'adv-mce-config' ); ?></h2>
+	<table class="advmceconf-table advmceconf-set">
+	<thead>
+		<tr>
+			<th class="names"><?php _e( 'Name', 'adv-mce-config' ); ?></th>
+			<th class="values"><?php _e( 'Value', 'adv-mce-config' ); ?></th>
+			<th class="actions">&nbsp;</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr id="advmceconf-new-row">
+			<td class="names"><input type="text" name="advmceconf-new" id="advmceconf-new" value="" spellcheck="false"></td>
+			<td class="values"><textarea name="advmceconf-new-val" id="advmceconf-new-val" spellcheck="false"></textarea></td>
+			<td class="actions">&nbsp;</td>
+		</tr>
+	</tbody>
+	</table>
+
+
 	<p class="submit">
-		<?php wp_nonce_field('advmceconf-save-options'); ?>
-		<input type="submit" value="<?php esc_attr_e('Save Changes', 'advmceconf'); ?>" class="button-primary" name="advmceconf_save" />
+		<?php wp_nonce_field( 'advmceconf-save-options' ); ?>
+		<input type="submit" value="<?php esc_attr_e( 'Save Changes', 'adv-mce-config' ); ?>" class="button-primary" name="advmceconf_save" />
 	</p>
-</form>
-</div>
+	</form>
+	</div>
 
-<script type="text/javascript">
-jQuery(document).ready( function($) {
-	var defaults = [];
+	<script type="text/javascript">
+	jQuery( document ).ready( function( $ ) {
 
-	$('#advmceconf-defaults td.names').each( function(n, el) {
-		defaults.push( $(el).text() );
-	});
+		function scrollToRow( row ) {
+			$( '.advmceconf-set tr' ).removeClass( 'highlight' );
 
-	$('#advmceconf-set td.names').each( function(n, el) {
-		var text = $('input', el).val();
-
-		if ( text && $.inArray(text, defaults) > -1 ) {
-			$(el).parent().addClass('advmceconf-hilite');
-			$('td.names:contains("' + text + '")', '#showhide').parent().addClass('advmceconf-hilite');
+			if ( row.length ) {
+				row.addClass( 'highlight' );
+				row[0].scrollIntoView( {
+					behavior: 'smooth',
+					block: 'center',
+				} );
+			}
 		}
-	});
-	
-	$('button.showhide').on( 'click', function(e) {
-		$('table.showhide, button.showhide').toggle();
-	});
 
-	$('#advmceconf-defaults').on( 'click', function(e) {
-		var num = $(e.target).data('num');
+		$( 'button.showhide' ).on( 'click', function() {
+			$( 'div.showhide, button.showhide' ).toggle();
+		});
 
-		if ( num ) {
-			$('#advmceconf-new').val( $( '#name-' + num ).text() );
-			$('#advmceconf-new-val').val( $( '#val-' + num ).text() );
-			scrollTo(0,50000);
-		}
-	});
-	
-	$('#advmceconf-set').on( 'click', function(e) {
-		var target = $(e.target);
 
-		if ( target.hasClass('remove') )
-			target.closest('tr').find('input[type="text"], textarea').val('');
+		$( '.advmceconf-initial button' ).on( 'click', function( event ) {
+			var target     = $( event.target );
+			var optionName = target.data( 'optname' );
+			var row;
+
+			if ( target.hasClass( 'changed' ) ) {
+				scrollToRow( $( '#' + optionName ).closest( 'tr' ) );
+			} else {
+				row = target.closest( 'tr' );
+				$( '#advmceconf-new' ).val( row.find( 'td.names' ).text() );
+				$( '#advmceconf-new-val' ).val( row.find( 'td.values' ).text() );
+
+				scrollToRow( $( '#advmceconf-new-row' ) );
+			}
+		});
+
+
+		$( '.advmceconf-added button, .advmceconf-changed button' ).on( 'click', function( event ) {
+			var optionName = $( event.target ).data( 'optname' );
+
+			scrollToRow( $( '#' + optionName ).closest( 'tr' ) );
+		});
+
+		$( '.advmceconf-set button' ).on( 'click', function( event ) {
+			var target = $( event.target );
+
+			if ( target.hasClass( 'remove' ) ) {
+				target.closest( 'tr' ).find( 'input[type="text"], textarea' ).val( '' );
+			}
+		});
 	});
-});
-</script>
-<?php
+	</script>
+	<?php
 }

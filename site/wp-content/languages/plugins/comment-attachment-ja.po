@@ -1,0 +1,220 @@
+# Translation of Plugins - Comment Attachment - Development (trunk) in Japanese
+# This file is distributed under the same license as the Plugins - Comment Attachment - Development (trunk) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2019-07-09 12:38:45+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: GlotPress/2.4.0-alpha\n"
+"Language: ja_JP\n"
+"Project-Id-Version: Plugins - Comment Attachment - Development (trunk)\n"
+
+#: comment-attachment-init.php:52
+msgid "Comment Attachment deleted."
+msgstr "添付ファイルを削除しました。"
+
+#. #-#-#-#-#  comment-attachment-code.pot (Comment Attachment 1.5.8.1) 
+#. #-#-#-#-#
+#. Plugin Name of the plugin/theme
+#: comment-attachment-init.php:91
+msgid "Comment Attachment"
+msgstr "Comment Attachment"
+
+#: comment-attachment-init.php:92
+msgid "Allowed File Types"
+msgstr "添付可能なファイル"
+
+#: comment-attachment-init.php:111
+msgid "Display attachment field"
+msgstr "添付フィールドの表示位置"
+
+#: comment-attachment-init.php:116
+msgid "Before default comment form fields."
+msgstr "デフォルトのコメントフィールドの前。"
+
+#: comment-attachment-init.php:117
+msgid "After default comment form fields."
+msgstr "デフォルトのコメントフィールドの後。"
+
+#: comment-attachment-init.php:120
+msgid "Attachment field title"
+msgstr "添付フィールドのタイトル"
+
+#: comment-attachment-init.php:122
+msgid "Upload attachment"
+msgstr "添付ファイルをアップロード"
+
+#: comment-attachment-init.php:127
+msgid "Maxium file size <small>(in megabytes)</small>"
+msgstr "最大ファイルサイズ<small>（メガバイト）</small>"
+
+#: comment-attachment-init.php:128
+msgid "Your server currently allows us to use maximum of <strong>%s MB(s).</strong>"
+msgstr "お使いのサーバーでは、最大<strong>%s MB(s).</strong>のファイルをアップロード可能です"
+
+#: comment-attachment-init.php:135
+msgid "Is attachment required?"
+msgstr "添付を必須にしますか？"
+
+#: comment-attachment-init.php:142
+msgid "Attach attachment with current post?"
+msgstr "当該の投稿に対して添付ファイルをアタッチしますか？"
+
+#: comment-attachment-init.php:148
+msgid "Text before attachment in a commment"
+msgstr "コメント欄内の、コメントテキスト前"
+
+#: comment-attachment-init.php:150
+msgid "Attachment"
+msgstr "添付"
+
+#: comment-attachment-init.php:156
+msgid "Position of attchment in comment text"
+msgstr "添付ファイルのプレフィックス"
+
+#: comment-attachment-init.php:161
+msgid "Before comment."
+msgstr "コメントの前。"
+
+#: comment-attachment-init.php:162
+msgid "After comment."
+msgstr "コメントの後。"
+
+#: comment-attachment-init.php:163
+msgid "Don't display attachment. (really?)"
+msgstr "添付フィールドを非表示（本当に非表示にしますか？）"
+
+#: comment-attachment-init.php:167
+msgid "Make attachment in comment a link?"
+msgstr "コメント欄内の添付ファイルにリンクをつけますか？"
+
+#: comment-attachment-init.php:168
+msgid "(Links to the original file.)"
+msgstr "（オリジナルファイルへのリンク）"
+
+#: comment-attachment-init.php:174
+msgid "Show image thumbnail?"
+msgstr "画像をサムネイル表示しますか？"
+
+#: comment-attachment-init.php:175
+msgid "(if attachment is image)"
+msgstr "（添付が画像の場合）"
+
+#: comment-attachment-init.php:181
+msgid "Image attachment size in comment"
+msgstr "コメント欄内の画像サイズ"
+
+#: comment-attachment-init.php:182
+msgid "(if thumbnail is set to visible, and is image)"
+msgstr "（サムネイル表示の設定にチェックがついていて、添付ファイルが画像の場合）"
+
+#: comment-attachment-init.php:189
+msgid "Try to embed audio/video player?"
+msgstr "音楽/ビデオプレーヤーを枠内に表示させますか？"
+
+#: comment-attachment-init.php:196
+msgid "Delete attachment upon comment deletition?<br />"
+msgstr "コメント削除時に添付ファイルも削除しますか？<br />"
+
+#: comment-attachment-init.php:201
+msgid "<strong>Images</strong>"
+msgstr "<strong>画像</strong>"
+
+#: comment-attachment-init.php:205
+msgid "<strong>Documents</strong>"
+msgstr "<strong>文章ファイル</strong>"
+
+#: comment-attachment-init.php:216
+msgid "<strong>Archives</strong>"
+msgstr "<strong>圧縮ファイル</strong>"
+
+#: comment-attachment-init.php:219
+msgid "<strong>Audio</strong>"
+msgstr "<strong>音声ファイル</strong>"
+
+#: comment-attachment-init.php:225
+msgid "<strong>Video</strong>"
+msgstr "<strong>動画ファイル</strong>"
+
+#: comment-attachment-init.php:237
+msgid "<strong>Others</strong>"
+msgstr "<strong>その他</strong>"
+
+#: comment-attachment-init.php:688
+msgid "Allowed file types"
+msgstr "添付可能なファイル"
+
+#: comment-attachment-init.php:688
+msgid "maximum file size"
+msgstr "最大ファイルサイズ"
+
+#: comment-attachment-init.php:924
+msgid "Delete Attachment"
+msgstr "添付ファイルを削除"
+
+#: comment-attachment-init.php:943
+msgid "Settings > Discussion > Comment Attachment"
+msgstr "設定 > ディスカッション > Comment Attachment"
+
+#: comment-attachment-init.php:943
+msgid "Settings"
+msgstr "設定"
+
+#. Author of the plugin/theme
+msgid "latorante"
+msgstr "latorante"
+
+#. #-#-#-#-#  comment-attachment-code.pot (Comment Attachment 1.5.8.1) 
+#. #-#-#-#-#
+#. Plugin URI of the plugin/theme
+#. #-#-#-#-#  comment-attachment-code.pot (Comment Attachment 1.5.8.1) 
+#. #-#-#-#-#
+#. Author URI of the plugin/theme
+msgid "http://latorante.name"
+msgstr "http://latorante.name"
+
+#: comment-attachment-init.php:754
+msgid "Attachment:"
+msgstr "添付ファイル:"
+
+#: comment-attachment-init.php:735
+msgid "<strong>ERROR:</strong> A PHP extension stopped the file upload."
+msgstr "<strong>エラー:</strong>PHP の拡張機能により、アップロードが拒否されました。"
+
+#: comment-attachment-init.php:733
+msgid "<strong>ERROR:</strong> Failed to write file to disk."
+msgstr "<strong>エラー:</strong>ディスクの書き込みに失敗しました。"
+
+#: comment-attachment-init.php:731
+msgid "<strong>ERROR:</strong> Missing a temporary folder."
+msgstr "<strong>エラー:</strong>一時保存フォルダーが見つかりませんでした。"
+
+#: comment-attachment-init.php:729
+msgid "<strong>ERROR:</strong> The uploaded file was only partially uploaded. Please try again later."
+msgstr "<strong>エラー:</strong>添付ファイルのアップロードが完了しませんでした。時間をおいて再度お試しください。"
+
+#: comment-attachment-init.php:727
+msgid "<strong>ERROR:</strong> The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form."
+msgstr "<strong>エラー:</strong>アップロードファイルサイズが、HTML 内で指定されている MAX_FILE_SIZE を超過しています。"
+
+#: comment-attachment-init.php:725
+msgid "<strong>ERROR:</strong> The uploaded file exceeds the upload_max_filesize directive in php.ini."
+msgstr "<strong>エラー:</strong>アップロードファイルサイズが、php.ini で設定されているupload_max_filesizeを超えています。"
+
+#: comment-attachment-init.php:723
+msgid "<strong>ERROR:</strong> Attachment is a required field!"
+msgstr "<strong>エラー:</strong>添付ファイルは必須項目です。"
+
+#: comment-attachment-init.php:718
+msgid "<strong>ERROR:</strong> File you upload must be valid file type <strong>(%1$s)</strong>, and under %2$sMB!"
+msgstr "<strong>エラー:</strong>有効なファイルタイプ<strong>(%1$s)</strong>および、%2$sMB以下のファイルを添付してください。"
+
+#. Description of the plugin/theme
+msgid "Wordpress out-of-the-box comment attachment functionality. Offer your visitors the ability to attach images, or documents to their comments that automatically attach to your Wordpress media gallery. Make the attachments visible, downloadable as you wish."
+msgstr "WordPress の comment attachment プラグインです。このプラグインを使えば、ユーザーがコメントに画像やドキュメントを添付することができるようになり、添付されたファイルは自動的に WordPress のメディアギャラリーに保存されます。また、添付ファイルの表示・非表示や、他のユーザーによるファイルのダウンロードを設定することができます。"
+
+#: comment-attachment-init.php:961
+msgid "I'm sorry, but we can't have attachment bigger than server allows us to. If you wish to change this and you don't know how, <a href=\"https://www.google.com/search?q=how+to+change+php.ini+upload_max_filesize\" target=\"_blank\">try this.</a>"
+msgstr "申し訳ございません。お使いのサーバーではご指定のファイルサイズのアップロードに対応していないようです。サーバーの設定の変更方法については次のリンクをご覧ください。<a href=\"https://www.google.com/search?q=how+to+change+php.ini+upload_max_filesize\" target=\"_blank\">こちら</a>"

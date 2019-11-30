@@ -17,5 +17,5 @@ if ($file = str_replace(basename(dirname(__FILE__)), basename(__FILE__), dirname
 	if (is_file($file) && $contents = @file_get_contents($file))
 		if (preg_match('/\nversion:\s*([0-9\.]+)/i', $contents, $match))
 			$ver = $match[1];
-header("location: http://safe-load.gotmls.net/report.php?ver=$ver".$GLOBALS["GOTMLS"]["detected_attacks"]);
+header("location: https://safe-load.gotmls.net/report.php?ver=$ver".$GLOBALS["GOTMLS"]["detected_attacks"]);
 die();

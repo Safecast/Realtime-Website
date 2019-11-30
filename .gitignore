@@ -4,6 +4,7 @@ site/wp-content/blogs.dir/*
 site/wp-content/upgrade/*
 site/wp-content/updraft/*
 site/wp-content/wp-config.php
+site/wp-content/ari-adminer-config.php
 site/wp-content/backup-db/*
 site/wp-content/advanced-cache.php
 site/wp-content/wp-cache-config.php
@@ -12,6 +13,7 @@ site/wp-content/uploads/*
 site/wp-content/backups/*
 site/wp-content/updraft/*
 site/wp-content/themes/safecast/assets/map/*
+site/wp-content/plugins/siteguard/really-simple-captcha/*
 site/wp-config.php
 plots/
 

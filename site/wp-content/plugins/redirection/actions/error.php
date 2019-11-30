@@ -1,26 +1,43 @@
 <?php
 
 class Error_Action extends Red_Action {
-	function can_change_code() {
+	function process_before( $code, $target ) {
+		$this->code = $code;
+
+		wp_reset_query();
+		set_query_var( 'is_404', true );
+
+		add_filter( 'template_include', [ $this, 'template_include' ] );
+		add_filter( 'pre_handle_404', [ $this, 'pre_handle_404' ] );
+		add_action( 'wp', [ $this, 'wp' ] );
+
 		return true;
 	}
 
-	function can_perform_action() {
+	public function wp() {
+		status_header( $this->code );
+		nocache_headers();
+
+		global $wp_version;
+
+		if ( version_compare( $wp_version, '5.1', '<' ) ) {
+			header( 'X-Redirect-Agent: redirection' );
+		}
+	}
+
+	public function pre_handle_404() {
+		global $wp_query;
+
+		// Page comments plugin interferes with this
+		$wp_query->posts = [];
 		return false;
 	}
 
-	function action_codes() {
-		return array(
-			404 => get_status_header_desc( 404 ),
-			410 => get_status_header_desc( 410 ),
-		);
+	public function template_include() {
+		return get_404_template();
 	}
 
-	function process_after( $code, $target ) {
-		global $wp_query;
-		$wp_query->is_404 = true;
-
-		// Page comments plugin interferes with this
-		remove_filter( 'template_redirect', 'paged_comments_alter_source', 12 );
+	public function needs_target() {
+		return false;
 	}
 }

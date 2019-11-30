@@ -5,10 +5,10 @@ Author URI: http://wordpress.ieonly.com/category/my-plugins/anti-malware/
 Contributors: scheeeli, gotmls
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QZHD8QHZ2E7PE
 Tags: security, firewall, anti-malware, scanner, automatic, repair, remove, malware, virus, threat, hacked, malicious, infection, timthumb, exploit, block, brute-force, wp-login, patch, antimalware, revslider, Revolution Slider
-Version: 4.16.39
-Stable tag: 4.16.39
+Version: 4.19.44
+Stable tag: 4.19.44
 Requires at least: 3.3
-Tested up to: 4.6.1
+Tested up to: 5.3
 
 This Anti-Malware scanner searches for Malware, Viruses, and other security threats and vulnerabilities on your server and it helps you fix them.
 
@@ -16,18 +16,16 @@ This Anti-Malware scanner searches for Malware, Viruses, and other security thre
 
 **Features:**
 
-* Run a Complete Scan to automatically remove known security threats and backdoor scripts.
-* Firewall block SoakSoak and other malware from exploiting Revolution Slider and other plugins from known vulnerabilites.
-* Upgrade vulnerable versions of timthumb scripts.
 * Download Definition Updates to protect against new threats.
+* Run a Complete Scan to automatically remove known security threats, backdoor scripts, and database injections.
+* Firewall block SoakSoak and other malware from exploiting Revolution Slider and other plugins with known vulnerabilites.
+* Upgrade vulnerable versions of timthumb scripts.
 
 **Premium Features:**
 
 * Patch your wp-login and XMLRPC to block Brute-Force and DDoS attacks.
 * Check the integrity of your WordPress Core files.
 * Automatically download new Definition Updates when running a Complete Scan.
-
-Updated September 16th
 
 Register this plugin at [GOTMLS.NET](http://gotmls.net/) and get access to new definitions of "Known Threats" and added features like Automatic Removal, plus patches for specific security vulnerabilities like old versions of timthumb. Updated definition files can be downloaded automatically within the admin once your Key is registered. Otherwise, this plugin just scans for "Potential Threats" and leaves it up to you to identify and remove the malicious ones.
 
@@ -38,6 +36,7 @@ NOTICE: This plugin make call to GOTMLS.NET to check for updates not unlike what
 * Clarus Dignus for design suggestions and graphic design work on the banner image.
 * Jelena Kovacevic and Andrew Kurtis of webhostinghub.com for providing the Spanish translation.
 * Marcelo Guernieri for the Brazilian Portuguese translation.
+* Umut Can Alparslan for the Turkish translation.
 
 == Installation ==
 
@@ -73,7 +72,7 @@ First just leave it for a while. If there are a lot of files on your server it c
 
 = How did I get hacked in the first place? =
 
-First, don't take the attack personally. Lots of hackers routinely run automated script that crawl the internet looking for easy targets. Your site probably got hacked because you are unknowingly an easy target. This might be because you are running an older version of WordPress or have installed a Plugin or Theme with a backdoor or known security vulnerability. However, the most common type of infection I see is cross-conamination. This can happen when your site is on a shared server with other exploitable sites that got infected. In most shared hosting environments it's possible for hackers to use an one infected site to infect other sites on the same server, sometimes even if the sites are on different accounts.
+First, don't take the attack personally. Lots of hackers routinely run automated script that crawl the internet looking for easy targets. Your site probably got hacked because you are unknowingly an easy target. This might be because you are running an older version of WordPress or have installed a Plugin or Theme with a backdoor or known security vulnerability. However, the most common type of infection I see is cross-contamination. This can happen when your site is on a shared server with other exploitable sites that got infected. In most shared hosting environments it's possible for hackers to use an one infected site to infect other sites on the same server, sometimes even if the sites are on different accounts.
 
 = What can I do to prevent it from happening again? =
 
@@ -92,6 +91,111 @@ sucuri.net caches their scan results and will not refresh the scan until you cli
 5. The Quarantine showing threats that have been fix already.
 
 == Changelog ==
+
+= 4.19.44 =
+* Updated links to use HTTPS by default and fixed some old URLs.
+* Various performance improvements.
+* Added more error handling to the DB Scan.
+* Fixed a few minor bugs causing PHP Notices.
+* Fixed a path search to work on Windows servers.
+* Tweaked code for compatibility with WP 5.3 (latest release).
+
+= 4.18.76 =
+* Cleaned up the Nonce Token creation and storage functions.
+* Cleaned up View Quarantine page and fixed recovery link.
+* Added debugging for login errors WP head and footer Hooks.
+
+= 4.18.74 =
+* Fixed a bug in the Nonce Token Errors that was created by changes in the last release.
+
+= 4.18.71 =
+* Added wp_options table to the db_scan.
+* Fixed a few minor bugs in the db scan quarantine view.
+* Changed some wording and other minor fomatting issues.
+* Checked code for compatibility with WP 5.2.1 (latest release).
+
+= 4.18.69 =
+* Added a Warning message about the vulnerability in the yuzo-related-post plugin.
+* Updated the Quarantine interface and added a re-scan / re-clean feature.
+* Fixed a bug in the scan depth array that would produce PHP Notices in the error_log files under certain conditions.
+* Changed some wording and other minor fomatting issues.
+* Removed some outdated JavaScript that is no longer needed.
+* Checked code for compatibility with WP 5.2 (latest release).
+
+= 4.18.63 =
+* Fixed a major bug in the Firewall updates that could cause a False Positive lockout.
+
+= 4.18.62 =
+* Fixed a bug in the Firewall that prevented some iPad devices from logging in.
+* Fixed an encoding bug that prevented the Examine File window from dispaying some file formats.
+* Restored the File Details window in the Examine File window.
+* Updated code for compatibility with WP 5.1.1 (latest release).
+
+= 4.18.52 =
+* Added a whole new DB Scan category that looks for links and scripts injected directly into the database content and removes them.
+* Updated Firewall landing page for HTTPS compatibility.
+* Removed some old code that was no longer needed.
+* Added a feature to clear cache files before running the Complete Scan, this will speed up the scan and prevent malware from being saved on your cached paged.
+* Updated code for compatibility with WP 5.0.2 (latest release).
+
+= 4.17.69 =
+* Updated code for compatibility with WP 4.9.8 (latest release).
+* Fixed PHP Notice for the unknown offset of SERVER_parts.
+* Escaped single-quotes in translated strings for use within JavaScript.
+
+= 4.17.68 =
+* Updated code for compatibility with WP 4.9.7 (latest release).
+* Removed wrong size dashicon from Settings link in plugin list.
+* Removed the broken link to vote WORKS on wordpress.org.
+* Reordered priorety on fixing Known Threats to be more efficient.
+
+= 4.17.58 =
+* Updated code for compatibility with WP 4.9.4 (latest release).
+* Fixed dashicons sizing in css.
+* Add ability to update registration email from within the plugin settings.
+* Cleaned up expired nonce tokens left behind from an older version.
+
+= 4.17.57 =
+* Updated code for compatibility with WP 4.9.3 (latest release).
+* Fixed registration form and alternate domain for definition updates to work on HTTPS.
+* Fixed the wording on the Title check error message.
+
+= 4.17.44 =
+* Added Title check to make sure it does say you were hacked.
+* Updated code for compatibility with WP 4.8.3 (latest release).
+* Fixed Undefined variable error in Quarantine.
+* Fixed XSS vulnerability in nonce error output.
+
+= 4.17.29 =
+* Changed the definition update URL to only use SSL when required.
+* Updated PayPal form for better domestic IPN compatibility.
+
+= 4.17.28 =
+* Added the Turkish translation thanks to Umut Can Alparslan.
+* Improved the auto update so that old definitions could be phased out and new threat types would be selected by default.
+* Fixed the admin username change feature on multisite installs.
+
+= 4.16.53 =
+* Fixed the details window so that it scrolls to the highlighted code.
+* Set defaults to disable the Potential Threat scan if other threats definitions are enabled.
+* Encoded definitions array for DB storage.
+
+= 4.16.49 =
+* Fixed syntax error in the XMLRPC patch for newer versions of Apache.
+
+= 4.16.48 =
+* Added fall-back to manual updates if the Automatic update feature fails.
+* Fixed PHP Notices about undefined variable added in last Version release.
+* Improved Apache version detection.
+
+= 4.16.47 =
+* Changed Automatic update feature to automatically download all definitions and firewall updates.
+* Added PHP and Apache version detections and changed the XMLRPC patch to work with Apache 2.4 directives.
+* Removed the onbeforeunload function because Norton detected it as a False Positive.
+* Removed code that was deprecated in PHP Version 7.
+
+= 4.16.39 =
+* Fixed PHP Notice about an array to string conversion with some rare global variable conditions.
 
 = 4.16.38 =
 * Added more firewall options.
@@ -187,114 +291,60 @@ sucuri.net caches their scan results and will not refresh the scan until you cli
 * Automatically whitelisted the unmodified WordPress Core files.
 * Made more improvements to the Brute-Force protection patch and other minor cosmetic changes to the interface.
 * Protected the HTML in my plugin from filter injections and fixed a few other minor bugs.
-
-= 4.14.65 =
 * Fixed a problem with deleting files from the Quarantine folder.
 * Added a descriptive reason to the error displayed if the fix was unsuccessful.
 * Added link to restore the default location of the Examine Results window.
-
-= 4.14.64 =
 * Improved the encoding of definition updates so that they would not be blocked by poorly written firewall rules.
 * Suppressed the "Please make a donation" nag if the fix was unsuccessful, to avoid confusion over premium services.
-
-= 4.14.63 =
 * Removed debug alert from initial session check.
-
-= 4.14.62 =
 * Improved rewrite compatibility of session check for the Brute-Force Protection Installation.
-
-= 4.14.59 =
 * Improved session check for the option to Install Brute-Force Protection and added an error message on failure.
 * Improved support for Multisite by only allowing Network Admins access to the Anti-Malware menu.
-
-= 4.14.55 =
 * Added link to view a simple scan history on the Quarantine page.
 * Updated firewall to better protect agains new variations of the RevSlider Exploit.
 * Improved check for session support before giving the option to Install Brute-Force patch.
-
-= 4.14.54 =
 * Added option to skip scanning the Quarantined files.
 * Updated Brute-Force patch to fix the problem of being included more that once.
 * Fixed a few minor bugs (better window positioning and css, cleaner results page, updated new help tab, etc.).
 * Made sure that the plugin does not check my servers for updates unless you have registered (this opt-in requirement is part of the WordPress Repository Guidelines).
-
-= 4.14.52 =
 * Added exception for the social.png files to the skip files by extension list.
 * Fixed removal of Known Threats from files in the Quarantine directory.
-
-= 4.14.51 =
 * Block SoakSoak and other malware from exploiting the Slider Revolution Vulnerability (THIS IS A WIDESPREAD THREAT RIGHT NOW).
-
-= 4.14.50 =
 * Enabled the Brute-Force protection option directly from the Settings page.
 * Fixed window position to auto-adjust on small screens.
 
 = 4.14.47 =
 * Major upgrade to the protection for wp-login.php Brute-Force attempts.
 * Fixes a bug in setting the permissions for read-only files so that they could still be cleaned.
-
-= 3.15.16 =
 * Fixes a minor bug with pass-by-reference which raises a fatal error in PHP v5.4.
-
-= 3.15.15 =
 * Enhanced the Examine File window with better styles and more info.
 * Changed form submission of encrypted file lists to array values instead of keys.
 * Fixes other minor bugs.
-
-= 3.14.24 =
 * Made the Examine File window sizable.
 * Fixed a few small bugs and removed some old code.
 * Added a link to my new twitter account.
-
-= 3.14.08 =
 * Re-purposed Quick Scan to just scan the most affected areas.
 * Set the registration form to display by defaulted in the definition update section.
 * Fixed a few small bugs in advanced features and directory depth determination.
-
-= 3.13.11 =
 * Fixed a session bug to display the last directory scanned.
 * Fixed a few small cosmetic bugs for WP 3.8.
-
-= 3.12.27 =
 * Added Spanish translation, thanks to Jelena Kovacevic and Andrew Kurtis at webhostinghub.com.
-
-= 3.11.28 =
 * Updated string in the code and added a .pot file to be ready for translation into other languages.
 * Added "Select All" checkbox to Quarantine and a new button to delete items from the Quarantine.
 * Added a trace.php file for advanced session tracking.
-
-= 3.08.31 =
 * Fixed undefined index bug with menu_group item in settings array.
-
-= 3.08.02 =
 * Added support for multisite network admin menu and the ability to restrict admin access.
-
-= 3.07.27 =
 * Fixed a session bug in the progress bar related to the last release.
-
-= 3.07.26 =
 * Fixed a session bug that conflicted with jigoshop. (Thanks dragonflyfla)
-
-= 3.07.19 =
 * Fixed a few bug in the Whitelist definition feature.
 
 = 3.07.06 =
 * Added SSL support for definition updates and registration form.
 * Upgraded the Whitelist feature so the it could not contain duplicates.
-
-= 1.3.05.31 =
 * Downgraded the WP-Login threat and changed it to an opt-in fix.
-
-= 1.3.05.14 =
 * Fixed a bug in the Add to Whitelist feature so the you do not need to update the definitions after whitelisting a file.
-
-= 1.3.05.13 =
 * Added ability to whitelist files.
-
-= 1.3.04.19 =
 * Fixed a major bug in yesterdays release broke the login page on some sites.
-
-= 1.3.04.17 =
 * Added a patch for the wp-login.php brute force attack that has been going around.
 * Created a process to restore files from the Quarantine.
 * Fixed a few other small bugs including path issues on Winblows server.
@@ -336,6 +386,63 @@ sucuri.net caches their scan results and will not refresh the scan until you cli
 * First versions available for WordPress (code removed, no longer compatible).
 
 == Upgrade Notice ==
+
+= 4.19.44 =
+Updated links, added more error handling to the DB Scan, various performance improvements, fixed path to work on Windows servers and a few minor bugs causing PHP Notices, and weaked code for compatibility with WP 5.3 (latest release).
+
+= 4.18.76 =
+Cleaned up the Nonce Token code and Quarantine page, fixed recovery link, and added debugging for login errors plus WP head and footer Hooks.
+
+= 4.18.74 =
+Fixed a bug in the Nonce Token Errors that was created by changes in the last release.
+
+= 4.18.71 =
+Added wp_options table to the db_scan and fixed a few minor bugs in the quarantine view, and changed some wording and checked code for compatibility with WP 5.2.1 (latest release).
+
+= 4.18.69 =
+Added a Warning message about the vulnerability in the yuzo-related-post plugin,  updated the Quarantine interface with a re-scan / re-clean feature, fixed a bug in the scan depth array that would produce PHP Notices, changed some wording and other minor fomatting issues, and checked code for compatibility with WP 5.2 (latest release).
+
+= 4.18.63 =
+Fixed a major bug in the Firewall updates that could cause a False Positive lockout.
+
+= 4.18.62 =
+Fixed a few minor bugs and updated code for compatibility with WP 5.1.1 (latest release).
+
+= 4.18.52 =
+Added a whole new DB Scan category, updated Firewall landing page, removed some old code that was no longer needed, clear cache files before running the Complete Scan,, and updated code for compatibility with WP 5.0.2 (latest release).
+
+= 4.17.69 =
+Updated code for compatibility with WP 4.9.8, fixed PHP Notice and escaped single-quotes in translated strings.
+
+= 4.17.68 =
+Updated code for compatibility with WP 4.9.7, removed dashicon from Settings link and the broken vote WORKS link, and reordered priorety on fixing Known Threats.
+
+= 4.17.58 =
+Updated code for compatibility with WP 4.9.4, fixed dashicons sizing in css, add ability to update registration email from within the plugin settings, and cleaned up expired nonce tokens left behind from an older version.
+
+= 4.17.57 =
+Updated code for compatibility with WP 4.9.3, fixed registration form and alternate domain for definition updates to work on HTTPS, and fixed the wording on the Title Check error message.
+
+= 4.17.44 =
+Added Title check to make sure it does say you were hacked, updated code for compatibility with WP 4.8.3 and fixed Undefined variable error in Quarantine and an XSS vulnerability in nonce error output.
+
+= 4.17.29 =
+Changed the definition update URL to only use SSL when required, and updated PayPal form for better domestic IPN compatibility.
+
+= 4.17.28 =
+Added the Turkish translation thanks to Umut Can Alparslan, improved the auto update feature, and fixed the admin username change feature on multisite installs.
+
+= 4.16.53 =
+Fixed the details window to scrolls to the highlighted code, set default Potential Threat scan to disabled, and encoded definitions array for DB storage.
+
+= 4.16.49 =
+Fixed syntax error in the XMLRPC patch for newer versions of Apache.
+
+= 4.16.48 =
+Added fall-back to manual updates if the Automatic update feature fails, fixed PHP Notices  and improved Apache version detection.
+
+= 4.16.47 =
+Changed Automatic update feature, added PHP and Apache version detections, and removed the onbeforeunload function other code that was deprecated.
 
 = 4.16.39 =
 Fixed PHP Notice about an array to string conversion with some rare global variable conditions.
@@ -401,97 +508,16 @@ Hardened against XSS in the admin, changed encoding of the index.php file in the
 Extended execution_time during the Fix process, added a Quarantine log to the database, and fixed a couple of minor bugs.
 
 = 4.15.16 =
-Created automatic definition updates that include WordPress Core files for integrity checking and whitelisting, made more improvements to the Brute-Force protection patch, and a few other cosmetic changes and minor bug fixes.
-
-= 4.14.65 =
-Fixed a problem with deleting files from the Quarantine folder, added more descriptive errors and a link to restore the default location of the Examine Results window.
-
-= 4.14.64 =
-Improved the encoding of definition updates and suppressed the "Please make a donation" nag if the fix was unsuccessful.
-
-= 4.14.63 =
-Removed debug alert from initial session check.
-
-= 4.14.62 =
-Improved rewrite compatibility of session check for the Brute-Force Protection Installation.
-
-= 4.14.59 =
-Improved session check for the Brute-Force Protection and support for Multisite menu.
-
-= 4.14.55 =
-Added link to scan history, improved check for session support before giving installing Brute-Force patch, and updated firewall to better protect agains the RevSlider Exploit.
-
-= 4.14.54 =
-Added option to skip scanning the Quarantine, updated Brute-Force patch, and fixed a few minor bugs.
-
-= 4.14.52 =
-Added exception for the social.png files to the skip files by extension list, and fixed removal of Known Threats from files in the Quarantine directory.
-
-= 4.14.51 =
-Block SoakSoak and other malware from exploiting the Slider Revolution Vulnerability (THIS IS A WIDESPREAD THREAT RIGHT NOW).
-
-= 4.14.50 =
-Enabled the Brute-Force protection from the Settings page and fixed window position on small screens.
+Created automatic definition updates that include WordPress Core files, more improvements to the Brute-Force protection patch (Plus many other improvement from v4.14.X: see Changelog for details).
 
 = 4.14.47 =
-Major upgrade to the protection for Brute-Force attempts, and a bug fix for resetting the permissions of read-only files.
-
-= 3.15.16 =
-Fixes a minor bug with pass-by-reference which raises a fatal error in PHP v5.4.
-
-= 3.15.15 =
-Enhanced the Examine File window with better styles and more info, changed form submission of encrypted file lists, and fixes other minor bugs.
-
-= 3.14.24 =
-Made the Examine File window sizable, fixed a few small bugs, removed some old code, and added a link to twitter.
-
-= 3.14.08 =
-Re-purposed Quick Scan to just scan the most affected areas and fixed a few small bugs.
-
-= 3.13.11 =
-Fixed a session bug to display the last directory scanned and a few other small cosmetic bugs for WP 3.8.
-
-= 3.12.27 =
-Added Spanish translation, thanks to Jelena Kovacevic and Andrew Kurtis.
-
-= 3.11.28 =
-Updated code and added a .pot file for translation into other languages and added more Quarantine options and a file for advanced session tracking.
-
-= 3.08.31 =
-Fixed undefined index bug with menu_group item in settings array.
-
-= 3.08.02 =
-Added support for multisite network admin menu and the ability to restrict admin access.
-
-= 3.07.27 =
-Fixed a session bug in the progress bar related to the last release.
-
-= 3.07.26 =
-Fixed a session bug that conflicted with jigoshop. (Thanks dragonflyfla)
-
-= 3.07.19 =
-Fixed a few bug in the Whitelist definition feature.
+Major upgrade to the protection for Brute-Force attempts, and a bug fix for resetting the permissions of read-only files (Plus many other improvement from v3.X: see Changelog for details).
 
 = 3.07.06 =
-Added SSL support for definition updates and upgraded the Whitelist feature.
-
-= 1.3.05.31 =
-Downgraded the WP-Login threat and changed it to an opt-in fix.
-
-= 1.3.05.14 =
-Fixed a bug in the Add to Whitelist feature so the you do not need to update the definitions after whitelisting a file.
-
-= 1.3.05.13 =
-Added ability to whitelist files.
-
-= 1.3.04.19 =
-Fixed a major bug in yesterdays release broke the login page on some sites.
-
-= 1.3.04.17 =
-Added a patch for the wp-login.php brute force attack and fixed a few other small bugs.
+Added SSL support for definition updates and upgraded the Whitelist feature (Plus many other improvement from v1.3.X: see Changelog for details).
 
 = 1.3.02.15 =
-Improved security on the Quarantine directory to fix the 500 error on some servers (Plus many other improvement from v1.2: see Changelog for details)
+Improved security on the Quarantine directory to fix the 500 error on some servers (Plus many other improvement from v1.2.X: see Changelog for details).
 
 = 1.2.03.23 =
 First versions available for WordPress (code removed, no longer compatible).

@@ -1,32 +1,32 @@
 === AddToAny Share Buttons ===
 Contributors: micropat, addtoany
-Tags: AddToAny, share, sharing, social, share button, share buttons, social media, media, marketing, images, image, links, shortcode, widget, email, seo, button, woocommerce, ecommerce, e-commerce, amazon, google, linkedin, reddit, facebook, like, twitter, google plus, pinterest, whatsapp, instagram, vimeo, youtube, feed, addthis, share this, sharethis, icons, floating, wpml
+Tags: buttons, share, icons, social media, share buttons, sharing, share button, media, social, marketing, links, email, seo, woocommerce, google, linkedin, reddit, facebook, twitter, pinterest, whatsapp, instagram, youtube, share this, sharethis, feed
 Requires at least: 3.7
-Tested up to: 4.7
-Stable tag: 1.7.2
+Tested up to: 5.3
+Requires PHP: 5.6
+Stable tag: 1.7.39
 
-Share buttons for WordPress including the AddToAny sharing button, Facebook, Twitter, Google+, Pinterest, WhatsApp, many more, and follow icons too.
+Share buttons for WordPress including the AddToAny sharing button, Facebook, Twitter, WhatsApp, Pinterest, Reddit, many more, and follow icons too.
 
 == Description ==
 
-The AddToAny WordPress sharing plugin helps people share your posts and pages to any service, such as Facebook, Twitter, Pinterest, Google, WhatsApp, LinkedIn, Tumblr, Reddit, and over 100 more sharing and social media sites & apps.
+The AddToAny Share Buttons plugin for WordPress increases traffic & engagement by helping people share your posts and pages to any service. Services include Facebook, Twitter, Pinterest, WhatsApp, LinkedIn, Tumblr, Reddit, WeChat, and over 100 more sharing and social media sites & apps.
 
-AddToAny is the universal sharing platform, and AddToAny's plugin is the most popular share plugin for WordPress, making sites social media ready since 2006.
+AddToAny is the home of universal sharing, and the AddToAny plugin is the most popular share plugin for WordPress, making sites social media ready since 2006.
 
-= Share Buttons & Follow Buttons =
+= Share Buttons =
 
-* **Counters** — fast & official share counts in the same style
-* **Floating** share buttons — responsive & customizable, vertical & horizontal
-* **Vector** share & follow buttons (SVG icons)
-* **Universal** Share Button and Smart Menu
-* Individual share links and custom share icons
-* Choose from over 100 services
-* 3rd party buttons include the Facebook Like Button, Twitter Tweet Button, Pinterest Pin It Button, Google+ Share Button and Google +1 Button
-* Universal email sharing makes it easy to share via Gmail, Yahoo! Mail, Outlook.com (Hotmail), AOL Mail, and any other web and native apps
+* [**Standard**](https://www.addtoany.com/buttons/customize/wordpress/standalone_services) share buttons — share each piece of content
+* [**Floating**](https://www.addtoany.com/buttons/customize/wordpress/floating_share_buttons) share buttons — responsive & customizable, vertical & horizontal
+* **Counters** — fast & official [share counts](https://www.addtoany.com/buttons/customize/wordpress/share_counters) in the same style
+* **Follow** buttons — [social media links](https://www.addtoany.com/buttons/customize/wordpress/follow_buttons) to your Instagram, YouTube, Snapchat
+* **Image** sharing buttons - share buttons for [sharing images](https://www.addtoany.com/buttons/customize/wordpress/image_sharing)
+* **Vector** share buttons & follow buttons — [custom color](https://www.addtoany.com/buttons/customize/wordpress/icon_color) SVG icons
+* **Custom** share icons — use your own if you prefer
+* Official buttons including the Facebook Like Button, Twitter Tweet Button, Pinterest Save Button, and LinkedIn Share Button
+* Universal email sharing makes it easy to share via Gmail, Yahoo Mail, Outlook.com (Hotmail), AOL Mail, and any other web or native apps
 
-<a href="https://www.addtoany.com/">Share Buttons</a> demo
-
-= Custom Placement =
+= Custom Placement & Appearance =
 * Before content, after content, or before & after content
 * Vertical Floating Share Bar, and Horizontal Floating Share Bar
 * As a shortcode, or a widget within a theme's layout
@@ -34,20 +34,20 @@ AddToAny is the universal sharing platform, and AddToAny's plugin is the most po
 
 = Analytics Integration =
 
-* Automatic Google Analytics integration (<a href="https://www.addtoany.com/ext/google_analytics/">access guide</a>) for sharing analytics
-* Track shared links with Bitly, Google URL Shortener, and custom URL shorteners
+* Google Analytics integration (<a href="https://www.addtoany.com/ext/google_analytics/">access guide</a>) for sharing analytics
+* Track shared links with Bitly and custom URL shorteners
 * Display share counts on posts and pages
 
 = WordPress Optimized =
 
 * Loads asynchronously so your content always loads before or in parallel with AddToAny
 * Supports theme features such as HTML5, widgets, infinite scroll, post formats
-* Supports multilingual sites and multisite networks
-* No signup, no login, no account necessary
+* Supports WooCommerce, multilingual sites, multisite networks, and accessibility standards
+* AddToAny is free — no signup, no login, no accounts to manage
 
 = Mobile Optimized & Retina Ready =
 
-* AddToAny gives users the choice in sharing from a service's native app or from a web app. For example, choose between Twitter's native app or Twitter's mobile web app
+* AddToAny gives users the choice in sharing from a service's native app or from a web app
 * Responsive Floating Share Buttons are mobile ready by default, and configurable breakpoints make floating buttons work with any theme
 * AddToAny's SVG icons are super-lightweight and pixel-perfect at any size, and AddToAny's responsive share menu fits on all displays
 * Automatic <a href="https://wordpress.org/plugins/amp/">AMP</a> (Accelerated Mobile Pages) support for social share buttons on AMP pages
@@ -56,25 +56,25 @@ AddToAny is the universal sharing platform, and AddToAny's plugin is the most po
 
 * Choose exactly where you want AddToAny to appear
 * Easily <a href="https://www.addtoany.com/buttons/customize/wordpress">customize sharing</a> on your WordPress site
-* <a href="/plugins/add-to-any/faq/">Highly extensible</a> for developers and designers
-* Custom icons let you use any icons at any location (media uploads directory, CDN, etc.)
+* <a href="https://wordpress.org/plugins/add-to-any/#faq">Highly extensible</a> for developers and designers
+* Custom icons let you use any icons from any location (media uploads directory, CDN, etc.)
 * Many more publisher and user features
 
 = Wide Support =
 
 * Over 10 years of development
-* Over 5.5 million downloads
+* Over 10 million downloads
 * Translated into dozens of languages
 * Ongoing support from the community
 
-This plugin always strives to be the best WordPress plugin for sharing. Development is fueled by your praise and feedback.
+This plugin always strives to be the best WordPress plugin for sharing. Development is fueled by your kind words and feedback.
 
 <a href="https://www.addtoany.com/share#url=https%3A%2F%2Fwordpress.org%2Fplugins%2Fadd-to-any%2F&title=AddToAny%20Sharing%20Plugin%20for%20WordPress" title="Share">Share</a> this plugin
 
 See also:
 
 * The <a href="https://www.addtoany.com/buttons/">share buttons</a> for all platforms
-* The <a href="https://www.addtoany.com/buttons/for/wordpress_com">share button for WordPress.com</a>
+* The <a href="https://www.addtoany.com/buttons/for/wordpress_com">share buttons for WordPress.com</a>
 
 <a href="https://www.addtoany.com/blog/">AddToAny Blog</a> | <a href="https://www.addtoany.com/privacy">Privacy Policy</a>
 
@@ -82,29 +82,32 @@ See also:
 
 In WordPress:
 
-1. Go to `Plugins` > `Add New` > search for `addtoany`
-1. Press `Install Now` for the AddToAny plugin
-1. Press `Activate Plugin`
+1. Go to Plugins > Add New > search for `addtoany`
+1. Press "Install Now" for the AddToAny plugin
+1. Press "Activate Plugin"
 
-To install manually instead:
+Manual installation:
 
 1. Upload the `add-to-any` directory to the `/wp-content/plugins/` directory
-1. Activate the plugin through the `Plugins` menu in WordPress
-1. Optional settings are available in `Settings` > `AddToAny`
+1. Activate the plugin through the "Plugins" menu in WordPress
+
+WP-CLI installation:
+
+1. `wp plugin install add-to-any --activate`
 
 == Frequently Asked Questions ==
 
 = Where are the options, and how can I customize the sharing plugin? =
 
-In your Admin panel, go to `Settings` > `AddToAny`.
+In WordPress, go to Settings > AddToAny.
 
-Setup Follow buttons (like Instagram, YouTube, etc.) using the AddToAny Follow widget in `Appearance` > `Widgets` (or `Appearance` > `Customize`).
+Setup Follow buttons (like Instagram, YouTube, etc.) using the AddToAny Follow widget in Appearance > Widgets (or Appearance > Customize).
 
-To further customize AddToAny, see the <a href="https://www.addtoany.com/buttons/customize/wordpress">WordPress sharing documentation</a> for the AddToAny plugin. Many customizations will have you copy & paste one or more lines of code into your "Additional JavaScript" or "Additional CSS" box. Those boxes are in `Settings` > `AddToAny`.
+To further customize AddToAny, see the <a href="https://www.addtoany.com/buttons/customize/wordpress">WordPress sharing documentation</a> for the AddToAny plugin. Many customizations will have you copy & paste one or more lines of code into your "Additional JavaScript" or "Additional CSS" box. Those boxes are in Settings > AddToAny.
 
 = Something is wrong. What should I try first? =
 
-Try temporarily switching themes and deactivating other plugins to identify a potential conflict. If you find a conflict, try contacting that theme or plugin author. If an issue persists on a default theme with all other plugins deactivated, perform a google search across the WordPress forums using a query such as: <a href="https://www.google.com/#q=site:wordpress.org%2Fsupport+-reviews+addtoany+">site:wordpress.org/support -reviews addtoany [your issue issue here]</a>
+Try temporarily switching themes and deactivating other plugins to identify a potential conflict. If you find a conflict, try contacting that theme or plugin author. If an issue persists on a default theme with all other plugins deactivated, search the WordPress plugin's <a href="https://wordpress.org/support/plugin/add-to-any/">support forum</a>.
 
 Feel free to <a href="https://wordpress.org/support/plugin/add-to-any">post here</a>, where the community can hopefully help you. Describe the issue, what troubleshooting you have already done, provide a link to your site, and any other potentially relevant information.
 
@@ -114,23 +117,27 @@ Something on your own device/browser/connection is likely filtering out major so
 
 Try another web browser, device, and/or Internet connection to see if the buttons appear. Tools like browserling.com or browserstack.com will give you an idea of what other people are seeing. The usual cause for this uncommon issue is 3rd party browser add-on software that blocks ads and optionally filters out major social buttons. Some security apps and Internet connections have an option to filter social buttons. Usually a social filter option is disabled by default, but if you find that some software is inappropriately filtering AddToAny buttons, <a href="https://www.addtoany.com/contact/">let AddToAny know</a>.
 
-= Is there a shortcode for sharing? =
+= What is the shortcode for sharing? =
 
-Yes, you can place your sharing buttons exactly where you want them by inserting the following shortcode in a post or page:
+You can place your share buttons exactly where you want them by inserting the following shortcode:
+
 `[addtoany]`
 
 Customize the shared URL like so:
+
 `[addtoany url="https://www.example.com/page.html" title="Some Example Page"]`
 
 Display specific share buttons by specifying comma-separated <a href="https://www.addtoany.com/services/">service codes</a>:
-`[addtoany buttons="facebook,twitter,google_plus"]`
 
-Share a specific image or video to certain services that accept arbitrary media (Pinterest, Yummly):
-`[addtoany buttons="pinterest,yummly" media="https://www.example.com/media/picture.jpg"]`
+`[addtoany buttons="facebook,twitter,email"]`
+
+Share a specific image or video to certain services that accept arbitrary media (Pinterest, Yummly, Houzz):
+
+`[addtoany buttons="pinterest,yummly,houzz" media="https://www.example.com/media/picture.jpg"]`
 
 = For Facebook sharing, how can I set the thumbnail image and description Facebook uses? =
 
-Facebook expects the Title, Description, and Thumbnail of a shared page to be defined in the Open Graph <a href="https://www.addtoany.com/ext/meta-tags/" target="_blank">meta tags</a> of a shared page.
+Facebook expects the Title, Description, and preview image of a shared page to be defined in the Open Graph <a href="https://www.addtoany.com/ext/meta-tags/" target="_blank">meta tags</a> of a shared page.
 
 Use Facebook's <a href="https://developers.facebook.com/tools/debug/sharing/" target="_blank">Sharing Debugger</a> on your pages to see how Facebook reads your site. "Scrape Again" to test site changes and clear Facebook's cache of a page, or use the <a href="https://developers.facebook.com/tools/debug/sharing/batch/" target="_blank">Batch Invalidator</a> to purge Facebook's cache of multiple URLs.
 
@@ -140,25 +147,32 @@ For more technical information on setting your pages up for Facebook sharing, se
 
 = Why do share links route through AddToAny? =
 
-Since 2006, AddToAny is trusted across the web to always route to each service's current endpoint. This routing enables publisher customization, visitor personalization, and keeps the AddToAny plugin remarkably lightweight without the need for constant plugin updates. In AddToAny menus, visitors see the services they actually use. On mobile, AddToAny presents the choice of sharing to a service's native app or mobile site and the preference is used on the next share. Publishers take advantage of AddToAny services such as <a href="https://www.addtoany.com/buttons/customize/wordpress/email_template">email templates</a>, <a href="https://www.addtoany.com/buttons/customize/wordpress/twitter_message">Twitter templates</a>, <a href="https://www.addtoany.com/buttons/customize/wordpress/link_tracking">URL shortener & parameters</a>, and more. Just as service icons change, service endpoints change too, and AddToAny is updated daily to reflect service endpoint and API changes.
+AddToAny routing enables publisher customization, visitor personalization, and keeps the AddToAny plugin remarkably lightweight without the need for constant plugin updates. In AddToAny menus, visitors see the services they actually use. On mobile, AddToAny presents the choice of sharing to a service's native app or mobile site and the preference is used on the next share. Publishers take advantage of AddToAny services such as <a href="https://www.addtoany.com/buttons/customize/wordpress/email_template">email templates</a>, <a href="https://www.addtoany.com/buttons/customize/wordpress/twitter_message">Twitter templates</a>, <a href="https://www.addtoany.com/buttons/customize/wordpress/templates">custom parameters</a>, <a href="https://www.addtoany.com/buttons/customize/wordpress/link_tracking">URL shorteners</a>, localization, and more. Just as service icons change, service endpoints change too, and AddToAny is updated daily to reflect service endpoint and API changes.
+
+= Where are buttons such as Instagram, YouTube, Snapchat? =
+
+Configure your social media profile links by adding the "AddToAny Follow" widget in Appearance > Customize or Appearance > Widgets.
 
 = How can I use custom icons? =
 
-Upload sharing icons in a single directory to a public location, and make sure the icon filenames match the icon filenames packaged in the AddToAny plugin. In your Admin panel, go to `Settings` > `AddToAny` > `Advanced Options` > check the "Use custom icons" checkbox and specify the URL to your custom icons directory (including the trailing `/`). For AddToAny's universal button, go to Universal Button, select `Image URL` and specify the exact location of your AddToAny universal share icon (including the filename).
+Upload sharing icons in a single directory to a public location, and make sure the icon filenames match the icon filenames packaged in the AddToAny plugin. In WordPress, go to Settings > AddToAny > Advanced Options > check the "Use custom icons" checkbox and specify the URL to your custom icons directory (including the trailing `/`). For AddToAny's universal button, go to Universal Button, select "Image URL" and specify the exact location of your AddToAny universal share icon (including the filename).
 
 = How can I place the share buttons in a specific area of my site? =
 
 In the Theme Editor (or another code editor), place this code block where you want the button and individual icons to appear in your theme:
+
 `<?php if ( function_exists( 'ADDTOANY_SHARE_SAVE_KIT' ) ) { ADDTOANY_SHARE_SAVE_KIT(); } ?>`
 
 You can specify [AddToAny service code(s)](https://www.addtoany.com/services/) to show specific share buttons, for example:
+
 `<?php if ( function_exists( 'ADDTOANY_SHARE_SAVE_KIT' ) ) { 
 	ADDTOANY_SHARE_SAVE_KIT( array( 
-		'buttons' => array( 'facebook', 'twitter', 'google_plus', 'whatsapp' ),
+		'buttons' => array( 'facebook', 'twitter', 'email', 'whatsapp' ),
 	) );
 } ?>`
 
 To customize the shared URL and title:
+
 `<?php if ( function_exists( 'ADDTOANY_SHARE_SAVE_KIT' ) ) { 
 	ADDTOANY_SHARE_SAVE_KIT( array( 
 		'linkname' => 'Example Page',
@@ -167,19 +181,22 @@ To customize the shared URL and title:
 } ?>`
 
 To share the current URL and title (detected on the client-side):
+
 `<?php if ( function_exists( 'ADDTOANY_SHARE_SAVE_KIT' ) ) { 
 	ADDTOANY_SHARE_SAVE_KIT( array( 'use_current_page' => true ) );
 } ?>`
 
 To hardcode the shared current URL and modify the title (server-side):
+
 `<?php if ( function_exists( 'ADDTOANY_SHARE_SAVE_KIT' ) ) { 
 	ADDTOANY_SHARE_SAVE_KIT( array( 
 		'linkname' => is_home() ? get_bloginfo( 'description' ) : wp_title( '', false ),
-		'linkurl'  => esc_url_raw( ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] ),
+		'linkurl'  => esc_url_raw( home_url( $_SERVER['REQUEST_URI'] ) ),
 	) );
 } ?>`
 
 To share a specific image or video to certain services that accept arbitrary media (Pinterest, Yummly):
+
 `<?php if ( function_exists( 'ADDTOANY_SHARE_SAVE_KIT' ) ) { 
 	ADDTOANY_SHARE_SAVE_KIT( array( 
 		'buttons'   => array( 'pinterest', 'yummly' ),
@@ -192,6 +209,7 @@ To share a specific image or video to certain services that accept arbitrary med
 = How can I place the follow buttons in a specific area of my site? =
 
 See the [supported follow services](https://www.addtoany.com/buttons/customize/follow_buttons) for service code names, then place this example code in your theme's file(s) where you want the follow buttons to appear:
+
 `<?php if ( function_exists( 'ADDTOANY_FOLLOW_KIT' ) ) {
 	ADDTOANY_FOLLOW_KIT( array(
 		'buttons' => array(
@@ -202,31 +220,31 @@ See the [supported follow services](https://www.addtoany.com/buttons/customize/f
 	) );
 } ?>`
 
-= How can I add a custom standalone share button? =
-You can create a plugin or customize the following example PHP code to add to your theme's functions.php file:
+= How can I add a custom share button? =
+You can add the following example PHP code using a "functionality" plugin such as the [Code Snippets](https://wordpress.org/plugins/code-snippets/) plugin:
 
-`function addtoany_add_services( $services ) {
+`function addtoany_add_share_services( $services ) {
 	$services['example_share_service'] = array(
 		'name'        => 'Example Share Service',
-		'icon_url'    => 'https://www.google.com/favicon.ico',
+		'icon_url'    => 'https://www.example.com/my-icon.svg',
 		'icon_width'  => 32,
 		'icon_height' => 32,
-		'href'        => 'https://www.example.com/share?url=A2A_LINKURL&amp;title=A2A_LINKNAME',
+		'href'        => 'https://www.example.com/share?url=A2A_LINKURL&title=A2A_LINKNAME',
 	);
 	return $services;
 }
-add_filter( 'A2A_SHARE_SAVE_services', 'addtoany_add_services', 10, 1 );`
+add_filter( 'A2A_SHARE_SAVE_services', 'addtoany_add_share_services', 10, 1 );`
 
 = How can I add a custom follow button? =
-You can create a plugin or customize the following example PHP code to add to your theme's functions.php file:
+You can customize the following example PHP code and add it to a "functionality" plugin such as the [Code Snippets](https://wordpress.org/plugins/code-snippets/) plugin:
 
 `function addtoany_add_follow_services( $services ) {
 	$services['example_follow_service'] = array(
 		'name'        => 'Example Follow Service',
-		'icon_url'    => 'https://www.google.com/favicon.ico',
+		'icon_url'    => 'https://www.example.com/my-icon.svg',
 		'icon_width'  => 32,
 		'icon_height' => 32,
-		'href'        => 'https://www.example.com/ID',
+		'href'        => 'https://www.example.com/${id}',
 	);
 	return $services;
 }
@@ -236,32 +254,35 @@ add_filter( 'A2A_FOLLOW_services', 'addtoany_add_follow_services', 10, 1 );`
 It depends on your theme, but you can try adding the following CSS code to your Additional CSS box in Settings > AddToAny.
 
 To align right:
-`.addtoany_share_save_container { text-align:right; }`
+
+`.addtoany_content { text-align:right; }`
 
 To align center:
-`.addtoany_share_save_container { text-align:center; }`
+
+`.addtoany_content { text-align:center; }`
 
 = How can I remove the button(s) from individual posts and pages? =
 
-When editing a post or page, uncheck "Show sharing buttons", which is located at the bottom of the editor page. Be sure to update or publish to save your changes.
+When editing a post or page, uncheck "Show sharing buttons", which is located next to the WordPress editor. Be sure to update or publish to save your changes.
 
 An older method was to insert the following tag into the page or post (HTML tab) that you do not want the button(s) to appear in: `<!--nosharesave-->`
 
 = How can I force the button(s) to appear in individual posts and pages? =
 
-When editing a post or page, check the "Show sharing buttons" checkbox, which is located at the bottom of the editor page. Be sure to update or publish to save your changes. Note that, by default, AddToAny is setup to display on all posts and pages.
+When editing a post or page, check the "Show sharing buttons" checkbox, which is located next to the WordPress editor. Be sure to update or publish to save your changes. Note that, by default, AddToAny is setup to display on all posts and pages.
 
 An older method was to insert the following tag into the page or post (HTML tab) that you want the button(s) to appear in: `<!--sharesave-->`
 
 = How can I remove the button(s) from category pages, or tag/author/date/search pages? =
 
-Go to `Settings` > `AddToAny` > uncheck `Display at the top or bottom of posts on archive pages`. Archive pages include Category, Tag, Author, Date, and also Search pages.
+Go to Settings > AddToAny > uncheck "Display at the top or bottom of posts on archive pages". Archive pages include Category, Tag, Author, Date, and also Search pages.
 
 = How can I programmatically remove the button(s)? =
 
-In your theme's `functions.php`, you can add a filter to disable AddToAny sharing.
+You can disable AddToAny sharing using a [filter](https://developer.wordpress.org/plugins/hooks/filters/) (PHP code) that you can add to a "functionality" plugin such as the [Code Snippets](https://wordpress.org/plugins/code-snippets/) plugin.
 
 Disable AddToAny sharing in specific categories, for example:
+
 `function addtoany_disable_sharing_in_some_categories() {
 	// Examples of in_category usage: https://codex.wordpress.org/Function_Reference/in_category
 	if ( in_category( array( 'my_category_1_slug', 'my_category_2_slug' ) ) ) {
@@ -271,6 +292,7 @@ Disable AddToAny sharing in specific categories, for example:
 add_filter( 'addtoany_sharing_disabled', 'addtoany_disable_sharing_in_some_categories' );`
 
 Disable AddToAny sharing on a custom post type, for example:
+
 `function addtoany_disable_sharing_on_my_custom_post_type() {
 	if ( 'my_custom_post_type' == get_post_type() ) {
 		return true;
@@ -280,16 +302,9 @@ add_filter( 'addtoany_sharing_disabled', 'addtoany_disable_sharing_on_my_custom_
 
 = How can I position a vertical floating share buttons bar relative to content? =
 
-In settings, disable the default placement of the Vertical Buttons. In your theme's file(s), find the parent element that you want to position the vertical bar to (the parent element should have a specified width), then add the following example PHP code as a child of that parent element:
+Go to Settings > AddToAny > Floating > select "Attach to content" then input the CSS selector(s) that match the HTML element you want to attach to.
 
-`<?php if ( function_exists( 'ADDTOANY_SHARE_SAVE_FLOATING' ) ) {
-	ADDTOANY_SHARE_SAVE_FLOATING( array(
-		'kit_style' => 'margin-left:-100px; top:150px;',
-		'vertical_type' => true,
-	) );
-} ?>`
-
-= Why does the Facebook Like Button, Pinterest Pin It Button, Google+ Share Button, or Google +1 Button have so much whitespace to the right of it? =
+= Why does the Facebook Like Button or Pinterest Pin It Button have so much whitespace to the right of it? =
 
 The minimum width for the Facebook Like Button is 90 pixels. This is required to display the total number of Likes to the right of the button.  See Facebook's <a href="https://developers.facebook.com/docs/plugins/like-button">Like Button documentation</a> for details
 
@@ -297,42 +312,235 @@ It's not recommended, but you can change the width of the Facebook Like Button u
 
 The Pinterest Pin It Button with 'show count' enabled is 76 pixels. You can change the width using CSS code, for instance: `.a2a_button_pinterest_pin { width:90px !important; }`
 
-The Google +1 Button with 'show count' enabled is 90 pixels. You can change the width using CSS code, for instance: `.a2a_button_google_plusone { width:65px !important; }`
+= Is AddToAny GDPR compatible? =
 
-The Google+ Share Button width can be changed using CSS code, for instance: `.a2a_button_google_plus_share { width:57px !important; }`
+Yes, AddToAny is [GDPR compatible by default](https://www.addtoany.com/buttons/faq/#gdpr).
 
 = Does the plugin output W3C valid code? =
 
 Yes, this plugin outputs 100% W3C valid HTML5 and W3C valid CSS 3 by default.
 
-= How can I load the buttons after content insertion with AJAX and infinite scroll? =
+= How can I load the buttons after content insertion with Ajax and infinite scroll? =
 
-Fire the standard `post-load` event to have the plugin initiate AddToAny buttons:
+AddToAny supports the <a href="https://codex.wordpress.org/AJAX_in_Plugins#The_post-load_JavaScript_Event">standard `post-load` event</a>.
+
+Ajax and infinite scroll plugins/themes should always fire the `post-load` event after content insertion, so request <a href="https://codex.wordpress.org/AJAX_in_Plugins#The_post-load_JavaScript_Event">standard `post-load` support</a> from plugin & theme authors as needed.
+
+Use the following line to dispatch the `post-load` event for AddToAny and other plugins:
+
 `jQuery( 'body' ).trigger( 'post-load' );`
-
-A couple prerequisites:
-
- * The request has an `HTTP_X_REQUESTED_WITH` header set to `xmlhttprequest`
- * `jQuery` available
-
-= Why does the menu appear behind embedded objects (like Flash)? =
-
-Please read <a href="https://www.addtoany.com/buttons/customize/show_over_embeds">this document</a> for an explanation and possible fix. For WordPress, an easier fix is to have the plugin <a href="https://www.addtoany.com/buttons/customize/wordpress/hide_embeds">hide intersecting embedded objects</a>.
 
 = How can I set the plugin as a "Must-Use" plugin that is autoloaded and activated for all sites? =
 
 Upload (or move) the `add-to-any` plugin directory into the `/wp-content/mu-plugins/` directory. Then create a proxy PHP loader file (such as `load.php`) in your `mu-plugins` directory, for example:
+
 `<?php require WPMU_PLUGIN_DIR . '/add-to-any/add-to-any.php';`
 
 == Screenshots ==
 
-1. AddToAny vector share buttons (SVG icons) are pixel-perfect on Retina and high-PPI dispays
-2. Traditional Share/Save button features Facebook, Twitter, and a generic share icon
-3. Mini share menu that drops down when visitors use the universal share button
-4. Full universal share menu modal that includes all services
-5. Settings panel
+1. AddToAny vector share buttons (SVG icons) are pixel-perfect and customizable
+2. Mini share menu that drops down when visitors use the universal share button
+3. Full universal share menu modal that includes all services
+4. Settings for Standard Share Buttons
+5. Settings for Floating Share Bars
 
 == Changelog ==
+
+= 1.7.39 =
+* Fix AMP version of the AddToAny universal icon
+* Enable the `addtoany_content_priority` filter hook to modify the priority of standard placement in content
+* Add a workaround for a bug in Jetpack's Related Posts on AMP pages that prevents some added content from loading
+* Bump minimum PHP version to 5.6
+
+= 1.7.38 =
+* Update AMP support for compatibility with AMP's standard mode
+
+= 1.7.37 =
+* Harden option to toggle standard sharing placement on pages and the "page" post type
+
+= 1.7.36 =
+* Apply the "Show sharing buttons" option to the floating vertical bar when Placement is set to "Attach to content"
+
+= 1.7.35 =
+* Remove Google+ because Google [shut down Google+](https://support.google.com/plus/answer/9195133)
+
+= 1.7.34 =
+* Add MeWe
+* Update Evernote icon color
+* Replace Google+ with Email as a default share button
+
+= 1.7.33 =
+* New translatable strings for the optional [post-share modal](https://www.addtoany.com/buttons/customize/wordpress/thanks)
+ * "Thanks for sharing!"
+ * "Thanks for following!"
+ * You can [configure](https://www.addtoany.com/buttons/customize/wordpress/thanks) the new post-share "Thanks for sharing!" modal and ad unit, rolling out soon for WordPress sites. By default, the modal only displays on pages that have an existing ad tag. You can [enable](https://www.addtoany.com/buttons/customize/wordpress/thanks#enable) and [disable](https://www.addtoany.com/buttons/customize/wordpress/thanks#disable) the modal and the ad, or [add](https://www.addtoany.com/buttons/customize/wordpress/thanks#add-ad) your own ad unit to be rotated along with AddToAny's
+* Move the "Show sharing buttons" meta box to the side of the WordPress editor
+* Fix issue where an extra floating vertical bar could appear when Placement is set to "Attach to content"
+* Add some supplementary escaping
+
+= 1.7.32 =
+* Fix the option to hide a floating bar when scrolled to a footer region
+* Fix placeholders and add a description for translating a string in admin (thanks Andreas)
+* Remove unnecessary data attributes from AddToAny Follow widgets
+* Add some supplementary escaping
+* Simplify some variable assignments
+
+= 1.7.31 =
+* Update language template file and extension
+* Remove StumbleUpon
+
+= 1.7.30 =
+* Fix issue where the "Show count" checkbox was unavailable for some services in settings
+
+= 1.7.29 =
+* Initialize AddToAny Follow buttons on the `post-load` event
+* Harden the local cache option to keep caches updated
+* Update official button options in admin
+
+= 1.7.28 =
+* New option to hide a floating bar until scrolled past a header region
+* New option to hide a floating bar when scrolled to a footer region
+* New "Center docked" option for the horizontal floating bar
+
+= 1.7.27 =
+* New "Attach to content" option for the vertical floating bar
+* Add Mix
+* Remove Delicious
+* Remove Polyvore
+* Remove Yahoo Bookmarks
+* Remove Yahoo Messenger
+
+= 1.7.26 =
+* Add Mastodon share button
+* Update admin interface
+* Remove the LinkedIn share count option because LinkedIn no longer provides share counts
+* Remove Oknotizie
+
+= 1.7.25 =
+* Fix service count options in settings
+* Load JS for the customizer only when the customizer is used (thanks Neil)
+
+= 1.7.24 =
+* Move JS into a single block to prevent issues caused by some site optimization plugins
+* Simplify file paths & URLs
+* Prevent Cloudflare's experimental Rocket Loader from causing script issues
+* Remove Google+ share count options because Google+ no longer provides counters
+* Remove AIM, BuddyMarks, diHITT, Jamespot, Netlog, NewsVine, NUjij, Segnalo, Stumpedia, YouMob
+
+= 1.7.23 =
+* Add `addtoany_content` class name to container in content
+ * The container's `addtoany_share_save_container` class name will be removed in a future plugin update
+ * Reference `.addtoany_content` instead of `.addtoany_share_save_container`
+* Add `addtoany_share` class name to universal share button
+ * The button's `addtoany_share_save` class name will be removed in a future plugin update
+ * Reference `.addtoany_share` instead of `.addtoany_share_save`
+* Add Medium follow button
+* Update Blogger service code
+* Remove Klipfolio
+* Remove Webnews
+
+= 1.7.22 =
+* Use WordPress 4.9 code editor for Additional CSS and Additional JavaScript boxes
+* Rename CSS handles to `addtoany`
+* Remove "Use default CSS" option
+ * If needed, you can disable the default stylesheet using `add_action( 'wp_enqueue_scripts', function() { wp_dequeue_style( 'addtoany' ); }, 21 );`
+* Remove menu style button in admin
+* Use Italian language pack (thanks truttle, blogforum)
+* Use Spanish language pack (thanks Luis Rull, Juan Ramón Navas, Yan Arlex)
+
+= 1.7.21 =
+* Fix simplified initial `a2a_config` JS so overlays are not enabled by default
+
+= 1.7.20 =
+* Show the optional sharing header for WooCommerce standard share buttons placement
+* Harden the "Show sharing buttons" checkbox so it works when other plugins conflict
+* Escape attributes in admin (thanks Ricardo Sanchez)
+* Simplify initial `a2a_config` JS
+
+= 1.7.19 =
+* Resolve issue in admin with [out-of-date PHP versions](https://secure.php.net/eol.php) below PHP 5.5
+* New icon color options in AddToAny settings
+* New background color options for floating bars
+* The background for floating bars now defaults to `transparent`
+* Add a tip for AddToAny Follow buttons (Instagram, YouTube, Snapchat, etc.) in Add/Remove Services
+* Update YouTube icon
+
+= 1.7.18 =
+* New icon color options in AddToAny settings
+* New background color options for floating bars
+* The background for floating bars now defaults to `transparent`
+* Add a tip for AddToAny Follow buttons (Instagram, YouTube, Snapchat, etc.) in Add/Remove Services
+* Update YouTube icon
+
+= 1.7.17 =
+* Add Threema
+* Add Houzz
+* Add StockTwits
+* Remove App.net
+* Remove Baidu
+
+= 1.7.16 =
+* Set the CSS enqueue priority to `20` to load after most theme stylesheets
+ * Resolves lines under buttons (`box-shadow`) caused by CSS such as the default Twenty Seventeen theme's stylesheet
+
+= 1.7.15 =
+* Use the `wp_enqueue_scripts` action hook instead of `wp_print_styles` for the plugin's stylesheet
+* Use the `home_url()` instead of the `Host` header when generating the current URL to be shared (thanks Paul)
+
+= 1.7.14 =
+* Fix the standard placement option for WooCommerce Product types
+
+= 1.7.13 =
+* Update standard placement for [WooCommerce](https://woocommerce.com/) to display share buttons after the product meta block instead of the product description
+ * In WooCommerce, you can customize where share buttons display by [editing](https://docs.woocommerce.com/document/editing-projects-templates-safely/) your `share.php` Single Product Share template.
+* Use Japanese language pack (thanks miccweb)
+
+= 1.7.12 =
+* Use `rel="noopener"` on links that open in a new tab/window for site JavaScript performance in some browsers
+* Fix the `[addtoany]` shortcode's `buttons` attribute
+
+= 1.7.11 =
+* Add icon size option to Follow buttons widget
+* Replace "Large" and "Small" icon size options with single field
+* Replace old universal buttons with custom button URLs
+* Update CSS to apply style to custom icon sizes
+* Always use HTTPS script and endpoints
+
+= 1.7.10 =
+* Fix vertical floating bar's class name and media query from the previous release
+
+= 1.7.9 =
+* Show optional meta box ("Show sharing buttons") below the WordPress editor by default, without having to save AddToAny settings first
+* Enable the `shortcode_atts_addtoany` hook to filter the default attributes of the `[addtoany]` shortcode
+* Accept `kit_additional_classes` argument in Floating and Follow button output functions (thanks Rocco Marco)
+
+= 1.7.8 =
+* AddToAny Follow widgets will now use full URLs when specified for a service ID
+* Add Papaly
+* Add Refind
+* Update Pinterest icon
+
+= 1.7.7 =
+* Resolve syntax issue with [out-of-date PHP versions](https://secure.php.net/eol.php) below PHP 5.3
+
+= 1.7.6 =
+* Skip background colors on AMP icons for [out-of-date PHP versions](https://secure.php.net/eol.php) below PHP 5.3
+
+= 1.7.5 =
+* Add background colors to share buttons on [AMP](https://wordpress.org/plugins/amp/) (Accelerated Mobile Pages) to support new AddToAny SVG icons
+* Fix AMP issue from `in_the_loop` check in 1.7.3
+* Remove `in_the_loop` context check because AMP doesn't use the loop
+* Use packaged AddToAny icon in admin (thanks xaviernieto)
+
+= 1.7.4 =
+* Fix custom/secondary contexts check when the WP query object is unavailable
+
+= 1.7.3 =
+* Add icon size options for the floating share buttons
+* Replace packaged PNG icons with SVG icons
+* Update services in AddToAny settings
+* Update standard placement to prevent the share buttons from automatically appearing in custom/secondary contexts
+* Set feed URL & title in AddToAny Follow widgets using HTML5 data attributes
 
 = 1.7.2 =
 * Accept arguments in universal button template tag for additional classes and HTML contents
@@ -398,7 +606,7 @@ Upload (or move) the `add-to-any` plugin directory into the `/wp-content/mu-plug
 
 = 1.6.11 =
 * Update `[addtoany]` shortcode to accept specific share buttons
- * Specify [AddToAny service codes](https://www.addtoany.com/services/) in the `buttons` attribute like: `[addtoany buttons="facebook,twitter,google_plus"]`
+ * Specify [AddToAny service codes](https://www.addtoany.com/services/) in the `buttons` attribute like: `[addtoany buttons="facebook,twitter,email"]`
 * Add SMS share button
 * Add Telegram share button
 * Add Google Classroom share button
@@ -589,7 +797,7 @@ Upload (or move) the `add-to-any` plugin directory into the `/wp-content/mu-plug
 * Point to additional placement options and information
 * Remove old placement instructions for hardcoding
 * Remove old error reporting suppression in admin
-* Ukrainian translation (by Michael Yunat, http://getvoip.com)
+* Ukrainian translation (by Michael Yunat)
 
 = 1.3.2 =
 * Avoid loading button script in admin, especially for visual editor plugins
@@ -817,6 +1025,27 @@ Upload (or move) the `add-to-any` plugin directory into the `/wp-content/mu-plug
 * For all prior versions, see 1.6.12 or earlier
 
 == Upgrade Notice ==
+
+= 1.7.33 =
+[Configure](https://www.addtoany.com/buttons/customize/wordpress/thanks) the new post-share "Thanks for sharing!" modal and ad unit, rolling out soon for WordPress sites. By default, the modal only displays on pages that have an existing ad tag. You can [enable](https://www.addtoany.com/buttons/customize/wordpress/thanks#enable) and [disable](https://www.addtoany.com/buttons/customize/wordpress/thanks#disable) the modal and the ad, or [add](https://www.addtoany.com/buttons/customize/wordpress/thanks#add-ad) your own ad unit to be rotated along with AddToAny's.
+
+= 1.7.31 =
+Using the Facebook Like button? You can enable its counter by clicking the down arrow below the Facebook Like button in AddToAny settings. For accurate counts when you enable [AddToAny Share Count Recovery](https://www.addtoany.com/blog/fix-share-counts-after-https-domain-url-change/), switch to AddToAny's standard Facebook share button instead of the Like button, because the Facebook Like button does not offer a way for previous counts to be recovered.
+
+= 1.7.28 =
+New floating options! Hide a bar until the page is scrolled past a header. Hide a bar where it would overlap a footer. Center your floating horizontal bar, too.
+
+= 1.7.27 =
+New "Attach to content" option for the floating vertical bar!
+
+= 1.7.23 =
+If you have CSS code customizations referencing the universal button (`.addtoany_share_save`) or the standard share buttons container (`.addtoany_share_save_container`), those class names have been deprecated and will be removed in a future plugin update. The new class names are `.addtoany_share` and `.addtoany_content` respectively. Please update your custom CSS if you are referencing the deprecated class names.
+
+= 1.7.18 =
+The background for floating bars now defaults to `transparent`. You can change the background for your floating bars in the "Floating" tab of Settings > AddToAny.
+
+= 1.7.13 =
+For [WooCommerce](https://woocommerce.com/) sites, the default standard placement for share buttons has moved from the product description to after the product meta block. You can customize exactly where share buttons display by [editing](https://docs.woocommerce.com/document/editing-projects-templates-safely/) your `share.php` Single Product Share template.
 
 = 1.6.12 =
 Automatic placement logic for [WordPress excerpts](https://codex.wordpress.org/Excerpt) has changed. If your theme displays buttons in a post's excerpt/snippet/intro after this plugin update, you can uncheck the "Display at the bottom of excerpts" placement option in AddToAny settings to remove those buttons. Use custom icons? For improved layout and compatibility, specify the width & height of your icons in Settings > AddToAny > Advanced Options.

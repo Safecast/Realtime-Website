@@ -1,0 +1,461 @@
+# Translation of Plugins - Search &amp; Replace - Stable (latest release) in Chinese (China)
+# This file is distributed under the same license as the Plugins - Search &amp; Replace - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2019-09-20 03:16:11+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: GlotPress/2.4.0-alpha\n"
+"Language: zh_CN\n"
+"Project-Id-Version: Plugins - Search &amp; Replace - Stable (latest release)\n"
+
+#: inc/FileDownloader.php:351
+msgid "The file you are looking for doesn't exists."
+msgstr "你查找的文件不存在。"
+
+#: inc/FileDownloader.php:158
+msgid "Row"
+msgstr "行"
+
+#: inc/FileDownloader.php:149
+msgid "Columns Changes:"
+msgstr "修改的栏："
+
+#: inc/templates/replace-domain.php:86
+msgid "Underscore suffix \"_\" can be omitted"
+msgstr "下划线后缀“_”可以省略"
+
+#: inc/templates/replace-domain.php:83
+msgid "E.g new_"
+msgstr "如：new_"
+
+#: inc/templates/replace-domain.php:13
+msgid "If you want to migrate your site to another domain, enter the new URL in the field \"Replace with\" and click \"Do Replace Domain/Url\". You can then download a database backup containing the new URL."
+msgstr "如果您想把这个网站迁移到其他域名，请在 [替换为] 字段中输入新网站，然后点击 [执行替换域名/URL]，便能下载一份已完成新文章替换的网站数据库备份文件。"
+
+#: inc/templates/search-replace.php:47
+msgid "Using comma delimited( , ). For example to replace cat with dog: cat,dog"
+msgstr "使用英文逗号(,)分隔，如需要用 dog 替换 cat: cat,dog"
+
+#: inc/templates/search-replace.php:42
+msgid "search value, replace value (one per line)"
+msgstr "搜索字符,替换字符（每行一个）"
+
+#: inc/templates/search-replace.php:38
+msgid "CSV Format Search/Replace:"
+msgstr "CSV 格式的搜索/替换："
+
+#: inc/Database/Exporter.php:633
+msgid "Cannot Process the file - Search &amp; Replace"
+msgstr "无法处理文件 - 搜索&amp;替换"
+
+#: inc/Database/Exporter.php:632
+msgid "Seems was not possible to create the file for some reason."
+msgstr "出现了一些问题，无法创建文件。"
+
+#. Translators: %s print the error message.
+#: inc/Page/SqlImport.php:155
+msgid "Upload Error: %s"
+msgstr "上传错误: %s"
+
+#: inc/Page/SqlImport.php:119
+msgid "There is no error, the file uploaded with success"
+msgstr "文件上传成功"
+
+#: inc/Page/SearchReplace.php:160
+msgid "No Tables were selected. You must select at least one table to perform the action."
+msgstr "尚未选择数据表，请至少选择一个数据表来执行这个操作。"
+
+#: inc/Page/SearchReplace.php:125
+msgid "You must provide at least a search string or a csv data"
+msgstr "必须至少提供一个搜索字符串或一个 CSV 数据"
+
+#: inc/Page/SearchReplace.php:61
+msgid "Your search contains your current site url. Replacing your site url can cause your site to break. Are you sure you wish to proceed?"
+msgstr "搜索字串中包含这个网站的网址，替换目前网站的网址会导致网站中断，确定要继续操作吗？"
+
+#. Author of the plugin
+msgid "Inpsyde GmbH"
+msgstr "Inpsyde GmbH"
+
+#. Description of the plugin
+msgid "Search & Replace data in your whole WordPress setup, backup and import your database, change table prefix or migrate your domain to another domain."
+msgstr "从你的 WordPress 站点中搜索替换数据，备份并导出数据库，修改数据库前缀或迁移您的数据到另外一个域名。"
+
+#. Plugin URI of the plugin
+msgid "https://wordpress.org/plugins/search-and-replace/"
+msgstr "https://wordpress.org/plugins/search-and-replace/"
+
+#: inpsyde-search-replace.php:56
+msgid "back"
+msgstr "返回"
+
+#. translators: %1$s will replace with the PHP version of the client.
+#: inpsyde-search-replace.php:49
+msgid "This plugin can not be activated because it requires at least PHP version %1$s. "
+msgstr "这个插件的最低 PHP 版本需求为 %1$s，所以插件目前无法启用。"
+
+#: inc/templates/sql-import.php:28
+msgid "Maximum file size: "
+msgstr "最大文件大小"
+
+#: inc/templates/sql-import.php:19
+msgid "Select SQL file to upload. "
+msgstr "选择需要上传的 SQL 文件"
+
+#: inc/templates/search-replace.php:99
+msgid "Use GZ compression"
+msgstr "使用 GZ 压缩"
+
+#: inc/templates/search-replace.php:91
+msgid "Save changes to Database"
+msgstr "将修改保存到数据库"
+
+#: inc/templates/search-replace.php:85
+msgid "Export SQL file with changes"
+msgstr "导出修改到 SQL 文件"
+
+#: inc/templates/search-replace.php:79
+msgid "Export SQL file or write changes to DB?"
+msgstr "导出 SQL 文件或写入修改到数据库？"
+
+#: inc/templates/search-replace.php:70
+msgid "Dry Run"
+msgstr "演示模式"
+
+#: inc/templates/search-replace.php:61
+msgid "Select all tables"
+msgstr "选择所有数据表"
+
+#: inc/templates/search-replace.php:55
+msgid "Select tables"
+msgstr "选择数据表"
+
+#: inc/templates/replace-domain.php:74
+msgid "New prefix: "
+msgstr "新前缀："
+
+#: inc/templates/replace-domain.php:63
+msgid "Current prefix: "
+msgstr "目前前缀："
+
+#: inc/templates/replace-domain.php:54
+msgid "Change database prefix"
+msgstr "修改数据库前缀"
+
+#: inc/templates/replace-domain.php:46
+msgid "New URL"
+msgstr "新 URL"
+
+#: inc/templates/search-replace.php:28 inc/templates/replace-domain.php:38
+msgid "Replace with: "
+msgstr "替换为："
+
+#: inc/templates/search-replace.php:18 inc/templates/replace-domain.php:27
+msgid "Search for: "
+msgstr "搜索："
+
+#: inc/templates/db-backup.php:14
+msgid "Create a backup of your database by clicking \"Create SQL File\"."
+msgstr "单击“创建SQL文件”创建数据库备份。"
+
+#. translators: $1 is a url
+#: inc/templates/credits.php:125
+msgid "If you love open source and especially WordPress, if you love to organize your working days by yourself, and you want to use your pragmatic problem-solving skills and result-oriented work methods: <a href=\"%s\">join our team</a>!"
+msgstr "如果你热爱开源软件 (特別是 WordPress)、希望主导自己的工作，并且希望展示个人解决问题的能力及以结果为导向工作方法，那就<a href=\"%s\">加入我们的团队</a>吧！"
+
+#: inc/templates/credits.php:114
+msgid "freedom for personal development and responsible, self-reliant action"
+msgstr "个人发展及自主负责的自由，自我驱动"
+
+#: inc/templates/credits.php:113
+msgid "a wide variety of tasks"
+msgstr "多样化的工作"
+
+#: inc/templates/credits.php:112
+msgid "deliberately flat hierarchies and short decision paths"
+msgstr "极为扁平化的组织结构和简短的决策路径"
+
+#: inc/templates/credits.php:111
+msgid "flexible working hours in remote office"
+msgstr "远程工作模式自主弹性的工作时间"
+
+#: inc/templates/credits.php:110
+msgid "challenging and exciting projects"
+msgstr "充满挑战，令人兴奋的项目"
+
+#: inc/templates/credits.php:103
+msgid "At the moment we’re looking for developers for WordPress based products and services. If you’re not a developer and want to be part of us, we’d be happy to recieve your unsolicited application. At Inpsyde you can expect an open, modern and lively company culture:"
+msgstr "我们正在招聘 WordPress 相关产品及服务的开发人员，如果你不是开发人员但想成为我们的一份子，我们非常乐于收到这个自发申请。在 Inpsyde，你可以看到开发、现在以及充满活力的的公司文化:"
+
+#: inc/templates/credits.php:96
+msgid "As the biggest WordPress enterprise in Europe, we’re dynamically growing and constantly looking for new employees. So, do you want to shape WordPress in an interesting and exciting work environment? Here we are!"
+msgstr "作为欧洲最大的 WordPress 生态圈企业，我们持续成长并招聘新员工。如果你想在一个有趣、令人兴奋的工作环境中 WordPress 产生影响力，来这里就对了！"
+
+#: inc/templates/credits.php:94
+msgid "Working at Inpsyde"
+msgstr "与 Inpsyde 一起工作"
+
+#: inc/templates/credits.php:81
+msgid "Look at our other <a href=\"%s\">free WordPress plugins</a>."
+msgstr "请看一下我们的其他 <a href=\"%s\">免费 WordPress 插件</a>。"
+
+#: inc/templates/credits.php:63
+msgid "Inpsyde is a WordPress <a href=\"%1$s\">VIP Service Partner</a> and <a href=\"%2$s\">WooCommerce Expert</a>."
+msgstr "Inpsyde 是一个 WordPress <a href=\"%1$s\">VIP 服务伙伴</a> 与 <a href=\"%2$s\">WooCommerce 专家</a>。"
+
+#: inc/templates/credits.php:54
+msgid "Inpsyde has developed enterprise solutions with the world’s most popular open-source CMS ever since it was a kitten. We still do, inconvincibly convinced."
+msgstr "Inpsyde 自成立以来，便致力于使用最热门的开源 CMS (内容管理系统) 开发企业解决方案，始终如一。"
+
+#: inc/templates/credits.php:52
+msgid "We are Inpsyde"
+msgstr "我们是 Inpsyde"
+
+#: inc/templates/credits.php:37
+msgid "You can contribute the Plugin go to the repository on <a href=\"%s\">github</a> making changes, creating issues, or submitting changes."
+msgstr "你可以前往此插件的<a href=\"%s\">GitHub 仓库</a>参与开发，参与者可以为插件作出修改、提出问题或提交变更。"
+
+#: inc/templates/credits.php:33
+msgid "You rock! contribute the plugin."
+msgstr "你很牛，来为这个插件贡献点力量吧！"
+
+#: inc/templates/credits.php:17
+msgid "Search and Replace is refactored in 2015 by <a href=\"%1$s\">Inpsyde GmbH</a>, maintained since 2006 and based on the original from <a href=\"%2$s\">Mark Cunningham</a>."
+msgstr "Search and Replace 插件最早由 <a href=\"%2$s\">Mark Cunningham</a> 开发，<a href=\"%1$s\">Inpsyde GmbH</a> 从 2006 年开始接收维护，并于 2015 年全面重写代码。"
+
+#: inc/templates/credits.php:13
+msgid "Hey nice to have you here!"
+msgstr "你好！很高兴在这里遇到你！"
+
+#: inc/Page/SqlImport.php:146
+msgid "A PHP extension stopped the file upload."
+msgstr "一个 PHP 扩展中断了文件上传。"
+
+#: inc/Page/SqlImport.php:143
+msgid "Failed to write file to disk."
+msgstr "文件写入到磁盘时失败."
+
+#: inc/Page/SqlImport.php:139
+msgid "Missing a temporary folder."
+msgstr "临时文件夹无效。"
+
+#: inc/Page/SqlImport.php:135
+msgid "No file was uploaded."
+msgstr "没有文件被上传."
+
+#: inc/Page/SqlImport.php:131
+msgid "The uploaded file was only partially uploaded"
+msgstr "上传的文件不完整。"
+
+#: inc/Page/SqlImport.php:127
+msgid "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form"
+msgstr "上传的文件尺寸超过 HTML 表单所定义的 MAX_FILE_SIZE 值。"
+
+#: inc/Page/SqlImport.php:123
+msgid "The uploaded file exceeds the upload_max_filesize directive in php.ini"
+msgstr "上传文件的尺寸超过 php.ini 中定义的 upload_max_filesize 值。"
+
+#. Translators: %s print the sql source.
+#: inc/Page/SqlImport.php:108
+msgid "The SQL file was successfully imported. %s SQL queries were performed."
+msgstr "成功导入 SQL 文件，%s 项 SQL 查询被执行。"
+
+#: inc/Page/SqlImport.php:98
+msgid "The file does not seem to be a valid SQL file. Import not possible."
+msgstr "这个文件看起来不是有效的 SQL 文件，无法导入。"
+
+#: inc/Page/SqlImport.php:86
+msgid "The file has neither '.gz' nor '.sql' Extension. Import not possible."
+msgstr "文件名不是 .gz 或 .sql 扩展名，无法导入。"
+
+#: inc/Page/SqlImport.php:60
+msgid "Import SQL file"
+msgstr "导入 SQL 文件"
+
+#: inc/Page/SqlImport.php:34
+msgid "SQL Import"
+msgstr "SQL 导入"
+
+#: inc/Page/SearchReplace.php:174
+msgid "Search field is empty."
+msgstr "搜索字段为空。"
+
+#: inc/Page/SearchReplace.php:206
+msgid "The following changes were made to the database: "
+msgstr "对数据库进行了以下更改："
+
+#: inc/Page/SearchReplace.php:198
+msgid "Dry run is selected. No changes were made to the database and no SQL file was written ."
+msgstr "已选择「模拟模式」，没有对数据库进行任何更改，也没有写入任何 SQL 文件。"
+
+#: inc/Page/SearchReplace.php:275
+msgid "Do Search & Replace"
+msgstr "执行搜索&替换"
+
+#: inc/Page/ReplaceDomain.php:100
+msgid "Replace Domain URL"
+msgstr "替换域名URL"
+
+#: inc/Page/ReplaceDomain.php:92
+msgid "Do Replace Domain/Url"
+msgstr "执行替换域名/Url"
+
+#: inc/Page/ReplaceDomain.php:56
+msgid "Replace Field should not be empty."
+msgstr "替换字段不应为空。"
+
+#: inc/Page/Credits.php:24
+msgid "Credits"
+msgstr "鸣谢"
+
+#: inc/Page/BackupDatabase.php:67
+msgid "Create SQL File"
+msgstr "创建 SQL 文件"
+
+#: inc/Page/BackupDatabase.php:41
+msgid "Backup Database"
+msgstr "备份数据库"
+
+#: inc/Page/AbstractPage.php:88
+msgid "Submit"
+msgstr "发送"
+
+#: inc/Page/AbstractPage.php:55
+msgid "Errors:"
+msgstr "错误："
+
+#. Plugin Name of the plugin
+#: inc/Page/Manager.php:104 inc/Page/AbstractPage.php:26
+#: inc/Page/SearchReplace.php:85
+msgid "Search & Replace"
+msgstr "搜索 & 替换"
+
+#: inc/FileDownloader.php:167
+msgid "New value"
+msgstr "新值"
+
+#: inc/FileDownloader.php:164
+msgid "Old value"
+msgstr "旧值"
+
+#: inc/FileDownloader.php:161
+msgid "Column"
+msgstr "列"
+
+#: inc/FileDownloader.php:146
+msgid "Table:"
+msgstr "表："
+
+#: inc/FileDownloader.php:127
+msgid "View details"
+msgstr "查看详细"
+
+#. translators: %s is the count of selected cells after search in tables.
+#: inc/FileDownloader.php:237
+msgid "%s cell needs to be updated."
+msgid_plural "%s cells need to be updated."
+msgstr[0] "%s 个数据需要更新。"
+
+#. translators: %s is the count of tables.
+#: inc/FileDownloader.php:226
+msgid "%s table was processed. "
+msgid_plural "%s tables were processed. "
+msgstr[0] "已处理 %s 个数据表。"
+
+#: inc/FileDownloader.php:84
+msgid "Download SQL File"
+msgstr "下载 SQL 文件"
+
+#: inc/FileDownloader.php:78
+msgid "Your SQL file was created!"
+msgstr "SQL 文件已创建！"
+
+#: inc/Page/SearchReplace.php:225 inc/FileDownloader.php:69
+msgid "Search pattern not found."
+msgstr "未找到搜索模式。"
+
+#. translators: $1 is the number of rows found in database
+#: inc/Database/Replace.php:270
+msgid "Error updating row: %d."
+msgstr "更新航出现错误：%d。"
+
+#: inc/Database/Replace.php:78
+msgid "Search and replace pattern can't be the same!"
+msgstr "搜索和替换模式不能相同！"
+
+#. Translators: %s is the value of the size in kByte.
+#: inc/Database/Manager.php:77
+msgid "(%s KB)"
+msgstr "(%s KB)"
+
+#: inc/Database/Exporter.php:238
+msgid "There was an error writing a line to the backup script: %s"
+msgstr "写入数据到备份脚本时出现错误：%s"
+
+#. translators: $1 is the name of the table
+#: inc/Database/Exporter.php:550
+msgid "End of data contents of table %s"
+msgstr "数据表 %s 的末尾"
+
+#. translators: $1 is the name of the new table
+#: inc/Database/Exporter.php:389
+msgid "Data contents of table %s"
+msgstr "数据表 %s 中的内容"
+
+#. translators: $1 is the name of the table
+#: inc/Database/Exporter.php:379
+msgid "Error getting table structure of %s"
+msgstr "获取数据表 %s 信息时发生错误"
+
+#. translators: $1 is the name of the table
+#: inc/Database/Exporter.php:364
+msgid "Error with SHOW CREATE TABLE for %s."
+msgstr "显示创建表格 %s 时发生错误."
+
+#: inc/Database/Exporter.php:352
+msgid "Table structure of table %s"
+msgstr "表格结构 %s"
+
+#: inc/Database/Exporter.php:338
+msgid "Delete any existing table %s"
+msgstr "删除一个存在的数据表 %s"
+
+#: inc/Database/Exporter.php:329
+msgid "Error getting table details"
+msgstr "获取数据表信息时出现错误"
+
+#: inc/Database/Exporter.php:323
+msgid "Table: %s"
+msgstr "数据表：%s"
+
+#. translators: $1 and $2 are the name of the database.
+#: inc/Database/Exporter.php:152
+msgid "Changed table prefix: From %1$s to %2$s "
+msgstr "修改数据表前缀: 从 %1$s 到 %2$s "
+
+#: inc/Database/Exporter.php:146
+msgid "Database: %s"
+msgstr "数据库：%s"
+
+#: inc/Database/Exporter.php:145
+msgid "Hostname: %s"
+msgstr "主机名：%s"
+
+#: inc/Database/Exporter.php:144
+msgid "Generated: %s"
+msgstr "创建于：%s"
+
+#: inc/Database/Exporter.php:142
+msgid "WordPress MySQL database backup"
+msgstr "WordPress MySQL 数据库备份"
+
+#: inc/Database/Exporter.php:123
+msgid "The backup directory is not writable!"
+msgstr "备份目录不可写入！"
+
+#: inc/Database/Exporter.php:133
+msgid "Could not open the backup file for writing!"
+msgstr "无法以写方式打开备份文件！"
